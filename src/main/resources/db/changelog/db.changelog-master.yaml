@@ -1,0 +1,27 @@
+databaseChangeLog:
+  - changeSet:
+      id: 1
+      author: mlotysz
+      changes:
+        - createTable:
+            tableName: org_info
+            columns:
+              - column:
+                  name: name
+                  type: varchar(255)
+                  constraints:
+                    nullable: false
+              - column:
+                  name: address
+                  type: varchar(255)
+                  constraints:
+                    nullable: false
+        - insert:
+            tableName: org_info
+            columns:
+              - column:
+                  name: name
+                  value: TOZ
+              - column:
+                  name: address
+                  value: Put full address here
