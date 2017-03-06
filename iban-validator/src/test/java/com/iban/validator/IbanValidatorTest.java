@@ -18,4 +18,14 @@ public class IbanValidatorTest {
     public void testInvalidIbanUnallowedCharacters(){
 
     }
+
+    public class IbanTester {
+
+        @Iban
+        String iban;
+
+        public IbanTester(String iban) {
+            this.iban = iban;
+        }
+    }
 }
