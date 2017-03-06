@@ -10,4 +10,6 @@ repositories {
 
 dependencies {
     testCompile group: 'junit', name: 'junit', version: '4.11'
+    compile group: 'org.hibernate', name: 'hibernate-validator', version: '5.2.4.Final'
+    compile group: 'javax.el', name: 'javax.el-api', version: '3.0.1-b04'
 }
