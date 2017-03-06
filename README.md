@@ -20,3 +20,7 @@ TODO [short description](https://en.support.wordpress.com/markdown-quick-referen
 ## REST API documentation
 
 TODO
+
+## Slack notifications (private)
+
+[Link](https://patronage-2017.slack.com/messages/backend-ci/)
