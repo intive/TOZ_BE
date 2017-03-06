@@ -1,3 +1,5 @@
+[![Build Status](https://travis-ci.org/blstream/TOZ_BE.svg?branch=master)](https://travis-ci.org/blstream/TOZ_BE)
+
 # TOZ backend
 
 TODO [short description](https://en.support.wordpress.com/markdown-quick-reference/)
@@ -24,3 +26,7 @@ TODO
 ## Slack notifications (private)
 
 [Link](https://patronage-2017.slack.com/messages/backend-ci/)
+
+# Temporary server
+
+[Heroku temporary hosting](https://vast-plains-10769.herokuapp.com/)
