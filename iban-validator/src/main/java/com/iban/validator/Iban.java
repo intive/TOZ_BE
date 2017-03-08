@@ -13,7 +13,7 @@ import static java.lang.annotation.RetentionPolicy.RUNTIME;
 @Documented
 public @interface Iban {
 
-    String message() default "{com.iban.validator.IbanValidator." + "message}";
+    String message() default "{com.iban.validator.IbanValidator." + "invalidIbanFormat}";
 
     Class<?>[] groups() default { };
 
