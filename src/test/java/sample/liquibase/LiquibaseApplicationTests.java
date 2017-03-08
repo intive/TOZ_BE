@@ -1,13 +1,12 @@
 package sample.liquibase;
 
-import java.net.ConnectException;
-
 import com.intive.patronage.toz.Application;
 import org.junit.Rule;
 import org.junit.Test;
-
 import org.springframework.boot.test.rule.OutputCapture;
 import org.springframework.core.NestedCheckedException;
+
+import java.net.ConnectException;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
@@ -30,7 +29,7 @@ public class LiquibaseApplicationTests {
 		assertThat(output).contains("Successfully acquired change log lock")
 				.contains("Creating database history "
 						+ "table with name: PUBLIC.DATABASECHANGELOG")
-				.contains("Table org_info created")
+				.contains("Table organization_info created")
 				.contains("Successfully released change log lock");
 	}
 
