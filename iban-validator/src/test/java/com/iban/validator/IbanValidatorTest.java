@@ -63,6 +63,19 @@ public class IbanValidatorTest {
         Assert.assertFalse(iban7.isIbanValid());
     }
 
+    @Test
+    public void testInvalidIbanUnallowedCharacters() {
+        SampleIban iban1 = new SampleIban("AL47 \n21 1009 0000 0002 3569 8741");
+        SampleIban iban2 = new SampleIban("AT61.904300234573201");
+        SampleIban iban3 = new SampleIban("DE89-3704-0044-0532-0130-00");
+        SampleIban iban4 = new SampleIban("PL60 \\n+ 1026 0000 0422 7020 1111");
+
+        Assert.assertFalse(iban1.isIbanValid());
+        Assert.assertFalse(iban2.isIbanValid());
+        Assert.assertFalse(iban3.isIbanValid());
+        Assert.assertFalse(iban4.isIbanValid());
+    }
+
     public class SampleIban {
 
         @Iban
