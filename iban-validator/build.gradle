@@ -12,5 +12,5 @@ dependencies {
     testCompile group: 'junit', name: 'junit', version: '4.12'
     compile group: 'org.hibernate', name: 'hibernate-validator', version: '5.2.4.Final'
     compile group: 'javax.el', name: 'javax.el-api', version: '3.0.1-b04'
-    compile group: 'org.iban4j', name: 'iban4j', version: '2.1.1'
+    compile group: 'org.iban4j', name: 'iban4j', version: '3.2.1'
 }
