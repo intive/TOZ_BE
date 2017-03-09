@@ -1,9 +1,14 @@
 package com.intive.patronage.toz.exception;
 
 public class NotFoundException extends RuntimeException {
-    private final static String NOT_FOUND = " not found!";
+
+    private final String name;
 
     public NotFoundException(String name) {
-        super(name + NOT_FOUND);
+        this.name = name;
+    }
+
+    public String getName() {
+        return name;
     }
 }
