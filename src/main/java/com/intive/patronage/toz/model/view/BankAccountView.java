@@ -4,6 +4,7 @@ import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
 import com.fasterxml.jackson.databind.annotation.JsonPOJOBuilder;
+import io.swagger.annotations.ApiModelProperty;
 import org.hibernate.validator.constraints.NotEmpty;
 
 @JsonInclude(JsonInclude.Include.NON_EMPTY)
@@ -11,6 +12,7 @@ import org.hibernate.validator.constraints.NotEmpty;
 public class BankAccountView {
 
     @NotEmpty
+    @ApiModelProperty(required = true)
     private final String number;
     private final String bankName;
 
