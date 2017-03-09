@@ -78,7 +78,7 @@ public class IbanValidatorTest {
 
     public class SampleIban {
 
-        @Iban
+        @IBAN
         String iban;
 
         public SampleIban(String iban) {
