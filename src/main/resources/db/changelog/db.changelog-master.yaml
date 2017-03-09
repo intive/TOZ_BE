@@ -79,3 +79,26 @@ databaseChangeLog:
               - column:
                   name: bank_name
                   value: PKO BO II O/Szczecin
+
+        - createTable:
+            tableName: pet
+            columns:
+              - column:
+                  name: id
+                  type: identity
+              - column:
+                  name: name
+                  type: varchar(255)
+              - column:
+                  name: type
+                  type: varchar(255)
+              - column:
+                  name: sex
+                  type: varchar(255)
+              - column:
+                  name: description
+                  type: varchar(255)
+              - column:
+                  name: address
+                  type: varchar(255)
+
