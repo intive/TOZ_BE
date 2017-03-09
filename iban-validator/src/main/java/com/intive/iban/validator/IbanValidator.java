@@ -1,4 +1,4 @@
-package com.iban.validator;
+package com.intive.iban.validator;
 
 
 import javax.validation.ConstraintValidator;

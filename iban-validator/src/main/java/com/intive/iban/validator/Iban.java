@@ -1,4 +1,4 @@
-package com.iban.validator;
+package com.intive.iban.validator;
 
 import javax.validation.Constraint;
 import javax.validation.Payload;
@@ -13,7 +13,7 @@ import static java.lang.annotation.RetentionPolicy.RUNTIME;
 @Documented
 public @interface Iban {
 
-    String message() default "{com.iban.validator.IbanValidator." + "invalidIbanFormat}";
+    String message() default "{com.intive.iban.validator.IbanValidator." + "invalidIbanFormat}";
 
     Class<?>[] groups() default { };
 

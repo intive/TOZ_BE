@@ -1,4 +1,4 @@
-package com.iban.validator;
+package com.intive.iban.validator;
 
 import org.junit.Assert;
 import org.junit.Before;
