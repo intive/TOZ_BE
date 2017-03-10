@@ -44,4 +44,11 @@ dependencies {
 	compile group: 'io.springfox', name: 'springfox-swagger2', version: '2.6.1'
 	compile group: 'io.springfox', name: 'springfox-swagger-ui', version: '2.6.1'
 
+	configurations.all {
+		resolutionStrategy.eachDependency { DependencyResolveDetails details ->
+			if (details.requested.group == 'org.springframework.boot' && details.requested.name == 'spring-boot-starter-logging') {
+				details.useTarget group: details.requested.group, name: 'spring-boot-starter-log4j2', version: details.requested.version
+			}
+		}
+	}
 }
