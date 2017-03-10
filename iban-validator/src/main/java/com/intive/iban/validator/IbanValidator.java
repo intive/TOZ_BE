@@ -7,12 +7,12 @@ import javax.validation.ConstraintValidatorContext;
 import java.io.*;
 import java.util.Properties;
 
-public class IbanValidator implements ConstraintValidator<IBAN, String> {
+public class IbanValidator implements ConstraintValidator<IbanFormat, String> {
 
     private String COUNTRY_CODE;
     private final String DEFAULT_COUNTRY_CODE = "PL";
 
-    public void initialize(IBAN constraintAnnotation) {
+    public void initialize(IbanFormat constraintAnnotation) {
         getCountryCodeFromConfig();
     }
 

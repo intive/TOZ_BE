@@ -11,7 +11,7 @@ import static java.lang.annotation.RetentionPolicy.RUNTIME;
 @Retention(RUNTIME)
 @Constraint(validatedBy = IbanValidator.class)
 @Documented
-public @interface IBAN {
+public @interface IbanFormat {
 
     String message() default "{com.intive.iban.validator.IbanValidator." + "invalidIbanFormat}";
 

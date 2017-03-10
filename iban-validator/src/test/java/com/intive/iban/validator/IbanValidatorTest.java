@@ -55,7 +55,7 @@ public class IbanValidatorTest {
 
     public class SampleIban {
 
-        @IBAN
+        @IbanFormat
         String iban;
 
         SampleIban(String iban) {
