@@ -23,7 +23,7 @@ import static org.mockito.Mockito.when;
 public class OrganizationInfoServiceTest {
 
     private final static String ORG_NAME = "Org";
-    private final static String ACCOUNT = "63 1020 4795 0000 9402 0103 5419";
+    private final static String ACCOUNT = "63102047950000940201035419";
     private final static UUID ID = UUID.randomUUID();
 
     @Mock
