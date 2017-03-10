@@ -29,7 +29,7 @@ public class ControllerExceptionHandler {
                 new String[]{e.getName()},
                 LocaleContextHolder.getLocale());
 
-        return new ErrorResponse(HttpStatus.CONFLICT.toString(), message);
+        return new ErrorResponse(HttpStatus.CONFLICT.value(), HttpStatus.CONFLICT.getReasonPhrase(), message);
     }
 
     @ExceptionHandler(NotFoundException.class)
@@ -40,20 +40,26 @@ public class ControllerExceptionHandler {
                 new String[]{e.getName()},
                 LocaleContextHolder.getLocale());
 
-        return new ErrorResponse(HttpStatus.NOT_FOUND.toString(), message);
+        return new ErrorResponse(HttpStatus.CONFLICT.value(), HttpStatus.CONFLICT.getReasonPhrase(), message);
     }
 
     public static class ErrorResponse {
-        private final String code;
+        private final int code;
+        private final String error;
         private final String message;
 
-        ErrorResponse(String code, String message) {
+        ErrorResponse(int code, String error, String message) {
             this.code = code;
+            this.error = error;
             this.message = message;
         }
 
-        public String getCode() {
+        public int getCode() {
             return code;
+        }
+
+        public String getError() {
+            return error;
         }
 
         public String getMessage() {
