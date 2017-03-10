@@ -1,8 +1,9 @@
 package com.intive.patronage.toz.repository;
 
-import com.intive.patronage.toz.model.OrganizationInfo;
+import com.intive.patronage.toz.model.db.OrganizationInfo;
 import org.springframework.data.jpa.repository.JpaRepository;
 
-public interface OrganizationInfoRepository extends JpaRepository<OrganizationInfo, Long> {
-    OrganizationInfo findByName(String name);
+import java.util.UUID;
+
+public interface OrganizationInfoRepository extends JpaRepository<OrganizationInfo, UUID> {
 }

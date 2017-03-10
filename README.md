@@ -21,7 +21,7 @@ TODO [short description](https://en.support.wordpress.com/markdown-quick-referen
 
 ## REST API documentation
 
-TODO
+    /swagger-ui.html
 
 ## Slack notifications (private)
 

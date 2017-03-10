@@ -1,9 +1,14 @@
 package com.intive.patronage.toz.exception;
 
 public class AlreadyExistsException extends RuntimeException {
-    private final static String ALREADY_EXISTS = " already exists!";
+
+    private final String name;
 
     public AlreadyExistsException(String name) {
-        super("'" + name + "'" + ALREADY_EXISTS);
+        this.name = name;
+    }
+
+    public String getName() {
+        return name;
     }
 }
