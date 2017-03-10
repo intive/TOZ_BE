@@ -61,7 +61,7 @@ public class IbanValidatorTest {
         assertThat(iban.isIbanValid()).isFalse();
     }
 
-    public class SampleIban {
+    private class SampleIban {
 
         @IbanFormat
         String iban;
