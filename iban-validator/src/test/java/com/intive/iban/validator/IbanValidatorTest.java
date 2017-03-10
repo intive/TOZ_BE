@@ -3,7 +3,6 @@ package com.intive.iban.validator;
 import com.tngtech.java.junit.dataprovider.DataProvider;
 import com.tngtech.java.junit.dataprovider.DataProviderRunner;
 import com.tngtech.java.junit.dataprovider.UseDataProvider;
-import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -13,6 +12,8 @@ import javax.validation.Validation;
 import javax.validation.Validator;
 import javax.validation.ValidatorFactory;
 import java.util.Set;
+
+import static org.assertj.core.api.Assertions.assertThat;
 
 @RunWith(DataProviderRunner.class)
 public class IbanValidatorTest {
@@ -50,14 +51,14 @@ public class IbanValidatorTest {
     @UseDataProvider("dataProviderValidIban")
     public void testValidIban(String ibanData) {
         SampleIban iban = new SampleIban(ibanData);
-        Assert.assertTrue(iban.isIbanValid());
+        assertThat(iban.isIbanValid()).isTrue();
     }
 
     @Test
     @UseDataProvider("dataProviderInvalidIban")
     public void testInvalidIbanBadCountryCodeOrLength(String ibanData) {
         SampleIban iban = new SampleIban(ibanData);
-        Assert.assertFalse(iban.isIbanValid());
+        assertThat(iban.isIbanValid()).isFalse();
     }
 
     public class SampleIban {
