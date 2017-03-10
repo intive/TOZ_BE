@@ -4,19 +4,28 @@ import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
 import com.fasterxml.jackson.databind.annotation.JsonPOJOBuilder;
+import io.swagger.annotations.ApiModel;
+import io.swagger.annotations.ApiModelProperty;
 
 import javax.validation.constraints.Pattern;
 
+@ApiModel("Address")
 @JsonInclude(JsonInclude.Include.NON_EMPTY)
 @JsonDeserialize(builder = AddressView.Builder.class)
 public class AddressView {
 
+    @ApiModelProperty(value = "Post code", example = "02-123")
     @Pattern(regexp = "[0-9]{2}-[0-9]{3}")
     private final String postCode;
+    @ApiModelProperty(value = "City")
     private final String city;
+    @ApiModelProperty(value = "Street")
     private final String street;
+    @ApiModelProperty(value = "Country")
     private final String country;
+    @ApiModelProperty(value = "House number")
     private final Integer houseNumber;
+    @ApiModelProperty(value = "Apartment number")
     private final Integer apartmentNumber;
 
     private AddressView(Builder builder) {

@@ -4,17 +4,19 @@ import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
 import com.fasterxml.jackson.databind.annotation.JsonPOJOBuilder;
+import io.swagger.annotations.ApiModel;
 import io.swagger.annotations.ApiModelProperty;
 import org.hibernate.validator.constraints.NotEmpty;
 
 import javax.validation.Valid;
 
+@ApiModel("Organization information")
 @JsonInclude(JsonInclude.Include.NON_EMPTY)
 @JsonDeserialize(builder = OrganizationInfoView.Builder.class)
 public class OrganizationInfoView {
 
     @NotEmpty
-    @ApiModelProperty(required = true)
+    @ApiModelProperty(value = "Organization name", required = true)
     private final String name;
     @Valid
     private final AddressView address;
