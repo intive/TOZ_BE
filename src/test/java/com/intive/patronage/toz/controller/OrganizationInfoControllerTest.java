@@ -28,7 +28,7 @@ public class OrganizationInfoControllerTest {
 
     private final static String PATH = "/organization/info";
     private final static String ORG_NAME = "Org";
-    private final static String ACCOUNT = "63 1020 4795 0000 9402 0103 5419";
+    private final static String ACCOUNT = "63102047950000940201035419";
 
     private final MediaType contentType = new MediaType(MediaType.APPLICATION_JSON.getType(),
             MediaType.APPLICATION_JSON.getSubtype(),
