@@ -87,7 +87,7 @@ databaseChangeLog:
                   value: http://toz.szczecin.pl
               - column:
                   name: bank_account_number
-                  value: 63 1020 4795 0000 9402 0103 5419
+                  value: 63102047950000940201035419
               - column:
                   name: bank_name
                   value: PKO BO II O/Szczecin
