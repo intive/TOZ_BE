@@ -1,6 +1,6 @@
 package com.intive.patronage.toz;
 
-import com.intive.patronage.toz.model.Pet;
+import com.intive.patronage.toz.model.db.Pet;
 import com.intive.patronage.toz.repository.PetsRepository;
 import org.springframework.boot.CommandLineRunner;
 import org.springframework.boot.SpringApplication;

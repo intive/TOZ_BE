@@ -40,7 +40,7 @@ public class ControllerExceptionHandler {
                 new String[]{e.getName()},
                 LocaleContextHolder.getLocale());
 
-        return new ErrorResponse(HttpStatus.CONFLICT.value(), HttpStatus.CONFLICT.getReasonPhrase(), message);
+        return new ErrorResponse(HttpStatus.NOT_FOUND.value(), HttpStatus.NOT_FOUND.getReasonPhrase(), message);
     }
 
     public static class ErrorResponse {
