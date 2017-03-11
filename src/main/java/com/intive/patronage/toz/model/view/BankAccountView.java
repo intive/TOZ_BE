@@ -4,17 +4,17 @@ import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
 import com.fasterxml.jackson.databind.annotation.JsonPOJOBuilder;
+import com.intive.iban.validator.IbanFormat;
 import io.swagger.annotations.ApiModel;
 import io.swagger.annotations.ApiModelProperty;
-import org.hibernate.validator.constraints.NotEmpty;
 
 @ApiModel("Bank account")
 @JsonInclude(JsonInclude.Include.NON_EMPTY)
 @JsonDeserialize(builder = BankAccountView.Builder.class)
 public class BankAccountView {
 
-    @ApiModelProperty(value = "Number", required = true, example = "PL61 1090 1014 0000 0712 1981 2874")
-    @NotEmpty
+    @ApiModelProperty(value = "Number", required = true, example = "61109010140000071219812874")
+    @IbanFormat
     private final String number;
     @ApiModelProperty(value = "Bank name")
     private final String bankName;
