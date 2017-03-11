@@ -12,6 +12,7 @@ import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
 
 import java.net.URI;
 import java.util.List;
+import java.util.UUID;
 
 @RestController
 @RequestMapping(value = "/pets",
@@ -34,7 +35,7 @@ public class PetsController {
     }
 
     @GetMapping(value = "/{id}")
-    public ResponseEntity<Pet> getPetById(@PathVariable Long id) {
+    public ResponseEntity<Pet> getPetById(@PathVariable UUID id) {
         final Pet pet = petsService.findById(id);
         return ResponseEntity.ok(pet);
     }
@@ -46,7 +47,7 @@ public class PetsController {
     }
 
     @DeleteMapping(value = "/{id}")
-    public ResponseEntity<Pet> deletePetById(@PathVariable Long id) {
+    public ResponseEntity<Pet> deletePetById(@PathVariable UUID id) {
         petsService.deletePet(id);
         return new ResponseEntity<>(HttpStatus.OK);
     }

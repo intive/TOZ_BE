@@ -1,5 +1,6 @@
 package com.intive.patronage.toz;
 
+import com.intive.patronage.toz.model.db.Address;
 import com.intive.patronage.toz.model.db.Pet;
 import com.intive.patronage.toz.repository.PetsRepository;
 import org.springframework.boot.CommandLineRunner;
@@ -18,10 +19,16 @@ public class Application {
     public CommandLineRunner initDatabase(PetsRepository petsRepository) {
         return args -> {
             for (int i = 0; i < 10; i++) {
+                Address address = new Address();
+                address.setCity("City:" + i);
+
                 Pet pet = new Pet();
                 pet.setName("Name:" + i);
                 pet.setSex(Pet.Sex.values()[i%2]);
                 pet.setType(Pet.Type.values()[i%2]);
+                pet.setAddress(address);
+
+
                 petsRepository.save(pet);
             }
         };

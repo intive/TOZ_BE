@@ -7,48 +7,49 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
+import java.util.UUID;
 
 @Service
 public class PetsService {
 
     private final static String PET = "Pet";
-    private PetsRepository repository;
+    private PetsRepository petsRepository;
 
     @Autowired
-    public PetsService(PetsRepository repository) {
-        this.repository = repository;
+    public PetsService(PetsRepository petsRepository) {
+        this.petsRepository = petsRepository;
     }
 
     public List<Pet> getAll() {
-        return repository.findAll();
+        return petsRepository.findAll();
     }
 
-    public Pet findById(final Long id) {
+    public Pet findById(final UUID id) {
         throwNotFoundExceptionIfNotExists(id);
-        return repository.findOne(id);
+        return petsRepository.findOne(id);
     }
 
     public Pet findByName(String name) {
-        return repository.findByName(name);
+        return petsRepository.findByName(name);
     }
 
     public void createPet(final Pet pet) {
-        repository.save(pet);
+        petsRepository.save(pet);
     }
 
-    public void deletePet(final Long id) {
+    public void deletePet(final UUID id) {
         throwNotFoundExceptionIfNotExists(id);
-        repository.delete(id);
+        petsRepository.delete(id);
     }
 
     public Pet updatePet(final Pet pet) {
-        final Long id = pet.getId();
+        final UUID id = pet.getId();
         throwNotFoundExceptionIfNotExists(id);
-        return repository.save(pet);
+        return petsRepository.save(pet);
     }
 
-    private void throwNotFoundExceptionIfNotExists(final Long id) {
-        if (!repository.exists(id)) {
+    private void throwNotFoundExceptionIfNotExists(final UUID id) {
+        if (!petsRepository.exists(id)) {
             throw new NotFoundException(PET);
         }
     }

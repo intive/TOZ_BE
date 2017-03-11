@@ -1,34 +1,18 @@
 package com.intive.patronage.toz.model.db;
 
+import javax.persistence.CascadeType;
 import javax.persistence.Entity;
-import javax.persistence.GeneratedValue;
-import javax.persistence.Id;
+import javax.persistence.OneToOne;
 
 @Entity
-public class Pet {
+public class Pet extends DbModel {
 
-    @Id
-    @GeneratedValue
-    private Long id;
     private String name;
     private Type type;
     private Sex sex;
     private String description;
-
-    private String postCode;
-    private String city;
-    private String street;
-    private String country;
-    private Integer houseNumber;
-    private Integer apartmentNumber;
-
-    public Long getId() {
-        return id;
-    }
-
-    public void setId(Long id) {
-        this.id = id;
-    }
+    @OneToOne(cascade = CascadeType.ALL)
+    private Address address;
 
     public String getName() {
         return name;
@@ -62,52 +46,12 @@ public class Pet {
         this.description = description;
     }
 
-    public String getPostCode() {
-        return postCode;
+    public Address getAddress() {
+        return address;
     }
 
-    public void setPostCode(String postCode) {
-        this.postCode = postCode;
-    }
-
-    public String getCity() {
-        return city;
-    }
-
-    public void setCity(String city) {
-        this.city = city;
-    }
-
-    public String getStreet() {
-        return street;
-    }
-
-    public void setStreet(String street) {
-        this.street = street;
-    }
-
-    public String getCountry() {
-        return country;
-    }
-
-    public void setCountry(String country) {
-        this.country = country;
-    }
-
-    public Integer getHouseNumber() {
-        return houseNumber;
-    }
-
-    public void setHouseNumber(Integer houseNumber) {
-        this.houseNumber = houseNumber;
-    }
-
-    public Integer getApartmentNumber() {
-        return apartmentNumber;
-    }
-
-    public void setApartmentNumber(Integer apartmentNumber) {
-        this.apartmentNumber = apartmentNumber;
+    public void setAddress(Address address) {
+        this.address = address;
     }
 
     public enum Type {

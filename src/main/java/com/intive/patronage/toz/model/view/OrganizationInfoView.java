@@ -25,7 +25,6 @@ public class OrganizationInfoView {
     @Valid
     private final BankAccountView bankAccount;
 
-
     private OrganizationInfoView(Builder builder) {
         this.name = builder.name;
         this.address = builder.address;
