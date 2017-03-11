@@ -51,4 +51,5 @@ dependencies {
 			}
 		}
 	}
+	compile project(':iban-validator')
 }
