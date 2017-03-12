@@ -2,20 +2,16 @@ package com.intive.patronage.toz.service;
 
 import com.intive.patronage.toz.exception.NotFoundException;
 import com.intive.patronage.toz.exception.StorageException;
-import com.intive.patronage.toz.exception.StorageFileNotFoundException;
-import com.intive.patronage.toz.model.db.FileUpload;
+import com.intive.patronage.toz.model.db.UploadedFile;
 import com.intive.patronage.toz.repository.FileUploadRepository;
 import liquibase.util.file.FilenameUtils;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.core.io.Resource;
-import org.springframework.core.io.UrlResource;
 import org.springframework.stereotype.Service;
 import org.springframework.util.FileSystemUtils;
 import org.springframework.web.multipart.MultipartFile;
 
 import java.io.File;
 import java.io.IOException;
-import java.net.MalformedURLException;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
@@ -23,19 +19,18 @@ import java.text.SimpleDateFormat;
 import java.util.Calendar;
 import java.util.Date;
 import java.util.UUID;
-import java.util.stream.Stream;
 
 @Service
 public class FileSystemStorageService implements StorageService {
 
     private final Path rootLocation;
     private String location = "";
-    private final int amountFilesInFolder = 998;
+    private int amountFilesInFolder;
     private FileUploadRepository fileUploadRepository;
 
     @Autowired
     public FileSystemStorageService(StorageProperties properties, FileUploadRepository fileUploadRepository) {
-
+        this.amountFilesInFolder = properties.getAmountFilesInFolder();
         this.rootLocation = Paths.get(properties.getLocation());
         this.location = properties.getLocation();
         this.fileUploadRepository = fileUploadRepository;
@@ -56,33 +51,33 @@ public class FileSystemStorageService implements StorageService {
         }
         return trueLocation;
     }
-    public FileUpload saveFileUpload(String path, String fileExtension){
-        FileUpload fileUpload = new FileUpload();
-        fileUpload.setId(UUID.randomUUID());
-        fileUpload.setDate(new Date());
-        fileUploadRepository.save(fileUpload);
-        path += File.separator + fileUpload.getId() + "." + fileExtension;
+    public UploadedFile saveFileUpload(String path, String fileExtension){
+        UploadedFile uploadedFile = new UploadedFile();
+        uploadedFile.setId(UUID.randomUUID());
+        uploadedFile.setDate(new Date());
+        fileUploadRepository.save(uploadedFile);
+        path = String.format("%s%s%s.%s", path, File.separator, uploadedFile.getId(),fileExtension);
         String filename = path;
-        fileUpload.setPath(filename);
-        fileUploadRepository.save(fileUpload);
-        return fileUpload;
+        uploadedFile.setPath(filename);
+        fileUploadRepository.save(uploadedFile);
+        return uploadedFile;
     }
 
     @Override
-    public FileUpload store(MultipartFile file) {
-        FileUpload fileUpload = null;
+    public UploadedFile store(MultipartFile file) {
+        UploadedFile uploadedFile = null;
         try {
             if (file.isEmpty()) {
                 throw new StorageException("Failed to store empty file " + file.getOriginalFilename());
             }
             String fileFolderLocation = this.getFileFolderLocation(this.location);
-            fileUpload = this.saveFileUpload(fileFolderLocation,FilenameUtils.getExtension(file.getOriginalFilename()));
-            Path location = Paths.get(this.location + fileUpload.getPath());
+            uploadedFile = this.saveFileUpload(fileFolderLocation,FilenameUtils.getExtension(file.getOriginalFilename()));
+            Path location = Paths.get(this.location + uploadedFile.getPath());
             Files.copy(file.getInputStream(), location);
-            return fileUpload;
+            return uploadedFile;
         } catch (IOException e) {
-            if (fileUpload != null) {
-                fileUploadRepository.delete(fileUpload.getId());
+            if (uploadedFile != null) {
+                fileUploadRepository.delete(uploadedFile.getId());
             }
             throw new StorageException("Failed to store file " + file.getOriginalFilename(), e);
         }
@@ -97,12 +92,12 @@ public class FileSystemStorageService implements StorageService {
 
     @Override
     public void delete(UUID uuid) {
-        FileUpload fileUpload = fileUploadRepository.findOne(uuid);
-        if (fileUpload == null){
+        UploadedFile uploadedFile = fileUploadRepository.findOne(uuid);
+        if (uploadedFile == null){
             throw new NotFoundException("Record with uuid "+uuid+" not found ");
         }
         fileUploadRepository.delete(uuid);
-        Path path = Paths.get(this.location + fileUpload.getPath());
+        Path path = Paths.get(this.location + uploadedFile.getPath());
         FileSystemUtils.deleteRecursively(path.toFile());
     }
 

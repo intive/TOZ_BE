@@ -10,6 +10,9 @@ public class StorageProperties {
      */
     private String location = "upload";
 
+    private int amountFilesInFolder = 998;
+
+
     public String getLocation() {
         return location;
     }
@@ -18,4 +21,11 @@ public class StorageProperties {
         this.location = location;
     }
 
+    public int getAmountFilesInFolder() {
+        return amountFilesInFolder;
+    }
+
+    public void setAmountFilesInFolder(int amountFilesInFolder) {
+        this.amountFilesInFolder = amountFilesInFolder;
+    }
 }

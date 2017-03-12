@@ -1,6 +1,6 @@
 package com.intive.patronage.toz.service;
 
-import com.intive.patronage.toz.model.db.FileUpload;
+import com.intive.patronage.toz.model.db.UploadedFile;
 import com.intive.patronage.toz.repository.FileUploadRepository;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -29,25 +29,25 @@ public class FileSystemStorageServiceTest {
         storageProperties = new StorageProperties();
         this.storageService = new FileSystemStorageService(storageProperties, fileUploadRepository);
         MockMultipartFile firstFile = new MockMultipartFile("data", "filename.jpg", "text/plain", "some file".getBytes());
-        FileUpload fileUpload = storageService.store(firstFile);
-        Path path = Paths.get(storageProperties.getLocation() + fileUpload.getPath());
+        UploadedFile uploadedFile = storageService.store(firstFile);
+        Path path = Paths.get(storageProperties.getLocation() + uploadedFile.getPath());
         assert(Files.exists(path));
         FileSystemUtils.deleteRecursively(path.toFile());
     }
 
     @Test
     public void saveManyFileTests(){
-        FileUpload fileUpload = null;
-        List<FileUpload> fileUploadList = new ArrayList<FileUpload>();
+        UploadedFile uploadedFile = null;
+        List<UploadedFile> uploadedFileList = new ArrayList<UploadedFile>();
         for (int i = 0; i < 2000; i++){
             storageProperties = new StorageProperties();
             this.storageService = new FileSystemStorageService(storageProperties, fileUploadRepository);
             MockMultipartFile firstFile = new MockMultipartFile("data", "filename.jpg", "text/plain", "some file".getBytes());
-            fileUpload = storageService.store(firstFile);
-            fileUploadList.add(fileUpload);
+            uploadedFile = storageService.store(firstFile);
+            uploadedFileList.add(uploadedFile);
         }
-        assert(fileUpload.getPath().contains("\\files"));
-        for (FileUpload fu : fileUploadList){
+        assert(uploadedFile.getPath().contains("\\files"));
+        for (UploadedFile fu : uploadedFileList){
             Path path = Paths.get(storageProperties.getLocation() + fu.getPath());
             FileSystemUtils.deleteRecursively(path.toFile());
         }

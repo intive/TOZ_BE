@@ -6,13 +6,13 @@ import java.util.Date;
 import java.util.UUID;
 
 @Entity
-public class FileUpload {
+public class UploadedFile {
     @Id
     private UUID id;
     private Date date;
     private String path;
 
-    public FileUpload(){
+    public UploadedFile(){
 
     }
     public UUID getId() {
