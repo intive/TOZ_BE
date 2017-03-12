@@ -1,5 +1,7 @@
 package com.intive.patronage.toz.model.db;
 
+import com.fasterxml.jackson.annotation.JsonCreator;
+
 import javax.persistence.CascadeType;
 import javax.persistence.Entity;
 import javax.persistence.OneToOne;
@@ -55,7 +57,17 @@ public class Pet extends DbModel {
     }
 
     public enum Type {
-        DOG, CAT
+        DOG, CAT;
+
+        @JsonCreator
+        public static Type fromString(String key) {
+            for (Type type : values()) {
+                if (type.name().equalsIgnoreCase(key)) {
+                    return type;
+                }
+            }
+            return null;
+        }
     }
 
     public enum Sex {

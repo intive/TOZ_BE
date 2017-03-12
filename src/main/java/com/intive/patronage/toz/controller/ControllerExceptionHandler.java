@@ -2,6 +2,8 @@ package com.intive.patronage.toz.controller;
 
 import com.intive.patronage.toz.exception.AlreadyExistsException;
 import com.intive.patronage.toz.exception.NotFoundException;
+import com.intive.patronage.toz.exception.WrongEnumValueException;
+import com.sun.deploy.util.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.MessageSource;
 import org.springframework.context.i18n.LocaleContextHolder;
@@ -10,7 +12,11 @@ import org.springframework.web.bind.annotation.ControllerAdvice;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.bind.annotation.ResponseStatus;
+import org.springframework.web.servlet.config.annotation.EnableWebMvc;
 
+import java.util.Arrays;
+
+@EnableWebMvc
 @ControllerAdvice
 public class ControllerExceptionHandler {
 
@@ -41,6 +47,19 @@ public class ControllerExceptionHandler {
                 LocaleContextHolder.getLocale());
 
         return new ErrorResponse(HttpStatus.NOT_FOUND.value(), HttpStatus.NOT_FOUND.getReasonPhrase(), message);
+    }
+
+    @ExceptionHandler(WrongEnumValueException.class)
+    @ResponseStatus(HttpStatus.UNPROCESSABLE_ENTITY)
+    @ResponseBody
+    public ErrorResponse handleWrongEnumValueException(WrongEnumValueException e) {
+        final String typeName = e.getName();
+        final String allowedValues = StringUtils.join(Arrays.asList(e.getAllowedValues()), ", ");
+        final String message = messageSource.getMessage("mustHaveValue",
+                new String[]{typeName, allowedValues},
+                LocaleContextHolder.getLocale());
+        final HttpStatus httpStatus = HttpStatus.UNPROCESSABLE_ENTITY;
+        return new ErrorResponse(httpStatus.value(), httpStatus.getReasonPhrase(), message);
     }
 
     public static class ErrorResponse {

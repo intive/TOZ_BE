@@ -1,6 +1,7 @@
 package com.intive.patronage.toz.service;
 
 import com.intive.patronage.toz.exception.NotFoundException;
+import com.intive.patronage.toz.exception.WrongEnumValueException;
 import com.intive.patronage.toz.model.db.Pet;
 import com.intive.patronage.toz.repository.PetsRepository;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -16,11 +17,11 @@ public class PetsService {
     private PetsRepository petsRepository;
 
     @Autowired
-    public PetsService(PetsRepository petsRepository) {
+    PetsService(PetsRepository petsRepository) {
         this.petsRepository = petsRepository;
     }
 
-    public List<Pet> getAll() {
+    public List<Pet> findAllPets() {
         return petsRepository.findAll();
     }
 
@@ -29,12 +30,11 @@ public class PetsService {
         return petsRepository.findOne(id);
     }
 
-    public Pet findByName(String name) {
-        return petsRepository.findByName(name);
-    }
-
-    public void createPet(final Pet pet) {
-        petsRepository.save(pet);
+    public Pet createPet(final Pet pet) {
+        if (pet.getType() == null) {
+            throw new WrongEnumValueException(Pet.Type.class);
+        }
+        return petsRepository.save(pet);
     }
 
     public void deletePet(final UUID id) {
@@ -42,9 +42,9 @@ public class PetsService {
         petsRepository.delete(id);
     }
 
-    public Pet updatePet(final Pet pet) {
-        final UUID id = pet.getId();
+    public Pet updatePet(UUID id, final Pet pet) {
         throwNotFoundExceptionIfNotExists(id);
+        pet.setId(id);
         return petsRepository.save(pet);
     }
 
