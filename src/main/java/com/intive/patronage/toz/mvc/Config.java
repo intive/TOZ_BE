@@ -20,7 +20,7 @@ import java.time.LocalDate;
 @EnableWebMvc
 @Configuration
 @EnableSwagger2
-public class MvcConfig extends WebMvcConfigurerAdapter {
+public class Config extends WebMvcConfigurerAdapter {
 
     @Bean
     public Docket api() {

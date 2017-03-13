@@ -2,19 +2,16 @@ package com.intive.patronage.toz.model.db;
 
 import com.fasterxml.jackson.annotation.JsonCreator;
 
-import javax.persistence.CascadeType;
 import javax.persistence.Entity;
-import javax.persistence.OneToOne;
 
 @Entity
-public class Pet extends DbModel {
+public class Pet extends Identifiable {
 
     private String name;
     private Type type;
     private Sex sex;
     private String description;
-    @OneToOne(cascade = CascadeType.ALL)
-    private Address address;
+    private String address;
 
     public String getName() {
         return name;
@@ -48,16 +45,16 @@ public class Pet extends DbModel {
         this.description = description;
     }
 
-    public Address getAddress() {
+    public String getAddress() {
         return address;
     }
 
-    public void setAddress(Address address) {
+    public void setAddress(String address) {
         this.address = address;
     }
 
     public enum Type {
-        DOG, CAT;
+        DOG, CAT, UNKNOWN;
 
         @JsonCreator
         public static Type fromString(String key) {
@@ -71,6 +68,16 @@ public class Pet extends DbModel {
     }
 
     public enum Sex {
-        MALE, FEMALE
+        MALE, FEMALE;
+
+        @JsonCreator
+        public static Sex fromString(String key) {
+            for (Sex sex : values()) {
+                if (sex.name().equalsIgnoreCase(key)) {
+                    return sex;
+                }
+            }
+            return null;
+        }
     }
 }

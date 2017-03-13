@@ -8,7 +8,7 @@ import javax.persistence.Entity;
 import java.util.UUID;
 
 @Entity
-public class OrganizationInfo extends DbModel {
+public class OrganizationInfo extends Identifiable {
 
     private String name;
 

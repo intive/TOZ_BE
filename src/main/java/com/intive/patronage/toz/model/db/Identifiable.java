@@ -7,7 +7,7 @@ import javax.persistence.MappedSuperclass;
 import java.util.UUID;
 
 @MappedSuperclass
-public abstract class DbModel {
+public abstract class Identifiable {
 
     @Id
     @JsonProperty(access = JsonProperty.Access.READ_ONLY)

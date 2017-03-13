@@ -56,30 +56,6 @@ databaseChangeLog:
                   name: bank_name
                   type: varchar(255)
         - createTable:
-            tableName: address
-            columns:
-              - column:
-                  name: id
-                  type: uuid
-              - column:
-                  name: post_code
-                  type: varchar(7)
-              - column:
-                  name: city
-                  type: varchar(255)
-              - column:
-                  name: street
-                  type: varchar(255)
-              - column:
-                  name: country
-                  type: varchar(255)
-              - column:
-                  name: house_number
-                  type: int
-              - column:
-                  name: apartment_number
-                  type: int
-        - createTable:
             tableName: pet
             columns:
               - column:
@@ -94,6 +70,8 @@ databaseChangeLog:
               - column:
                   name: type
                   type: varchar(255)
+                  constraints:
+                    - nullable: false
               - column:
                   name: sex
                   type: varchar(255)
@@ -101,11 +79,8 @@ databaseChangeLog:
                   name: description
                   type: varchar(255)
               - column:
-                  name: address_id
-                  type: uuid
-                  constraints:
-                    foreignKeyName: fk_pet_address
-                    references: address(id)
+                  name: address
+                  type: varchar(255)
         - insert:
             tableName: organization_info
             columns:
