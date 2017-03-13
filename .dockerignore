@@ -1,8 +1,3 @@
-.git
-.gitignore
-.gradle
-src
-.travis.yml
-README.md
-LICENSE
-logs
+**
+!Dockerfile
+!build/**

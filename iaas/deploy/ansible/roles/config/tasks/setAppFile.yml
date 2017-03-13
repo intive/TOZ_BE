@@ -1,0 +1,16 @@
+---
+
+- name: set binaryApp toz-core-prod.jar
+  set_fact:
+    binaryApp: "toz-core-prod.jar"
+  when: env == "PROD"
+
+- name: set binaryApp toz-core-dev.jar
+  set_fact:
+    binaryApp: "toz-core-dev.jar"
+  when: env == "DEV"
+
+- name: set binaryApp toz-core.jar
+  set_fact:
+    binaryApp: "toz-core.jar"
+  when: env == "CORE"

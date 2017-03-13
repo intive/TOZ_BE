@@ -1,0 +1,12 @@
+# http://docs.spring.io/spring-boot/docs/current/reference/html/deployment-install.html#deployment-systemd-service
+[Unit]
+Description=TOZ backend - dev
+After=syslog.target
+
+[Service]
+User=debian
+ExecStart=/home/debian/dev/toz-core-0.1-SNAPSHOT.jar
+SuccessExitStatus=143
+
+[Install]
+WantedBy=multi-user.target
