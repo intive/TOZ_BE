@@ -22,6 +22,5 @@ bin/
 out/
 
 gradle/
-gradlew
 gradlew.bat
 logs
