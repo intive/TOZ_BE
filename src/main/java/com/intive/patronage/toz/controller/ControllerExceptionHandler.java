@@ -3,7 +3,7 @@ package com.intive.patronage.toz.controller;
 import com.intive.patronage.toz.exception.AlreadyExistsException;
 import com.intive.patronage.toz.exception.NotFoundException;
 import com.intive.patronage.toz.exception.WrongEnumValueException;
-import com.sun.deploy.util.StringUtils;
+import liquibase.util.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.MessageSource;
 import org.springframework.context.i18n.LocaleContextHolder;
