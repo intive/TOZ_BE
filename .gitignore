@@ -16,10 +16,8 @@ gen/
 
 #Gradle
 .gradletasknamecache
-.gradle/
+
 build/
 bin/
 out/
-
-gradle/
 logs
