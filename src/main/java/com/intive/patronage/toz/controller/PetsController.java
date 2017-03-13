@@ -2,7 +2,7 @@ package com.intive.patronage.toz.controller;
 
 import com.intive.patronage.toz.model.db.Pet;
 import com.intive.patronage.toz.service.PetsService;
-import io.swagger.annotations.ApiOperation;
+import io.swagger.annotations.*;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
@@ -16,6 +16,7 @@ import java.net.URI;
 import java.util.List;
 import java.util.UUID;
 
+@Api(value = "Pet", description = "Operations for pet resources")
 @RestController
 @RequestMapping(value = "/pets", produces = MediaType.APPLICATION_JSON_VALUE)
 public class PetsController {
@@ -35,13 +36,21 @@ public class PetsController {
     }
 
     @ApiOperation("Get single pet by id")
+    @ApiResponses(value = {
+            @ApiResponse(code = 404, message = "Pet not found",
+                    response = ControllerExceptionHandler.ErrorResponse.class)
+    })
     @GetMapping(value = "/{id}")
-    public ResponseEntity<Pet> getPetById(@PathVariable UUID id) {
+    public ResponseEntity<Pet> getPetById(@ApiParam(required = true) @PathVariable UUID id) {
         final Pet pet = petsService.findById(id);
         return ResponseEntity.ok(pet);
     }
 
     @ApiOperation("Create new pet")
+    @ApiResponses(value = {
+            @ApiResponse(code = 404, message = "Pet not found",
+                    response = ControllerExceptionHandler.ErrorResponse.class)
+    })
     @PostMapping(consumes = MediaType.APPLICATION_JSON_VALUE)
     public ResponseEntity<?> createPet(@Valid @RequestBody Pet pet) {
         Pet createdPet = petsService.createPet(pet);
@@ -54,6 +63,10 @@ public class PetsController {
     }
 
     @ApiOperation("Delete pet")
+    @ApiResponses(value = {
+            @ApiResponse(code = 404, message = "Pet not found",
+                    response = ControllerExceptionHandler.ErrorResponse.class)
+    })
     @DeleteMapping(value = "/{id}")
     public ResponseEntity<Pet> deletePetById(@PathVariable UUID id) {
         petsService.deletePet(id);
@@ -61,6 +74,10 @@ public class PetsController {
     }
 
     @ApiOperation("Update pet information")
+    @ApiResponses(value = {
+            @ApiResponse(code = 404, message = "Pet not found",
+                    response = ControllerExceptionHandler.ErrorResponse.class)
+    })
     @PutMapping(value = "/{id}", consumes = MediaType.APPLICATION_JSON_VALUE)
     public ResponseEntity<Pet> updatePet(@PathVariable UUID id, @RequestBody Pet pet) {
         final Pet updatedPet = petsService.updatePet(id, pet);
