@@ -19,7 +19,7 @@ public class Application {
     @Profile("dev")
     public CommandLineRunner initDatabase(PetsRepository petsRepository) {
         return args -> {
-            for (int i = 0; i < 10; i++) {
+            for (int i = 0; i < 5; i++) {
                 Pet pet = new Pet();
                 pet.setName("Name:" + i);
                 pet.setType(Pet.Type.values()[i%3]);

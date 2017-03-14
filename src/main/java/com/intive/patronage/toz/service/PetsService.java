@@ -42,7 +42,7 @@ public class PetsService {
         petsRepository.delete(id);
     }
 
-    public Pet updatePet(UUID id, final Pet pet) {
+    public Pet updatePet(final UUID id, final Pet pet) {
         throwNotFoundExceptionIfNotExists(id);
         pet.setId(id);
         return petsRepository.save(pet);

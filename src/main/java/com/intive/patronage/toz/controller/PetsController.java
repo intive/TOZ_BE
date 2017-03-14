@@ -1,5 +1,6 @@
 package com.intive.patronage.toz.controller;
 
+import com.intive.patronage.toz.model.constant.PetsConstants;
 import com.intive.patronage.toz.model.db.Pet;
 import com.intive.patronage.toz.service.PetsService;
 import io.swagger.annotations.*;
@@ -18,7 +19,7 @@ import java.util.UUID;
 
 @Api(value = "Pet", description = "Operations for pet resources")
 @RestController
-@RequestMapping(value = "/pets", produces = MediaType.APPLICATION_JSON_VALUE)
+@RequestMapping(value = PetsConstants.PATH, produces = MediaType.APPLICATION_JSON_VALUE)
 public class PetsController {
 
     private final PetsService petsService;
@@ -30,9 +31,8 @@ public class PetsController {
 
     @ApiOperation("Get all pets")
     @GetMapping
-    public ResponseEntity<List<Pet>> getAllPets() {
-        final List<Pet> pet = petsService.findAllPets();
-        return ResponseEntity.ok(pet);
+    public List<Pet> getAllPets() {
+        return petsService.findAllPets();
     }
 
     @ApiOperation("Get single pet by id")
@@ -41,9 +41,8 @@ public class PetsController {
                     response = ControllerExceptionHandler.ErrorResponse.class)
     })
     @GetMapping(value = "/{id}")
-    public ResponseEntity<Pet> getPetById(@ApiParam(required = true) @PathVariable UUID id) {
-        final Pet pet = petsService.findById(id);
-        return ResponseEntity.ok(pet);
+    public Pet getPetById(@ApiParam(required = true) @PathVariable UUID id) {
+        return petsService.findById(id);
     }
 
     @ApiOperation("Create new pet")

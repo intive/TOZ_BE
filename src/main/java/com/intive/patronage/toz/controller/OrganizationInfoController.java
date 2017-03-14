@@ -22,7 +22,7 @@ public class OrganizationInfoController {
     private final OrganizationInfoService infoService;
 
     @Autowired
-    public OrganizationInfoController(OrganizationInfoService infoService) {
+    OrganizationInfoController(OrganizationInfoService infoService) {
         this.infoService = infoService;
     }
 

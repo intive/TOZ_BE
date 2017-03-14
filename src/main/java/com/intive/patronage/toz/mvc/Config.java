@@ -2,6 +2,7 @@ package com.intive.patronage.toz.mvc;
 
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.data.jpa.repository.config.EnableJpaAuditing;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.servlet.config.annotation.EnableWebMvc;
@@ -20,6 +21,7 @@ import java.time.LocalDate;
 @EnableWebMvc
 @Configuration
 @EnableSwagger2
+@EnableJpaAuditing
 public class Config extends WebMvcConfigurerAdapter {
 
     @Bean

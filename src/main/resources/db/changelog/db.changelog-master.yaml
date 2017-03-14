@@ -81,6 +81,12 @@ databaseChangeLog:
               - column:
                   name: address
                   type: varchar(255)
+              - column:
+                  name: created
+                  type: datetime
+              - column:
+                  name: last_modified
+                  type: datetime
         - insert:
             tableName: organization_info
             columns:
