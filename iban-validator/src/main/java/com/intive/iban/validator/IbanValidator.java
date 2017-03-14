@@ -26,8 +26,7 @@ public class IbanValidator implements ConstraintValidator<IbanFormat, String> {
     }
 
     private void setErrorMessage(ConstraintValidatorContext context, String message) {
-        String errorMessage = String.format("{com.intive.iban.validator.IbanValidator.%s}", message);
         context.disableDefaultConstraintViolation();
-        context.buildConstraintViolationWithTemplate(errorMessage).addConstraintViolation();
+        context.buildConstraintViolationWithTemplate(message).addConstraintViolation();
     }
 }
