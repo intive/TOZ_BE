@@ -7,27 +7,25 @@ import org.springframework.stereotype.Component;
 @ConfigurationProperties("storage")
 public class StorageProperties {
 
-    /**
-     * Folder location for storing files
-     */
-    private String location = "upload";
 
-    private int amountFilesInFolder = 998;
+    private String storagePathRoot = "storage";
+
+    private int maxAmountFilesInDir = 998;
 
 
-    public String getLocation() {
-        return location;
+    public String getStoragePathRoot() {
+        return storagePathRoot;
     }
 
-    public void setLocation(String location) {
-        this.location = location;
+    public void setStoragePathRoot(String storagePathRoot) {
+        this.storagePathRoot = storagePathRoot;
     }
 
-    public int getAmountFilesInFolder() {
-        return amountFilesInFolder;
+    public int getMaxAmountFilesInDir() {
+        return maxAmountFilesInDir;
     }
 
-    public void setAmountFilesInFolder(int amountFilesInFolder) {
-        this.amountFilesInFolder = amountFilesInFolder;
+    public void setMaxAmountFilesInDir(int maxAmountFilesInDir) {
+        this.maxAmountFilesInDir = maxAmountFilesInDir;
     }
 }

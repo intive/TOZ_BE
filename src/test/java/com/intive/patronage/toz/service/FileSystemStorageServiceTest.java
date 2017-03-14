@@ -2,17 +2,24 @@ package com.intive.patronage.toz.service;
 
 import com.intive.patronage.toz.model.db.UploadedFile;
 import com.intive.patronage.toz.repository.FileUploadRepository;
+import org.junit.After;
+import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.mockito.Mock;
+import org.mockito.MockitoAnnotations;
+import org.springframework.data.repository.CrudRepository;
 import org.springframework.mock.web.MockMultipartFile;
 import org.springframework.test.context.junit4.SpringRunner;
 import org.springframework.util.FileSystemUtils;
+
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.ArrayList;
+
 import java.util.List;
+import java.util.UUID;
 
 @RunWith(SpringRunner.class)
 public class FileSystemStorageServiceTest {
@@ -24,32 +31,40 @@ public class FileSystemStorageServiceTest {
 
     private StorageService storageService;
 
+    private List<UploadedFile> uploadedFileListToDelete;
+    @Before
+    public void setUp() throws Exception {
+        MockitoAnnotations.initMocks(this);
+        storageProperties = new StorageProperties();
+        storageService = new FileSystemStorageService(storageProperties, fileUploadRepository);
+        uploadedFileListToDelete = new ArrayList<UploadedFile>();
+    }
+
+
     @Test
     public void saveFileTests(){
-        storageProperties = new StorageProperties();
-        this.storageService = new FileSystemStorageService(storageProperties, fileUploadRepository);
+
         MockMultipartFile firstFile = new MockMultipartFile("data", "filename.jpg", "text/plain", "some file".getBytes());
         UploadedFile uploadedFile = storageService.store(firstFile);
-        Path path = Paths.get(storageProperties.getLocation() + uploadedFile.getPath());
+        Path path = Paths.get(storageProperties.getStoragePathRoot(),uploadedFile.getPath());
+        uploadedFileListToDelete.add(uploadedFile);
         assert(Files.exists(path));
-        FileSystemUtils.deleteRecursively(path.toFile());
     }
 
     @Test
     public void saveManyFileTests(){
         UploadedFile uploadedFile = null;
-        List<UploadedFile> uploadedFileList = new ArrayList<UploadedFile>();
-        for (int i = 0; i < 2000; i++){
-            storageProperties = new StorageProperties();
-            this.storageService = new FileSystemStorageService(storageProperties, fileUploadRepository);
+        for (int i = 0; i < 5; i++){
             MockMultipartFile firstFile = new MockMultipartFile("data", "filename.jpg", "text/plain", "some file".getBytes());
             uploadedFile = storageService.store(firstFile);
-            uploadedFileList.add(uploadedFile);
+            uploadedFileListToDelete.add(uploadedFile);
         }
-        assert(uploadedFile.getPath().contains("\\files"));
-        for (UploadedFile fu : uploadedFileList){
-            Path path = Paths.get(storageProperties.getLocation() + fu.getPath());
-            FileSystemUtils.deleteRecursively(path.toFile());
+    }
+    @After
+    public void deleteFiles(){
+        for (UploadedFile uploadedFile : uploadedFileListToDelete){
+            FileSystemUtils.deleteRecursively(Paths.get(storageProperties.getStoragePathRoot(),
+                    uploadedFile.getPath()).toFile());
         }
     }
 }

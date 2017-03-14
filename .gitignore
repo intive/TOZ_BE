@@ -7,7 +7,7 @@
 # generated files
 bin/
 gen/
-upload/
+storage/
 
 # Intellij project files
 *.iml

@@ -1,5 +1,7 @@
 package com.intive.patronage.toz.service;
 
+import com.google.common.base.Splitter;
+import com.google.common.collect.Iterables;
 import com.intive.patronage.toz.exception.NotFoundException;
 import com.intive.patronage.toz.exception.StorageException;
 import com.intive.patronage.toz.model.db.UploadedFile;
@@ -18,6 +20,7 @@ import java.nio.file.Paths;
 import java.text.SimpleDateFormat;
 import java.util.Calendar;
 import java.util.Date;
+import java.util.List;
 import java.util.UUID;
 
 @Service
@@ -30,35 +33,30 @@ public class FileSystemStorageService implements StorageService {
 
     @Autowired
     public FileSystemStorageService(StorageProperties properties, FileUploadRepository fileUploadRepository) {
-        this.amountFilesInFolder = properties.getAmountFilesInFolder();
-        this.rootLocation = Paths.get(properties.getLocation());
-        this.location = properties.getLocation();
+        this.amountFilesInFolder = properties.getMaxAmountFilesInDir();
+        this.rootLocation = Paths.get(properties.getStoragePathRoot());
+        this.location = properties.getStoragePathRoot();
         this.fileUploadRepository = fileUploadRepository;
     }
 
-    public String getFileFolderLocation(String location) throws IOException{
-        Calendar calendar = Calendar.getInstance();
-        String month = new SimpleDateFormat("MM").format(calendar.getTime());
-        String trueLocation =
-                 File.separator
-                + calendar.get(Calendar.YEAR)
-                + File.separator
-                + month;
-        Files.createDirectories(Paths.get(location + trueLocation));
-        while(Files.list(Paths.get(location + trueLocation)).count() > this.amountFilesInFolder){
-            trueLocation += File.separator + "files";
-            Files.createDirectories(Paths.get(location + trueLocation));
-        }
-        return trueLocation;
-    }
-    public UploadedFile saveFileUpload(String path, String fileExtension){
+    public UploadedFile saveFileUpload(String fileExtension) throws IOException{
         UploadedFile uploadedFile = new UploadedFile();
         uploadedFile.setId(UUID.randomUUID());
-        uploadedFile.setDate(new Date());
+        uploadedFile.setCreateDate(new Date());
         fileUploadRepository.save(uploadedFile);
-        path = String.format("%s%s%s.%s", path, File.separator, uploadedFile.getId(),fileExtension);
-        String filename = path;
-        uploadedFile.setPath(filename);
+
+        String[] folder = uploadedFile.getId().toString().split("-");
+
+        Iterable<String> result = Splitter.fixedLength(2).split(folder[0]);
+        String[] parts = Iterables.toArray(result, String.class);
+
+        Path storageLocationPath = Paths.get(parts[0],parts[1],parts[2]);
+        Path storageLocation = Paths.get(
+                storageLocationPath.toString(),
+                String.format("%s.%s",uploadedFile.getId(),fileExtension));
+        Files.createDirectories(Paths.get(location.toString(),storageLocationPath.toString()));
+
+        uploadedFile.setPath(storageLocation.toString());
         fileUploadRepository.save(uploadedFile);
         return uploadedFile;
     }
@@ -70,9 +68,8 @@ public class FileSystemStorageService implements StorageService {
             if (file.isEmpty()) {
                 throw new StorageException("Failed to store empty file " + file.getOriginalFilename());
             }
-            String fileFolderLocation = this.getFileFolderLocation(this.location);
-            uploadedFile = this.saveFileUpload(fileFolderLocation,FilenameUtils.getExtension(file.getOriginalFilename()));
-            Path location = Paths.get(this.location + uploadedFile.getPath());
+            uploadedFile = this.saveFileUpload(FilenameUtils.getExtension(file.getOriginalFilename()));
+            Path location = Paths.get(this.location, uploadedFile.getPath());
             Files.copy(file.getInputStream(), location);
             return uploadedFile;
         } catch (IOException e) {
@@ -83,11 +80,14 @@ public class FileSystemStorageService implements StorageService {
         }
     }
 
-
+    @Override
+    public UploadedFile get(UUID uuid) {
+        return fileUploadRepository.findOne(uuid);
+    }
 
     @Override
-    public Path load(String filename) {
-        return rootLocation.resolve(filename);
+    public List<UploadedFile> getAll() {
+        return fileUploadRepository.findAll();
     }
 
     @Override
@@ -97,7 +97,7 @@ public class FileSystemStorageService implements StorageService {
             throw new NotFoundException("Record with uuid "+uuid+" not found ");
         }
         fileUploadRepository.delete(uuid);
-        Path path = Paths.get(this.location + uploadedFile.getPath());
+        Path path = Paths.get(this.location, uploadedFile.getPath());
         FileSystemUtils.deleteRecursively(path.toFile());
     }
 

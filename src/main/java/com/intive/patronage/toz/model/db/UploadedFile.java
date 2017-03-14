@@ -9,12 +9,12 @@ import java.util.UUID;
 public class UploadedFile {
     @Id
     private UUID id;
-    private Date date;
+    private Date createDate;
     private String path;
 
     public UploadedFile(){
-
     }
+
     public UUID getId() {
         return id;
     }
@@ -23,15 +23,18 @@ public class UploadedFile {
         this.id = id;
     }
 
-    public Date getDate() {
-        return date;
+    public Date getCreateDate() {
+        return createDate;
     }
-    public void setDate(Date date) {
-        this.date = date;
+
+    public void setCreateDate(Date createDate) {
+        this.createDate = createDate;
     }
+
     public String getPath() {
         return path;
     }
+
     public void setPath(String path) {
         this.path = path;
     }
