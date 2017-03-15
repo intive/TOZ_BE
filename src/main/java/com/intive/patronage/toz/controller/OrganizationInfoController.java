@@ -56,19 +56,6 @@ public class OrganizationInfoController {
                 .body(createdInfo);
     }
 
-    @ApiOperation("Delete organization information")
-    @ApiResponses(value = {
-            @ApiResponse(code = 404, message = "Organization not found",
-                    response = ControllerExceptionHandler.ErrorResponse.class)
-    })
-    @DeleteMapping
-    @ResponseStatus(HttpStatus.OK)
-    public ResponseEntity<OrganizationInfoView> deleteOrganizationInfo() {
-        final OrganizationInfoView info = infoService.deleteOrganizationInfo();
-        return ResponseEntity.ok()
-                .body(info);
-    }
-
     @ApiOperation("Update organization information")
     @ApiResponses(value = {
             @ApiResponse(code = 400, message = "Bad Request"),
