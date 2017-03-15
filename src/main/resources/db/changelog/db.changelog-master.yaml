@@ -91,3 +91,22 @@ databaseChangeLog:
               - column:
                   name: bank_name
                   value: PKO BO II O/Szczecin
+  - changeSet:
+      id : 2
+      author: ppiotr191
+      changes:
+        - createTable:
+            tableName: uploaded_file
+            columns:
+              - column:
+                  name: id
+                  type: uuid
+                  constraints:
+                    - primaryKey: true
+                    - nullable: false
+              - column:
+                  name: createDate
+                  type: date
+              - column:
+                  name: path
+                  type: varchar(255)
