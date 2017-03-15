@@ -1,0 +1,77 @@
+databaseChangeLog:
+  - changeSet:
+      id: 1
+      author: lukaszpiskadlo
+      changes:
+        - createTable:
+            tableName: organization_info
+            columns:
+              - column:
+                  name: id
+                  type: uuid
+                  constraints:
+                    - primaryKey: true
+                    - nullable: false
+              - column:
+                  name: name
+                  type: varchar(255)
+                  constraints:
+                    nullable: false
+              - column:
+                  name: post_code
+                  type: varchar(7)
+              - column:
+                  name: city
+                  type: varchar(255)
+              - column:
+                  name: street
+                  type: varchar(255)
+              - column:
+                  name: country
+                  type: varchar(255)
+              - column:
+                  name: house_number
+                  type: int
+              - column:
+                  name: apartment_number
+                  type: int
+              - column:
+                  name: email
+                  type: varchar(255)
+              - column:
+                  name: phone
+                  type: varchar(64)
+              - column:
+                  name: fax
+                  type: varchar(64)
+              - column:
+                  name: website
+                  type: varchar(255)
+              - column:
+                  name: bank_account_number
+                  type: varchar(255)
+                  constraints:
+                    nullable: false
+              - column:
+                  name: bank_name
+                  type: varchar(255)
+
+  - changeSet:
+      id : 2
+      author: ppiotr191
+      changes:
+        - createTable:
+            tableName: uploaded_file
+            columns:
+              - column:
+                  name: id
+                  type: uuid
+                  constraints:
+                    - primaryKey: true
+                    - nullable: false
+              - column:
+                  name: createDate
+                  type: date
+              - column:
+                  name: path
+                  type: varchar(255)
