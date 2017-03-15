@@ -1,17 +1,20 @@
 package com.intive.patronage.toz.error;
 
+import org.springframework.validation.FieldError;
+import org.springframework.web.bind.MethodArgumentNotValidException;
+
 import java.util.List;
 
 public class ValidationErrorResponse {
 
     private final int code;
     private final String message;
-    private final List<ValidationError> errors;
+    private final List<FieldError> errors;
 
-    public ValidationErrorResponse(int code, String message, List<ValidationError> errors) {
+    public ValidationErrorResponse(int code, String message, MethodArgumentNotValidException ex) {
         this.code = code;
         this.message = message;
-        this.errors = errors;
+        this.errors = setErrors(ex);
     }
 
     public int getCode() {
@@ -22,7 +25,14 @@ public class ValidationErrorResponse {
         return message;
     }
 
-    public List<ValidationError> getErrors() {
+    public List<FieldError> getErrors() {
+        return errors;
+    }
+
+    private List<FieldError> setErrors(MethodArgumentNotValidException ex) {
+        for (FieldError error : ex.getBindingResult().getFieldErrors()) {
+            errors.add(error);
+        }
         return errors;
     }
 }
