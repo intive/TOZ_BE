@@ -4,6 +4,8 @@ import com.intive.patronage.toz.error.ErrorResponse;
 import com.intive.patronage.toz.error.ValidationErrorResponse;
 import com.intive.patronage.toz.exception.AlreadyExistsException;
 import com.intive.patronage.toz.exception.NotFoundException;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.MessageSource;
 import org.springframework.context.i18n.LocaleContextHolder;
@@ -17,15 +19,26 @@ import org.springframework.web.bind.annotation.ResponseStatus;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.UUID;
 
 @ControllerAdvice
 public class ControllerExceptionHandler {
 
     private MessageSource messageSource;
+    final static Logger logger = LoggerFactory.getLogger(ControllerExceptionHandler.class);
 
     @Autowired
     public ControllerExceptionHandler(MessageSource messageSource) {
         this.messageSource = messageSource;
+    }
+
+    @ExceptionHandler(RuntimeException.class)
+    @ResponseStatus(value = HttpStatus.INTERNAL_SERVER_ERROR)
+    @ResponseBody
+    public String handleRuntimeException(RuntimeException e) {
+        String errorLog = String.format("%s, ID: %s", e.getMessage(), UUID.randomUUID().toString());
+        logger.error(errorLog);
+        return errorLog;
     }
 
     @ExceptionHandler(MethodArgumentNotValidException.class)
