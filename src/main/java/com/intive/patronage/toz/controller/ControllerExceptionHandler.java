@@ -25,7 +25,7 @@ import java.util.UUID;
 public class ControllerExceptionHandler {
 
     private MessageSource messageSource;
-    final static Logger logger = LoggerFactory.getLogger(ControllerExceptionHandler.class);
+    private final static Logger logger = LoggerFactory.getLogger(ControllerExceptionHandler.class);
 
     @Autowired
     public ControllerExceptionHandler(MessageSource messageSource) {
