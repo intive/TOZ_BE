@@ -28,14 +28,6 @@ public class ControllerExceptionHandler {
         this.messageSource = messageSource;
     }
 
-//    @Override
-//    protected ResponseEntity<Object> handleMethodArgumentNotValid(MethodArgumentNotValidException ex, HttpHeaders headers, HttpStatus status, WebRequest request) {
-//        String message = messageSource.getMessage("validationError", null, LocaleContextHolder.getLocale());
-//        ValidationErrorResponse response = new ValidationErrorResponse(HttpStatus.BAD_REQUEST.value(), message, ex);
-//        return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(response);
-//        return handleExceptionInternal(ex, response, headers, status, request);
-//    }
-
     @ExceptionHandler(MethodArgumentNotValidException.class)
     @ResponseStatus(value = HttpStatus.BAD_REQUEST)
     @ResponseBody
