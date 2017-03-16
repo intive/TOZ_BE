@@ -1,34 +1,49 @@
 package com.intive.patronage.toz.model.db;
 
-import com.fasterxml.jackson.annotation.JsonCreator;
-import com.fasterxml.jackson.annotation.JsonFormat;
+import com.intive.patronage.toz.model.constant.PetValues;
 import org.springframework.data.annotation.CreatedDate;
 import org.springframework.data.annotation.LastModifiedDate;
 import org.springframework.data.jpa.domain.support.AuditingEntityListener;
 
-import javax.persistence.*;
+import javax.persistence.Column;
+import javax.persistence.Entity;
+import javax.persistence.EntityListeners;
 import java.util.Date;
+import java.util.UUID;
 
 @Entity
 @EntityListeners(AuditingEntityListener.class)
 public class Pet extends Identifiable {
 
-    private static final String DATE_PATTERN = "dd-MM-yy HH:mm:ss";
     private String name;
-    private Type type;
-    private Sex sex;
+    private PetValues.Type type;
+    private PetValues.Sex sex;
     private String description;
     private String address;
 
     @CreatedDate
     @Column(updatable = false)
-    @JsonFormat(pattern = DATE_PATTERN)
     private Date created;
 
     @LastModifiedDate
     @Column(insertable = false)
-    @JsonFormat(pattern = DATE_PATTERN)
     private Date lastModified;
+
+    public Pet() {
+    }
+
+    private Pet(Builder builder) {
+        if (builder.id != null) {
+            this.setId(builder.id);
+        }
+        this.name = builder.name;
+        this.type = builder.type;
+        this.sex = builder.sex;
+        this.description = builder.description;
+        this.address = builder.address;
+        this.created = builder.created;
+        this.lastModified = builder.lastModified;
+    }
 
     public String getName() {
         return name;
@@ -38,19 +53,19 @@ public class Pet extends Identifiable {
         this.name = name;
     }
 
-    public Type getType() {
+    public PetValues.Type getType() {
         return type;
     }
 
-    public void setType(Type type) {
+    public void setType(PetValues.Type type) {
         this.type = type;
     }
 
-    public Sex getSex() {
+    public PetValues.Sex getSex() {
         return sex;
     }
 
-    public void setSex(Sex sex) {
+    public void setSex(PetValues.Sex sex) {
         this.sex = sex;
     }
 
@@ -86,31 +101,60 @@ public class Pet extends Identifiable {
         this.lastModified = lastModified;
     }
 
-    public enum Type {
-        DOG, CAT, UNKNOWN;
+    public static class Builder {
+        private UUID id;
+        private String name;
+        private PetValues.Type type;
+        private PetValues.Sex sex;
+        private String description;
+        private String address;
+        private Date created;
+        private Date lastModified;
 
-        @JsonCreator
-        public static Type fromString(String key) {
-            for (Type type : values()) {
-                if (type.name().equalsIgnoreCase(key)) {
-                    return type;
-                }
-            }
-            return null;
+        public Builder() {
         }
-    }
 
-    public enum Sex {
-        MALE, FEMALE;
+        public Builder(UUID id) {
+            this.id = id;
+        }
 
-        @JsonCreator
-        public static Sex fromString(String key) {
-            for (Sex sex : values()) {
-                if (sex.name().equalsIgnoreCase(key)) {
-                    return sex;
-                }
-            }
-            return null;
+        public Builder setName(String name) {
+            this.name = name;
+            return this;
+        }
+
+        public Builder setType(PetValues.Type type) {
+            this.type = type;
+            return this;
+        }
+
+        public Builder setSex(PetValues.Sex sex) {
+            this.sex = sex;
+            return this;
+        }
+
+        public Builder setDescription(String description) {
+            this.description = description;
+            return this;
+        }
+
+        public Builder setAddress(String address) {
+            this.address = address;
+            return this;
+        }
+
+        public Builder setCreated(Date created) {
+            this.created = created;
+            return this;
+        }
+
+        public Builder setLastModified(Date lastModified) {
+            this.lastModified = lastModified;
+            return this;
+        }
+
+        public Pet build() {
+            return new Pet(this);
         }
     }
 }

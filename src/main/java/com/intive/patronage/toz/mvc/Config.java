@@ -22,7 +22,7 @@ import java.time.LocalDate;
 @Configuration
 @EnableSwagger2
 @EnableJpaAuditing
-public class Config extends WebMvcConfigurerAdapter {
+class Config extends WebMvcConfigurerAdapter {
 
     @Bean
     public Docket api() {

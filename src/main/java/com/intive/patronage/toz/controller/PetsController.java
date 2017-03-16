@@ -1,7 +1,8 @@
 package com.intive.patronage.toz.controller;
 
-import com.intive.patronage.toz.model.constant.PetsConstants;
-import com.intive.patronage.toz.model.db.Pet;
+import com.intive.patronage.toz.model.request.PetRequestBody;
+import com.intive.patronage.toz.model.constant.PetValues;
+import com.intive.patronage.toz.model.view.PetView;
 import com.intive.patronage.toz.service.PetsService;
 import io.swagger.annotations.*;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -19,8 +20,8 @@ import java.util.UUID;
 
 @Api(value = "Pet", description = "Operations for pet resources")
 @RestController
-@RequestMapping(value = PetsConstants.PATH, produces = MediaType.APPLICATION_JSON_VALUE)
-public class PetsController {
+@RequestMapping(value = PetValues.PATH, produces = MediaType.APPLICATION_JSON_VALUE)
+class PetsController {
 
     private final PetsService petsService;
 
@@ -31,28 +32,28 @@ public class PetsController {
 
     @ApiOperation("Get all pets")
     @GetMapping
-    public List<Pet> getAllPets() {
+    public List<PetView> getAllPets() {
         return petsService.findAllPets();
     }
 
-    @ApiOperation("Get single pet by id")
+    @ApiOperation(value = "Get single pet by id")
     @ApiResponses(value = {
             @ApiResponse(code = 404, message = "Pet not found",
-                    response = ControllerExceptionHandler.ErrorResponse.class)
+                    response = ControllerExceptionHandler.ErrorResponse.class),
     })
     @GetMapping(value = "/{id}")
-    public Pet getPetById(@ApiParam(required = true) @PathVariable UUID id) {
+    public PetView getPetById(@ApiParam(required = true) @PathVariable UUID id) {
         return petsService.findById(id);
     }
 
-    @ApiOperation("Create new pet")
+    @ApiOperation(value = "Create new pet", response = PetView.class)
     @ApiResponses(value = {
             @ApiResponse(code = 404, message = "Pet not found",
                     response = ControllerExceptionHandler.ErrorResponse.class)
     })
     @PostMapping(consumes = MediaType.APPLICATION_JSON_VALUE)
-    public ResponseEntity<?> createPet(@Valid @RequestBody Pet pet) {
-        Pet createdPet = petsService.createPet(pet);
+    public ResponseEntity<PetView> createPet(@Valid @RequestBody PetRequestBody pet) {
+        PetView createdPet = petsService.createPet(pet);
         final URI baseLocation = ServletUriComponentsBuilder.fromCurrentRequest()
                 .build().toUri();
         String petLocationString = String.format("%s%s", baseLocation, createdPet.getId());
@@ -67,19 +68,18 @@ public class PetsController {
                     response = ControllerExceptionHandler.ErrorResponse.class)
     })
     @DeleteMapping(value = "/{id}")
-    public ResponseEntity<Pet> deletePetById(@PathVariable UUID id) {
+    public ResponseEntity<PetView> deletePetById(@PathVariable UUID id) {
         petsService.deletePet(id);
         return new ResponseEntity<>(HttpStatus.OK);
     }
 
-    @ApiOperation("Update pet information")
+    @ApiOperation(value = "Update pet information", response = PetView.class)
     @ApiResponses(value = {
             @ApiResponse(code = 404, message = "Pet not found",
                     response = ControllerExceptionHandler.ErrorResponse.class)
     })
     @PutMapping(value = "/{id}", consumes = MediaType.APPLICATION_JSON_VALUE)
-    public ResponseEntity<Pet> updatePet(@PathVariable UUID id, @RequestBody Pet pet) {
-        final Pet updatedPet = petsService.updatePet(id, pet);
-        return ResponseEntity.ok(updatedPet);
+    public PetView updatePet(@PathVariable UUID id, @RequestBody PetRequestBody pet) {
+        return petsService.updatePet(id, pet);
     }
 }

@@ -4,7 +4,7 @@ import java.util.Arrays;
 
 public class WrongEnumValueException extends RuntimeException {
 
-    private Class<? extends Enum> enumType;
+    private final Class<? extends Enum> enumType;
 
     public WrongEnumValueException(Class<? extends Enum> enumType) {
         this.enumType = enumType;

@@ -1,7 +1,5 @@
 package com.intive.patronage.toz.model.db;
 
-import com.fasterxml.jackson.annotation.JsonProperty;
-
 import javax.persistence.Id;
 import javax.persistence.MappedSuperclass;
 import java.util.UUID;
@@ -10,7 +8,6 @@ import java.util.UUID;
 public abstract class Identifiable {
 
     @Id
-    @JsonProperty(access = JsonProperty.Access.READ_ONLY)
     private UUID id = UUID.randomUUID();
 
     public UUID getId() {

@@ -1,5 +1,6 @@
 package com.intive.patronage.toz;
 
+import com.intive.patronage.toz.model.constant.PetValues;
 import com.intive.patronage.toz.model.db.Pet;
 import com.intive.patronage.toz.repository.PetsRepository;
 import org.springframework.boot.CommandLineRunner;
@@ -22,8 +23,10 @@ public class Application {
             for (int i = 0; i < 5; i++) {
                 Pet pet = new Pet();
                 pet.setName("Name:" + i);
-                pet.setType(Pet.Type.values()[i%3]);
-                pet.setSex(Pet.Sex.values()[i%2]);
+                PetValues.Type[] types = PetValues.Type.values();
+                PetValues.Sex[] sexes = PetValues.Sex.values();
+                pet.setType(types[i%types.length]);
+                pet.setSex(sexes[i%sexes.length]);
                 pet.setDescription("description:" + i);
                 pet.setAddress("address:" + i);
                 petsRepository.save(pet);

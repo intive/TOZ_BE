@@ -20,7 +20,7 @@ import java.util.Arrays;
 @ControllerAdvice
 public class ControllerExceptionHandler {
 
-    private MessageSource messageSource;
+    private final MessageSource messageSource;
 
     @Autowired
     public ControllerExceptionHandler(MessageSource messageSource) {
