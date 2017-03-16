@@ -87,9 +87,6 @@ databaseChangeLog:
               - column:
                   name: last_modified
                   type: datetime
-        - insert:
-            tableName: organization_info
-
   - changeSet:
       id : 2
       author: ppiotr191
