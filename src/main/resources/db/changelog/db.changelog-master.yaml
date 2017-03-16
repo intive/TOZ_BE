@@ -55,42 +55,7 @@ databaseChangeLog:
               - column:
                   name: bank_name
                   type: varchar(255)
-        - insert:
-            tableName: organization_info
-            columns:
-              - column:
-                  name: id
-                  value: 0d816fc3-1da2-499a-b03d-e31c4c55cf90
-              - column:
-                  name: name
-                  value: Towarzystwo Opieki nad Zwierzętami w Polsce Oddział w Szczecinie
-              - column:
-                  name: post_code
-                  value: 70-391
-              - column:
-                  name: city
-                  value: Szczecin
-              - column:
-                  name: street
-                  value: ul. Ojca Beyzyma 17
-              - column:
-                  name: email
-                  value: tozszczecin@op.pl
-              - column:
-                  name: phone
-                  value: 91 487 04 37
-              - column:
-                  name: fax
-                  value: 91 487 04 37
-              - column:
-                  name: website
-                  value: http://toz.szczecin.pl
-              - column:
-                  name: bank_account_number
-                  value: 63102047950000940201035419
-              - column:
-                  name: bank_name
-                  value: PKO BO II O/Szczecin
+
   - changeSet:
       id : 2
       author: ppiotr191
