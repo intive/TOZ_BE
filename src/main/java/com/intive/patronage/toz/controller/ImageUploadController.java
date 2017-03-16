@@ -2,6 +2,7 @@ package com.intive.patronage.toz.controller;
 
 import com.intive.patronage.toz.exception.InvalidImageFileException;
 import com.intive.patronage.toz.model.db.UploadedFile;
+import com.intive.patronage.toz.service.StorageProperties;
 import com.intive.patronage.toz.service.StorageService;
 import io.swagger.annotations.ApiOperation;
 import io.swagger.annotations.ApiResponse;
@@ -28,10 +29,12 @@ public class ImageUploadController {
     private final static String IMAGES = "Images";
 
     private final StorageService storageService;
+    private final StorageProperties storageProperties;
 
     @Autowired
-    public ImageUploadController(StorageService storageService) {
+    public ImageUploadController(StorageService storageService, StorageProperties storageProperties) {
         this.storageService = storageService;
+        this.storageProperties = storageProperties;
     }
 
     @ApiOperation("Upload image")
@@ -41,14 +44,15 @@ public class ImageUploadController {
     })
 
     @PostMapping(consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
-    public ResponseEntity<UploadedFile> uploadFile(@RequestParam("file") MultipartFile file) {
+    public ResponseEntity<String> uploadFile(@RequestParam("file") MultipartFile file) {
         validateImageArgument(file);
         final UploadedFile uploadedFile = storageService.store(file);
         final URI location = ServletUriComponentsBuilder.fromCurrentRequest()
                 .build().toUri();
-        return ResponseEntity.created(location)
-                .body(uploadedFile);
+        final String imageUrl = String.format("%s/%s/%s", location.toString(), this.storageProperties.getStoragePathRoot(), uploadedFile.getPath());
 
+        return ResponseEntity.created(location)
+                .body(imageUrl);
     }
 
     private void validateImageArgument(MultipartFile multipartFile) {
