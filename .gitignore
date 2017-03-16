@@ -7,6 +7,7 @@
 # generated files
 bin/
 gen/
+storage/
 
 # Intellij project files
 *.iml
@@ -16,11 +17,9 @@ gen/
 
 #Gradle
 .gradletasknamecache
-.gradle/
+.gradle
+
 build/
 bin/
 out/
-
-gradle/
-gradlew
-gradlew.bat
+logs
