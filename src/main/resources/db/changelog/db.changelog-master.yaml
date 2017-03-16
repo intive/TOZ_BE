@@ -105,7 +105,7 @@ databaseChangeLog:
                     - primaryKey: true
                     - nullable: false
               - column:
-                  name: createDate
+                  name: create_date
                   type: date
               - column:
                   name: path
