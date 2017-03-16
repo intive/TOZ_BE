@@ -18,7 +18,8 @@ import org.springframework.test.web.servlet.setup.MockMvcBuilders;
 import java.nio.charset.Charset;
 
 import static org.mockito.Matchers.any;
-import static org.mockito.Mockito.*;
+import static org.mockito.Mockito.verifyZeroInteractions;
+import static org.mockito.Mockito.when;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
 
@@ -36,6 +37,7 @@ public class OrganizationInfoControllerTest {
 
     @Mock
     private OrganizationInfoService infoService;
+    @SuppressWarnings("SpringJavaAutowiredMembersInspection")
     @Autowired
     private ObjectMapper objectMapper;
 
@@ -91,14 +93,6 @@ public class OrganizationInfoControllerTest {
                 .andExpect(content().contentType(contentType))
                 .andExpect(jsonPath("name").value(ORG_NAME))
                 .andExpect(jsonPath("bankAccount.number").value(ACCOUNT));
-    }
-
-    @Test
-    public void shouldDeleteOrganizationInformation() throws Exception {
-        mvc.perform(delete(PATH))
-                .andExpect(status().isOk());
-
-        verify(infoService).deleteOrganizationInfo();
     }
 
     @Test
