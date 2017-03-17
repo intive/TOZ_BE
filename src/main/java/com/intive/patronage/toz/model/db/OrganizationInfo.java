@@ -5,14 +5,10 @@ import com.intive.patronage.toz.model.view.BankAccountView;
 import com.intive.patronage.toz.model.view.ContactView;
 
 import javax.persistence.Entity;
-import javax.persistence.Id;
 import java.util.UUID;
 
 @Entity
-public class OrganizationInfo {
-
-    @Id
-    private UUID id;
+public class OrganizationInfo extends Identifiable {
 
     private String name;
 
@@ -35,7 +31,7 @@ public class OrganizationInfo {
     }
 
     private OrganizationInfo(Builder builder) {
-        this.id = builder.id;
+        this.setId(builder.id);
         this.name = builder.name;
 
         if (builder.address != null) {
@@ -58,10 +54,6 @@ public class OrganizationInfo {
             this.bankAccountNumber = builder.bankAccount.getNumber();
             this.bankName = builder.bankAccount.getBankName();
         }
-    }
-
-    public UUID getId() {
-        return id;
     }
 
     public String getName() {

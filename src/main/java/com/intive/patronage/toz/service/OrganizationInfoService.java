@@ -22,7 +22,7 @@ public class OrganizationInfoService {
     private final OrganizationInfoRepository infoRepository;
 
     @Autowired
-    public OrganizationInfoService(OrganizationInfoRepository infoRepository) {
+    OrganizationInfoService(OrganizationInfoRepository infoRepository) {
         this.infoRepository = infoRepository;
 
         if (infoRepository.findAll().isEmpty()) {
