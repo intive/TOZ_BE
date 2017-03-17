@@ -29,6 +29,7 @@ public class ImageUploadController {
     private final static String IMAGES = "Images";
 
     private final StorageService storageService;
+    
     private final StorageProperties storageProperties;
 
     @Autowired
@@ -37,19 +38,19 @@ public class ImageUploadController {
         this.storageProperties = storageProperties;
     }
 
+
     @ApiOperation("Upload image")
     @ApiResponses(value = {
             @ApiResponse(code = 400, message = "Bad Request"),
             @ApiResponse(code = 422, message = "Invalid image file")
     })
-
     @PostMapping(consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
     public ResponseEntity<String> uploadFile(@RequestParam("file") MultipartFile file) {
         validateImageArgument(file);
         final UploadedFile uploadedFile = storageService.store(file);
         final URI location = ServletUriComponentsBuilder.fromCurrentRequest()
                 .build().toUri();
-        final String imageUrl = String.format("%s/%s/%s", location.toString(), this.storageProperties.getStoragePathRoot(), uploadedFile.getPath());
+        final String imageUrl = String.format("%s/%s/%s", location.toString().replace("/images", ""), this.storageProperties.getStoragePathRoot(), uploadedFile.getPath());
 
         return ResponseEntity.created(location)
                 .body(imageUrl);
