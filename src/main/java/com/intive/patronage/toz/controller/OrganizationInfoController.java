@@ -19,12 +19,12 @@ import java.net.URI;
 
 @RestController
 @RequestMapping(value = "/organization/info", produces = MediaType.APPLICATION_JSON_VALUE)
-public class OrganizationInfoController {
+class OrganizationInfoController {
 
     private final OrganizationInfoService infoService;
 
     @Autowired
-    public OrganizationInfoController(OrganizationInfoService infoService) {
+    OrganizationInfoController(OrganizationInfoService infoService) {
         this.infoService = infoService;
     }
 

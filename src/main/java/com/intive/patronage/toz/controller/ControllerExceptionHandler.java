@@ -4,6 +4,8 @@ import com.intive.patronage.toz.error.ErrorResponse;
 import com.intive.patronage.toz.error.ValidationErrorResponse;
 import com.intive.patronage.toz.exception.AlreadyExistsException;
 import com.intive.patronage.toz.exception.NotFoundException;
+import com.intive.patronage.toz.exception.WrongEnumValueException;
+import liquibase.util.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -16,15 +18,18 @@ import org.springframework.web.bind.annotation.ControllerAdvice;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.bind.annotation.ResponseStatus;
+import org.springframework.web.servlet.config.annotation.EnableWebMvc;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 import java.util.UUID;
 
+@EnableWebMvc
 @ControllerAdvice
 public class ControllerExceptionHandler {
 
-    private MessageSource messageSource;
+    private final MessageSource messageSource;
     private final static Logger logger = LoggerFactory.getLogger(ControllerExceptionHandler.class);
 
     @Autowired
@@ -76,6 +81,19 @@ public class ControllerExceptionHandler {
                 new String[]{e.getName()},
                 LocaleContextHolder.getLocale());
 
-        return new ErrorResponse(HttpStatus.CONFLICT.value(), HttpStatus.CONFLICT.getReasonPhrase(), message);
+        return new ErrorResponse(HttpStatus.NOT_FOUND.value(), HttpStatus.NOT_FOUND.getReasonPhrase(), message);
+    }
+
+    @ExceptionHandler(WrongEnumValueException.class)
+    @ResponseStatus(HttpStatus.UNPROCESSABLE_ENTITY)
+    @ResponseBody
+    public ErrorResponse handleWrongEnumValueException(WrongEnumValueException e) {
+        final String typeName = e.getName();
+        final String allowedValues = StringUtils.join(Arrays.asList(e.getAllowedValues()), ", ");
+        final String message = messageSource.getMessage("mustHaveValue",
+                new String[]{typeName, allowedValues},
+                LocaleContextHolder.getLocale());
+        final HttpStatus httpStatus = HttpStatus.UNPROCESSABLE_ENTITY;
+        return new ErrorResponse(httpStatus.value(), httpStatus.getReasonPhrase(), message);
     }
 }
