@@ -1,7 +1,8 @@
 package com.intive.patronage.toz.controller;
 
-import com.intive.patronage.toz.model.request.PetRequestBody;
+import com.intive.patronage.toz.error.ErrorResponse;
 import com.intive.patronage.toz.model.constant.PetValues;
+import com.intive.patronage.toz.model.request.PetRequestBody;
 import com.intive.patronage.toz.model.view.PetView;
 import com.intive.patronage.toz.service.PetsService;
 import io.swagger.annotations.*;
@@ -39,7 +40,7 @@ class PetsController {
     @ApiOperation(value = "Get single pet by id")
     @ApiResponses(value = {
             @ApiResponse(code = 404, message = "Pet not found",
-                    response = ControllerExceptionHandler.ErrorResponse.class),
+                    response = ErrorResponse.class),
     })
     @GetMapping(value = "/{id}")
     public PetView getPetById(@ApiParam(required = true) @PathVariable UUID id) {
@@ -49,7 +50,7 @@ class PetsController {
     @ApiOperation(value = "Create new pet", response = PetView.class)
     @ApiResponses(value = {
             @ApiResponse(code = 404, message = "Pet not found",
-                    response = ControllerExceptionHandler.ErrorResponse.class)
+                    response = ErrorResponse.class)
     })
     @PostMapping(consumes = MediaType.APPLICATION_JSON_VALUE)
     public ResponseEntity<PetView> createPet(@Valid @RequestBody PetRequestBody pet) {
@@ -65,7 +66,7 @@ class PetsController {
     @ApiOperation("Delete pet")
     @ApiResponses(value = {
             @ApiResponse(code = 404, message = "Pet not found",
-                    response = ControllerExceptionHandler.ErrorResponse.class)
+                    response = ErrorResponse.class)
     })
     @DeleteMapping(value = "/{id}")
     public ResponseEntity<PetView> deletePetById(@PathVariable UUID id) {
@@ -76,7 +77,7 @@ class PetsController {
     @ApiOperation(value = "Update pet information", response = PetView.class)
     @ApiResponses(value = {
             @ApiResponse(code = 404, message = "Pet not found",
-                    response = ControllerExceptionHandler.ErrorResponse.class)
+                    response = ErrorResponse.class)
     })
     @PutMapping(value = "/{id}", consumes = MediaType.APPLICATION_JSON_VALUE)
     public PetView updatePet(@PathVariable UUID id, @RequestBody PetRequestBody pet) {

@@ -1,5 +1,7 @@
 package com.intive.patronage.toz.controller;
 
+import com.intive.patronage.toz.error.ErrorResponse;
+import com.intive.patronage.toz.error.ValidationErrorResponse;
 import com.intive.patronage.toz.model.view.OrganizationInfoView;
 import com.intive.patronage.toz.service.OrganizationInfoService;
 import io.swagger.annotations.ApiOperation;
@@ -29,7 +31,7 @@ class OrganizationInfoController {
     @ApiOperation("Get organization information")
     @ApiResponses(value = {
             @ApiResponse(code = 404, message = "Organization not found",
-                    response = ControllerExceptionHandler.ErrorResponse.class)
+                    response = ErrorResponse.class)
     })
     @GetMapping
     @ResponseStatus(HttpStatus.OK)
@@ -41,9 +43,10 @@ class OrganizationInfoController {
 
     @ApiOperation("Create organization information")
     @ApiResponses(value = {
-            @ApiResponse(code = 400, message = "Bad Request"),
+            @ApiResponse(code = 400, message = "Bad Request",
+                    response = ValidationErrorResponse.class),
             @ApiResponse(code = 409, message = "Organization already exists",
-                    response = ControllerExceptionHandler.ErrorResponse.class)
+                    response = ErrorResponse.class)
     })
     @PostMapping(consumes = MediaType.APPLICATION_JSON_VALUE)
     @ResponseStatus(HttpStatus.CREATED)
@@ -58,9 +61,10 @@ class OrganizationInfoController {
 
     @ApiOperation("Update organization information")
     @ApiResponses(value = {
-            @ApiResponse(code = 400, message = "Bad Request"),
+            @ApiResponse(code = 400, message = "Bad Request",
+                    response = ValidationErrorResponse.class),
             @ApiResponse(code = 404, message = "Organization not found",
-                    response = ControllerExceptionHandler.ErrorResponse.class)
+                    response = ErrorResponse.class)
     })
     @PutMapping(consumes = MediaType.APPLICATION_JSON_VALUE)
     @ResponseStatus(HttpStatus.CREATED)

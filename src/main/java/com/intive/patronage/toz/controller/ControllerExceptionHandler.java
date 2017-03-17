@@ -1,30 +1,65 @@
 package com.intive.patronage.toz.controller;
 
+import com.intive.patronage.toz.error.ErrorResponse;
+import com.intive.patronage.toz.error.ValidationErrorResponse;
 import com.intive.patronage.toz.exception.AlreadyExistsException;
 import com.intive.patronage.toz.exception.NotFoundException;
 import com.intive.patronage.toz.exception.WrongEnumValueException;
 import liquibase.util.StringUtils;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.MessageSource;
 import org.springframework.context.i18n.LocaleContextHolder;
 import org.springframework.http.HttpStatus;
+import org.springframework.validation.FieldError;
+import org.springframework.web.bind.MethodArgumentNotValidException;
 import org.springframework.web.bind.annotation.ControllerAdvice;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.bind.annotation.ResponseStatus;
 import org.springframework.web.servlet.config.annotation.EnableWebMvc;
 
+import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.List;
+import java.util.UUID;
 
 @EnableWebMvc
 @ControllerAdvice
 public class ControllerExceptionHandler {
 
     private final MessageSource messageSource;
+    private final static Logger logger = LoggerFactory.getLogger(ControllerExceptionHandler.class);
 
     @Autowired
     public ControllerExceptionHandler(MessageSource messageSource) {
         this.messageSource = messageSource;
+    }
+
+    @ExceptionHandler(RuntimeException.class)
+    @ResponseStatus(value = HttpStatus.INTERNAL_SERVER_ERROR)
+    @ResponseBody
+    public String handleRuntimeException(RuntimeException e) {
+        String errorLog = String.format("%s, ID: %s", e.getMessage(), UUID.randomUUID().toString());
+        logger.error(errorLog);
+        return errorLog;
+    }
+
+    @ExceptionHandler(MethodArgumentNotValidException.class)
+    @ResponseStatus(value = HttpStatus.BAD_REQUEST)
+    @ResponseBody
+    public ValidationErrorResponse handleValidationException(MethodArgumentNotValidException e) {
+        String message = messageSource.getMessage("validationError",
+                null,
+                LocaleContextHolder.getLocale());
+        List<ValidationErrorResponse.SingleFieldError> errors = new ArrayList<>();
+        for (FieldError error : e.getBindingResult().getFieldErrors()) {
+            errors.add(new ValidationErrorResponse.SingleFieldError(error.getField(),
+                    error.getDefaultMessage(),
+                    error.getRejectedValue().toString()));
+        }
+        return new ValidationErrorResponse(HttpStatus.BAD_REQUEST.value(), message, errors);
     }
 
     @ExceptionHandler(AlreadyExistsException.class)
@@ -60,29 +95,5 @@ public class ControllerExceptionHandler {
                 LocaleContextHolder.getLocale());
         final HttpStatus httpStatus = HttpStatus.UNPROCESSABLE_ENTITY;
         return new ErrorResponse(httpStatus.value(), httpStatus.getReasonPhrase(), message);
-    }
-
-    public static class ErrorResponse {
-        private final int code;
-        private final String error;
-        private final String message;
-
-        ErrorResponse(int code, String error, String message) {
-            this.code = code;
-            this.error = error;
-            this.message = message;
-        }
-
-        public int getCode() {
-            return code;
-        }
-
-        public String getError() {
-            return error;
-        }
-
-        public String getMessage() {
-            return message;
-        }
     }
 }
