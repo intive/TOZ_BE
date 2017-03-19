@@ -1,12 +1,9 @@
 package com.intive.patronage.toz.controller;
 
 import com.intive.patronage.toz.model.db.UploadedFile;
-import com.intive.patronage.toz.service.FileSystemStorageService;
 import com.intive.patronage.toz.service.StorageService;
-import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
-import org.mockito.MockitoAnnotations;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
 import org.springframework.boot.test.context.SpringBootTest;
@@ -17,17 +14,16 @@ import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.web.multipart.MultipartFile;
 
 import java.io.InputStream;
+import java.net.URL;
 
+import static org.hibernate.validator.internal.util.Contracts.assertNotNull;
 import static org.mockito.BDDMockito.then;
 import static org.mockito.Matchers.any;
 import static org.mockito.Mockito.verifyZeroInteractions;
 import static org.mockito.Mockito.when;
-
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.fileUpload;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
-
-import static org.junit.Assert.assertTrue;
 
 @RunWith(SpringRunner.class)
 @AutoConfigureMockMvc
@@ -37,9 +33,7 @@ public class ImageUploadControllerTest {
     private final static String PATH = "/images";
 
     private final static String imageFileName = "/test.jpg";
-
-    private final static String imageUrlPattern = String.format("%s%s", ".*/storage/", "([a-z0-9]{2}\\\\){3}[a-z0-9]{8}-([a-z0-9]{4}-){3}[a-z0-9]{12}\\.jpg");
-
+    
     @Autowired
     private MockMvc mockMvc;
 
@@ -62,8 +56,8 @@ public class ImageUploadControllerTest {
         String response = this.mockMvc.perform(fileUpload(PATH).file(multipartFile))
                 .andExpect(status().isCreated())
                 .andReturn().getResponse().getContentAsString();
-        assertTrue(response.matches(imageUrlPattern));
 
+        assertNotNull(new URL(response));
         then(this.storageService).should().store(multipartFile);
     }
 

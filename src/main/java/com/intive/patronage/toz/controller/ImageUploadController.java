@@ -29,7 +29,7 @@ public class ImageUploadController {
     private final static String IMAGES = "Images";
 
     private final StorageService storageService;
-    
+
     private final StorageProperties storageProperties;
 
     @Autowired
