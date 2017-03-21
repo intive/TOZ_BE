@@ -1,30 +1,28 @@
 package com.intive.patronage.toz.model.db;
 
-import com.intive.patronage.toz.model.constant.NewsValues;
 import org.springframework.data.annotation.CreatedDate;
 import org.springframework.data.annotation.LastModifiedDate;
 
 import javax.persistence.Column;
 import javax.persistence.Entity;
-import java.util.Date;
+import java.time.LocalDateTime;
 import java.util.UUID;
 
 @Entity
 public class News extends Identifiable {
     private String title;
     private String contents;
-    private NewsValues.Type type;
+    private NewsType type;
 
     @CreatedDate
     @Column(updatable = false)
-    private Date created;
+    private LocalDateTime created;
 
     @LastModifiedDate
     @Column(insertable = false)
-    private Date lastModified;
+    private LocalDateTime lastModified;
 
-    @Column(updatable = false)
-    private Date published;
+    private LocalDateTime published;
 
     public News() {
     }
@@ -57,35 +55,35 @@ public class News extends Identifiable {
         this.contents = contents;
     }
 
-    public NewsValues.Type getType() {
+    public NewsType getType() {
         return type;
     }
 
-    public void setType(NewsValues.Type type) {
+    public void setType(NewsType type) {
         this.type = type;
     }
 
-    public Date getCreated() {
+    public LocalDateTime getCreated() {
         return created;
     }
 
-    public void setCreated(Date created) {
+    public void setCreated(LocalDateTime created) {
         this.created = created;
     }
 
-    public Date getLastModified() {
+    public LocalDateTime getLastModified() {
         return lastModified;
     }
 
-    public void setLastModified(Date lastModified) {
+    public void setLastModified(LocalDateTime lastModified) {
         this.lastModified = lastModified;
     }
 
-    public Date getPublished() {
+    public LocalDateTime getPublished() {
         return published;
     }
 
-    public void setPublished(Date published) {
+    public void setPublished(LocalDateTime published) {
         this.published = published;
     }
 
@@ -93,10 +91,10 @@ public class News extends Identifiable {
         private UUID id;
         private String title;
         private String contents;
-        private NewsValues.Type type;
-        private Date created;
-        private Date lastModified;
-        private Date published;
+        private NewsType type;
+        private LocalDateTime created;
+        private LocalDateTime lastModified;
+        private LocalDateTime published;
 
         public Builder() {
         }
@@ -115,22 +113,22 @@ public class News extends Identifiable {
             return this;
         }
 
-        public Builder setType(NewsValues.Type type) {
+        public Builder setType(NewsType type) {
             this.type = type;
             return this;
         }
 
-        public Builder setCreated(Date created) {
+        public Builder setCreated(LocalDateTime created) {
             this.created = created;
             return this;
         }
 
-        public Builder setLastModified(Date lastModified) {
+        public Builder setLastModified(LocalDateTime lastModified) {
             this.lastModified = lastModified;
             return this;
         }
 
-        public Builder setPublished(Date published) {
+        public Builder setPublished(LocalDateTime published) {
             this.published = published;
             return this;
         }

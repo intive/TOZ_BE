@@ -103,7 +103,7 @@ databaseChangeLog:
                     - nullable: false
               - column:
                   name: contents
-                  type: varchar(255)
+                  type: text
                   constraints:
                     - nullable: false
               - column:
