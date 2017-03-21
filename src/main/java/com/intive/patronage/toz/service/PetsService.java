@@ -1,8 +1,7 @@
 package com.intive.patronage.toz.service;
 
+import com.intive.patronage.toz.model.ModelMapper;
 import com.intive.patronage.toz.exception.NotFoundException;
-import com.intive.patronage.toz.exception.WrongEnumValueException;
-import com.intive.patronage.toz.model.constant.PetValues;
 import com.intive.patronage.toz.model.db.Pet;
 import com.intive.patronage.toz.model.view.PetView;
 import com.intive.patronage.toz.repository.PetsRepository;
@@ -16,7 +15,7 @@ import java.util.UUID;
 @Service
 public class PetsService {
 
-    private final static String PET = "Pet";
+    private static final String PET = "Pet";
     private final PetsRepository petsRepository;
 
     @Autowired
@@ -25,16 +24,17 @@ public class PetsService {
     }
 
     public List<PetView> findAllPets() {
-        return convertList(petsRepository.findAll());
-    }
-
-    private List<PetView> convertList(List<Pet> pets) {
         List<PetView> petViews = new ArrayList<>();
-        for (Pet pet : pets) {
+        List<Pet> petDb = petsRepository.findByNameNotNullAndTypeNotNullAndSexNotNull();
+        for (Pet pet : petDb) {
             PetView petView = convertToView(pet);
             petViews.add(petView);
         }
         return petViews;
+    }
+
+    private PetView convertToView(final Pet pet) {
+        return ModelMapper.convertToView(pet, PetView.class);
     }
 
     public PetView findById(final UUID id) {
@@ -44,23 +44,12 @@ public class PetsService {
     }
 
     public PetView createPet(final PetView petView) {
-        if (petView.getType() == null) {
-            throw new WrongEnumValueException(PetValues.Type.class);
-        }
         Pet pet = convertFromView(petView);
         return convertToView(petsRepository.save(pet));
     }
 
     private Pet convertFromView(final PetView petView) {
-        return new Pet.Builder()
-                .setName(petView.getName())
-                .setType(petView.getType())
-                .setSex(petView.getSex())
-                .setDescription(petView.getDescription())
-                .setAddress(petView.getAddress())
-                .setCreated(petView.getCreated())
-                .setLastModified(petView.getLastModified())
-                .build();
+        return ModelMapper.convertToModel(petView, Pet.class);
     }
 
     public void deletePet(final UUID id) {
@@ -70,15 +59,8 @@ public class PetsService {
 
     public PetView updatePet(final UUID id, final PetView petView) {
         throwNotFoundExceptionIfNotExists(id);
-        final Pet pet = new Pet.Builder(id)
-                .setName(petView.getName())
-                .setType(petView.getType())
-                .setSex(petView.getSex())
-                .setDescription(petView.getDescription())
-                .setAddress(petView.getAddress())
-                .setCreated(petView.getCreated())
-                .setLastModified(petView.getLastModified())
-                .build();
+        final Pet pet = convertFromView(petView);
+        pet.setId(id);
         return convertToView(petsRepository.save(pet));
     }
 
@@ -86,18 +68,5 @@ public class PetsService {
         if (!petsRepository.exists(id)) {
             throw new NotFoundException(PET);
         }
-    }
-
-    private PetView convertToView(final Pet pet) {
-        final PetView petView = new PetView();
-        petView.setId(pet.getId());
-        petView.setName(pet.getName());
-        petView.setType(pet.getType());
-        petView.setSex(pet.getSex());
-        petView.setDescription(pet.getDescription());
-        petView.setAddress(pet.getAddress());
-        petView.setCreated(pet.getCreated());
-        petView.setLastModified(pet.getLastModified());
-        return petView;
     }
 }

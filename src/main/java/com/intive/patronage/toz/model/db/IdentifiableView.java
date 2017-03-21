@@ -9,7 +9,7 @@ public abstract class IdentifiableView {
 
     @ApiModelProperty(example = "c5296892-347f-4b2e-b1c6-6faff971f767")
     @JsonProperty(access = JsonProperty.Access.READ_ONLY)
-    private UUID id = UUID.randomUUID();
+    private UUID id;
 
     public UUID getId() {
         return id;

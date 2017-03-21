@@ -8,7 +8,6 @@ import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.mockito.Mock;
 import org.mockito.MockitoAnnotations;
-import org.springframework.data.repository.CrudRepository;
 import org.springframework.mock.web.MockMultipartFile;
 import org.springframework.test.context.junit4.SpringRunner;
 import org.springframework.util.FileSystemUtils;
@@ -17,9 +16,7 @@ import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.ArrayList;
-
 import java.util.List;
-import java.util.UUID;
 
 @RunWith(SpringRunner.class)
 public class FileSystemStorageServiceTest {
@@ -37,7 +34,7 @@ public class FileSystemStorageServiceTest {
         MockitoAnnotations.initMocks(this);
         storageProperties = new StorageProperties();
         storageService = new FileSystemStorageService(storageProperties, fileUploadRepository);
-        uploadedFileListToDelete = new ArrayList<UploadedFile>();
+        uploadedFileListToDelete = new ArrayList<>();
     }
 
 
@@ -53,7 +50,7 @@ public class FileSystemStorageServiceTest {
 
     @Test
     public void saveManyFileTests(){
-        UploadedFile uploadedFile = null;
+        UploadedFile uploadedFile;
         for (int i = 0; i < 5; i++){
             MockMultipartFile firstFile = new MockMultipartFile("data", "filename.jpg", "text/plain", "some file".getBytes());
             uploadedFile = storageService.store(firstFile);

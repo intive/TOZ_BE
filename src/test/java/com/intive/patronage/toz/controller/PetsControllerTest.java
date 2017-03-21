@@ -2,7 +2,8 @@ package com.intive.patronage.toz.controller;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
-import com.intive.patronage.toz.model.constant.PetValues;
+import com.intive.patronage.toz.model.constant.PetConst;
+import com.intive.patronage.toz.model.db.Pet;
 import com.intive.patronage.toz.model.view.PetView;
 import com.intive.patronage.toz.service.PetsService;
 import com.tngtech.java.junit.dataprovider.DataProvider;
@@ -17,9 +18,7 @@ import org.springframework.http.MediaType;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.setup.MockMvcBuilders;
 
-import java.util.ArrayList;
-import java.util.List;
-import java.util.UUID;
+import java.util.*;
 
 import static org.hamcrest.Matchers.hasSize;
 import static org.hamcrest.Matchers.is;
@@ -30,12 +29,12 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 @RunWith(DataProviderRunner.class)
 public class PetsControllerTest {
 
-    private static final  int PETS_LIST_SIZE = 5;
+    private static final int PETS_LIST_SIZE = 5;
+    private static final UUID EXPECTED_ID = UUID.randomUUID();
     private static final String EXPECTED_NAME = "Johny";
-    private static final PetValues.Sex EXPECTED_SEX = PetValues.Sex.MALE;
-    private static final PetValues.Type EXPECTED_TYPE = PetValues.Type.DOG;
+    private static final String EXPECTED_SEX_VALUE = Pet.Sex.MALE.toString();
+    private static final String EXPECTED_TYPE_VALUE = Pet.Type.DOG.toString();
     private static final MediaType CONTENT_TYPE = MediaType.APPLICATION_JSON_UTF8;
-    private final List<PetView> pets = new ArrayList<>();
 
     @Mock
     private PetsService petsService;
@@ -45,30 +44,24 @@ public class PetsControllerTest {
     public void setUp() throws Exception {
         MockitoAnnotations.initMocks(this);
         mvc = MockMvcBuilders.standaloneSetup(new PetsController(petsService)).build();
-
-        for (int i = 0; i < PETS_LIST_SIZE; i++) {
-            PetView pet = new PetView();
-            pet.setName("Name:" + i);
-            pet.setType(PetValues.Type.values()[i%2]);
-            pet.setSex(PetValues.Sex.values()[i%2]);
-            pets.add(pet);
-        }
     }
 
     @DataProvider
     public static Object[] getProperPet() {
         PetView pet = new PetView();
+        pet.setId(EXPECTED_ID);
         pet.setName(EXPECTED_NAME);
-        pet.setSex(EXPECTED_SEX);
-        pet.setType(EXPECTED_TYPE);
+        pet.setSex(EXPECTED_SEX_VALUE);
+        pet.setType(EXPECTED_TYPE_VALUE);
         return new PetView[]{pet};
     }
 
     @Test
     public void getAllPetsOk() throws Exception {
+        final List<PetView> pets = getPets();
         when(petsService.findAllPets()).thenReturn(pets);
 
-        mvc.perform(get(PetValues.PATH))
+        mvc.perform(get(PetConst.PATH))
                 .andExpect(status().isOk())
                 .andExpect(content().contentType(CONTENT_TYPE))
                 .andExpect(jsonPath("$", hasSize(PETS_LIST_SIZE)));
@@ -77,21 +70,31 @@ public class PetsControllerTest {
         verifyNoMoreInteractions(petsService);
     }
 
+    private List<PetView> getPets() {
+        final List<PetView> pets = new ArrayList<>();
+        for (int i = 0; i < PETS_LIST_SIZE; i++) {
+            PetView pet = new PetView();
+            pet.setName("Name:" + i);
+            pet.setType(Pet.Type.values()[i%2].toString());
+            pet.setSex(Pet.Sex.values()[i%2].toString());
+            pets.add(pet);
+        }
+        return pets;
+    }
+
     @Test
     @UseDataProvider("getProperPet")
     public void getPetByIdOk(final PetView pet) throws Exception {
-        UUID expectedId = pet.getId();
-
-        when(petsService.findById(expectedId)).thenReturn(pet);
-        mvc.perform(get(PetValues.PATH + "/" + expectedId))
+        when(petsService.findById(EXPECTED_ID)).thenReturn(pet);
+        mvc.perform(get(PetConst.PATH + "/" + EXPECTED_ID))
                 .andExpect(status().isOk())
                 .andExpect(content().contentType(CONTENT_TYPE))
-                .andExpect(jsonPath("$.id", is(expectedId.toString())))
+                .andExpect(jsonPath("$.id", is(EXPECTED_ID.toString())))
                 .andExpect(jsonPath("$.name", is(EXPECTED_NAME)))
-                .andExpect(jsonPath("$.sex", is(EXPECTED_SEX.toString())))
-                .andExpect(jsonPath("$.type", is(EXPECTED_TYPE.toString())));
+                .andExpect(jsonPath("$.sex", is(EXPECTED_SEX_VALUE)))
+                .andExpect(jsonPath("$.type", is(EXPECTED_TYPE_VALUE)));
 
-        verify(petsService, times(1)).findById(expectedId);
+        verify(petsService, times(1)).findById(EXPECTED_ID);
         verifyNoMoreInteractions(petsService);
     }
 
@@ -101,13 +104,13 @@ public class PetsControllerTest {
         String petJsonString = convertToJsonString(pet);
 
         when(petsService.createPet(any(PetView.class))).thenReturn(pet);
-        mvc.perform(post(PetValues.PATH)
+        mvc.perform(post(PetConst.PATH)
                 .contentType(CONTENT_TYPE)
                 .content(petJsonString))
                 .andExpect(status().isCreated())
                 .andExpect(jsonPath("$.name", is(EXPECTED_NAME)))
-                .andExpect(jsonPath("$.sex", is(EXPECTED_SEX.toString())))
-                .andExpect(jsonPath("$.type", is(EXPECTED_TYPE.toString())));
+                .andExpect(jsonPath("$.sex", is(EXPECTED_SEX_VALUE)))
+                .andExpect(jsonPath("$.type", is(EXPECTED_TYPE_VALUE)));
 
         verify(petsService, times(1)).createPet(any(PetView.class));
         verifyNoMoreInteractions(petsService);
@@ -117,7 +120,7 @@ public class PetsControllerTest {
     public void deletePetById() throws Exception {
         UUID id = UUID.randomUUID();
         doNothing().when(petsService).deletePet(id);
-        mvc.perform(delete(PetValues.PATH + "/" + id))
+        mvc.perform(delete(PetConst.PATH + "/" + id))
                 .andExpect(status().isOk());
 
         verify(petsService, times(1)).deletePet(id);
@@ -128,15 +131,14 @@ public class PetsControllerTest {
     @UseDataProvider("getProperPet")
     public void updatePet(final PetView pet) throws Exception {
         String petJsonString = convertToJsonString(pet);
-        final UUID id = pet.getId();
 
-        when(petsService.updatePet(eq(id), any(PetView.class))).thenReturn(pet);
-        mvc.perform(put(PetValues.PATH + "/" + id)
+        when(petsService.updatePet(eq(EXPECTED_ID), any(PetView.class))).thenReturn(pet);
+        mvc.perform(put(PetConst.PATH + "/" + EXPECTED_ID)
                 .contentType(CONTENT_TYPE)
                 .content(petJsonString))
                 .andExpect(status().isOk());
 
-        verify(petsService, times(1)).updatePet(eq(id), any(PetView.class));
+        verify(petsService, times(1)).updatePet(eq(EXPECTED_ID), any(PetView.class));
         verifyNoMoreInteractions(petsService);
     }
 
