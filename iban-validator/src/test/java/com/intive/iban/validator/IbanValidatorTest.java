@@ -27,17 +27,18 @@ public class IbanValidatorTest {
         this.validator = factory.getValidator();
     }
 
-    @DataProvider
+    @DataProvider(trimValues = false)
     public static String[] dataProviderValidIban() {
         return new String[]{
                 "60102010260000042270201111",
-                " 61109010140000071219812874",
-                "27114020040000300201355387 "};
+                "27114020040000300201355387"};
     }
 
-    @DataProvider
+    @DataProvider(trimValues = false)
     public static String[] dataProviderInvalidIban() {
         return new String[]{
+                " 61109010140000071219812874",
+                "27114020040000300201355387 ",
                 "601020102600000422=70201111",
                 "2 7114020040000300201355387",
                 "\"61109010140000071219811\\\\n\"",
