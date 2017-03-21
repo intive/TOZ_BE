@@ -17,7 +17,7 @@ public class IbanValidator implements ConstraintValidator<IbanFormat, String> {
 
     public boolean isValid(String iban, ConstraintValidatorContext context) {
         try {
-            IbanUtil.validate(COUNTRY_CODE + iban);
+            IbanUtil.validate(String.format("%s%s", COUNTRY_CODE, iban));
             return true;
         } catch (IbanFormatException | InvalidCheckDigitException | UnsupportedCountryException e) {
             setErrorMessage(context, e.getMessage());
