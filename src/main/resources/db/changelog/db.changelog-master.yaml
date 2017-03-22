@@ -87,6 +87,9 @@ databaseChangeLog:
               - column:
                   name: last_modified
                   type: datetime
+              - column:
+                  name: image_url
+                  type: varchar(255)
   - changeSet:
       id : 2
       author: ppiotr191

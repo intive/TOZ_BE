@@ -69,4 +69,11 @@ public class PetsService {
             throw new NotFoundException(PET);
         }
     }
+
+    public void updatePetImage(final UUID id, String imageUrl) {
+        throwNotFoundExceptionIfNotExists(id);
+        final Pet pet = petsRepository.findOne(id);
+        pet.setImageUrl(imageUrl);
+        updatePet(id, convertToView(pet));
+    }
 }
