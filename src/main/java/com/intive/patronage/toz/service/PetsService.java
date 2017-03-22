@@ -25,7 +25,7 @@ public class PetsService {
     }
 
     public List<PetView> findAllPets() {
-        return convertList(petsRepository.findAll());
+        return convertList(petsRepository.findByNameNotNullAndTypeNotNullAndSexNotNull());
     }
 
     private List<PetView> convertList(List<Pet> pets) {
