@@ -6,6 +6,8 @@ import com.intive.patronage.toz.model.constant.PetConst;
 import com.intive.patronage.toz.model.db.Pet;
 import com.intive.patronage.toz.model.view.PetView;
 import com.intive.patronage.toz.service.PetsService;
+import com.intive.patronage.toz.service.StorageProperties;
+import com.intive.patronage.toz.service.StorageService;
 import com.tngtech.java.junit.dataprovider.DataProvider;
 import com.tngtech.java.junit.dataprovider.DataProviderRunner;
 import com.tngtech.java.junit.dataprovider.UseDataProvider;
@@ -22,9 +24,20 @@ import java.util.*;
 
 import static org.hamcrest.Matchers.hasSize;
 import static org.hamcrest.Matchers.is;
-import static org.mockito.Mockito.*;
-import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
-import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
+import static org.mockito.Mockito.any;
+import static org.mockito.Mockito.doNothing;
+import static org.mockito.Mockito.eq;
+import static org.mockito.Mockito.times;
+import static org.mockito.Mockito.verify;
+import static org.mockito.Mockito.verifyNoMoreInteractions;
+import static org.mockito.Mockito.when;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.delete;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.put;
+import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.content;
+import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
+import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
 @RunWith(DataProviderRunner.class)
 public class PetsControllerTest {
@@ -38,12 +51,17 @@ public class PetsControllerTest {
 
     @Mock
     private PetsService petsService;
+    @Mock
+    private StorageService storageService;
+    @Mock
+    private StorageProperties storageProperties;
+
     private MockMvc mvc;
 
     @Before
     public void setUp() throws Exception {
         MockitoAnnotations.initMocks(this);
-        mvc = MockMvcBuilders.standaloneSetup(new PetsController(petsService)).build();
+        mvc = MockMvcBuilders.standaloneSetup(new PetsController(petsService, storageService, storageProperties)).build();
     }
 
     @DataProvider
