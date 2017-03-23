@@ -1,6 +1,6 @@
 package com.intive.patronage.toz.controller;
 
-import com.intive.patronage.toz.model.constant.PetValues;
+import com.intive.patronage.toz.model.constant.PetConst;
 import com.intive.patronage.toz.model.db.Pet;
 import com.intive.patronage.toz.model.db.UploadedFile;
 import com.intive.patronage.toz.service.PetsService;
@@ -37,7 +37,7 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 @SpringBootTest
 public class PetsControllerImagesTest {
 
-    private final static String IMAGES_REQUEST_PATH_FORMAT = PetValues.PATH + "/%s/images";
+    private final static String IMAGES_REQUEST_PATH_FORMAT = PetConst.PATH + "/%s/images";
     private final static String imageFileName = "/test.jpg";
     private final Pet pet = new Pet();
 
@@ -94,7 +94,7 @@ public class PetsControllerImagesTest {
         verifyZeroInteractions(storageService);
     }
 
-    private UploadedFile initializeUploadedFile(){
+    private UploadedFile initializeUploadedFile() {
         UploadedFile uploadedFile = new UploadedFile();
         uploadedFile.setId(UUID.randomUUID());
         uploadedFile.setPath(uploadedFile.getId().toString());
