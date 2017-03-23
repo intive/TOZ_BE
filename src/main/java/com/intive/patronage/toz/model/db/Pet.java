@@ -1,49 +1,31 @@
 package com.intive.patronage.toz.model.db;
 
-import com.intive.patronage.toz.model.constant.PetValues;
 import org.springframework.data.annotation.CreatedDate;
 import org.springframework.data.annotation.LastModifiedDate;
 import org.springframework.data.jpa.domain.support.AuditingEntityListener;
 
-import javax.persistence.Column;
-import javax.persistence.Entity;
-import javax.persistence.EntityListeners;
+import javax.persistence.*;
 import java.util.Date;
-import java.util.UUID;
 
 @Entity
 @EntityListeners(AuditingEntityListener.class)
 public class Pet extends Identifiable {
 
     private String name;
-    private PetValues.Type type;
-    private PetValues.Sex sex;
+    private Type type;
+    private Sex sex;
     private String description;
     private String address;
 
     @CreatedDate
     @Column(updatable = false)
+    @Temporal(TemporalType.TIMESTAMP)
     private Date created;
 
     @LastModifiedDate
     @Column(insertable = false)
+    @Temporal(TemporalType.TIMESTAMP)
     private Date lastModified;
-
-    public Pet() {
-    }
-
-    private Pet(Builder builder) {
-        if (builder.id != null) {
-            this.setId(builder.id);
-        }
-        this.name = builder.name;
-        this.type = builder.type;
-        this.sex = builder.sex;
-        this.description = builder.description;
-        this.address = builder.address;
-        this.created = builder.created;
-        this.lastModified = builder.lastModified;
-    }
 
     public String getName() {
         return name;
@@ -53,19 +35,19 @@ public class Pet extends Identifiable {
         this.name = name;
     }
 
-    public PetValues.Type getType() {
+    public Type getType() {
         return type;
     }
 
-    public void setType(PetValues.Type type) {
+    public void setType(Type type) {
         this.type = type;
     }
 
-    public PetValues.Sex getSex() {
+    public Sex getSex() {
         return sex;
     }
 
-    public void setSex(PetValues.Sex sex) {
+    public void setSex(Sex sex) {
         this.sex = sex;
     }
 
@@ -101,60 +83,11 @@ public class Pet extends Identifiable {
         this.lastModified = lastModified;
     }
 
-    public static class Builder {
-        private UUID id;
-        private String name;
-        private PetValues.Type type;
-        private PetValues.Sex sex;
-        private String description;
-        private String address;
-        private Date created;
-        private Date lastModified;
+    public enum Type {
+        DOG, CAT
+    }
 
-        public Builder() {
-        }
-
-        public Builder(UUID id) {
-            this.id = id;
-        }
-
-        public Builder setName(String name) {
-            this.name = name;
-            return this;
-        }
-
-        public Builder setType(PetValues.Type type) {
-            this.type = type;
-            return this;
-        }
-
-        public Builder setSex(PetValues.Sex sex) {
-            this.sex = sex;
-            return this;
-        }
-
-        public Builder setDescription(String description) {
-            this.description = description;
-            return this;
-        }
-
-        public Builder setAddress(String address) {
-            this.address = address;
-            return this;
-        }
-
-        public Builder setCreated(Date created) {
-            this.created = created;
-            return this;
-        }
-
-        public Builder setLastModified(Date lastModified) {
-            this.lastModified = lastModified;
-            return this;
-        }
-
-        public Pet build() {
-            return new Pet(this);
-        }
+    public enum Sex {
+        MALE, FEMALE, UNKNOWN
     }
 }

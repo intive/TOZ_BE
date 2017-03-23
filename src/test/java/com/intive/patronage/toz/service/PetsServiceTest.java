@@ -1,8 +1,6 @@
 package com.intive.patronage.toz.service;
 
 import com.intive.patronage.toz.exception.NotFoundException;
-import com.intive.patronage.toz.exception.WrongEnumValueException;
-import com.intive.patronage.toz.model.constant.PetValues;
 import com.intive.patronage.toz.model.db.Pet;
 import com.intive.patronage.toz.model.view.PetView;
 import com.intive.patronage.toz.repository.PetsRepository;
@@ -22,8 +20,10 @@ import static org.mockito.Mockito.*;
 public class PetsServiceTest {
 
     private static final String EXPECTED_NAME = "Johny";
-    private static final PetValues.Type EXPECTED_TYPE = PetValues.Type.DOG;
-    private static final PetValues.Sex EXPECTED_SEX = PetValues.Sex.MALE;
+    private static final Pet.Type EXPECTED_TYPE = Pet.Type.DOG;
+    private static final String EXPECTED_TYPE_VALUE = EXPECTED_TYPE.toString();
+    private static final Pet.Sex EXPECTED_SEX = Pet.Sex.MALE;
+    private static final String EXPECTED_SEX_VALUE = EXPECTED_SEX.toString();
     private PetView petView;
     private Pet petDb;
     private UUID petId;
@@ -38,8 +38,8 @@ public class PetsServiceTest {
         petsService = new PetsService(petsRepository);
         petView = new PetView();
         petView.setName(EXPECTED_NAME);
-        petView.setType(EXPECTED_TYPE);
-        petView.setSex(EXPECTED_SEX);
+        petView.setType(EXPECTED_TYPE_VALUE);
+        petView.setSex(EXPECTED_SEX_VALUE);
         petId = petView.getId();
 
         petDb = new Pet();
@@ -63,8 +63,8 @@ public class PetsServiceTest {
 
         PetView dbPet = petsService.findById(petId);
         assertEquals(EXPECTED_NAME, dbPet.getName());
-        assertEquals(EXPECTED_TYPE, dbPet.getType());
-        assertEquals(EXPECTED_SEX, dbPet.getSex());
+        assertEquals(EXPECTED_TYPE_VALUE, dbPet.getType());
+        assertEquals(EXPECTED_SEX_VALUE, dbPet.getSex());
 
         verify(petsRepository, times(1)).exists(eq(petId));
         verify(petsRepository, times(1)).findOne(eq(petId));
@@ -86,20 +86,10 @@ public class PetsServiceTest {
 
         PetView createdPet = petsService.createPet(petView);
         assertEquals(EXPECTED_NAME, createdPet.getName());
-        assertEquals(EXPECTED_TYPE, createdPet.getType());
-        assertEquals(EXPECTED_SEX, createdPet.getSex());
+        assertEquals(EXPECTED_TYPE_VALUE, createdPet.getType());
+        assertEquals(EXPECTED_SEX_VALUE, createdPet.getSex());
 
         verify(petsRepository, times(1)).save(any(Pet.class));
-        verifyNoMoreInteractions(petsRepository);
-    }
-
-    @Test(expected = WrongEnumValueException.class)
-    public void createPetWrongEnumValueException() throws Exception {
-        petView.setType(null);
-        when(petsRepository.exists(petId)).thenReturn(true);
-        petsService.createPet(petView);
-
-        verify(petsRepository, times(1)).exists(eq(petId));
         verifyNoMoreInteractions(petsRepository);
     }
 
@@ -129,8 +119,8 @@ public class PetsServiceTest {
         PetView savedPet = petsService.updatePet(petId, petView);
 
         assertEquals(EXPECTED_NAME, savedPet.getName());
-        assertEquals(EXPECTED_TYPE, savedPet.getType());
-        assertEquals(EXPECTED_SEX, savedPet.getSex());
+        assertEquals(EXPECTED_TYPE_VALUE, savedPet.getType());
+        assertEquals(EXPECTED_SEX_VALUE, savedPet.getSex());
     }
 
     @Test(expected = NotFoundException.class)

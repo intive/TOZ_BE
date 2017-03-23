@@ -3,7 +3,6 @@ package com.intive.patronage.toz.service;
 import com.intive.patronage.toz.model.db.UploadedFile;
 import org.springframework.web.multipart.MultipartFile;
 
-import java.nio.file.Path;
 import java.util.List;
 import java.util.UUID;
 

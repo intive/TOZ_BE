@@ -12,13 +12,10 @@ import org.springframework.stereotype.Service;
 import org.springframework.util.FileSystemUtils;
 import org.springframework.web.multipart.MultipartFile;
 
-import java.io.File;
 import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
-import java.text.SimpleDateFormat;
-import java.util.Calendar;
 import java.util.Date;
 import java.util.List;
 import java.util.UUID;
@@ -39,7 +36,7 @@ public class FileSystemStorageService implements StorageService {
         this.fileUploadRepository = fileUploadRepository;
     }
 
-    public UploadedFile saveFileUpload(String fileExtension) throws IOException{
+    public UploadedFile saveFileUpload(String fileExtension) throws IOException {
         UploadedFile uploadedFile = new UploadedFile();
         uploadedFile.setId(UUID.randomUUID());
         uploadedFile.setCreateDate(new Date());
@@ -50,11 +47,11 @@ public class FileSystemStorageService implements StorageService {
         Iterable<String> result = Splitter.fixedLength(2).split(folder[0]);
         String[] parts = Iterables.toArray(result, String.class);
 
-        Path storageLocationPath = Paths.get(parts[0],parts[1],parts[2]);
+        Path storageLocationPath = Paths.get(parts[0], parts[1], parts[2]);
         Path storageLocation = Paths.get(
                 storageLocationPath.toString(),
-                String.format("%s.%s",uploadedFile.getId(),fileExtension));
-        Files.createDirectories(Paths.get(location.toString(),storageLocationPath.toString()));
+                String.format("%s.%s", uploadedFile.getId(), fileExtension));
+        Files.createDirectories(Paths.get(location, storageLocationPath.toString()));
 
         uploadedFile.setPath(storageLocation.toString());
         fileUploadRepository.save(uploadedFile);
@@ -93,8 +90,8 @@ public class FileSystemStorageService implements StorageService {
     @Override
     public void delete(UUID uuid) {
         UploadedFile uploadedFile = fileUploadRepository.findOne(uuid);
-        if (uploadedFile == null){
-            throw new NotFoundException("Record with uuid "+uuid+" not found ");
+        if (uploadedFile == null) {
+            throw new NotFoundException("Record with uuid " + uuid + " not found ");
         }
         fileUploadRepository.delete(uuid);
         Path path = Paths.get(this.location, uploadedFile.getPath());
