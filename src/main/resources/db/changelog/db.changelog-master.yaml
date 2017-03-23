@@ -112,6 +112,9 @@ databaseChangeLog:
                   constraints:
                     - nullable: false
               - column:
+                  name: photo_url
+                  type: varchar(255)
+              - column:
                   name: created
                   type: datetime
               - column:

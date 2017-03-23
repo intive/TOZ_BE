@@ -68,7 +68,7 @@ dependencies {
 	runtime('org.postgresql:postgresql')
 	compile('org.projectlombok:lombok')
 	testCompile('org.springframework.boot:spring-boot-starter-test')
-	compile('org.hibernate:hibernate-java8:5.0.3.Final')
+	compile group: 'org.apache.commons', name: 'commons-lang3', version: '3.0'
 
 	compile group: 'io.springfox', name: 'springfox-swagger2', version: '2.6.1'
 	compile group: 'io.springfox', name: 'springfox-swagger-ui', version: '2.6.1'
