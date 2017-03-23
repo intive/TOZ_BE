@@ -112,25 +112,26 @@ class PetsController {
             @ApiResponse(code = 400, message = "Bad Request"),
             @ApiResponse(code = 422, message = "Invalid image file")
     })
-    @PostMapping(value = "/images/{id}", consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
+    @PostMapping(value = "/{id}/images", consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
     public ResponseEntity<UrlView> uploadFile(@PathVariable UUID id, @RequestParam("file") MultipartFile file) {
         validateImageArgument(file);
         final UploadedFile uploadedFile = storageService.store(file);
-        petsService.updatePetImage(id, uploadedFile.getPath());
+        petsService.updatePetImageUrl(id, uploadedFile.getPath());
         final URI location = ServletUriComponentsBuilder.fromCurrentRequest()
                 .build().toUri();
         UrlView urlView = new UrlView();
-        urlView.setUrl(String.format("%s/%s/%s", location.toString().replace("/images", ""), this.storageProperties.getStoragePathRoot(), uploadedFile.getPath()));
+        urlView.setUrl(String.format(this.storageProperties.getStoragePathRoot(), uploadedFile.getPath()));
         return ResponseEntity.created(location)
                 .body(urlView);
     }
 
     private void validateImageArgument(MultipartFile multipartFile) {
         try (InputStream input = multipartFile.getInputStream()) {
-            if (ImageIO.read(input) == null)
+            if (ImageIO.read(input) == null) {
                 throw new InvalidImageFileException("Images");
+            }
         } catch (IOException e) {
-            throw new InvalidImageFileException("Images");
+            throw new InvalidImageFileException(String.format("%s: %s", "Images: ", e.getMessage()));
         }
     }
 }

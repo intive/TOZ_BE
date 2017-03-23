@@ -37,8 +37,7 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 @SpringBootTest
 public class PetsControllerImagesTest {
 
-    private final static String PATH = "/images";
-    private final static String IMAGE_REQUEST_PATH = String.format("%s/%s", PetValues.PATH, "images");
+    private final static String IMAGES_REQUEST_PATH_FORMAT = PetValues.PATH + "/%s/images";
     private final static String imageFileName = "/test.jpg";
     private final Pet pet = new Pet();
 
@@ -54,18 +53,16 @@ public class PetsControllerImagesTest {
     @Before
     public void setUp() {
         pet.setId(UUID.randomUUID());
+        UploadedFile uploadedFile = initializeUploadedFile();
 
-        UploadedFile uploadedFile = new UploadedFile();
-        uploadedFile.setId(UUID.randomUUID());
-        uploadedFile.setPath(uploadedFile.getId().toString());
         when(storageService.store(any(MultipartFile.class))).thenReturn(uploadedFile);
         when(storageService.get(uploadedFile.getId())).thenReturn(uploadedFile);
-        doNothing().when(petsService).updatePetImage(any(UUID.class), any(String.class));
+        doNothing().when(petsService).updatePetImageUrl(any(UUID.class), any(String.class));
     }
 
     @Test
     public void shouldReturnErrorWhenImproperMediaType() throws Exception {
-        this.mockMvc.perform(post(String.format("%s/%s", IMAGE_REQUEST_PATH, pet.getId())))
+        this.mockMvc.perform(post(String.format(IMAGES_REQUEST_PATH_FORMAT, pet.getId())))
                 .andExpect(status().isUnsupportedMediaType());
 
         verifyZeroInteractions(storageService);
@@ -77,7 +74,7 @@ public class PetsControllerImagesTest {
             MockMultipartFile multipartFile =
                     new MockMultipartFile("file", "filename.jpg", MediaType.IMAGE_JPEG_VALUE, inputStream);
 
-            mockMvc.perform(fileUpload(String.format("%s/%s", IMAGE_REQUEST_PATH, pet.getId())).file(multipartFile))
+            mockMvc.perform(fileUpload(String.format(IMAGES_REQUEST_PATH_FORMAT, pet.getId())).file(multipartFile))
                     .andExpect(status().isCreated())
                     .andExpect(jsonPath("url").isNotEmpty());
 
@@ -91,12 +88,18 @@ public class PetsControllerImagesTest {
     public void shouldReturnErrorWhenInvalidImage() throws Exception {
         MockMultipartFile multipartFile =
                 new MockMultipartFile("file", "test.txt", "text/plain", "Spring Framework".getBytes());
-        this.mockMvc.perform(fileUpload(String.format("%s/%s", IMAGE_REQUEST_PATH, pet.getId())).file(multipartFile))
+        this.mockMvc.perform(fileUpload(String.format(IMAGES_REQUEST_PATH_FORMAT, pet.getId())).file(multipartFile))
                 .andExpect(status().isUnprocessableEntity());
 
         verifyZeroInteractions(storageService);
     }
 
+    private UploadedFile initializeUploadedFile(){
+        UploadedFile uploadedFile = new UploadedFile();
+        uploadedFile.setId(UUID.randomUUID());
+        uploadedFile.setPath(uploadedFile.getId().toString());
+        return uploadedFile;
+    }
 }
 
 

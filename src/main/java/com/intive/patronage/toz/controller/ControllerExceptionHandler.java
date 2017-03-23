@@ -89,7 +89,7 @@ class ControllerExceptionHandler {
         String message = messageSource.getMessage("unprocessableEntity",
                 new String[]{e.getName()},
                 LocaleContextHolder.getLocale());
-
+        logger.error(message);
         return new ErrorResponse(HttpStatus.UNPROCESSABLE_ENTITY.value(), HttpStatus.UNPROCESSABLE_ENTITY.getReasonPhrase(), message);
     }
 }

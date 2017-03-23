@@ -8,7 +8,7 @@ import io.swagger.annotations.ApiModelProperty;
 @JsonInclude(JsonInclude.Include.NON_EMPTY)
 public class UrlView {
 
-    @ApiModelProperty(example = "http://localhost.com", position = 1)
+    @ApiModelProperty(example = "storage/a9\\2c\\cd\\a92ccd6a-f51c-4ff0-8645-02adff409051.jpg", position = 1)
     private String url;
 
     public void setUrl(String url) {
