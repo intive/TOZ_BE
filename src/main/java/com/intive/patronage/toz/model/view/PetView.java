@@ -2,13 +2,14 @@ package com.intive.patronage.toz.model.view;
 
 import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.annotation.JsonProperty;
-import com.intive.patronage.toz.model.validator.EnumValidate;
 import com.intive.patronage.toz.model.db.IdentifiableView;
 import com.intive.patronage.toz.model.db.Pet;
+import com.intive.patronage.toz.model.validator.EnumValidate;
 import io.swagger.annotations.ApiModel;
 import io.swagger.annotations.ApiModelProperty;
 
 import javax.validation.constraints.NotNull;
+import javax.validation.constraints.Size;
 
 @ApiModel(value = "Pet")
 @JsonInclude(JsonInclude.Include.NON_EMPTY)
@@ -16,9 +17,10 @@ import javax.validation.constraints.NotNull;
 public class PetView extends IdentifiableView {
 
     @ApiModelProperty(example = "Burek", position = 1)
+    @Size(max = 35)
     private String name;
 
-    @ApiModelProperty(example = "DOG", position = 2, allowableValues = "DOG,CAT,UNKNOWN", required = true)
+    @ApiModelProperty(example = "DOG", position = 2, allowableValues = "DOG,CAT", required = true)
     @NotNull
     @EnumValidate(enumClass = Pet.Type.class)
     private String type;
@@ -28,9 +30,11 @@ public class PetView extends IdentifiableView {
     private String sex;
 
     @ApiModelProperty(example = "Jamnik niskopodłogowy", position = 4)
+    @Size(max = 120)
     private String description;
 
     @ApiModelProperty(example = "Most cłowy", position = 5)
+    @Size(max = 35)
     private String address;
 
     @ApiModelProperty(example = "1490134074968", position = 6)
