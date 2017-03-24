@@ -32,6 +32,8 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 public class NewsControllerTest {
     private static final int NEWS_LIST_SIZE = 5;
     private static final String PATH = "/news";
+    private static final Boolean DEFAULT_SHORTENED = false;
+    private static final Boolean SHORTENED_FOR_TEST = true;
     private static final UUID EXPECTED_ID = UUID.randomUUID();
     private static final String EXPECTED_TITLE = "New dog in TOZ!";
     private static final String EXPECTED_CONTENTS = "Today to our facility in Szczecin arrived a new dog. His name is Reksio, he is two years old dachshund. He was found in the neighborhood of allotment gardens.";
@@ -62,21 +64,21 @@ public class NewsControllerTest {
     @Test
     public void getAllNews() throws Exception {
         final List<NewsView> newsViews = getNewsList("", false);
-        when(newsService.findAllNews()).thenReturn(newsViews);
+        when(newsService.findAllNews(DEFAULT_SHORTENED)).thenReturn(newsViews);
 
         mvc.perform(get(PATH))
                 .andExpect(status().isOk())
                 .andExpect(content().contentType(CONTENT_TYPE))
                 .andExpect(jsonPath("$", hasSize(NEWS_LIST_SIZE)));
 
-        verify(newsService, times(1)).findAllNews();
+        verify(newsService, times(1)).findAllNews(DEFAULT_SHORTENED);
         verifyNoMoreInteractions(newsService);
     }
 
     @Test
     public void getAllNewsByType() throws Exception {
         final List<NewsView> newsViews = getNewsList(EXPECTED_TYPE, false);
-        when(newsService.findAllNewsByType(EXPECTED_TYPE)).thenReturn(newsViews);
+        when(newsService.findAllNewsByType(EXPECTED_TYPE, DEFAULT_SHORTENED)).thenReturn(newsViews);
 
         mvc.perform(get(PATH + "?type=" + EXPECTED_TYPE))
                 .andExpect(status().isOk())
@@ -85,14 +87,14 @@ public class NewsControllerTest {
                 .andExpect(jsonPath("$[1].type", is(EXPECTED_TYPE)))
                 .andExpect(jsonPath("$", hasSize(NEWS_LIST_SIZE)));
 
-        verify(newsService, times(1)).findAllNewsByType(EXPECTED_TYPE);
+        verify(newsService, times(1)).findAllNewsByType(EXPECTED_TYPE, DEFAULT_SHORTENED);
         verifyNoMoreInteractions(newsService);
     }
 
     @Test
     public void getAllNewsShortened() throws Exception {
         final List<NewsView> newsViews = getNewsList("", true);
-        when(newsService.findAllNews()).thenReturn(newsViews);
+        when(newsService.findAllNews(SHORTENED_FOR_TEST)).thenReturn(newsViews);
 
         mvc.perform(get(PATH + "?shortened=true"))
                 .andExpect(status().isOk())
@@ -101,7 +103,7 @@ public class NewsControllerTest {
                 .andExpect(jsonPath("$[1].contents", is(EXPECTED_SHORTENED_CONTENTS)))
                 .andExpect(jsonPath("$", hasSize(NEWS_LIST_SIZE)));
 
-        verify(newsService, times(1)).findAllNews();
+        verify(newsService, times(1)).findAllNews(SHORTENED_FOR_TEST);
         verifyNoMoreInteractions(newsService);
     }
 
