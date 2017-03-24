@@ -2,7 +2,6 @@ package com.intive.patronage.toz.controller;
 
 import com.intive.patronage.toz.model.view.NewsView;
 import com.intive.patronage.toz.service.NewsService;
-import com.intive.patronage.toz.util.StringFormatter;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
@@ -18,7 +17,6 @@ import java.util.UUID;
 @RequestMapping(value = "/news", produces = MediaType.APPLICATION_JSON_VALUE)
 class NewsController {
     private final NewsService newsService;
-    private static final Integer NEWS_DESCRIPTION_LENGTH = 100;
 
     @Autowired
     NewsController(NewsService newsService) {
@@ -29,19 +27,10 @@ class NewsController {
     public List<NewsView> getAllNews(@RequestParam(value = "type", required = false) String type,
                                      @RequestParam(value = "shortened", required = false, defaultValue = "false")
                                              Boolean shortened) {
-        List<NewsView> newsViews;
         if (type != null) {
-            newsViews = newsService.findAllNewsByType(type);
-        } else {
-            newsViews = newsService.findAllNews();
+            return newsService.findAllNewsByType(type, shortened);
         }
-        if (shortened == true) {
-            for (NewsView newsView : newsViews) {
-                newsView.setContents(new StringFormatter().
-                        cutStringAfterSpecifiedLength(newsView.getContents(), NEWS_DESCRIPTION_LENGTH));
-            }
-        }
-        return newsViews;
+        return newsService.findAllNews(shortened);
     }
 
     @GetMapping(value = "/{id}")
