@@ -44,10 +44,12 @@ class ReservationView extends IdentifiableView {
     private UserView owner;
 
     @JsonProperty(access = JsonProperty.Access.READ_ONLY)
-    private LocalDateTime creationTime;
+    @ApiModelProperty(readOnly = true)
+    private LocalDateTime created;
 
     @JsonProperty(access = JsonProperty.Access.READ_ONLY)
-    private LocalDateTime modificationDate;
+    @ApiModelProperty(readOnly = true)
+    private LocalDateTime lastModified;
 
     @ApiModelProperty(value = "Modification message")
     private String modificationMessage;

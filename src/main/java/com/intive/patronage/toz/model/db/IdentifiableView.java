@@ -7,7 +7,7 @@ import java.util.UUID;
 
 public abstract class IdentifiableView {
 
-    @ApiModelProperty(example = "c5296892-347f-4b2e-b1c6-6faff971f767")
+    @ApiModelProperty(example = "c5296892-347f-4b2e-b1c6-6faff971f767", readOnly = true)
     @JsonProperty(access = JsonProperty.Access.READ_ONLY)
     private UUID id;
 
