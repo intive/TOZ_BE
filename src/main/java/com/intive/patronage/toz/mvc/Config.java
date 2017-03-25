@@ -14,13 +14,21 @@ import springfox.documentation.spi.DocumentationType;
 import springfox.documentation.spring.web.plugins.Docket;
 import springfox.documentation.swagger2.annotations.EnableSwagger2;
 
-import java.time.LocalDate;
+import java.time.LocalTime;
 
 @EnableWebMvc
 @Configuration
 @EnableSwagger2
 @EnableJpaAuditing
 class Config extends WebMvcConfigurerAdapter {
+
+    private static ApiInfo apiInfo() {
+        return new ApiInfoBuilder()
+                .title("Patronage 2017 TOZ-BE")
+                .description("REST API made in Spring Boot")
+                .version("1")
+                .build();
+    }
 
     @Override
     public void addResourceHandlers(ResourceHandlerRegistry registry) {
@@ -36,7 +44,7 @@ class Config extends WebMvcConfigurerAdapter {
                 .paths(PathSelectors.any())
                 .build()
                 .apiInfo(apiInfo())
-                .directModelSubstitute(LocalDate.class, String.class)
+                .directModelSubstitute(LocalTime.class, String.class)
                 .genericModelSubstitutes(ResponseEntity.class);
     }
 
@@ -49,13 +57,5 @@ class Config extends WebMvcConfigurerAdapter {
                         .allowedMethods("GET", "POST", "PUT", "DELETE");
             }
         };
-    }
-
-    private static ApiInfo apiInfo() {
-        return new ApiInfoBuilder()
-                .title("Patronage 2017 TOZ-BE")
-                .description("REST API made in Spring Boot")
-                .version("1")
-                .build();
     }
 }
