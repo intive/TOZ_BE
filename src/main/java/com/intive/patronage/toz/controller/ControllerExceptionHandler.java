@@ -103,6 +103,6 @@ class ControllerExceptionHandler {
                 new String[]{e.getMessage()},
                 LocaleContextHolder.getLocale());
         logger.error(message);
-        return new ErrorResponse(HttpStatus.UNPROCESSABLE_ENTITY.value(), HttpStatus.UNPROCESSABLE_ENTITY.getReasonPhrase(), message);
+        return new ErrorResponse(HttpStatus.UNPROCESSABLE_ENTITY, message);
     }
 }
