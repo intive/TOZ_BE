@@ -95,4 +95,17 @@ class ControllerExceptionHandler {
         logger.error(message);
         return new ErrorResponse(HttpStatus.UNPROCESSABLE_ENTITY.value(), HttpStatus.UNPROCESSABLE_ENTITY.getReasonPhrase(), message);
     }
+
+    @ExceptionHandler(WrongEnumValueException.class)
+    @ResponseStatus(HttpStatus.UNPROCESSABLE_ENTITY)
+    @ResponseBody
+    public ErrorResponse handleWrongEnumValueException(WrongEnumValueException e) {
+        final String typeName = e.getName();
+        final String allowedValues = StringUtils.join(Arrays.asList(e.getAllowedValues()), ", ");
+        final String message = messageSource.getMessage("mustHaveValue",
+                new String[]{typeName, allowedValues},
+                LocaleContextHolder.getLocale());
+        final HttpStatus httpStatus = HttpStatus.UNPROCESSABLE_ENTITY;
+        return new ErrorResponse(httpStatus.value(), httpStatus.getReasonPhrase(), message);
+    }
 }

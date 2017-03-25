@@ -90,6 +90,18 @@ databaseChangeLog:
               - column:
                   name: image_url
                   type: varchar(255)
+        - createTable:
+            tableName: news
+            columns:
+              - column:
+                  name: id
+                  type: uuid
+                  constraints:
+                    - primaryKey: true
+                    - nullable: false
+              - column:
+                  name: title
+                  type: varchar(255)
                   constraints:
                     - nullable: false
               - column:
@@ -114,7 +126,6 @@ databaseChangeLog:
               - column:
                   name: published
                   type: datetime
->>>>>>> Improved model for news.
   - changeSet:
       id : 2
       author: ppiotr191
