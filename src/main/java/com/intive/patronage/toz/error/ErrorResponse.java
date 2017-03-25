@@ -1,23 +1,23 @@
 package com.intive.patronage.toz.error;
 
+import org.springframework.http.HttpStatus;
+
 public class ErrorResponse {
 
-    private final int code;
-    private final String error;
+    private final HttpStatus status;
     private final String message;
 
-    public ErrorResponse(int code, String error, String message) {
-        this.code = code;
-        this.error = error;
+    public ErrorResponse(HttpStatus status, String message) {
+        this.status = status;
         this.message = message;
     }
 
     public int getCode() {
-        return code;
+        return status.value();
     }
 
     public String getError() {
-        return error;
+        return status.getReasonPhrase();
     }
 
     public String getMessage() {
