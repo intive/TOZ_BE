@@ -15,5 +15,5 @@ import java.util.List;
 @JsonInclude(JsonInclude.Include.NON_EMPTY)
 class ScheduleView {
     private List<ReservationView> reservations;
-    private PeriodConfig config;
+    private List<DayConfig> configs;
 }

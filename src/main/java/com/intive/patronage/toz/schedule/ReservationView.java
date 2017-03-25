@@ -1,6 +1,7 @@
 package com.intive.patronage.toz.schedule;
 
 import com.fasterxml.jackson.annotation.JsonInclude;
+import com.fasterxml.jackson.annotation.JsonProperty;
 import com.intive.patronage.toz.model.db.IdentifiableView;
 import io.swagger.annotations.ApiModel;
 import io.swagger.annotations.ApiModelProperty;
@@ -42,9 +43,14 @@ class ReservationView extends IdentifiableView {
     @NotNull
     private UserView owner;
 
+    @JsonProperty(access = JsonProperty.Access.READ_ONLY)
     private LocalDateTime creationTime;
 
+    @JsonProperty(access = JsonProperty.Access.READ_ONLY)
     private LocalDateTime modificationDate;
+
+    @ApiModelProperty(value = "Modification message")
     private String modificationMessage;
+    @ApiModelProperty(value = "Modification author")
     private UserView modificationAuthor;
 }
