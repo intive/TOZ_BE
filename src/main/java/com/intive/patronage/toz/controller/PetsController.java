@@ -48,7 +48,6 @@ class PetsController {
 
     @ApiOperation(value = "Create new pet", response = PetView.class)
     @ApiResponses(value = {
-            @ApiResponse(code = 404, message = "Pet not found", response = ErrorResponse.class),
             @ApiResponse(code = 400, message = "Bad request", response = ValidationErrorResponse.class)
     })
     @PostMapping(consumes = MediaType.APPLICATION_JSON_VALUE)

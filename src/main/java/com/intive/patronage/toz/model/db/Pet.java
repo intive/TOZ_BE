@@ -88,6 +88,6 @@ public class Pet extends Identifiable {
     }
 
     public enum Sex {
-        MALE, FEMALE, UNKNOWN
+        MALE, FEMALE
     }
 }
