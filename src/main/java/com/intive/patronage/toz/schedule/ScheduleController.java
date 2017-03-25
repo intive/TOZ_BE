@@ -11,10 +11,15 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.format.annotation.DateTimeFormat;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
+import org.springframework.web.util.UriComponentsBuilder;
 
 import javax.validation.Valid;
+import java.net.URI;
 import java.time.LocalDate;
+import java.util.Collections;
 import java.util.UUID;
 
 @RestController
@@ -39,18 +44,41 @@ public class ScheduleController {
                                     @DateTimeFormat(iso = DateTimeFormat.ISO.DATE)
                                     @RequestParam("to") LocalDate to) {
 
-        return new ScheduleView();
+        return new ScheduleView(Collections.emptyList(), Collections.emptyList());
+    }
+
+    @ApiOperation("Get single reservation by id")
+    @ApiResponses(value = {
+            @ApiResponse(code = 400, message = "Bad request", response = ArgumentErrorResponse.class),
+            @ApiResponse(code = 404, message = "Not found", response = ErrorResponse.class)
+    })
+    @GetMapping(value = "/{id}")
+    public ReservationView getReservation(@PathVariable UUID id) {
+        return new ReservationView();
     }
 
     @ApiOperation("Make reservation")
     @ApiResponses(value = {
-            @ApiResponse(code = 400, message = "Bad request", response = ValidationErrorResponse.class)
+            @ApiResponse(code = 400, message = "Bad request", response = ValidationErrorResponse.class),
+            @ApiResponse(code = 409, message = "Already exists", response = ErrorResponse.class)
     })
     @PostMapping(consumes = MediaType.APPLICATION_JSON_VALUE)
     @ResponseStatus(HttpStatus.CREATED)
-    public ReservationView makeReservation(@Valid @RequestBody ReservationView reservation) {
-        // todo response entity with location
-        return new ReservationView();
+    public ResponseEntity<ReservationView> makeReservation(@Valid @RequestBody ReservationView reservation) {
+        // TODO remove once service is done
+        ReservationView createdReservation = new ReservationView();
+        createdReservation.setId(UUID.randomUUID());
+
+        final URI baseLocation = ServletUriComponentsBuilder.fromCurrentRequest()
+                .build()
+                .toUri();
+        final String reservationLocation = String.format("%s/%s", baseLocation, createdReservation.getId());
+        final URI location = UriComponentsBuilder.fromUriString(reservationLocation)
+                .build()
+                .toUri();
+
+        return ResponseEntity.created(location)
+                .body(createdReservation);
     }
 
     @ApiOperation("Update reservation")
@@ -67,6 +95,7 @@ public class ScheduleController {
 
     @ApiOperation("Delete reservation")
     @ApiResponses(value = {
+            @ApiResponse(code = 400, message = "Bad request", response = ArgumentErrorResponse.class),
             @ApiResponse(code = 404, message = "Not found", response = ErrorResponse.class)
     })
     @DeleteMapping(value = "/{id}")
