@@ -1,6 +1,7 @@
 package com.intive.patronage.toz.schedule;
 
 import com.intive.patronage.toz.model.db.Identifiable;
+import lombok.*;
 import org.springframework.data.annotation.CreatedDate;
 import org.springframework.data.annotation.LastModifiedDate;
 
@@ -11,6 +12,11 @@ import javax.persistence.TemporalType;
 import java.util.Date;
 import java.util.UUID;
 
+@Getter
+@Setter
+@Builder
+@NoArgsConstructor
+@AllArgsConstructor
 @Entity
 public class Reservation extends Identifiable{
 

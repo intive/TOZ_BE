@@ -19,16 +19,17 @@ import org.springframework.web.util.UriComponentsBuilder;
 import javax.validation.Valid;
 import java.net.URI;
 import java.time.LocalDate;
-import java.util.Collections;
 import java.util.UUID;
 
 @RestController
 @RequestMapping(value = "/schedule", produces = MediaType.APPLICATION_JSON_VALUE)
 public class ScheduleController {
 
+    private final ReservationService reservationService;
+
     @Autowired
-    public ScheduleController() {
-        // TODO initialize service
+    public ScheduleController(ReservationService reservationService) {
+        this.reservationService = reservationService;
     }
 
     @ApiOperation("Get schedule")
@@ -44,7 +45,7 @@ public class ScheduleController {
                                     @DateTimeFormat(iso = DateTimeFormat.ISO.DATE)
                                     @RequestParam("to") LocalDate to) {
 
-        return new ScheduleView(Collections.emptyList(), Collections.emptyList());
+        return reservationService.findScheduleReservations(from, to);
     }
 
     @ApiOperation("Get single reservation by id")
@@ -66,7 +67,7 @@ public class ScheduleController {
     @ResponseStatus(HttpStatus.CREATED)
     public ResponseEntity<ReservationView> makeReservation(@Valid @RequestBody ReservationView reservation) {
         // TODO remove once service is done
-        ReservationView createdReservation = new ReservationView();
+        ReservationView createdReservation = reservationService.makeReservation(reservation);
         createdReservation.setId(UUID.randomUUID());
 
         final URI baseLocation = ServletUriComponentsBuilder.fromCurrentRequest()

@@ -5,6 +5,7 @@ import com.fasterxml.jackson.annotation.JsonProperty;
 import com.intive.patronage.toz.model.db.IdentifiableView;
 import io.swagger.annotations.ApiModel;
 import io.swagger.annotations.ApiModelProperty;
+import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
@@ -17,8 +18,10 @@ import java.time.LocalDateTime;
 import java.time.LocalTime;
 
 @ApiModel("Reservation")
+
 @Getter
 @Setter
+@Builder
 @NoArgsConstructor
 @JsonInclude(JsonInclude.Include.NON_EMPTY)
 class ReservationView extends IdentifiableView {
@@ -37,6 +40,7 @@ class ReservationView extends IdentifiableView {
     @DateTimeFormat(iso = DateTimeFormat.ISO.TIME)
     @NotNull
     private LocalTime endTime;
+
 
     @ApiModelProperty(value = "Owner", required = true)
     @Valid
