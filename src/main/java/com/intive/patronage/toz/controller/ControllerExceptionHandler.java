@@ -3,6 +3,7 @@ package com.intive.patronage.toz.controller;
 import com.intive.patronage.toz.error.ErrorResponse;
 import com.intive.patronage.toz.error.ValidationErrorResponse;
 import com.intive.patronage.toz.exception.AlreadyExistsException;
+import com.intive.patronage.toz.exception.InvalidImageFileException;
 import com.intive.patronage.toz.exception.NotFoundException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -79,5 +80,16 @@ class ControllerExceptionHandler {
                 LocaleContextHolder.getLocale());
 
         return new ErrorResponse(HttpStatus.NOT_FOUND.value(), HttpStatus.NOT_FOUND.getReasonPhrase(), message);
+    }
+
+    @ExceptionHandler(InvalidImageFileException.class)
+    @ResponseStatus(HttpStatus.UNPROCESSABLE_ENTITY)
+    @ResponseBody
+    public ErrorResponse invalidImageFileException(InvalidImageFileException e) {
+        String message = messageSource.getMessage("unprocessableEntity",
+                new String[]{e.getMessage()},
+                LocaleContextHolder.getLocale());
+        logger.error(message);
+        return new ErrorResponse(HttpStatus.UNPROCESSABLE_ENTITY.value(), HttpStatus.UNPROCESSABLE_ENTITY.getReasonPhrase(), message);
     }
 }

@@ -4,7 +4,11 @@ import org.springframework.data.annotation.CreatedDate;
 import org.springframework.data.annotation.LastModifiedDate;
 import org.springframework.data.jpa.domain.support.AuditingEntityListener;
 
-import javax.persistence.*;
+import javax.persistence.Column;
+import javax.persistence.Entity;
+import javax.persistence.EntityListeners;
+import javax.persistence.Temporal;
+import javax.persistence.TemporalType;
 import java.util.Date;
 
 @Entity
@@ -16,6 +20,7 @@ public class Pet extends Identifiable {
     private Sex sex;
     private String description;
     private String address;
+    private String imageUrl;
 
     @CreatedDate
     @Column(updatable = false)
@@ -26,6 +31,7 @@ public class Pet extends Identifiable {
     @Column(insertable = false)
     @Temporal(TemporalType.TIMESTAMP)
     private Date lastModified;
+
 
     public String getName() {
         return name;
@@ -81,6 +87,10 @@ public class Pet extends Identifiable {
 
     public void setLastModified(Date lastModified) {
         this.lastModified = lastModified;
+    }
+
+    public void setImageUrl(String imageUrl) {
+        this.imageUrl = imageUrl;
     }
 
     public enum Type {
