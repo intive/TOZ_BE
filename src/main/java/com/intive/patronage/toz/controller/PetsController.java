@@ -2,8 +2,8 @@ package com.intive.patronage.toz.controller;
 
 import com.intive.patronage.toz.error.ErrorResponse;
 import com.intive.patronage.toz.error.ValidationErrorResponse;
-import com.intive.patronage.toz.model.constant.PetConst;
 import com.intive.patronage.toz.exception.InvalidImageFileException;
+import com.intive.patronage.toz.model.constant.PetConst;
 import com.intive.patronage.toz.model.db.UploadedFile;
 import com.intive.patronage.toz.model.request.PetRequestBody;
 import com.intive.patronage.toz.model.view.PetView;
@@ -127,11 +127,14 @@ class PetsController {
 
     private void validateImageArgument(MultipartFile multipartFile) {
         try (InputStream input = multipartFile.getInputStream()) {
-            if (ImageIO.read(input) == null) {
-                throw new InvalidImageFileException("Images");
+            try {
+                ImageIO.read(input).toString();
+            }
+            catch (Exception e){
+                throw new InvalidImageFileException(String.format("%s: %s", "Images ", e.getMessage()));
             }
         } catch (IOException e) {
-            throw new InvalidImageFileException(String.format("%s: %s", "Images: ", e.getMessage()));
+            throw new InvalidImageFileException(String.format("%s: %s", "Images ", e.getMessage()));
         }
     }
 }

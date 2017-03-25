@@ -87,7 +87,7 @@ class ControllerExceptionHandler {
     @ResponseBody
     public ErrorResponse invalidImageFileException(InvalidImageFileException e) {
         String message = messageSource.getMessage("unprocessableEntity",
-                new String[]{e.getName()},
+                new String[]{e.getMessage()},
                 LocaleContextHolder.getLocale());
         logger.error(message);
         return new ErrorResponse(HttpStatus.UNPROCESSABLE_ENTITY.value(), HttpStatus.UNPROCESSABLE_ENTITY.getReasonPhrase(), message);
