@@ -1,5 +1,6 @@
 package com.intive.patronage.toz.controller;
 
+import com.intive.patronage.toz.error.ArgumentErrorResponse;
 import com.intive.patronage.toz.error.ErrorResponse;
 import com.intive.patronage.toz.error.ValidationErrorResponse;
 import com.intive.patronage.toz.exception.AlreadyExistsException;
@@ -16,6 +17,7 @@ import org.springframework.web.bind.annotation.ControllerAdvice;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.bind.annotation.ResponseStatus;
+import org.springframework.web.method.annotation.MethodArgumentTypeMismatchException;
 import org.springframework.web.servlet.config.annotation.EnableWebMvc;
 
 import java.util.ArrayList;
@@ -26,8 +28,8 @@ import java.util.UUID;
 @ControllerAdvice
 class ControllerExceptionHandler {
 
-    private final MessageSource messageSource;
     private final static Logger logger = LoggerFactory.getLogger(ControllerExceptionHandler.class);
+    private final MessageSource messageSource;
 
     @Autowired
     ControllerExceptionHandler(MessageSource messageSource) {
@@ -67,7 +69,7 @@ class ControllerExceptionHandler {
                 new String[]{e.getName()},
                 LocaleContextHolder.getLocale());
 
-        return new ErrorResponse(HttpStatus.CONFLICT.value(), HttpStatus.CONFLICT.getReasonPhrase(), message);
+        return new ErrorResponse(HttpStatus.CONFLICT, message);
     }
 
     @ExceptionHandler(NotFoundException.class)
@@ -78,6 +80,17 @@ class ControllerExceptionHandler {
                 new String[]{e.getName()},
                 LocaleContextHolder.getLocale());
 
-        return new ErrorResponse(HttpStatus.NOT_FOUND.value(), HttpStatus.NOT_FOUND.getReasonPhrase(), message);
+        return new ErrorResponse(HttpStatus.NOT_FOUND, message);
+    }
+
+    @ExceptionHandler(MethodArgumentTypeMismatchException.class)
+    @ResponseStatus(value = HttpStatus.BAD_REQUEST)
+    @ResponseBody
+    public ArgumentErrorResponse handleArgumentTypeMismatchException(MethodArgumentTypeMismatchException e) {
+        String message = messageSource.getMessage("invalidArgumentValue",
+                null,
+                LocaleContextHolder.getLocale());
+
+        return new ArgumentErrorResponse(HttpStatus.BAD_REQUEST, message, e.getName(), e.getValue().toString());
     }
 }
