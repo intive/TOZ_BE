@@ -5,5 +5,5 @@ import org.springframework.data.jpa.repository.JpaRepository;
 
 import java.util.UUID;
 
-interface IdentifiableRepository<T extends Identifiable> extends JpaRepository<T, UUID> {
+public interface IdentifiableRepository<T extends Identifiable> extends JpaRepository<T, UUID> {
 }
