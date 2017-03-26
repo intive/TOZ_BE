@@ -45,7 +45,7 @@ public class OrganizationInfoControllerTest {
             Charset.forName("utf8"));
 
     @Mock
-    private OrganizationInfoService infoService;
+    private OrganizationInfoService organizationInfoService;
     @SuppressWarnings("SpringJavaAutowiredMembersInspection")
     @Autowired
     private ObjectMapper objectMapper;
@@ -75,8 +75,8 @@ public class OrganizationInfoControllerTest {
 
     @Before
     public void setUp() throws Exception {
-        mvc = MockMvcBuilders.standaloneSetup(new OrganizationInfoController(infoService)).build();
-        mvcWithCustomHandlers = MockMvcBuilders.standaloneSetup(new OrganizationInfoController(infoService))
+        mvc = MockMvcBuilders.standaloneSetup(new OrganizationInfoController(organizationInfoService)).build();
+        mvcWithCustomHandlers = MockMvcBuilders.standaloneSetup(new OrganizationInfoController(organizationInfoService))
                 .setHandlerExceptionResolvers(createExceptionResolver()).build();
 
         BankAccountView bankAccountView = new BankAccountView.Builder(ACCOUNT)
@@ -91,7 +91,7 @@ public class OrganizationInfoControllerTest {
 
     @Test
     public void shouldGetOrganizationInfo() throws Exception {
-        when(infoService.findOrganizationInfo()).thenReturn(infoView);
+        when(organizationInfoService.findOrganizationInfo()).thenReturn(infoView);
 
         mvc.perform(get(ApiUrl.ORGANIZATION_INFO_PATH))
                 .andExpect(status().isOk())
@@ -105,7 +105,7 @@ public class OrganizationInfoControllerTest {
         mvc.perform(post(ApiUrl.ORGANIZATION_INFO_PATH))
                 .andExpect(status().isUnsupportedMediaType());
 
-        verifyZeroInteractions(infoService);
+        verifyZeroInteractions(organizationInfoService);
     }
 
     @Test
@@ -114,12 +114,12 @@ public class OrganizationInfoControllerTest {
                 .contentType(contentType))
                 .andExpect(status().isBadRequest());
 
-        verifyZeroInteractions(infoService);
+        verifyZeroInteractions(organizationInfoService);
     }
 
     @Test
     public void shouldCreateOrganizationInfo() throws Exception {
-        when(infoService.createOrganizationInfo(any(OrganizationInfoView.class))).thenReturn(infoView);
+        when(organizationInfoService.createOrganizationInfo(any(OrganizationInfoView.class))).thenReturn(infoView);
 
         mvc.perform(post(ApiUrl.ORGANIZATION_INFO_PATH)
                 .contentType(contentType)
@@ -132,7 +132,7 @@ public class OrganizationInfoControllerTest {
 
     @Test
     public void shouldUpdateOrganizationInformation() throws Exception {
-        when(infoService.updateOrganizationInfo(any(OrganizationInfoView.class))).thenReturn(infoView);
+        when(organizationInfoService.updateOrganizationInfo(any(OrganizationInfoView.class))).thenReturn(infoView);
 
         mvc.perform(put(ApiUrl.ORGANIZATION_INFO_PATH)
                 .contentType(contentType)
@@ -148,7 +148,7 @@ public class OrganizationInfoControllerTest {
         mvc.perform(put(ApiUrl.ORGANIZATION_INFO_PATH))
                 .andExpect(status().isUnsupportedMediaType());
 
-        verifyZeroInteractions(infoService);
+        verifyZeroInteractions(organizationInfoService);
     }
 
     @Test
@@ -157,7 +157,7 @@ public class OrganizationInfoControllerTest {
                 .contentType(contentType))
                 .andExpect(status().isBadRequest());
 
-        verifyZeroInteractions(infoService);
+        verifyZeroInteractions(organizationInfoService);
     }
 
     @Test()

@@ -72,6 +72,7 @@ public class NewsControllerTest {
         mvc.perform(get(ApiUrl.NEWS_PATH))
                 .andExpect(status().isOk())
                 .andExpect(content().contentType(CONTENT_TYPE))
+                .andExpect(jsonPath("$[0].contents", is(EXPECTED_CONTENTS)))
                 .andExpect(jsonPath("$", hasSize(NEWS_LIST_SIZE)));
 
         verify(newsService, times(1)).findAllNews(DEFAULT_SHORTENED);
@@ -115,8 +116,8 @@ public class NewsControllerTest {
         final List<NewsView> newsViews = new ArrayList<>();
         for (int i = 0; i < NEWS_LIST_SIZE; i++) {
             NewsView newsView = new NewsView();
-            newsView.setTitle("Title:" + i);
-            if (shortened = false) {
+            newsView.setTitle(String.format("Title:%d", i));
+            if (shortened == false) {
                 newsView.setContents(EXPECTED_CONTENTS);
             } else {
                 newsView.setContents(EXPECTED_SHORTENED_CONTENTS);
@@ -135,7 +136,7 @@ public class NewsControllerTest {
     @UseDataProvider("getProperNews")
     public void getNewsById(final NewsView newsView) throws Exception {
         when(newsService.findById(EXPECTED_ID)).thenReturn(newsView);
-        mvc.perform(get(ApiUrl.NEWS_PATH + "/" + EXPECTED_ID))
+        mvc.perform(get(String.format("%s/%s", ApiUrl.NEWS_PATH, EXPECTED_ID)))
                 .andExpect(status().isOk())
                 .andExpect(content().contentType(CONTENT_TYPE))
                 .andExpect(jsonPath("$.id", is(EXPECTED_ID.toString())))
@@ -170,7 +171,7 @@ public class NewsControllerTest {
     public void updateNews(final NewsView newsView) throws Exception {
         when(newsService.updateNews(eq(EXPECTED_ID), any(NewsView.class))).
                 thenReturn(newsView);
-        mvc.perform(put(ApiUrl.NEWS_PATH + "/" + EXPECTED_ID)
+        mvc.perform(put(String.format("%s/%s", ApiUrl.NEWS_PATH, EXPECTED_ID))
                 .contentType(CONTENT_TYPE)
                 .content(new ObjectMapper().writeValueAsString(newsView)))
                 .andExpect(status().isOk())
@@ -188,7 +189,7 @@ public class NewsControllerTest {
     public void deleteNewsById() throws Exception {
         UUID id = UUID.randomUUID();
         doNothing().when(newsService).deleteNews(id);
-        mvc.perform(delete(ApiUrl.NEWS_PATH + "/" + id))
+        mvc.perform(delete(String.format("%s/%s", ApiUrl.NEWS_PATH, id)))
                 .andExpect(status().isOk());
 
         verify(newsService, times(1)).deleteNews(id);
