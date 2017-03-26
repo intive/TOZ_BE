@@ -45,7 +45,8 @@ public class ScheduleController {
                                     @DateTimeFormat(iso = DateTimeFormat.ISO.DATE)
                                     @RequestParam("to") LocalDate to) {
 
-        return reservationService.findScheduleReservations(from, to);
+//        return reservationService.findScheduleReservations(from, to);
+        return new ScheduleView(null, null);
     }
 
     @ApiOperation("Get single reservation by id")
@@ -68,8 +69,7 @@ public class ScheduleController {
     public ResponseEntity<ReservationView> makeReservation(@Valid @RequestBody ReservationView reservation) {
         // TODO remove once service is done
         ReservationView createdReservation = reservationService.makeReservation(reservation);
-        createdReservation.setId(UUID.randomUUID());
-
+//        createdReservation.setId(UUID.randomUUID());
         final URI baseLocation = ServletUriComponentsBuilder.fromCurrentRequest()
                 .build()
                 .toUri();
@@ -77,7 +77,6 @@ public class ScheduleController {
         final URI location = UriComponentsBuilder.fromUriString(reservationLocation)
                 .build()
                 .toUri();
-
         return ResponseEntity.created(location)
                 .body(createdReservation);
     }

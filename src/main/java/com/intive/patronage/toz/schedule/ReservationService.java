@@ -30,7 +30,7 @@ public class ReservationService {
 
     public ReservationView makeReservation(ReservationView reservationView) {
         Reservation reservation = convertToReservation(reservationView);
-        reservationRepository.save(reservation);
+        return convertToReservationView(reservationRepository.save(reservation));
     }
 
     private Reservation convertToReservation(ReservationView reservationView) {

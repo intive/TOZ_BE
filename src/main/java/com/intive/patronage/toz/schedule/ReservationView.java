@@ -2,13 +2,12 @@ package com.intive.patronage.toz.schedule;
 
 import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.annotation.JsonProperty;
+import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
+import com.fasterxml.jackson.databind.annotation.JsonPOJOBuilder;
 import com.intive.patronage.toz.model.db.IdentifiableView;
 import io.swagger.annotations.ApiModel;
 import io.swagger.annotations.ApiModelProperty;
-import lombok.Builder;
-import lombok.Getter;
-import lombok.NoArgsConstructor;
-import lombok.Setter;
+import lombok.*;
 import org.springframework.format.annotation.DateTimeFormat;
 
 import javax.validation.Valid;
@@ -23,7 +22,9 @@ import java.time.LocalTime;
 @Setter
 @Builder
 @NoArgsConstructor
+@AllArgsConstructor
 @JsonInclude(JsonInclude.Include.NON_EMPTY)
+@JsonDeserialize(builder = ReservationView.ReservationViewBuilder.class)
 class ReservationView extends IdentifiableView {
 
     @ApiModelProperty(value = "Date in UTC", required = true)
@@ -59,4 +60,8 @@ class ReservationView extends IdentifiableView {
     private String modificationMessage;
     @ApiModelProperty(value = "Modification author")
     private UserView modificationAuthor;
+
+    @JsonPOJOBuilder(withPrefix = "")
+    public static final class ReservationViewBuilder {
+    }
 }
