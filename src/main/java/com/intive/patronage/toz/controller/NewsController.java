@@ -2,11 +2,14 @@ package com.intive.patronage.toz.controller;
 
 import com.intive.patronage.toz.error.ErrorResponse;
 import com.intive.patronage.toz.error.ValidationErrorResponse;
+import com.intive.patronage.toz.model.ModelMapper;
 import com.intive.patronage.toz.model.constant.ApiUrl;
+import com.intive.patronage.toz.model.db.News;
 import com.intive.patronage.toz.model.view.NewsView;
 import com.intive.patronage.toz.service.NewsService;
 import io.swagger.annotations.*;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -14,6 +17,7 @@ import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
 
 import javax.validation.Valid;
 import java.net.URI;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.UUID;
 
@@ -33,14 +37,16 @@ class NewsController {
             @ApiResponse(code = 422, message = "Unprocessable entity.", response = ErrorResponse.class)
     })
     @GetMapping
-    public List<NewsView> getAllNews(@ApiParam(allowableValues = "ARCHIVED, RELEASED, UNRELEASED")
-                                         @RequestParam(value = "type", required = false) String type,
-                                     @RequestParam(value = "shortened", required = false, defaultValue = "false")
-                                             Boolean shortened) {
-        if (type != null) {
-            return newsService.findAllNewsByType(type, shortened);
+    public ResponseEntity<List<NewsView>> getAllNews(
+            @ApiParam(allowableValues = "ARCHIVED, RELEASED, UNRELEASED")
+            @RequestParam(value = "type", required = false) String type,
+            @RequestParam(value = "shortened", required = false, defaultValue = "false")
+                    Boolean shortened) {
+        List<NewsView> newsViewList = new ArrayList<>();
+        for (News news : newsService.findAllNews(type, shortened)) {
+            newsViewList.add(ModelMapper.convertToView(news, NewsView.class));
         }
-        return newsService.findAllNews(shortened);
+        return ResponseEntity.ok().body(newsViewList);
     }
 
     @ApiOperation(value = "Get news by id.")
@@ -48,21 +54,22 @@ class NewsController {
             @ApiResponse(code = 404, message = "News not found.", response = ErrorResponse.class),
     })
     @GetMapping(value = "/{id}")
-    public NewsView getNewsById(@PathVariable UUID id) {
-        return newsService.findById(id);
+    public ResponseEntity<NewsView> getNewsById(@PathVariable UUID id) {
+        return ResponseEntity.ok().
+                body(ModelMapper.convertToView(newsService.findById(id), NewsView.class));
     }
 
     @ApiOperation(value = "Create news.", response = NewsView.class)
     @ApiResponses(value = {
             @ApiResponse(code = 400, message = "Bad request.", response = ValidationErrorResponse.class)
     })
+    @ResponseStatus(HttpStatus.CREATED)
     @PostMapping(consumes = MediaType.APPLICATION_JSON_VALUE)
     public ResponseEntity<NewsView> createNews(@Valid @RequestBody NewsView newsView) {
-        NewsView createdNews = newsService.createNews(newsView);
         final URI baseLocation = ServletUriComponentsBuilder.fromCurrentRequest()
                 .build().toUri();
         return ResponseEntity.created(baseLocation)
-                .body(createdNews);
+                .body(ModelMapper.convertToView(newsService.createNews(newsView), NewsView.class));
     }
 
     @ApiOperation("Delete news.")
@@ -80,8 +87,12 @@ class NewsController {
             @ApiResponse(code = 404, message = "News not found.", response = ErrorResponse.class),
             @ApiResponse(code = 400, message = "Bad request.", response = ValidationErrorResponse.class)
     })
+    @ResponseStatus(HttpStatus.CREATED)
     @PutMapping(value = "/{id}", consumes = MediaType.APPLICATION_JSON_VALUE)
-    public NewsView updateNews(@PathVariable UUID id, @Valid @RequestBody NewsView newsView) {
-        return newsService.updateNews(id, newsView);
+    public ResponseEntity<NewsView> updateNews(@PathVariable UUID id, @Valid @RequestBody NewsView newsView) {
+        final URI baseLocation = ServletUriComponentsBuilder.fromCurrentRequest()
+                .build().toUri();
+        return ResponseEntity.created(baseLocation)
+                .body(ModelMapper.convertToView(newsService.updateNews(id, newsView), NewsView.class));
     }
 }

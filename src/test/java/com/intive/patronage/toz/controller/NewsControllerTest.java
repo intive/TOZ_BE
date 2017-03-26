@@ -42,6 +42,7 @@ public class NewsControllerTest {
     private static final String EXPECTED_SHORTENED_CONTENTS = "Today to our facility in Szczecin arrived a " +
             "new dog. His name is Reksio, he is two years old ";
     private static final String EXPECTED_TYPE = News.Type.RELEASED.toString();
+    private static final String DEFAULT_TYPE = null;
     private static final MediaType CONTENT_TYPE = MediaType.APPLICATION_JSON_UTF8;
 
     @Mock
@@ -56,18 +57,18 @@ public class NewsControllerTest {
 
     @DataProvider
     public static Object[] getProperNews() {
-        NewsView newsView = new NewsView();
-        newsView.setId(EXPECTED_ID);
-        newsView.setTitle(EXPECTED_TITLE);
-        newsView.setContents(EXPECTED_CONTENTS);
-        newsView.setType(EXPECTED_TYPE);
-        return new NewsView[]{newsView};
+        News news = new News();
+        news.setId(EXPECTED_ID);
+        news.setTitle(EXPECTED_TITLE);
+        news.setContents(EXPECTED_CONTENTS);
+        news.setType(News.Type.valueOf(EXPECTED_TYPE));
+        return new News[]{news};
     }
 
     @Test
     public void getAllNews() throws Exception {
-        final List<NewsView> newsViews = getNewsList("", false);
-        when(newsService.findAllNews(DEFAULT_SHORTENED)).thenReturn(newsViews);
+        final List<News> newsList = getNewsList("", false);
+        when(newsService.findAllNews(DEFAULT_TYPE, DEFAULT_SHORTENED)).thenReturn(newsList);
 
         mvc.perform(get(ApiUrl.NEWS_PATH))
                 .andExpect(status().isOk())
@@ -75,14 +76,14 @@ public class NewsControllerTest {
                 .andExpect(jsonPath("$[0].contents", is(EXPECTED_CONTENTS)))
                 .andExpect(jsonPath("$", hasSize(NEWS_LIST_SIZE)));
 
-        verify(newsService, times(1)).findAllNews(DEFAULT_SHORTENED);
+        verify(newsService, times(1)).findAllNews(DEFAULT_TYPE, DEFAULT_SHORTENED);
         verifyNoMoreInteractions(newsService);
     }
 
     @Test
     public void getAllNewsByType() throws Exception {
-        final List<NewsView> newsViews = getNewsList(EXPECTED_TYPE, false);
-        when(newsService.findAllNewsByType(EXPECTED_TYPE, DEFAULT_SHORTENED)).thenReturn(newsViews);
+        final List<News> newsList = getNewsList(EXPECTED_TYPE, false);
+        when(newsService.findAllNews(EXPECTED_TYPE, DEFAULT_SHORTENED)).thenReturn(newsList);
 
         mvc.perform(get(ApiUrl.NEWS_PATH).param("type", EXPECTED_TYPE))
                 .andExpect(status().isOk())
@@ -92,14 +93,14 @@ public class NewsControllerTest {
                 .andExpect(jsonPath("$", hasSize(NEWS_LIST_SIZE)));
 
         verify(newsService, times(1)).
-                findAllNewsByType(EXPECTED_TYPE, DEFAULT_SHORTENED);
+                findAllNews(EXPECTED_TYPE, DEFAULT_SHORTENED);
         verifyNoMoreInteractions(newsService);
     }
 
     @Test
     public void getAllNewsShortened() throws Exception {
-        final List<NewsView> newsViews = getNewsList("", true);
-        when(newsService.findAllNews(SHORTENED_FOR_TEST)).thenReturn(newsViews);
+        final List<News> newsList = getNewsList("", true);
+        when(newsService.findAllNews(DEFAULT_TYPE, SHORTENED_FOR_TEST)).thenReturn(newsList);
 
         mvc.perform(get(ApiUrl.NEWS_PATH).param("shortened", SHORTENED_FOR_TEST.toString()))
                 .andExpect(status().isOk())
@@ -108,34 +109,34 @@ public class NewsControllerTest {
                 .andExpect(jsonPath("$[1].contents", is(EXPECTED_SHORTENED_CONTENTS)))
                 .andExpect(jsonPath("$", hasSize(NEWS_LIST_SIZE)));
 
-        verify(newsService, times(1)).findAllNews(SHORTENED_FOR_TEST);
+        verify(newsService, times(1)).findAllNews(DEFAULT_TYPE, SHORTENED_FOR_TEST);
         verifyNoMoreInteractions(newsService);
     }
 
-    private List<NewsView> getNewsList(String type, Boolean shortened) {
-        final List<NewsView> newsViews = new ArrayList<>();
+    private List<News> getNewsList(String type, Boolean shortened) {
+        final List<News> newsList = new ArrayList<>();
         for (int i = 0; i < NEWS_LIST_SIZE; i++) {
-            NewsView newsView = new NewsView();
-            newsView.setTitle(String.format("Title:%d", i));
+            News news = new News();
+            news.setTitle(String.format("Title:%d", i));
             if (shortened == false) {
-                newsView.setContents(EXPECTED_CONTENTS);
+                news.setContents(EXPECTED_CONTENTS);
             } else {
-                newsView.setContents(EXPECTED_SHORTENED_CONTENTS);
+                news.setContents(EXPECTED_SHORTENED_CONTENTS);
             }
             if (type.equals(EXPECTED_TYPE)) {
-                newsView.setType(News.Type.values()[0].toString());
+                news.setType(News.Type.RELEASED);
             } else {
-                newsView.setType(News.Type.values()[i % 2].toString());
+                news.setType(News.Type.values()[i % 2]);
             }
-            newsViews.add(newsView);
+            newsList.add(news);
         }
-        return newsViews;
+        return newsList;
     }
 
     @Test
     @UseDataProvider("getProperNews")
-    public void getNewsById(final NewsView newsView) throws Exception {
-        when(newsService.findById(EXPECTED_ID)).thenReturn(newsView);
+    public void getNewsById(final News news) throws Exception {
+        when(newsService.findById(EXPECTED_ID)).thenReturn(news);
         mvc.perform(get(String.format("%s/%s", ApiUrl.NEWS_PATH, EXPECTED_ID)))
                 .andExpect(status().isOk())
                 .andExpect(content().contentType(CONTENT_TYPE))
@@ -150,11 +151,11 @@ public class NewsControllerTest {
 
     @Test
     @UseDataProvider("getProperNews")
-    public void createNews(final NewsView newsView) throws Exception {
-        when(newsService.createNews(any(NewsView.class))).thenReturn(newsView);
+    public void createNews(final News news) throws Exception {
+        when(newsService.createNews(any(NewsView.class))).thenReturn(news);
         mvc.perform(post(ApiUrl.NEWS_PATH)
                 .contentType(CONTENT_TYPE)
-                .content(new ObjectMapper().writeValueAsString(newsView)))
+                .content(new ObjectMapper().writeValueAsString(news)))
                 .andExpect(status().isCreated())
                 .andExpect(jsonPath("$.id", is(EXPECTED_ID.toString())))
                 .andExpect(jsonPath("$.title", is(EXPECTED_TITLE)))
@@ -168,13 +169,13 @@ public class NewsControllerTest {
 
     @Test
     @UseDataProvider("getProperNews")
-    public void updateNews(final NewsView newsView) throws Exception {
+    public void updateNews(final News news) throws Exception {
         when(newsService.updateNews(eq(EXPECTED_ID), any(NewsView.class))).
-                thenReturn(newsView);
+                thenReturn(news);
         mvc.perform(put(String.format("%s/%s", ApiUrl.NEWS_PATH, EXPECTED_ID))
                 .contentType(CONTENT_TYPE)
-                .content(new ObjectMapper().writeValueAsString(newsView)))
-                .andExpect(status().isOk())
+                .content(new ObjectMapper().writeValueAsString(news)))
+                .andExpect(status().isCreated())
                 .andExpect(jsonPath("$.id", is(EXPECTED_ID.toString())))
                 .andExpect(jsonPath("$.title", is(EXPECTED_TITLE)))
                 .andExpect(jsonPath("$.contents", is(EXPECTED_CONTENTS)))

@@ -32,10 +32,12 @@ public class NewsServiceTest {
             "neighborhood of allotment gardens.";
     private static final News.Type EXPECTED_TYPE = News.Type.RELEASED;
     private static final String WRONG_TYPE = "published";
-    private static final String EXPECTED_TYPE_VALUE = EXPECTED_TYPE.toString();
+    private static final News.Type EXPECTED_TYPE_VALUE = EXPECTED_TYPE;
     private static final Boolean DEFAULT_SHORTENED = false;
+    private static final String DEFAULT_TYPE = null;
     private static final Long EXPECTED_PUBLISHED = 12412412412L;
     private static final UUID EXPECTED_ID = UUID.randomUUID();
+    private static final Date EXPECTED_PUBLISHED_DATE = new Date(12412412412L);
     private NewsView newsView;
 
     @Mock
@@ -50,7 +52,7 @@ public class NewsServiceTest {
         newsView = new NewsView();
         newsView.setTitle(EXPECTED_TITLE);
         newsView.setContents(EXPECTED_CONTENTS);
-        newsView.setType(EXPECTED_TYPE_VALUE);
+        newsView.setType(EXPECTED_TYPE_VALUE.toString());
         newsView.setPublished(EXPECTED_PUBLISHED);
     }
 
@@ -69,25 +71,25 @@ public class NewsServiceTest {
     public void findAllNews() throws Exception {
         when(newsRepository.findAll()).thenReturn(Collections.emptyList());
 
-        List<NewsView> newsViews = newsService.findAllNews(DEFAULT_SHORTENED);
-        assertTrue(newsViews.isEmpty());
+        List<News> newsList = newsService.findAllNews(DEFAULT_TYPE, DEFAULT_SHORTENED);
+        assertTrue(newsList.isEmpty());
     }
 
     @Test
     public void findAllNewsByType() throws Exception {
         when(newsRepository.findByType(EXPECTED_TYPE)).thenReturn(Collections.emptyList());
 
-        List<NewsView> newsViews = newsService.
-                findAllNewsByType(EXPECTED_TYPE.toString(), DEFAULT_SHORTENED);
-        assertTrue(newsViews.isEmpty());
+        List<News> newsList = newsService.
+                findAllNews(EXPECTED_TYPE.toString(), DEFAULT_SHORTENED);
+        assertTrue(newsList.isEmpty());
     }
 
     @Test(expected = WrongEnumValueException.class)
     public void findAllNewsByTypeWrongEnumValueException() throws Exception {
         when(newsRepository.findByType(EXPECTED_TYPE)).thenReturn(Collections.emptyList());
 
-        List<NewsView> newsViews = newsService.findAllNewsByType(WRONG_TYPE, DEFAULT_SHORTENED);
-        assertTrue(newsViews.isEmpty());
+        List<News> newsList = newsService.findAllNews(WRONG_TYPE, DEFAULT_SHORTENED);
+        assertTrue(newsList.isEmpty());
     }
 
     @Test
@@ -96,7 +98,7 @@ public class NewsServiceTest {
         when(newsRepository.exists(EXPECTED_ID)).thenReturn(true);
         when(newsRepository.findOne(EXPECTED_ID)).thenReturn(newsDb);
 
-        NewsView dbNews = newsService.findById(EXPECTED_ID);
+        News dbNews = newsService.findById(EXPECTED_ID);
         assertEquals(EXPECTED_TITLE, dbNews.getTitle());
         assertEquals(EXPECTED_CONTENTS, dbNews.getContents());
         assertEquals(EXPECTED_TYPE_VALUE, dbNews.getType());
@@ -120,10 +122,10 @@ public class NewsServiceTest {
     public void createNews(final News newsDb) throws Exception {
         when(newsRepository.save(any(News.class))).thenReturn(newsDb);
 
-        NewsView newNews = newsService.createNews(newsView);
-        assertEquals(EXPECTED_TITLE, newNews.getTitle());
-        assertEquals(EXPECTED_CONTENTS, newNews.getContents());
-        assertEquals(EXPECTED_TYPE_VALUE, newNews.getType());
+        News news = newsService.createNews(newsView);
+        assertEquals(EXPECTED_TITLE, news.getTitle());
+        assertEquals(EXPECTED_CONTENTS, news.getContents());
+        assertEquals(EXPECTED_TYPE_VALUE, news.getType());
 
         verify(newsRepository, times(1)).save(any(News.class));
         verifyNoMoreInteractions(newsRepository);
@@ -154,12 +156,12 @@ public class NewsServiceTest {
         when(newsRepository.exists(EXPECTED_ID)).thenReturn(true);
         when(newsRepository.save(any(News.class))).thenReturn(newsDb);
         when(newsRepository.findOne(EXPECTED_ID)).thenReturn(newsDb);
-        NewsView newNews = newsService.updateNews(EXPECTED_ID, newsView);
+        News news = newsService.updateNews(EXPECTED_ID, newsView);
 
-        assertEquals(EXPECTED_TITLE, newNews.getTitle());
-        assertEquals(EXPECTED_TYPE_VALUE, newNews.getType());
-        assertEquals(EXPECTED_CONTENTS, newNews.getContents());
-        assertEquals(EXPECTED_PUBLISHED, newNews.getPublished());
+        assertEquals(EXPECTED_TITLE, news.getTitle());
+        assertEquals(EXPECTED_TYPE_VALUE, news.getType());
+        assertEquals(EXPECTED_CONTENTS, news.getContents());
+        assertEquals(EXPECTED_PUBLISHED_DATE, news.getPublished());
     }
 
     @Test(expected = NotFoundException.class)
