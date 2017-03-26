@@ -76,7 +76,8 @@ public class NewsControllerTest {
                 .andExpect(jsonPath("$[0].contents", is(EXPECTED_CONTENTS)))
                 .andExpect(jsonPath("$", hasSize(NEWS_LIST_SIZE)));
 
-        verify(newsService, times(1)).findAllNews(DEFAULT_TYPE, DEFAULT_SHORTENED);
+        verify(newsService, times(1)).
+                findAllNews(DEFAULT_TYPE, DEFAULT_SHORTENED);
         verifyNoMoreInteractions(newsService);
     }
 
@@ -109,7 +110,8 @@ public class NewsControllerTest {
                 .andExpect(jsonPath("$[1].contents", is(EXPECTED_SHORTENED_CONTENTS)))
                 .andExpect(jsonPath("$", hasSize(NEWS_LIST_SIZE)));
 
-        verify(newsService, times(1)).findAllNews(DEFAULT_TYPE, SHORTENED_FOR_TEST);
+        verify(newsService, times(1)).
+                findAllNews(DEFAULT_TYPE, SHORTENED_FOR_TEST);
         verifyNoMoreInteractions(newsService);
     }
 
