@@ -22,7 +22,9 @@ import static org.mockito.Mockito.*;
 
 public class NewsServiceTest {
     private static final String EXPECTED_TITLE = "New dog in TOZ!";
-    private static final String EXPECTED_CONTENTS = "Today to our facility in Szczecin arrived a new dog. His name is Reksio, he is two years old dachshund. He was found in the neighborhood of allotment gardens.";
+    private static final String EXPECTED_CONTENTS = "Today to our facility in Szczecin arrived a " +
+            "new dog. His name is Reksio, he is two years old dachshund. He was found in the " +
+            "neighborhood of allotment gardens.";
     private static final News.Type EXPECTED_TYPE = News.Type.RELEASED;
     private static final String WRONG_TYPE = "published";
     private static final String EXPECTED_TYPE_VALUE = EXPECTED_TYPE.toString();
@@ -66,7 +68,8 @@ public class NewsServiceTest {
     public void findAllNewsByType() throws Exception {
         when(newsRepository.findByType(EXPECTED_TYPE)).thenReturn(Collections.emptyList());
 
-        List<NewsView> newsViews = newsService.findAllNewsByType(EXPECTED_TYPE.toString(), DEFAULT_SHORTENED);
+        List<NewsView> newsViews = newsService.
+                findAllNewsByType(EXPECTED_TYPE.toString(), DEFAULT_SHORTENED);
         assertTrue(newsViews.isEmpty());
     }
 

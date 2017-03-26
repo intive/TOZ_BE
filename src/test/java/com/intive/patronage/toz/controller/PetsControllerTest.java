@@ -2,7 +2,7 @@ package com.intive.patronage.toz.controller;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
-import com.intive.patronage.toz.model.constant.PetConst;
+import com.intive.patronage.toz.model.constant.ApiUrl;
 import com.intive.patronage.toz.model.db.Pet;
 import com.intive.patronage.toz.model.view.PetView;
 import com.intive.patronage.toz.service.PetsService;
@@ -79,7 +79,7 @@ public class PetsControllerTest {
         final List<PetView> pets = getPets();
         when(petsService.findAllPets()).thenReturn(pets);
 
-        mvc.perform(get(PetConst.PATH))
+        mvc.perform(get(ApiUrl.PET_PATH))
                 .andExpect(status().isOk())
                 .andExpect(content().contentType(CONTENT_TYPE))
                 .andExpect(jsonPath("$", hasSize(PETS_LIST_SIZE)));
@@ -104,7 +104,7 @@ public class PetsControllerTest {
     @UseDataProvider("getProperPet")
     public void getPetByIdOk(final PetView pet) throws Exception {
         when(petsService.findById(EXPECTED_ID)).thenReturn(pet);
-        mvc.perform(get(PetConst.PATH + "/" + EXPECTED_ID))
+        mvc.perform(get(ApiUrl.PET_PATH + "/" + EXPECTED_ID))
                 .andExpect(status().isOk())
                 .andExpect(content().contentType(CONTENT_TYPE))
                 .andExpect(jsonPath("$.id", is(EXPECTED_ID.toString())))
@@ -122,7 +122,7 @@ public class PetsControllerTest {
         String petJsonString = convertToJsonString(pet);
 
         when(petsService.createPet(any(PetView.class))).thenReturn(pet);
-        mvc.perform(post(PetConst.PATH)
+        mvc.perform(post(ApiUrl.PET_PATH)
                 .contentType(CONTENT_TYPE)
                 .content(petJsonString))
                 .andExpect(status().isCreated())
@@ -138,7 +138,7 @@ public class PetsControllerTest {
     public void deletePetById() throws Exception {
         UUID id = UUID.randomUUID();
         doNothing().when(petsService).deletePet(id);
-        mvc.perform(delete(PetConst.PATH + "/" + id))
+        mvc.perform(delete(ApiUrl.PET_PATH + "/" + id))
                 .andExpect(status().isOk());
 
         verify(petsService, times(1)).deletePet(id);
@@ -151,7 +151,7 @@ public class PetsControllerTest {
         String petJsonString = convertToJsonString(pet);
 
         when(petsService.updatePet(eq(EXPECTED_ID), any(PetView.class))).thenReturn(pet);
-        mvc.perform(put(PetConst.PATH + "/" + EXPECTED_ID)
+        mvc.perform(put(ApiUrl.PET_PATH + "/" + EXPECTED_ID)
                 .contentType(CONTENT_TYPE)
                 .content(petJsonString))
                 .andExpect(status().isOk());

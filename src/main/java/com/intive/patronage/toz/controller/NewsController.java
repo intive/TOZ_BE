@@ -2,6 +2,7 @@ package com.intive.patronage.toz.controller;
 
 import com.intive.patronage.toz.error.ErrorResponse;
 import com.intive.patronage.toz.error.ValidationErrorResponse;
+import com.intive.patronage.toz.model.constant.ApiUrl;
 import com.intive.patronage.toz.model.view.NewsView;
 import com.intive.patronage.toz.service.NewsService;
 import io.swagger.annotations.*;
@@ -18,7 +19,7 @@ import java.util.UUID;
 
 @Api(description = "News operations.")
 @RestController
-@RequestMapping(value = "/news", produces = MediaType.APPLICATION_JSON_VALUE)
+@RequestMapping(value = ApiUrl.NEWS_PATH, produces = MediaType.APPLICATION_JSON_VALUE)
 class NewsController {
     private final NewsService newsService;
 
@@ -32,7 +33,8 @@ class NewsController {
             @ApiResponse(code = 422, message = "Unprocessable entity.", response = ErrorResponse.class)
     })
     @GetMapping
-    public List<NewsView> getAllNews(@ApiParam(allowableValues = "ARCHIVED, RELEASED, UNRELEASED") @RequestParam(value = "type", required = false) String type,
+    public List<NewsView> getAllNews(@ApiParam(allowableValues = "ARCHIVED, RELEASED, UNRELEASED")
+                                         @RequestParam(value = "type", required = false) String type,
                                      @RequestParam(value = "shortened", required = false, defaultValue = "false")
                                              Boolean shortened) {
         if (type != null) {

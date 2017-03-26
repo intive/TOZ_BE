@@ -20,7 +20,6 @@ import java.util.UUID;
 public class NewsService {
     private final static String NEWS = "News";
     private final NewsRepository newsRepository;
-    private static final ModelMapper MODEL_MAPPER = new ModelMapper();
     private static final Integer NEWS_DESCRIPTION_LENGTH = 100;
 
     @Autowired
@@ -50,13 +49,13 @@ public class NewsService {
 
     public NewsView findById(final UUID id) {
         throwNotFoundExceptionIfNotExists(id);
-        return MODEL_MAPPER.convertToView(newsRepository.findOne(id), NewsView.class);
+        return ModelMapper.convertToView(newsRepository.findOne(id), NewsView.class);
     }
 
     public NewsView createNews(final NewsView newsView) {
-        News news = MODEL_MAPPER.convertToModel(newsView, News.class);
+        News news = ModelMapper.convertToModel(newsView, News.class);
         setPublishedDate(news);
-        return MODEL_MAPPER.convertToView(newsRepository.save(news), NewsView.class);
+        return ModelMapper.convertToView(newsRepository.save(news), NewsView.class);
     }
 
     public void deleteNews(final UUID id) {
@@ -66,11 +65,11 @@ public class NewsService {
 
     public NewsView updateNews(final UUID id, final NewsView newsView) {
         throwNotFoundExceptionIfNotExists(id);
-        News news = MODEL_MAPPER.convertToModel(newsView, News.class);
+        News news = ModelMapper.convertToModel(newsView, News.class);
         news.setId(id);
         news.setPublished(newsRepository.findOne(id).getPublished());
         setPublishedDate(news);
-        return MODEL_MAPPER.convertToView(newsRepository.save(news), NewsView.class);
+        return ModelMapper.convertToView(newsRepository.save(news), NewsView.class);
     }
 
     private void setPublishedDate(News news) {
@@ -80,10 +79,11 @@ public class NewsService {
     }
 
     private void createNewsList(Boolean shortened, List<NewsView> newsViews, News news) {
-        NewsView newsView = MODEL_MAPPER.convertToView(news, NewsView.class);
+        NewsView newsView = ModelMapper.convertToView(news, NewsView.class);
         if (shortened == true) {
             newsView.setContents(new StringFormatter().
-                    cutStringAfterSpecifiedLength(newsView.getContents(), NEWS_DESCRIPTION_LENGTH));
+                    cutStringAfterSpecifiedLength(newsView.getContents(),
+                            NEWS_DESCRIPTION_LENGTH));
         }
         newsViews.add(newsView);
     }

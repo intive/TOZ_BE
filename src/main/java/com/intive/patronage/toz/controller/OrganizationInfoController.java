@@ -2,6 +2,7 @@ package com.intive.patronage.toz.controller;
 
 import com.intive.patronage.toz.error.ErrorResponse;
 import com.intive.patronage.toz.error.ValidationErrorResponse;
+import com.intive.patronage.toz.model.constant.ApiUrl;
 import com.intive.patronage.toz.model.view.OrganizationInfoView;
 import com.intive.patronage.toz.service.OrganizationInfoService;
 import io.swagger.annotations.ApiOperation;
@@ -18,7 +19,7 @@ import javax.validation.Valid;
 import java.net.URI;
 
 @RestController
-@RequestMapping(value = "/organization/info", produces = MediaType.APPLICATION_JSON_VALUE)
+@RequestMapping(value = ApiUrl.ORGANIZATION_INFO_PATH, produces = MediaType.APPLICATION_JSON_VALUE)
 class OrganizationInfoController {
 
     private final OrganizationInfoService infoService;

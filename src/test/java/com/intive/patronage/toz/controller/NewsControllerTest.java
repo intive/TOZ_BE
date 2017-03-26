@@ -1,6 +1,7 @@
 package com.intive.patronage.toz.controller;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.intive.patronage.toz.model.constant.ApiUrl;
 import com.intive.patronage.toz.model.db.News;
 import com.intive.patronage.toz.model.view.NewsView;
 import com.intive.patronage.toz.service.NewsService;
@@ -31,13 +32,15 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 @RunWith(DataProviderRunner.class)
 public class NewsControllerTest {
     private static final int NEWS_LIST_SIZE = 5;
-    private static final String PATH = "/news";
     private static final Boolean DEFAULT_SHORTENED = false;
     private static final Boolean SHORTENED_FOR_TEST = true;
     private static final UUID EXPECTED_ID = UUID.randomUUID();
     private static final String EXPECTED_TITLE = "New dog in TOZ!";
-    private static final String EXPECTED_CONTENTS = "Today to our facility in Szczecin arrived a new dog. His name is Reksio, he is two years old dachshund. He was found in the neighborhood of allotment gardens.";
-    private static final String EXPECTED_SHORTENED_CONTENTS = "Today to our facility in Szczecin arrived a new dog. His name is Reksio, he is two years old ";
+    private static final String EXPECTED_CONTENTS = "Today to our facility in Szczecin arrived a new dog. " +
+            "His name is Reksio, he is two years old dachshund. " +
+            "He was found in the neighborhood of allotment gardens.";
+    private static final String EXPECTED_SHORTENED_CONTENTS = "Today to our facility in Szczecin arrived a " +
+            "new dog. His name is Reksio, he is two years old ";
     private static final String EXPECTED_TYPE = News.Type.RELEASED.toString();
     private static final MediaType CONTENT_TYPE = MediaType.APPLICATION_JSON_UTF8;
 
@@ -66,7 +69,7 @@ public class NewsControllerTest {
         final List<NewsView> newsViews = getNewsList("", false);
         when(newsService.findAllNews(DEFAULT_SHORTENED)).thenReturn(newsViews);
 
-        mvc.perform(get(PATH))
+        mvc.perform(get(ApiUrl.NEWS_PATH))
                 .andExpect(status().isOk())
                 .andExpect(content().contentType(CONTENT_TYPE))
                 .andExpect(jsonPath("$", hasSize(NEWS_LIST_SIZE)));
@@ -80,14 +83,15 @@ public class NewsControllerTest {
         final List<NewsView> newsViews = getNewsList(EXPECTED_TYPE, false);
         when(newsService.findAllNewsByType(EXPECTED_TYPE, DEFAULT_SHORTENED)).thenReturn(newsViews);
 
-        mvc.perform(get(PATH + "?type=" + EXPECTED_TYPE))
+        mvc.perform(get(ApiUrl.NEWS_PATH).param("type", EXPECTED_TYPE))
                 .andExpect(status().isOk())
                 .andExpect(content().contentType(CONTENT_TYPE))
                 .andExpect(jsonPath("$[0].type", is(EXPECTED_TYPE)))
                 .andExpect(jsonPath("$[1].type", is(EXPECTED_TYPE)))
                 .andExpect(jsonPath("$", hasSize(NEWS_LIST_SIZE)));
 
-        verify(newsService, times(1)).findAllNewsByType(EXPECTED_TYPE, DEFAULT_SHORTENED);
+        verify(newsService, times(1)).
+                findAllNewsByType(EXPECTED_TYPE, DEFAULT_SHORTENED);
         verifyNoMoreInteractions(newsService);
     }
 
@@ -96,7 +100,7 @@ public class NewsControllerTest {
         final List<NewsView> newsViews = getNewsList("", true);
         when(newsService.findAllNews(SHORTENED_FOR_TEST)).thenReturn(newsViews);
 
-        mvc.perform(get(PATH + "?shortened=true"))
+        mvc.perform(get(ApiUrl.NEWS_PATH).param("shortened", SHORTENED_FOR_TEST.toString()))
                 .andExpect(status().isOk())
                 .andExpect(content().contentType(CONTENT_TYPE))
                 .andExpect(jsonPath("$[0].contents", is(EXPECTED_SHORTENED_CONTENTS)))
@@ -131,7 +135,7 @@ public class NewsControllerTest {
     @UseDataProvider("getProperNews")
     public void getNewsById(final NewsView newsView) throws Exception {
         when(newsService.findById(EXPECTED_ID)).thenReturn(newsView);
-        mvc.perform(get(PATH + "/" + EXPECTED_ID))
+        mvc.perform(get(ApiUrl.NEWS_PATH + "/" + EXPECTED_ID))
                 .andExpect(status().isOk())
                 .andExpect(content().contentType(CONTENT_TYPE))
                 .andExpect(jsonPath("$.id", is(EXPECTED_ID.toString())))
@@ -147,7 +151,7 @@ public class NewsControllerTest {
     @UseDataProvider("getProperNews")
     public void createNews(final NewsView newsView) throws Exception {
         when(newsService.createNews(any(NewsView.class))).thenReturn(newsView);
-        mvc.perform(post(PATH)
+        mvc.perform(post(ApiUrl.NEWS_PATH)
                 .contentType(CONTENT_TYPE)
                 .content(new ObjectMapper().writeValueAsString(newsView)))
                 .andExpect(status().isCreated())
@@ -156,15 +160,17 @@ public class NewsControllerTest {
                 .andExpect(jsonPath("$.contents", is(EXPECTED_CONTENTS)))
                 .andExpect(jsonPath("$.type", is(EXPECTED_TYPE)));
 
-        verify(newsService, times(1)).createNews(any(NewsView.class));
+        verify(newsService, times(1)).
+                createNews(any(NewsView.class));
         verifyNoMoreInteractions(newsService);
     }
 
     @Test
     @UseDataProvider("getProperNews")
     public void updateNews(final NewsView newsView) throws Exception {
-        when(newsService.updateNews(eq(EXPECTED_ID), any(NewsView.class))).thenReturn(newsView);
-        mvc.perform(put(PATH + "/" + EXPECTED_ID)
+        when(newsService.updateNews(eq(EXPECTED_ID), any(NewsView.class))).
+                thenReturn(newsView);
+        mvc.perform(put(ApiUrl.NEWS_PATH + "/" + EXPECTED_ID)
                 .contentType(CONTENT_TYPE)
                 .content(new ObjectMapper().writeValueAsString(newsView)))
                 .andExpect(status().isOk())
@@ -173,7 +179,8 @@ public class NewsControllerTest {
                 .andExpect(jsonPath("$.contents", is(EXPECTED_CONTENTS)))
                 .andExpect(jsonPath("$.type", is(EXPECTED_TYPE)));
 
-        verify(newsService, times(1)).updateNews(eq(EXPECTED_ID), any(NewsView.class));
+        verify(newsService, times(1)).
+                updateNews(eq(EXPECTED_ID), any(NewsView.class));
         verifyNoMoreInteractions(newsService);
     }
 
@@ -181,7 +188,7 @@ public class NewsControllerTest {
     public void deleteNewsById() throws Exception {
         UUID id = UUID.randomUUID();
         doNothing().when(newsService).deleteNews(id);
-        mvc.perform(delete(PATH + "/" + id))
+        mvc.perform(delete(ApiUrl.NEWS_PATH + "/" + id))
                 .andExpect(status().isOk());
 
         verify(newsService, times(1)).deleteNews(id);

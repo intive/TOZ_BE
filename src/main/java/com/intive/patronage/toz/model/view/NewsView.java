@@ -14,17 +14,21 @@ import javax.validation.constraints.NotNull;
 @ApiModel(value = "News")
 @JsonInclude(JsonInclude.Include.NON_EMPTY)
 public class NewsView extends IdentifiableView {
-    @ApiModelProperty(example = "Do oddziału TOZ trafił nowy pies!", position = 1, required = true)
+    @ApiModelProperty(example = "Do oddziału TOZ trafił nowy pies!", position = 1,
+            required = true)
     @NotNull
     @NotEmpty
     private String title;
 
-    @ApiModelProperty(example = "Dzisiaj do naszej placówki w Szczecinie trafił nowy pies. Nazywa się Reksio i jest dwuletnim jamnikiem. Został znaleziony w pobliżu ogrodów działkowych.", position = 2, required = true)
+    @ApiModelProperty(example = "Dzisiaj do naszej placówki w Szczecinie trafił nowy " +
+            "pies. Nazywa się Reksio i jest dwuletnim jamnikiem. Został znaleziony w " +
+            "pobliżu ogrodów działkowych.", position = 2, required = true)
     @NotNull
     @NotEmpty
     private String contents;
 
-    @ApiModelProperty(example = "RELEASED", allowableValues = "ARCHIVED, RELEASED, UNRELEASED", position = 3, required = true)
+    @ApiModelProperty(example = "RELEASED", allowableValues = "ARCHIVED, RELEASED, UNRELEASED",
+            position = 3, required = true)
     @NotNull
     @EnumValidate(enumClass = News.Type.class)
     private String type;
