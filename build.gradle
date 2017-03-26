@@ -3,12 +3,13 @@ buildscript {
 		springBootVersion = '1.5.2.RELEASE'
 	}
 	repositories {
-    mavenCentral()
-    jcenter()
+    	mavenCentral()
+    	jcenter()
 	}
 	dependencies {
 		classpath("org.springframework.boot:spring-boot-gradle-plugin:${springBootVersion}")
-    classpath 'com.bmuschko:gradle-docker-plugin:3.0.6'
+    	classpath 'com.bmuschko:gradle-docker-plugin:3.0.6'
+		classpath 'org.hidetake:gradle-ssh-plugin:2.8.0'
 	}
 }
 
@@ -16,6 +17,7 @@ apply plugin: 'java'
 apply plugin: 'idea'
 apply plugin: 'org.springframework.boot'
 apply plugin: 'com.bmuschko.docker-remote-api'
+apply plugin: 'org.hidetake.ssh'
 
 import com.bmuschko.gradle.docker.tasks.container.*
 import com.bmuschko.gradle.docker.tasks.image.*
@@ -27,6 +29,10 @@ jar {
 
 sourceCompatibility = 1.8
 targetCompatibility = 1.8
+
+springBoot {
+	executable = true
+}
 
 task buildImage(type: DockerBuildImage) {
     inputDir = file('./')
@@ -54,6 +60,26 @@ task functionalTest(type: Test) {
     finalizedBy stopContainer
 }
 
+remotes {
+	openstack {
+		host = 'patronage'
+		user = 'debian'
+		identity = file('/home/mlo/.ssh/id_rsa')
+	}
+}
+
+task deploy {
+	doLast {
+		ssh.run {
+			session(remotes.openstack) {
+				execute 'sudo service toz-dev stop'
+				put from: 'build/libs/toz-core-0.1-SNAPSHOT.jar', into: 'dev/toz-core-0.1-SNAPSHOT.jar'
+				execute 'sudo service toz-dev start'
+			}
+		}
+	}
+}
+
 dependencies {
     compile("org.springframework.boot:spring-boot-starter-web") {
         exclude module: "spring-boot-starter-tomcat"
@@ -61,16 +87,20 @@ dependencies {
     compile("org.springframework.boot:spring-boot-starter-jetty")
 	compile('org.springframework.boot:spring-boot-starter-actuator')
 	compile('org.springframework.boot:spring-boot-starter-data-jpa')
-	compile('org.liquibase:liquibase-core')
 	compile('org.springframework.boot:spring-boot-starter-mail')
+	compile('org.liquibase:liquibase-core')
+	compile('org.projectlombok:lombok')
+	compile group: 'io.springfox', name: 'springfox-swagger2', version: '2.6.1'
+	compile group: 'io.springfox', name: 'springfox-swagger-ui', version: '2.6.1'
+
+	compile project(':iban-validator')
+
+	testCompile('org.springframework.boot:spring-boot-starter-test')
+	testCompile group: 'com.tngtech.java', name: 'junit-dataprovider', version: '1.12.0'
+
 	runtime('org.springframework.boot:spring-boot-devtools')
 	runtime('com.h2database:h2')
 	runtime('org.postgresql:postgresql')
-	compile('org.projectlombok:lombok')
-	testCompile('org.springframework.boot:spring-boot-starter-test')
-
-	compile group: 'io.springfox', name: 'springfox-swagger2', version: '2.6.1'
-	compile group: 'io.springfox', name: 'springfox-swagger-ui', version: '2.6.1'
 
 	configurations.all {
 		resolutionStrategy.eachDependency { DependencyResolveDetails details ->
@@ -79,5 +109,4 @@ dependencies {
 			}
 		}
 	}
-	compile project(':iban-validator')
 }
