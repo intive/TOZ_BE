@@ -1,31 +1,26 @@
 package com.intive.patronage.toz.model.view;
 
-import com.fasterxml.jackson.annotation.JsonFormat;
 import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.annotation.JsonProperty;
-import com.intive.patronage.toz.model.constant.NewsValues;
 import com.intive.patronage.toz.model.db.IdentifiableView;
+import com.intive.patronage.toz.model.db.NewsType;
 
-import java.util.Date;
+import java.time.LocalDateTime;
 
 @JsonInclude(JsonInclude.Include.NON_EMPTY)
 public class NewsView extends IdentifiableView {
-    private static final String DATE_FORMAT = "dd-MM-yyyy HH:mm:ss";
     private String title;
     private String contents;
-    private NewsValues.Type type;
+    private NewsType type;
 
     @JsonProperty(access = JsonProperty.Access.READ_ONLY)
-    @JsonFormat(pattern = DATE_FORMAT)
-    private Date created;
+    private LocalDateTime created;
 
     @JsonProperty(access = JsonProperty.Access.READ_ONLY)
-    @JsonFormat(pattern = DATE_FORMAT)
-    private Date lastModified;
+    private LocalDateTime lastModified;
 
     @JsonProperty(access = JsonProperty.Access.READ_ONLY)
-    @JsonFormat(pattern = DATE_FORMAT)
-    private Date published;
+    private LocalDateTime published;
 
     public String getTitle() {
         return title;
@@ -43,35 +38,35 @@ public class NewsView extends IdentifiableView {
         this.contents = contents;
     }
 
-    public NewsValues.Type getType() {
+    public NewsType getType() {
         return type;
     }
 
-    public void setType(NewsValues.Type type) {
+    public void setType(NewsType type) {
         this.type = type;
     }
 
-    public Date getCreated() {
+    public LocalDateTime getCreated() {
         return created;
     }
 
-    public void setCreated(Date created) {
+    public void setCreated(LocalDateTime created) {
         this.created = created;
     }
 
-    public Date getLastModified() {
+    public LocalDateTime getLastModified() {
         return lastModified;
     }
 
-    public void setLastModified(Date lastModified) {
+    public void setLastModified(LocalDateTime lastModified) {
         this.lastModified = lastModified;
     }
 
-    public Date getPublished() {
+    public LocalDateTime getPublished() {
         return published;
     }
 
-    public void setPublished(Date published) {
+    public void setPublished(LocalDateTime published) {
         this.published = published;
     }
 }

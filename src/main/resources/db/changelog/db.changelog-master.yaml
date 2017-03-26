@@ -90,6 +90,28 @@ databaseChangeLog:
               - column:
                   name: image_url
                   type: varchar(255)
+                  constraints:
+                    - nullable: false
+              - column:
+                  name: contents
+                  type: text
+                  constraints:
+                    - nullable: false
+              - column:
+                  name: type
+                  type: varchar(255)
+                  constraints:
+                    - nullable: false
+              - column:
+                  name: created
+                  type: datetime
+              - column:
+                  name: last_modified
+                  type: datetime
+              - column:
+                  name: published
+                  type: datetime
+>>>>>>> Improved model for news.
   - changeSet:
       id : 2
       author: ppiotr191
