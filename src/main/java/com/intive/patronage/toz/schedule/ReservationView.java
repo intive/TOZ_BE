@@ -15,6 +15,7 @@ import javax.validation.constraints.NotNull;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.LocalTime;
+import java.util.UUID;
 
 @ApiModel("Reservation")
 @Getter
@@ -38,10 +39,10 @@ class ReservationView extends IdentifiableView {
     @NotNull
     private LocalTime endTime;
 
-    @ApiModelProperty(value = "Owner", required = true)
+    @ApiModelProperty(value = "Owner ID", example = "c5296892-347f-4b2e-b1c6-6faff971f767", required = true)
     @Valid
     @NotNull
-    private UserView owner;
+    private UUID ownerId;
 
     @JsonProperty(access = JsonProperty.Access.READ_ONLY)
     @ApiModelProperty(readOnly = true)
@@ -53,6 +54,6 @@ class ReservationView extends IdentifiableView {
 
     @ApiModelProperty(value = "Modification message")
     private String modificationMessage;
-    @ApiModelProperty(value = "Modification author")
-    private UserView modificationAuthor;
+    @ApiModelProperty(value = "Modification author ID", example = "c5296892-347f-4b2e-b1c6-6faff971f767")
+    private UUID modificationAuthorId;
 }
