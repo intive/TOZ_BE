@@ -77,7 +77,7 @@ class NewsController {
             @ApiResponse(code = 404, message = "News not found.", response = ErrorResponse.class)
     })
     @DeleteMapping(value = "/{id}")
-    public ResponseEntity<NewsView> deleteNewsById(@PathVariable UUID id) {
+    public ResponseEntity<?> deleteNewsById(@PathVariable UUID id) {
         newsService.deleteNews(id);
         return ResponseEntity.ok().build();
     }

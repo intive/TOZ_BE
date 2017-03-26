@@ -120,7 +120,7 @@ public class NewsControllerTest {
         for (int i = 0; i < NEWS_LIST_SIZE; i++) {
             News news = new News();
             news.setTitle(String.format("Title:%d", i));
-            if (shortened == false) {
+            if (!shortened) {
                 news.setContents(EXPECTED_CONTENTS);
             } else {
                 news.setContents(EXPECTED_SHORTENED_CONTENTS);
