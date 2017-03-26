@@ -82,7 +82,7 @@ public class NewsService {
         NewsView newsView = ModelMapper.convertToView(news, NewsView.class);
         if (shortened == true) {
             newsView.setContents(new StringFormatter().
-                    cutStringAfterSpecifiedLength(newsView.getContents(),
+                    trimToLengthPreserveWord(newsView.getContents(),
                             NEWS_DESCRIPTION_LENGTH));
         }
         newsViews.add(newsView);
