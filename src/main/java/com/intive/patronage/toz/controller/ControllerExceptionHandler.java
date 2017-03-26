@@ -5,6 +5,8 @@ import com.intive.patronage.toz.error.ValidationErrorResponse;
 import com.intive.patronage.toz.exception.AlreadyExistsException;
 import com.intive.patronage.toz.exception.InvalidImageFileException;
 import com.intive.patronage.toz.exception.NotFoundException;
+import com.intive.patronage.toz.exception.WrongEnumValueException;
+import liquibase.util.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -20,6 +22,7 @@ import org.springframework.web.bind.annotation.ResponseStatus;
 import org.springframework.web.servlet.config.annotation.EnableWebMvc;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 import java.util.UUID;
 
