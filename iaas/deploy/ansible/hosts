@@ -1,0 +1,2 @@
+; hostname, port ssh, host ip, user key
+dev ansible_port=22 ansible_host=127.0.0.1 ansible_user=mpo ansible_ssh_private_key_file=/home/mpo/.ssh/id_rsa

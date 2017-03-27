@@ -1,6 +1,7 @@
 package com.intive.patronage.toz.controller;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.intive.patronage.toz.model.constant.ApiUrl;
 import com.intive.patronage.toz.model.view.BankAccountView;
 import com.intive.patronage.toz.model.view.OrganizationInfoView;
 import com.intive.patronage.toz.service.OrganizationInfoService;
@@ -35,7 +36,6 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 @SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT)
 public class OrganizationInfoControllerTest {
 
-    private final static String PATH = "/organization/info";
     private final static String ORG_NAME = "Org";
     private final static String ACCOUNT = "63102047950000940201035419";
     private final static String INVALID_ACCOUNT = "631-02047950000940201035419";
@@ -45,7 +45,7 @@ public class OrganizationInfoControllerTest {
             Charset.forName("utf8"));
 
     @Mock
-    private OrganizationInfoService infoService;
+    private OrganizationInfoService organizationInfoService;
     @SuppressWarnings("SpringJavaAutowiredMembersInspection")
     @Autowired
     private ObjectMapper objectMapper;
@@ -75,8 +75,8 @@ public class OrganizationInfoControllerTest {
 
     @Before
     public void setUp() throws Exception {
-        mvc = MockMvcBuilders.standaloneSetup(new OrganizationInfoController(infoService)).build();
-        mvcWithCustomHandlers = MockMvcBuilders.standaloneSetup(new OrganizationInfoController(infoService))
+        mvc = MockMvcBuilders.standaloneSetup(new OrganizationInfoController(organizationInfoService)).build();
+        mvcWithCustomHandlers = MockMvcBuilders.standaloneSetup(new OrganizationInfoController(organizationInfoService))
                 .setHandlerExceptionResolvers(createExceptionResolver()).build();
 
         BankAccountView bankAccountView = new BankAccountView.Builder(ACCOUNT)
@@ -91,9 +91,9 @@ public class OrganizationInfoControllerTest {
 
     @Test
     public void shouldGetOrganizationInfo() throws Exception {
-        when(infoService.findOrganizationInfo()).thenReturn(infoView);
+        when(organizationInfoService.findOrganizationInfo()).thenReturn(infoView);
 
-        mvc.perform(get(PATH))
+        mvc.perform(get(ApiUrl.ORGANIZATION_INFO_PATH))
                 .andExpect(status().isOk())
                 .andExpect(content().contentType(contentType))
                 .andExpect(jsonPath("name").value(ORG_NAME))
@@ -102,26 +102,26 @@ public class OrganizationInfoControllerTest {
 
     @Test
     public void shouldReturnErrorWhenMediaTypeHeaderIsMissingInPostRequest() throws Exception {
-        mvc.perform(post(PATH))
+        mvc.perform(post(ApiUrl.ORGANIZATION_INFO_PATH))
                 .andExpect(status().isUnsupportedMediaType());
 
-        verifyZeroInteractions(infoService);
+        verifyZeroInteractions(organizationInfoService);
     }
 
     @Test
     public void shouldReturnErrorWhenBodyIsMissingInPostRequest() throws Exception {
-        mvc.perform(post(PATH)
+        mvc.perform(post(ApiUrl.ORGANIZATION_INFO_PATH)
                 .contentType(contentType))
                 .andExpect(status().isBadRequest());
 
-        verifyZeroInteractions(infoService);
+        verifyZeroInteractions(organizationInfoService);
     }
 
     @Test
     public void shouldCreateOrganizationInfo() throws Exception {
-        when(infoService.createOrganizationInfo(any(OrganizationInfoView.class))).thenReturn(infoView);
+        when(organizationInfoService.createOrganizationInfo(any(OrganizationInfoView.class))).thenReturn(infoView);
 
-        mvc.perform(post(PATH)
+        mvc.perform(post(ApiUrl.ORGANIZATION_INFO_PATH)
                 .contentType(contentType)
                 .content(objectMapper.writeValueAsString(infoView)))
                 .andExpect(status().isCreated())
@@ -132,9 +132,9 @@ public class OrganizationInfoControllerTest {
 
     @Test
     public void shouldUpdateOrganizationInformation() throws Exception {
-        when(infoService.updateOrganizationInfo(any(OrganizationInfoView.class))).thenReturn(infoView);
+        when(organizationInfoService.updateOrganizationInfo(any(OrganizationInfoView.class))).thenReturn(infoView);
 
-        mvc.perform(put(PATH)
+        mvc.perform(put(ApiUrl.ORGANIZATION_INFO_PATH)
                 .contentType(contentType)
                 .content(objectMapper.writeValueAsString(infoView)))
                 .andExpect(status().isCreated())
@@ -145,19 +145,19 @@ public class OrganizationInfoControllerTest {
 
     @Test
     public void shouldReturnErrorWhenMediaTypeHeaderIsMissingInPutRequest() throws Exception {
-        mvc.perform(put(PATH))
+        mvc.perform(put(ApiUrl.ORGANIZATION_INFO_PATH))
                 .andExpect(status().isUnsupportedMediaType());
 
-        verifyZeroInteractions(infoService);
+        verifyZeroInteractions(organizationInfoService);
     }
 
     @Test
     public void shouldReturnErrorWhenBodyIsMissingInPutRequest() throws Exception {
-        mvc.perform(put(PATH)
+        mvc.perform(put(ApiUrl.ORGANIZATION_INFO_PATH)
                 .contentType(contentType))
                 .andExpect(status().isBadRequest());
 
-        verifyZeroInteractions(infoService);
+        verifyZeroInteractions(organizationInfoService);
     }
 
     @Test()
@@ -165,7 +165,7 @@ public class OrganizationInfoControllerTest {
         final String validationErrorMessage = messageSource.getMessage("validationError",
                 null,
                 LocaleContextHolder.getLocale());
-        mvcWithCustomHandlers.perform(put(PATH)
+        mvcWithCustomHandlers.perform(put(ApiUrl.ORGANIZATION_INFO_PATH)
                 .contentType(contentType)
                 .content(objectMapper.writeValueAsString(invalidInfoView)))
                 .andExpect(status().isBadRequest())
@@ -178,7 +178,7 @@ public class OrganizationInfoControllerTest {
         final String validationErrorMessage = messageSource.getMessage("validationError",
                 null,
                 LocaleContextHolder.getLocale());
-        mvcWithCustomHandlers.perform(post(PATH)
+        mvcWithCustomHandlers.perform(post(ApiUrl.ORGANIZATION_INFO_PATH)
                 .contentType(contentType)
                 .content(objectMapper.writeValueAsString(invalidInfoView)))
                 .andExpect(status().isBadRequest())

@@ -2,6 +2,7 @@ package com.intive.patronage.toz.controller;
 
 import com.intive.patronage.toz.error.ErrorResponse;
 import com.intive.patronage.toz.error.ValidationErrorResponse;
+import com.intive.patronage.toz.model.constant.ApiUrl;
 import com.intive.patronage.toz.model.view.OrganizationInfoView;
 import com.intive.patronage.toz.service.OrganizationInfoService;
 import io.swagger.annotations.ApiOperation;
@@ -18,14 +19,14 @@ import javax.validation.Valid;
 import java.net.URI;
 
 @RestController
-@RequestMapping(value = "/organization/info", produces = MediaType.APPLICATION_JSON_VALUE)
+@RequestMapping(value = ApiUrl.ORGANIZATION_INFO_PATH, produces = MediaType.APPLICATION_JSON_VALUE)
 class OrganizationInfoController {
 
-    private final OrganizationInfoService infoService;
+    private final OrganizationInfoService organizationInfoService;
 
     @Autowired
-    OrganizationInfoController(OrganizationInfoService infoService) {
-        this.infoService = infoService;
+    OrganizationInfoController(OrganizationInfoService organizationInfoService) {
+        this.organizationInfoService = organizationInfoService;
     }
 
     @ApiOperation("Get organization information")
@@ -36,7 +37,7 @@ class OrganizationInfoController {
     @GetMapping
     @ResponseStatus(HttpStatus.OK)
     public ResponseEntity<OrganizationInfoView> readOrganizationInfo() {
-        final OrganizationInfoView info = infoService.findOrganizationInfo();
+        final OrganizationInfoView info = organizationInfoService.findOrganizationInfo();
         return ResponseEntity.ok()
                 .body(info);
     }
@@ -51,7 +52,7 @@ class OrganizationInfoController {
     @PostMapping(consumes = MediaType.APPLICATION_JSON_VALUE)
     @ResponseStatus(HttpStatus.CREATED)
     public ResponseEntity<OrganizationInfoView> createOrganizationInfo(@Valid @RequestBody OrganizationInfoView info) {
-        final OrganizationInfoView createdInfo = infoService.createOrganizationInfo(info);
+        final OrganizationInfoView createdInfo = organizationInfoService.createOrganizationInfo(info);
         final URI location = ServletUriComponentsBuilder.fromCurrentRequest()
                 .build().toUri();
 
@@ -69,7 +70,7 @@ class OrganizationInfoController {
     @PutMapping(consumes = MediaType.APPLICATION_JSON_VALUE)
     @ResponseStatus(HttpStatus.CREATED)
     public ResponseEntity<OrganizationInfoView> updateOrganizationInfo(@Valid @RequestBody OrganizationInfoView info) {
-        final OrganizationInfoView updatedInfo = infoService.updateOrganizationInfo(info);
+        final OrganizationInfoView updatedInfo = organizationInfoService.updateOrganizationInfo(info);
         final URI location = ServletUriComponentsBuilder.fromCurrentRequest()
                 .build().toUri();
 

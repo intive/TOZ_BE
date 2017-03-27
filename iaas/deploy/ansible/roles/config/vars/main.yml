@@ -1,0 +1,5 @@
+---
+# variables
+
+config_name_prod:
+   - { http: 8011, admin: 8111 }

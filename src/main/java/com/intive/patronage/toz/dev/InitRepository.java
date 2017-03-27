@@ -1,6 +1,8 @@
 package com.intive.patronage.toz.dev;
 
+import com.intive.patronage.toz.model.db.News;
 import com.intive.patronage.toz.model.db.Pet;
+import com.intive.patronage.toz.repository.NewsRepository;
 import com.intive.patronage.toz.repository.PetsRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.CommandLineRunner;
@@ -15,6 +17,8 @@ class InitRepository {
 
     @Autowired
     private PetsRepository petsRepository;
+    @Autowired
+    private NewsRepository newsRepository;
 
     @Bean
     public CommandLineRunner initDatabase() {
@@ -29,6 +33,14 @@ class InitRepository {
                 pet.setDescription("description:" + i);
                 pet.setAddress("address:" + i);
                 petsRepository.save(pet);
+
+                News news = new News();
+                news.setTitle("Title:" + i);
+                News.Type[] newsTypes = News.Type.values();
+                news.setType(newsTypes[i % newsTypes.length]);
+                news.setContents("contents:" + i);
+                news.setPhotoUrl("photo:" + i);
+                newsRepository.save(news);
             }
         };
     }
