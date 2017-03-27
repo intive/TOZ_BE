@@ -3,6 +3,9 @@ package com.intive.patronage.toz.schedule;
 import com.intive.patronage.toz.error.ArgumentErrorResponse;
 import com.intive.patronage.toz.error.ErrorResponse;
 import com.intive.patronage.toz.error.ValidationErrorResponse;
+import com.intive.patronage.toz.schedule.model.view.ReservationRequestView;
+import com.intive.patronage.toz.schedule.model.view.ReservationResponseView;
+import com.intive.patronage.toz.schedule.model.view.ScheduleView;
 import io.swagger.annotations.ApiOperation;
 import io.swagger.annotations.ApiParam;
 import io.swagger.annotations.ApiResponse;
@@ -19,6 +22,8 @@ import org.springframework.web.util.UriComponentsBuilder;
 import javax.validation.Valid;
 import java.net.URI;
 import java.time.LocalDate;
+import java.time.LocalDateTime;
+import java.time.LocalTime;
 import java.util.Collections;
 import java.util.UUID;
 
@@ -53,8 +58,8 @@ public class ScheduleController {
             @ApiResponse(code = 404, message = "Not found", response = ErrorResponse.class)
     })
     @GetMapping(value = "/{id}")
-    public ReservationView getReservation(@PathVariable UUID id) {
-        return new ReservationView();
+    public ReservationResponseView getReservation(@PathVariable UUID id) {
+        return new ReservationResponseView();
     }
 
     @ApiOperation("Make reservation")
@@ -64,10 +69,15 @@ public class ScheduleController {
     })
     @PostMapping(consumes = MediaType.APPLICATION_JSON_VALUE)
     @ResponseStatus(HttpStatus.CREATED)
-    public ResponseEntity<ReservationView> makeReservation(@Valid @RequestBody ReservationView reservation) {
+    public ResponseEntity<ReservationResponseView> makeReservation(
+            @Valid @RequestBody ReservationRequestView reservation) {
+
         // TODO remove once service is done
-        ReservationView createdReservation = new ReservationView();
+        ReservationResponseView createdReservation = new ReservationResponseView();
         createdReservation.setId(UUID.randomUUID());
+        createdReservation.setCreated(LocalDateTime.now());
+        createdReservation.setDate(LocalDate.now());
+        createdReservation.setStartTime(LocalTime.now());
 
         final URI baseLocation = ServletUriComponentsBuilder.fromCurrentRequest()
                 .build()
@@ -88,9 +98,9 @@ public class ScheduleController {
     })
     @PutMapping(value = "/{id}", consumes = MediaType.APPLICATION_JSON_VALUE)
     @ResponseStatus(HttpStatus.CREATED)
-    public ReservationView updateReservation(@PathVariable UUID id,
-                                             @Valid @RequestBody ReservationView reservation) {
-        return new ReservationView();
+    public ReservationResponseView updateReservation(@PathVariable UUID id,
+                                                     @Valid @RequestBody ReservationRequestView reservation) {
+        return new ReservationResponseView();
     }
 
     @ApiOperation("Delete reservation")
@@ -100,7 +110,7 @@ public class ScheduleController {
     })
     @DeleteMapping(value = "/{id}")
     @ResponseStatus(HttpStatus.OK)
-    public ReservationView removeReservation(@PathVariable UUID id) {
-        return new ReservationView();
+    public ReservationResponseView removeReservation(@PathVariable UUID id) {
+        return new ReservationResponseView();
     }
 }

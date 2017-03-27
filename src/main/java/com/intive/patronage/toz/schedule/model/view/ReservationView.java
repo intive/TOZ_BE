@@ -1,42 +1,39 @@
-package com.intive.patronage.toz.schedule;
+package com.intive.patronage.toz.schedule.model.view;
 
+import com.fasterxml.jackson.annotation.JsonFormat;
 import com.fasterxml.jackson.annotation.JsonInclude;
-import com.fasterxml.jackson.annotation.JsonProperty;
-import com.intive.patronage.toz.model.db.IdentifiableView;
-import io.swagger.annotations.ApiModel;
 import io.swagger.annotations.ApiModelProperty;
 import lombok.Getter;
-import lombok.NoArgsConstructor;
 import lombok.Setter;
 import org.springframework.format.annotation.DateTimeFormat;
 
 import javax.validation.Valid;
 import javax.validation.constraints.NotNull;
 import java.time.LocalDate;
-import java.time.LocalDateTime;
 import java.time.LocalTime;
 import java.util.UUID;
 
-@ApiModel("Reservation")
 @Getter
 @Setter
-@NoArgsConstructor
 @JsonInclude(JsonInclude.Include.NON_EMPTY)
-class ReservationView extends IdentifiableView {
+abstract class ReservationView {
 
     @ApiModelProperty(value = "Date in UTC", required = true)
     @NotNull
     @DateTimeFormat(iso = DateTimeFormat.ISO.DATE)
+    @JsonFormat(pattern = "yyyy-MM-dd", timezone = "UTC")
     private LocalDate date;
 
     @ApiModelProperty(value = "Start time in UTC", required = true, example = "13:59")
     @DateTimeFormat(iso = DateTimeFormat.ISO.TIME)
     @NotNull
+    @JsonFormat(pattern = "HH:mm", timezone = "UTC")
     private LocalTime startTime;
 
     @ApiModelProperty(value = "End time in UTC", required = true, example = "17:59")
     @DateTimeFormat(iso = DateTimeFormat.ISO.TIME)
     @NotNull
+    @JsonFormat(pattern = "HH:mm", timezone = "UTC")
     private LocalTime endTime;
 
     @ApiModelProperty(value = "Owner ID", example = "c5296892-347f-4b2e-b1c6-6faff971f767", required = true)
@@ -44,16 +41,9 @@ class ReservationView extends IdentifiableView {
     @NotNull
     private UUID ownerId;
 
-    @JsonProperty(access = JsonProperty.Access.READ_ONLY)
-    @ApiModelProperty(readOnly = true)
-    private LocalDateTime created;
-
-    @JsonProperty(access = JsonProperty.Access.READ_ONLY)
-    @ApiModelProperty(readOnly = true)
-    private LocalDateTime lastModified;
-
     @ApiModelProperty(value = "Modification message")
     private String modificationMessage;
+
     @ApiModelProperty(value = "Modification author ID", example = "c5296892-347f-4b2e-b1c6-6faff971f767")
     private UUID modificationAuthorId;
 }

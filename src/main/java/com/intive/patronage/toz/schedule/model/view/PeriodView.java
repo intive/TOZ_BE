@@ -1,4 +1,4 @@
-package com.intive.patronage.toz.schedule;
+package com.intive.patronage.toz.schedule.model.view;
 
 import com.fasterxml.jackson.annotation.JsonInclude;
 import io.swagger.annotations.ApiModel;
@@ -11,7 +11,7 @@ import java.time.LocalTime;
 @ApiModel("Period")
 @Getter
 @JsonInclude(JsonInclude.Include.NON_EMPTY)
-class Period {
+public class PeriodView {
 
     @ApiModelProperty(value = "Start time in UTC", example = "08:00")
     @DateTimeFormat(iso = DateTimeFormat.ISO.TIME)
@@ -21,7 +21,7 @@ class Period {
     @DateTimeFormat(iso = DateTimeFormat.ISO.TIME)
     private final LocalTime periodEnd;
 
-    public Period(LocalTime periodStart, LocalTime periodEnd) {
+    public PeriodView(LocalTime periodStart, LocalTime periodEnd) {
         this.periodStart = periodStart;
         this.periodEnd = periodEnd;
     }
