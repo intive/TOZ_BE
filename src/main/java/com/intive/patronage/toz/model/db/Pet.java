@@ -93,6 +93,10 @@ public class Pet extends Identifiable {
         this.imageUrl = imageUrl;
     }
 
+    public String getImageUrl() {
+        return imageUrl;
+    }
+
     public enum Type {
         DOG, CAT
     }

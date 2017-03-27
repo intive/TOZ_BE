@@ -115,11 +115,12 @@ class PetsController {
     public ResponseEntity<UrlView> uploadFile(@PathVariable UUID id, @RequestParam("file") MultipartFile file) {
         validateImageArgument(file);
         final UploadedFile uploadedFile = storageService.store(file);
-        petsService.updatePetImageUrl(id, uploadedFile.getPath());
+        UrlView urlView = new UrlView();
+        urlView.setUrl(String.format("%s/%s",this.storageProperties.getStoragePathRoot(), uploadedFile.getPath()));
+        petsService.updatePetImageUrl(id, urlView.getUrl());
         final URI location = ServletUriComponentsBuilder.fromCurrentRequest()
                 .build().toUri();
-        UrlView urlView = new UrlView();
-        urlView.setUrl(String.format(this.storageProperties.getStoragePathRoot(), uploadedFile.getPath()));
+
         return ResponseEntity.created(location)
                 .body(urlView);
     }
