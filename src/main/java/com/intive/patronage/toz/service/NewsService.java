@@ -72,7 +72,8 @@ public class NewsService {
     private List<News> createShortenedNewsContents(Boolean shortened, List<News> newsList) {
         if (shortened) {
             for (News news : newsList) {
-                news.setContents(new StringFormatter().trimToLengthPreserveWord(news.getContents(), NEWS_DESCRIPTION_LENGTH));
+                news.setContents(new StringFormatter().
+                        trimToLengthPreserveWord(news.getContents(), NEWS_DESCRIPTION_LENGTH));
             }
         }
         return newsList;
