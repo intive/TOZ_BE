@@ -38,3 +38,9 @@ It should be self explanatory. You can:
 # Temporary server
 
 [Heroku temporary hosting](https://vast-plains-10769.herokuapp.com/)
+
+# Create user
+curl:
+```
+curl -i -X POST -H "Content-Type:application/json" -d '{  "username" : "TOZ",  "password" : "admin", "forename" : "admin", "surname" : "admin","role" : "VOLUNTEER" }' http://localhost:8080/user
+```
