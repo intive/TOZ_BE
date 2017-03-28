@@ -2,6 +2,7 @@ package com.intive.patronage.toz.schedule;
 
 import org.junit.Before;
 import org.junit.Test;
+import org.mockito.Mock;
 import org.springframework.http.MediaType;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.setup.MockMvcBuilders;
@@ -19,10 +20,12 @@ public class ScheduleControllerTest {
     private static final MediaType CONTENT_TYPE = MediaType.APPLICATION_JSON_UTF8;
 
     private MockMvc mvc;
+    @Mock
+    private ReservationService reservationService;
 
     @Before
     public void setUp() throws Exception {
-        mvc = MockMvcBuilders.standaloneSetup(new ScheduleController()).build();
+        mvc = MockMvcBuilders.standaloneSetup(new ScheduleController(reservationService)).build();
     }
 
     @Test
