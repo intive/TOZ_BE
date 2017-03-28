@@ -6,7 +6,6 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.time.LocalDate;
-import java.time.ZoneOffset;
 import java.util.Date;
 import java.util.List;
 
@@ -15,8 +14,6 @@ import static com.intive.patronage.toz.schedule.DateUtil.convertToDate;
 @Service
 public class ReservationService {
 
-    //TODO: move this to configuration
-    private ZoneOffset timeZoneOffset = ZoneOffset.UTC;
     private final ReservationRepository reservationRepository;
 
     @Autowired
