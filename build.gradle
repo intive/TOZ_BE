@@ -90,6 +90,7 @@ dependencies {
 	compile('org.springframework.boot:spring-boot-starter-mail')
 	compile('org.liquibase:liquibase-core')
 	compile('org.projectlombok:lombok')
+	compile('com.fasterxml.jackson.datatype:jackson-datatype-jsr310')
 	compile group: 'org.apache.commons', name: 'commons-lang3', version: '3.5'
 
 	compile group: 'io.springfox', name: 'springfox-swagger2', version: '2.6.1'

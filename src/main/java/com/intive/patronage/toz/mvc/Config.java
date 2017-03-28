@@ -19,7 +19,7 @@ import springfox.documentation.spring.web.plugins.Docket;
 import springfox.documentation.swagger2.annotations.EnableSwagger2;
 
 import javax.servlet.ServletContext;
-import java.time.LocalDate;
+import java.time.LocalTime;
 
 @EnableWebMvc
 @Configuration
@@ -57,7 +57,7 @@ class Config extends WebMvcConfigurerAdapter {
                 .paths(PathSelectors.any())
                 .build()
                 .apiInfo(apiInfo())
-                .directModelSubstitute(LocalDate.class, String.class)
+                .directModelSubstitute(LocalTime.class, String.class)
                 .genericModelSubstitutes(ResponseEntity.class);
     }
 
