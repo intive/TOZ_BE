@@ -1,4 +1,4 @@
-package com.intive.patronage.toz.schedule;
+package com.intive.patronage.toz.schedule.model.view;
 
 import com.fasterxml.jackson.annotation.JsonInclude;
 import io.swagger.annotations.ApiModel;

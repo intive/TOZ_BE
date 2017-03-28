@@ -1,4 +1,4 @@
-package com.intive.patronage.toz.schedule;
+package com.intive.patronage.toz.schedule.model.db;
 
 import com.intive.patronage.toz.model.db.Identifiable;
 import org.hibernate.annotations.CreationTimestamp;

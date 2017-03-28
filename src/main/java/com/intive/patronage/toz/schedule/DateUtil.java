@@ -12,7 +12,7 @@ public class DateUtil {
     //TODO: move this to configuration
     private static ZoneOffset timeZoneOffset = ZoneOffset.UTC;
 
-    static Date convertToDate(LocalDate localDate, LocalTime localTime) {
+    public static Date convertToDate(LocalDate localDate, LocalTime localTime) {
         LocalDateTime localDateTime = LocalDateTime.of(localDate, localTime);
         return Date.from(localDateTime.toInstant(timeZoneOffset));
     }

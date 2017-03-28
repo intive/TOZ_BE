@@ -1,4 +1,4 @@
-package com.intive.patronage.toz.schedule;
+package com.intive.patronage.toz.schedule.model.view;
 
 import com.fasterxml.jackson.annotation.JsonFormat;
 import com.fasterxml.jackson.annotation.JsonInclude;
@@ -16,7 +16,7 @@ import java.util.UUID;
 
 @ApiModel(value = "Reservation")
 @JsonInclude(JsonInclude.Include.NON_EMPTY)
-class ReservationView extends IdentifiableView {
+public class ReservationView extends IdentifiableView {
 
     private final String LOCAL_DATE_PATTERN = "yyyy-MM-dd";
     private final String LOCAL_TIME_PATTERN = "HH:mm";

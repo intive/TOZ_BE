@@ -1,5 +1,6 @@
 package com.intive.patronage.toz.schedule;
 
+import com.intive.patronage.toz.schedule.service.ReservationService;
 import org.junit.Before;
 import org.junit.Test;
 import org.mockito.Mock;

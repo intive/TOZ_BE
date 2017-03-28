@@ -1,18 +1,19 @@
-package com.intive.patronage.toz.schedule;
+package com.intive.patronage.toz.schedule.service;
 
+import com.intive.patronage.toz.schedule.model.db.Reservation;
+import com.intive.patronage.toz.schedule.repository.ReservationRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.time.LocalDate;
 import java.time.ZoneOffset;
-import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 
 import static com.intive.patronage.toz.schedule.DateUtil.convertToDate;
 
 @Service
-class ReservationService {
+public class ReservationService {
 
     //TODO: move this to configuration
     private ZoneOffset timeZoneOffset = ZoneOffset.UTC;
