@@ -9,11 +9,8 @@ import java.util.Date;
 
 public class DateUtil {
 
-    //TODO: move this to configuration
-    private static ZoneOffset timeZoneOffset = ZoneOffset.UTC;
-
-    public static Date convertToDate(LocalDate localDate, LocalTime localTime) {
+    public static Date convertToDate(LocalDate localDate, LocalTime localTime, ZoneOffset zoneOffset) {
         LocalDateTime localDateTime = LocalDateTime.of(localDate, localTime);
-        return Date.from(localDateTime.toInstant(timeZoneOffset));
+        return Date.from(localDateTime.toInstant(zoneOffset));
     }
 }

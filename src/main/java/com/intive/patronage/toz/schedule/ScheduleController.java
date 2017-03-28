@@ -14,6 +14,8 @@ import io.swagger.annotations.ApiParam;
 import io.swagger.annotations.ApiResponse;
 import io.swagger.annotations.ApiResponses;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
+import org.springframework.context.annotation.PropertySource;
 import org.springframework.format.annotation.DateTimeFormat;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
@@ -32,17 +34,19 @@ import java.util.UUID;
 
 import static com.intive.patronage.toz.schedule.DateUtil.convertToDate;
 
+@PropertySource("classpath:application.properties")
 @RestController
 @RequestMapping(value = "/schedule", produces = MediaType.APPLICATION_JSON_VALUE)
 public class ScheduleController {
 
-    //TODO: move this to configuration
-    private static ZoneOffset timeZoneOffset = ZoneOffset.UTC;
     private final ReservationService reservationService;
+    private ZoneOffset zoneOffset;
 
     @Autowired
-    ScheduleController(ReservationService reservationService) {
+    ScheduleController(ReservationService reservationService,
+                       @Value("${timezoneOffset}") String offsetString) {
         this.reservationService = reservationService;
+        this.zoneOffset = ZoneOffset.of(offsetString);
     }
 
     @ApiOperation("Get schedule")
@@ -124,38 +128,40 @@ public class ScheduleController {
         return new ReservationResponseView();
     }
 
-    private static Reservation convertToReservation(ReservationRequestView reservationRequestView) {
+    private Reservation convertToReservation(ReservationRequestView reservationRequestView) {
         Reservation reservation = new Reservation();
         reservation.setStartDate(
                 convertToDate(
                         reservationRequestView.getDate(),
-                        reservationRequestView.getStartTime()));
+                        reservationRequestView.getStartTime(),
+                        zoneOffset));
         reservation.setEndDate(
                 convertToDate(
                         reservationRequestView.getDate(),
-                        reservationRequestView.getEndTime()));
+                        reservationRequestView.getEndTime(),
+                        zoneOffset));
         reservation.setOwnerUuid(reservationRequestView.getOwnerId());
         reservation.setModificationMessage(reservationRequestView.getModificationMessage());
         reservation.setModificationAuthorUuid(reservationRequestView.getModificationAuthorId());
         return reservation;
     }
 
-    private static ReservationResponseView convertToReservationResponseView(Reservation reservation) {
+    private ReservationResponseView convertToReservationResponseView(Reservation reservation) {
         ReservationResponseView reservationResponseView = new ReservationResponseView();
         reservationResponseView.setDate(reservation
                 .getStartDate()
                 .toInstant()
-                .atOffset(timeZoneOffset)
+                .atOffset(zoneOffset)
                 .toLocalDate());
         reservationResponseView.setStartTime(reservation
                 .getStartDate()
                 .toInstant()
-                .atOffset(timeZoneOffset)
+                .atOffset(zoneOffset)
                 .toLocalTime());
         reservationResponseView.setEndTime(reservation
                 .getEndDate()
                 .toInstant()
-                .atOffset(timeZoneOffset)
+                .atOffset(zoneOffset)
                 .toLocalTime());
         reservationResponseView.setOwnerId(reservation
                 .getOwnerUuid());
