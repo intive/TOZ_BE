@@ -9,6 +9,7 @@ import org.springframework.context.annotation.PropertySource;
 import org.springframework.stereotype.Service;
 
 import java.time.LocalDate;
+import java.time.LocalTime;
 import java.time.ZoneOffset;
 import java.util.Date;
 import java.util.List;
@@ -37,8 +38,10 @@ public class ReservationService {
                 from.atStartOfDay().toLocalTime(),
                 zoneOffset);
         Date dateTo = convertToDate(
-                to.plusDays(1),
-                to.atStartOfDay().toLocalTime(),
+                to,
+                LocalDate.now()
+                        .atTime(LocalTime.MAX)
+                        .toLocalTime(),
                 zoneOffset);
         return reservationRepository
                 .findByStartDateBetween(dateFrom, dateTo);
@@ -71,7 +74,7 @@ public class ReservationService {
         return reservationRepository.save(reservation);
     }
 
-    public void removeReservation(UUID id){
+    public void removeReservation(UUID id) {
         if (!reservationRepository.exists(id)) {
             throw new NotFoundException(RESERVATION);
         }
