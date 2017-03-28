@@ -19,16 +19,25 @@ import org.springframework.web.util.UriComponentsBuilder;
 import javax.validation.Valid;
 import java.net.URI;
 import java.time.LocalDate;
+import java.time.ZoneOffset;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.UUID;
+
+import static com.intive.patronage.toz.schedule.DateUtil.convertToDate;
 
 @RestController
 @RequestMapping(value = "/schedule", produces = MediaType.APPLICATION_JSON_VALUE)
 public class ScheduleController {
 
+
+    //TODO: move this to configuration
+    private static ZoneOffset timeZoneOffset = ZoneOffset.UTC;
+
     private final ReservationService reservationService;
 
     @Autowired
-    public ScheduleController(ReservationService reservationService) {
+    ScheduleController(ReservationService reservationService) {
         this.reservationService = reservationService;
     }
 
@@ -45,8 +54,13 @@ public class ScheduleController {
                                     @DateTimeFormat(iso = DateTimeFormat.ISO.DATE)
                                     @RequestParam("to") LocalDate to) {
 
-//        return reservationService.findScheduleReservations(from, to);
-        return new ScheduleView(null, null);
+        List<Reservation> reservations = reservationService.findScheduleReservations(from, to);
+        List<ReservationView> reservationViews = new ArrayList<ReservationView>();
+        for (Reservation reservation : reservations) {
+            reservationViews.add(convertToReservationView(reservation));
+        }
+        List<DayConfig> dayConfigs = new ArrayList<>();
+        return new ScheduleView(reservationViews, dayConfigs);
     }
 
     @ApiOperation("Get single reservation by id")
@@ -56,7 +70,7 @@ public class ScheduleController {
     })
     @GetMapping(value = "/{id}")
     public ReservationView getReservation(@PathVariable UUID id) {
-        return new ReservationView();
+        return null;
     }
 
     @ApiOperation("Make reservation")
@@ -66,10 +80,9 @@ public class ScheduleController {
     })
     @PostMapping(consumes = MediaType.APPLICATION_JSON_VALUE)
     @ResponseStatus(HttpStatus.CREATED)
-    public ResponseEntity<ReservationView> makeReservation(@Valid @RequestBody ReservationView reservation) {
-        // TODO remove once service is done
-        ReservationView createdReservation = reservationService.makeReservation(reservation);
-//        createdReservation.setId(UUID.randomUUID());
+    public ResponseEntity<ReservationView> makeReservation(@Valid @RequestBody ReservationView reservationView) {
+        ReservationView createdReservation = convertToReservationView(
+                reservationService.makeReservation(convertToReservation(reservationView)));
         final URI baseLocation = ServletUriComponentsBuilder.fromCurrentRequest()
                 .build()
                 .toUri();
@@ -90,7 +103,7 @@ public class ScheduleController {
     @ResponseStatus(HttpStatus.CREATED)
     public ReservationView updateReservation(@PathVariable UUID id,
                                              @Valid @RequestBody ReservationView reservation) {
-        return new ReservationView();
+        return null;
     }
 
     @ApiOperation("Delete reservation")
@@ -101,6 +114,55 @@ public class ScheduleController {
     @DeleteMapping(value = "/{id}")
     @ResponseStatus(HttpStatus.OK)
     public ReservationView removeReservation(@PathVariable UUID id) {
-        return new ReservationView();
+        return null;
+    }
+
+    private static Reservation convertToReservation(ReservationView reservationView) {
+        Reservation reservation = new Reservation();
+        reservation.setStartDate(
+                convertToDate(
+                        reservationView.getDate(),
+                        reservationView.getStartTime()));
+        reservation.setEndDate(
+                convertToDate(
+                        reservationView.getDate(),
+                        reservationView.getEndTime()));
+        reservation.setOwnerUuid(reservationView.getOwnerId());
+        reservation.setModificationMessage(reservationView.getModificationMessage());
+        reservation.setModificationAuthorUuid(reservationView.getModificationAuthorId());
+        return reservation;
+    }
+
+    private static ReservationView convertToReservationView(Reservation reservation) {
+        ReservationView reservationView = new ReservationView();
+        reservationView.setDate(reservation
+                .getStartDate()
+                .toInstant()
+                .atOffset(timeZoneOffset)
+                .toLocalDate());
+        reservationView.setStartTime(reservation
+                .getStartDate()
+                .toInstant()
+                .atOffset(timeZoneOffset)
+                .toLocalTime());
+        reservationView.setEndTime(reservation
+                .getEndDate()
+                .toInstant()
+                .atOffset(timeZoneOffset)
+                .toLocalTime());
+        reservationView.setOwnerId(reservation
+                .getOwnerUuid());
+        reservationView.setCreated(reservation
+                .getCreationDate()
+                .getTime());
+        reservationView.setLastModified(reservation
+                .getModificationDate()
+                .getTime());
+        reservationView.setModificationMessage(reservation
+                .getModificationMessage());
+        reservationView.setModificationAuthorId(reservation
+                .getModificationAuthorUuid());
+        reservationView.setId(reservation.getId());
+        return reservationView;
     }
 }
