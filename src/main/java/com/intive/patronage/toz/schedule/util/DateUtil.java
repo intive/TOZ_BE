@@ -1,4 +1,4 @@
-package com.intive.patronage.toz.schedule;
+package com.intive.patronage.toz.schedule.util;
 
 
 import java.time.LocalDate;

@@ -15,7 +15,7 @@ import java.util.Date;
 import java.util.List;
 import java.util.UUID;
 
-import static com.intive.patronage.toz.schedule.DateUtil.convertToDate;
+import static com.intive.patronage.toz.schedule.util.DateUtil.convertToDate;
 
 @Service
 @PropertySource("classpath:application.properties")

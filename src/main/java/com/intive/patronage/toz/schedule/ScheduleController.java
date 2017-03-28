@@ -32,7 +32,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.UUID;
 
-import static com.intive.patronage.toz.schedule.DateUtil.convertToDate;
+import static com.intive.patronage.toz.schedule.util.DateUtil.convertToDate;
 
 @PropertySource("classpath:application.properties")
 @RestController
