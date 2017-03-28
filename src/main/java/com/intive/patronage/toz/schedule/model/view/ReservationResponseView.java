@@ -24,12 +24,10 @@ public class ReservationResponseView extends ReservationView {
 
     public ReservationResponseView(){}
 
-    @Override
     public UUID getId() {
         return id;
     }
 
-    @Override
     public void setId(UUID id) {
         this.id = id;
     }
