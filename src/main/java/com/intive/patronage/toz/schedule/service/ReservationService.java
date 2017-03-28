@@ -3,6 +3,7 @@ package com.intive.patronage.toz.schedule.service;
 import com.intive.patronage.toz.exception.NotFoundException;
 import com.intive.patronage.toz.schedule.model.db.Reservation;
 import com.intive.patronage.toz.schedule.repository.ReservationRepository;
+import com.intive.patronage.toz.schedule.util.ScheduleParser;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.PropertySource;
@@ -23,26 +24,28 @@ public class ReservationService {
 
     private final String RESERVATION = "Reservation";
     private final ReservationRepository reservationRepository;
-    private ZoneOffset zoneOffset;
+    private ScheduleParser scheduleParser;
+    @Value("${timezoneOffset}")
+    private String zoneOffset;
 
     @Autowired
     ReservationService(ReservationRepository reservationRepository,
-                       @Value("${timezoneOffset}") String offsetString) {
+                       ScheduleParser scheduleParser) {
         this.reservationRepository = reservationRepository;
-        this.zoneOffset = ZoneOffset.of(offsetString);
+        this.scheduleParser = scheduleParser;
     }
 
     public List<Reservation> findScheduleReservations(LocalDate from, LocalDate to) {
         Date dateFrom = convertToDate(
                 from,
                 from.atStartOfDay().toLocalTime(),
-                zoneOffset);
+                ZoneOffset.of(zoneOffset));
         Date dateTo = convertToDate(
                 to,
                 LocalDate.now()
                         .atTime(LocalTime.MAX)
                         .toLocalTime(),
-                zoneOffset);
+                ZoneOffset.of(zoneOffset));
         return reservationRepository
                 .findByStartDateBetween(dateFrom, dateTo);
 

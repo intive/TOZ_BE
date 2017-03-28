@@ -40,13 +40,12 @@ import static com.intive.patronage.toz.schedule.util.DateUtil.convertToDate;
 public class ScheduleController {
 
     private final ReservationService reservationService;
-    private ZoneOffset zoneOffset;
+    @Value("${timezoneOffset}")
+    private String zoneOffset;
 
     @Autowired
-    ScheduleController(ReservationService reservationService,
-                       @Value("${timezoneOffset}") String offsetString) {
+    ScheduleController(ReservationService reservationService) {
         this.reservationService = reservationService;
-        this.zoneOffset = ZoneOffset.of(offsetString);
     }
 
     @ApiOperation("Get schedule")
@@ -129,12 +128,12 @@ public class ScheduleController {
                 convertToDate(
                         reservationRequestView.getDate(),
                         reservationRequestView.getStartTime(),
-                        zoneOffset));
+                        ZoneOffset.of(zoneOffset)));
         reservation.setEndDate(
                 convertToDate(
                         reservationRequestView.getDate(),
                         reservationRequestView.getEndTime(),
-                        zoneOffset));
+                        ZoneOffset.of(zoneOffset)));
         reservation.setOwnerUuid(reservationRequestView.getOwnerId());
         reservation.setModificationMessage(reservationRequestView.getModificationMessage());
         reservation.setModificationAuthorUuid(reservationRequestView.getModificationAuthorId());
@@ -146,17 +145,17 @@ public class ScheduleController {
         reservationResponseView.setDate(reservation
                 .getStartDate()
                 .toInstant()
-                .atOffset(zoneOffset)
+                .atOffset(ZoneOffset.of(zoneOffset))
                 .toLocalDate());
         reservationResponseView.setStartTime(reservation
                 .getStartDate()
                 .toInstant()
-                .atOffset(zoneOffset)
+                .atOffset(ZoneOffset.of(zoneOffset))
                 .toLocalTime());
         reservationResponseView.setEndTime(reservation
                 .getEndDate()
                 .toInstant()
-                .atOffset(zoneOffset)
+                .atOffset(ZoneOffset.of(zoneOffset))
                 .toLocalTime());
         reservationResponseView.setOwnerId(reservation
                 .getOwnerUuid());
