@@ -1,0 +1,23 @@
+---
+# get fact from localhost role package setup var appDomain
+- set_fact: appDomain={{ hostvars["localhost"]['appDomain'] }}
+
+- debug: msg="DEBUG MSG{{":"}} env{{":"}} {{env}}, domain{{":"}} {{appDomain}}"
+
+- name: Deploy
+  debug: msg="Deploy to host {{ansible_host}} path {{remotePath}} file {{env}}.tar.gz"
+- name: Copy to remote server 
+  copy: src="{{item}}" dest="{{remotePath}}"
+  with_fileglob:
+    - "{{binaryPath}}/TMP/{{env}}.tar.gz"
+
+- debug: msg="Un ZIP {{env}}.tar.gz to {{remotePath}}"
+- name: UnZIP
+  command: chdir="{{remotePath}}" tar -xf "{{env}}.tar.gz"
+
+- debug: msg="Restart instance {{pathToApp}} command {{restartApp}}"
+- name:  Restart servers
+  shell: "{{restartApp}}"
+
+#- debug: msg="Wait for service"
+#- wait_for: host=127.0.0.1 port=8053 delay=60

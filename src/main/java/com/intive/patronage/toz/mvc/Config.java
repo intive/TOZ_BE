@@ -1,5 +1,8 @@
 package com.intive.patronage.toz.mvc;
 
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
+import org.springframework.context.ApplicationContext;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.data.jpa.repository.config.EnableJpaAuditing;
@@ -11,9 +14,11 @@ import springfox.documentation.builders.PathSelectors;
 import springfox.documentation.builders.RequestHandlerSelectors;
 import springfox.documentation.service.ApiInfo;
 import springfox.documentation.spi.DocumentationType;
+import springfox.documentation.spring.web.paths.RelativePathProvider;
 import springfox.documentation.spring.web.plugins.Docket;
 import springfox.documentation.swagger2.annotations.EnableSwagger2;
 
+import javax.servlet.ServletContext;
 import java.time.LocalTime;
 
 @EnableWebMvc
@@ -22,23 +27,31 @@ import java.time.LocalTime;
 @EnableJpaAuditing
 class Config extends WebMvcConfigurerAdapter {
 
-    private static ApiInfo apiInfo() {
-        return new ApiInfoBuilder()
-                .title("Patronage 2017 TOZ-BE")
-                .description("REST API made in Spring Boot")
-                .version("1")
-                .build();
+    private final ServletContext servletContext;
+
+    @Value("${server.external.host}")
+    private String serverHost;
+
+    @Value("${server.external.url.context}")
+    private String serverContext;
+
+    @Autowired
+    public Config(ServletContext servletContext) {
+        this.servletContext = servletContext;
     }
 
     @Override
     public void addResourceHandlers(ResourceHandlerRegistry registry) {
-        registry.addResourceHandler("swagger-ui.html").addResourceLocations("classpath:/META-INF/resources/");
-        registry.addResourceHandler("/webjars/**").addResourceLocations("classpath:/META-INF/resources/webjars/");
+        registry.addResourceHandler("swagger-ui.html")
+                .addResourceLocations("classpath:/META-INF/resources/");
+        registry.addResourceHandler("/webjars/**")
+                .addResourceLocations("classpath:/META-INF/resources/webjars/");
     }
 
     @Bean
-    Docket api() {
-        return new Docket(DocumentationType.SWAGGER_2)
+    public Docket api() {
+        final String contextPath = servletContext.getContextPath();
+        return handleReverseProxyMapping(new Docket(DocumentationType.SWAGGER_2))
                 .select()
                 .apis(RequestHandlerSelectors.withClassAnnotation(RestController.class))
                 .paths(PathSelectors.any())
@@ -55,6 +68,28 @@ class Config extends WebMvcConfigurerAdapter {
             public void addCorsMappings(CorsRegistry registry) {
                 registry.addMapping("/**")
                         .allowedMethods("GET", "POST", "PUT", "DELETE");
+            }
+        };
+    }
+
+    private static ApiInfo apiInfo() {
+        return new ApiInfoBuilder()
+                .title("Patronage 2017 TOZ-BE")
+                .description("REST API made in Spring Boot")
+                .build();
+    }
+
+    private Docket handleReverseProxyMapping(Docket docket) {
+        return docket
+                .host(serverHost)
+                .pathProvider(createPathProvider());
+    }
+
+    private RelativePathProvider createPathProvider() {
+        return new RelativePathProvider(this.servletContext) {
+            @Override
+            public String getApplicationBasePath() {
+                return serverContext;
             }
         };
     }

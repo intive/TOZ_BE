@@ -1,0 +1,9 @@
+---
+- include: setAppFile.yml
+
+
+- debug: msg="DEBUG MSG{{":"}} env{{":"}} {{env}}, domain{{":"}} {{appDomain}}"
+
+
+- include: prod.yml
+

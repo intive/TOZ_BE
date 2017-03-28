@@ -120,6 +120,42 @@ databaseChangeLog:
               - column:
                   name: image_url
                   type: varchar(255)
+        - createTable:
+            tableName: news
+            columns:
+              - column:
+                  name: id
+                  type: uuid
+                  constraints:
+                    - primaryKey: true
+                    - nullable: false
+              - column:
+                  name: title
+                  type: varchar(255)
+                  constraints:
+                    - nullable: false
+              - column:
+                  name: contents
+                  type: text
+                  constraints:
+                    - nullable: false
+              - column:
+                  name: type
+                  type: varchar(255)
+                  constraints:
+                    - nullable: false
+              - column:
+                  name: photo_url
+                  type: varchar(255)
+              - column:
+                  name: created
+                  type: datetime
+              - column:
+                  name: last_modified
+                  type: datetime
+              - column:
+                  name: published
+                  type: datetime
   - changeSet:
       id : 2
       author: ppiotr191

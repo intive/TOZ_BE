@@ -2,8 +2,6 @@ package com.intive.patronage.toz.schedule.model.view;
 
 import com.fasterxml.jackson.annotation.JsonFormat;
 import com.fasterxml.jackson.annotation.JsonInclude;
-import com.fasterxml.jackson.annotation.JsonProperty;
-import com.intive.patronage.toz.model.db.IdentifiableView;
 import io.swagger.annotations.ApiModel;
 import io.swagger.annotations.ApiModelProperty;
 import org.springframework.format.annotation.DateTimeFormat;
@@ -16,7 +14,7 @@ import java.util.UUID;
 
 @ApiModel(value = "Reservation")
 @JsonInclude(JsonInclude.Include.NON_EMPTY)
-public class ReservationView extends IdentifiableView {
+public abstract class ReservationView {
 
     private final String LOCAL_DATE_PATTERN = "yyyy-MM-dd";
     private final String LOCAL_TIME_PATTERN = "HH:mm";
@@ -43,14 +41,6 @@ public class ReservationView extends IdentifiableView {
     @Valid
     @NotNull
     private UUID ownerId;
-
-    @JsonProperty(access = JsonProperty.Access.READ_ONLY)
-    @ApiModelProperty(example = "1490134074968", position = 5)
-    private Long created;
-
-    @JsonProperty(access = JsonProperty.Access.READ_ONLY)
-    @ApiModelProperty(example = "1490134074968", position = 6)
-    private Long lastModified;
 
     @ApiModelProperty(value = "Modification message", position = 7)
     private String modificationMessage;
@@ -91,22 +81,6 @@ public class ReservationView extends IdentifiableView {
 
     public void setOwnerId(UUID ownerId) {
         this.ownerId = ownerId;
-    }
-
-    public Long getCreated() {
-        return created;
-    }
-
-    public void setCreated(Long created) {
-        this.created = created;
-    }
-
-    public Long getLastModified() {
-        return lastModified;
-    }
-
-    public void setLastModified(Long lastModified) {
-        this.lastModified = lastModified;
     }
 
     public String getModificationMessage() {

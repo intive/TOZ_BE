@@ -1,0 +1,28 @@
+---
+
+
+# create a directory
+- name: PROD DIR
+  file: path="{{binaryPath}}/TMP/" state=directory
+
+
+- name: Generate domain
+  debug: msg="Domain name {{appDomain}}, target dir {{binaryPath}}, ENV {{env}}"
+
+# prepare to tar all
+
+- name: Copy YML
+  shell: cp "{{item}}" "{{binaryPath}}/TMP/"
+  with_fileglob:
+    - "{{binaryPath}}/config.yml"
+
+
+- name: Copy binary file
+  shell: cp "{{binaryPath}}/{{binaryApp}}" "{{binaryPath}}/TMP/"
+- debug: msg="cp {{binaryPath}}/{{binaryApp}} {{binaryPath}}/TMP/"
+
+# prepare for deploy to prod
+- name: TAR
+  command: chdir="{{binaryPath}}/TMP" tar -vcf "{{env}}.tar.gz" config.yml "{{binaryApp}}"
+  register: out
+- debug: var=out.stdout

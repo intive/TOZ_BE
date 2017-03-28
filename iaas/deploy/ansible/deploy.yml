@@ -1,0 +1,10 @@
+---
+- include: config.yml
+
+- name: Deploy App
+  hosts: dev
+  remote_user: jboss
+  gather_facts: no
+
+  roles:
+    - { role: deploy }

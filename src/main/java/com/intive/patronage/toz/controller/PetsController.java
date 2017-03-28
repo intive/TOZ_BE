@@ -3,7 +3,7 @@ package com.intive.patronage.toz.controller;
 import com.intive.patronage.toz.error.ErrorResponse;
 import com.intive.patronage.toz.error.ValidationErrorResponse;
 import com.intive.patronage.toz.exception.InvalidImageFileException;
-import com.intive.patronage.toz.model.constant.PetConst;
+import com.intive.patronage.toz.model.constant.ApiUrl;
 import com.intive.patronage.toz.model.db.UploadedFile;
 import com.intive.patronage.toz.model.request.PetRequestBody;
 import com.intive.patronage.toz.model.view.PetView;
@@ -42,7 +42,7 @@ import java.util.UUID;
 
 @Api(description = "Operations for pet resources")
 @RestController
-@RequestMapping(value = PetConst.PATH, produces = MediaType.APPLICATION_JSON_VALUE)
+@RequestMapping(value = ApiUrl.PET_PATH, produces = MediaType.APPLICATION_JSON_VALUE)
 class PetsController {
 
     private final PetsService petsService;
@@ -115,11 +115,12 @@ class PetsController {
     public ResponseEntity<UrlView> uploadFile(@PathVariable UUID id, @RequestParam("file") MultipartFile file) {
         validateImageArgument(file);
         final UploadedFile uploadedFile = storageService.store(file);
-        petsService.updatePetImageUrl(id, uploadedFile.getPath());
+        UrlView urlView = new UrlView();
+        urlView.setUrl(String.format("%s/%s",this.storageProperties.getStoragePathRoot(), uploadedFile.getPath()));
+        petsService.updatePetImageUrl(id, urlView.getUrl());
         final URI location = ServletUriComponentsBuilder.fromCurrentRequest()
                 .build().toUri();
-        UrlView urlView = new UrlView();
-        urlView.setUrl(String.format(this.storageProperties.getStoragePathRoot(), uploadedFile.getPath()));
+
         return ResponseEntity.created(location)
                 .body(urlView);
     }

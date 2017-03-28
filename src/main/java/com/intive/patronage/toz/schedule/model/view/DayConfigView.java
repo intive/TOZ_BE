@@ -17,9 +17,10 @@ public class DayConfigView {
     private final DayOfWeek dayOfWeek;
 
     @ApiModelProperty(value = "List of periods in a day")
-    private final List<Period> periods;
 
-    public DayConfigView(DayOfWeek dayOfWeek, List<Period> periods) {
+    private final List<PeriodView> periods;
+
+    public DayConfigView(DayOfWeek dayOfWeek, List<PeriodView> periods) {
         this.dayOfWeek = dayOfWeek;
         this.periods = periods;
     }

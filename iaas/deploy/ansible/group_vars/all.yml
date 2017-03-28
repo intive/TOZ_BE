@@ -1,0 +1,32 @@
+---
+# default config for all roles
+# can be overridden by: ansible-playbook name.yml -e 'appDomain=tmp binaryApp=tmp.jar'
+
+# path to app dir
+
+# domain instance
+test1: app1
+
+
+# ENV PROD|CORE|DEV
+env: DEV
+
+# default domain
+appDomain: "{{test1}}"
+
+remotePath: /home/debian
+
+#pathToApp: "{{remotePath}}/{{appDomain}}"
+pathToApp: "{{remotePath}}/"
+
+# binary file
+# prod|core|dev
+binaryApp: toz-core-dev.jar
+
+
+# build TARGETDIR
+binaryPath: ../../build/libs
+# generated file
+
+# restart
+restartApp: "{{pathToApp}}/run.sh restart"

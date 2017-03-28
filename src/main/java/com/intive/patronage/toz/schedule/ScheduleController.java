@@ -8,6 +8,9 @@ import com.intive.patronage.toz.schedule.model.view.DayConfigView;
 import com.intive.patronage.toz.schedule.model.view.ReservationView;
 import com.intive.patronage.toz.schedule.model.view.ScheduleView;
 import com.intive.patronage.toz.schedule.service.ReservationService;
+import com.intive.patronage.toz.schedule.model.view.ReservationRequestView;
+import com.intive.patronage.toz.schedule.model.view.ReservationResponseView;
+import com.intive.patronage.toz.schedule.model.view.ScheduleView;
 import io.swagger.annotations.ApiOperation;
 import io.swagger.annotations.ApiParam;
 import io.swagger.annotations.ApiResponse;
@@ -31,14 +34,17 @@ import java.util.UUID;
 
 import static com.intive.patronage.toz.schedule.DateUtil.convertToDate;
 
+import java.time.LocalDateTime;
+import java.time.LocalTime;
+import java.util.Collections;
+import java.util.UUID;
+
 @RestController
 @RequestMapping(value = "/schedule", produces = MediaType.APPLICATION_JSON_VALUE)
 public class ScheduleController {
 
-
     //TODO: move this to configuration
     private static ZoneOffset timeZoneOffset = ZoneOffset.UTC;
-
     private final ReservationService reservationService;
 
     @Autowired
@@ -60,12 +66,14 @@ public class ScheduleController {
                                     @RequestParam("to") LocalDate to) {
 
         List<Reservation> reservations = reservationService.findScheduleReservations(from, to);
-        List<ReservationView> reservationViews = new ArrayList<ReservationView>();
+        List<ReservationResponseView> reservationViews = new ArrayList<ReservationView>();
         for (Reservation reservation : reservations) {
             reservationViews.add(convertToReservationView(reservation));
         }
+        //TODO:change, when day config properties is implemented
         List<DayConfigView> dayConfigs = new ArrayList<>();
         return new ScheduleView(reservationViews, dayConfigs);
+
     }
 
     @ApiOperation("Get single reservation by id")
@@ -74,8 +82,8 @@ public class ScheduleController {
             @ApiResponse(code = 404, message = "Not found", response = ErrorResponse.class)
     })
     @GetMapping(value = "/{id}")
-    public ReservationView getReservation(@PathVariable UUID id) {
-        return null;
+    public ReservationResponseView getReservation(@PathVariable UUID id) {
+        return new ReservationResponseView();
     }
 
     @ApiOperation("Make reservation")
@@ -85,9 +93,10 @@ public class ScheduleController {
     })
     @PostMapping(consumes = MediaType.APPLICATION_JSON_VALUE)
     @ResponseStatus(HttpStatus.CREATED)
-    public ResponseEntity<ReservationView> makeReservation(@Valid @RequestBody ReservationView reservationView) {
-        ReservationView createdReservation = convertToReservationView(
+    public ResponseEntity<ReservationResponseView> makeReservation(@Valid @RequestBody ReservationRequestView reservationView) {
+        ReservationResponseView createdReservation = convertToReservationView(
                 reservationService.makeReservation(convertToReservation(reservationView)));
+
         final URI baseLocation = ServletUriComponentsBuilder.fromCurrentRequest()
                 .build()
                 .toUri();
@@ -106,9 +115,9 @@ public class ScheduleController {
     })
     @PutMapping(value = "/{id}", consumes = MediaType.APPLICATION_JSON_VALUE)
     @ResponseStatus(HttpStatus.CREATED)
-    public ReservationView updateReservation(@PathVariable UUID id,
-                                             @Valid @RequestBody ReservationView reservation) {
-        return null;
+    public ReservationResponseView updateReservation(@PathVariable UUID id,
+                                                     @Valid @RequestBody ReservationRequestView reservation) {
+        return new ReservationResponseView();
     }
 
     @ApiOperation("Delete reservation")
@@ -118,8 +127,8 @@ public class ScheduleController {
     })
     @DeleteMapping(value = "/{id}")
     @ResponseStatus(HttpStatus.OK)
-    public ReservationView removeReservation(@PathVariable UUID id) {
-        return null;
+    public ReservationResponseView removeReservation(@PathVariable UUID id) {
+        return new ReservationResponseView();
     }
 
     private static Reservation convertToReservation(ReservationView reservationView) {
