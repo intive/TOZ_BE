@@ -4,6 +4,10 @@ import com.fasterxml.jackson.annotation.JsonFormat;
 import com.fasterxml.jackson.annotation.JsonInclude;
 import io.swagger.annotations.ApiModel;
 import io.swagger.annotations.ApiModelProperty;
+import lombok.AccessLevel;
+import lombok.Getter;
+import lombok.NoArgsConstructor;
+import lombok.Setter;
 import org.springframework.format.annotation.DateTimeFormat;
 
 import javax.validation.Valid;
@@ -12,11 +16,16 @@ import java.time.LocalDate;
 import java.time.LocalTime;
 import java.util.UUID;
 
+@Getter
+@Setter
+@NoArgsConstructor
 @ApiModel(value = "Reservation")
 @JsonInclude(JsonInclude.Include.NON_EMPTY)
-public abstract class ReservationView {
+abstract class ReservationView {
 
+    @Getter(AccessLevel.NONE)
     private final String LOCAL_DATE_PATTERN = "yyyy-MM-dd";
+    @Getter(AccessLevel.NONE)
     private final String LOCAL_TIME_PATTERN = "HH:mm";
 
     @ApiModelProperty(value = "Date in UTC", example = "2017-10-20", required = true, position = 1)
@@ -47,55 +56,4 @@ public abstract class ReservationView {
 
     @ApiModelProperty(value = "Modification author ID", example = "c5296892-347f-4b2e-b1c6-6faff971f767", position = 8)
     private UUID modificationAuthorId;
-
-    public ReservationView() {
-    }
-
-    public LocalDate getDate() {
-        return date;
-    }
-
-    public void setDate(LocalDate date) {
-        this.date = date;
-    }
-
-    public LocalTime getStartTime() {
-        return startTime;
-    }
-
-    public void setStartTime(LocalTime startTime) {
-        this.startTime = startTime;
-    }
-
-    public LocalTime getEndTime() {
-        return endTime;
-    }
-
-    public void setEndTime(LocalTime endTime) {
-        this.endTime = endTime;
-    }
-
-    public UUID getOwnerId() {
-        return ownerId;
-    }
-
-    public void setOwnerId(UUID ownerId) {
-        this.ownerId = ownerId;
-    }
-
-    public String getModificationMessage() {
-        return modificationMessage;
-    }
-
-    public void setModificationMessage(String modificationMessage) {
-        this.modificationMessage = modificationMessage;
-    }
-
-    public UUID getModificationAuthorId() {
-        return modificationAuthorId;
-    }
-
-    public void setModificationAuthorId(UUID modificationAuthorId) {
-        this.modificationAuthorId = modificationAuthorId;
-    }
 }

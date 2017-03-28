@@ -4,9 +4,15 @@ import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import io.swagger.annotations.ApiModel;
 import io.swagger.annotations.ApiModelProperty;
+import lombok.Getter;
+import lombok.NoArgsConstructor;
+import lombok.Setter;
 
 import java.util.UUID;
 
+@Getter
+@Setter
+@NoArgsConstructor
 @ApiModel("Reservation Response")
 @JsonInclude(JsonInclude.Include.NON_EMPTY)
 public class ReservationResponseView extends ReservationView {
@@ -21,30 +27,4 @@ public class ReservationResponseView extends ReservationView {
     @JsonProperty(access = JsonProperty.Access.READ_ONLY)
     @ApiModelProperty(example = "1490134074968", position = 6)
     private Long lastModified;
-
-    public ReservationResponseView(){}
-
-    public UUID getId() {
-        return id;
-    }
-
-    public void setId(UUID id) {
-        this.id = id;
-    }
-
-    public Long getCreated() {
-        return created;
-    }
-
-    public void setCreated(Long created) {
-        this.created = created;
-    }
-
-    public Long getLastModified() {
-        return lastModified;
-    }
-
-    public void setLastModified(Long lastModified) {
-        this.lastModified = lastModified;
-    }
 }
