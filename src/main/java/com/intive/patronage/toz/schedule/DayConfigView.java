@@ -11,7 +11,7 @@ import java.util.List;
 @ApiModel("Day configuration")
 @Getter
 @JsonInclude(JsonInclude.Include.NON_EMPTY)
-class DayConfig {
+class DayConfigView {
 
     @ApiModelProperty(value = "Name of day")
     private final DayOfWeek dayOfWeek;
@@ -19,7 +19,7 @@ class DayConfig {
     @ApiModelProperty(value = "List of periods in a day")
     private final List<Period> periods;
 
-    public DayConfig(DayOfWeek dayOfWeek, List<Period> periods) {
+    public DayConfigView(DayOfWeek dayOfWeek, List<Period> periods) {
         this.dayOfWeek = dayOfWeek;
         this.periods = periods;
     }

@@ -11,9 +11,9 @@ import java.util.List;
 @JsonInclude(JsonInclude.Include.NON_EMPTY)
 class ScheduleView {
     private final List<ReservationView> reservations;
-    private final List<DayConfig> configs;
+    private final List<DayConfigView> configs;
 
-    ScheduleView(List<ReservationView> reservations, List<DayConfig> configs) {
+    ScheduleView(List<ReservationView> reservations, List<DayConfigView> configs) {
         this.reservations = reservations;
         this.configs = configs;
     }

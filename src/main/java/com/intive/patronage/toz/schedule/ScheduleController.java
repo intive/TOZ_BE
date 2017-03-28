@@ -59,7 +59,7 @@ public class ScheduleController {
         for (Reservation reservation : reservations) {
             reservationViews.add(convertToReservationView(reservation));
         }
-        List<DayConfig> dayConfigs = new ArrayList<>();
+        List<DayConfigView> dayConfigs = new ArrayList<>();
         return new ScheduleView(reservationViews, dayConfigs);
     }
 
