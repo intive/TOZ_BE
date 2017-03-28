@@ -16,14 +16,11 @@ class ReservationService {
 
     //TODO: move this to configuration
     private ZoneOffset timeZoneOffset = ZoneOffset.UTC;
-
     private final ReservationRepository reservationRepository;
-    private final UserService userService;
 
     @Autowired
-    ReservationService(ReservationRepository reservationRepository, UserService userService) {
+    ReservationService(ReservationRepository reservationRepository) {
         this.reservationRepository = reservationRepository;
-        this.userService = userService;
     }
 
     public List<Reservation> findScheduleReservations(LocalDate from, LocalDate to) {
