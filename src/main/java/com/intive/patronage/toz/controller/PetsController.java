@@ -3,7 +3,9 @@ package com.intive.patronage.toz.controller;
 import com.intive.patronage.toz.error.ErrorResponse;
 import com.intive.patronage.toz.error.ValidationErrorResponse;
 import com.intive.patronage.toz.exception.InvalidImageFileException;
+import com.intive.patronage.toz.model.ModelMapper;
 import com.intive.patronage.toz.model.constant.ApiUrl;
+import com.intive.patronage.toz.model.db.Pet;
 import com.intive.patronage.toz.model.db.UploadedFile;
 import com.intive.patronage.toz.model.request.PetRequestBody;
 import com.intive.patronage.toz.model.view.PetView;
@@ -11,23 +13,11 @@ import com.intive.patronage.toz.model.view.UrlView;
 import com.intive.patronage.toz.service.PetsService;
 import com.intive.patronage.toz.service.StorageProperties;
 import com.intive.patronage.toz.service.StorageService;
-import io.swagger.annotations.Api;
-import io.swagger.annotations.ApiOperation;
-import io.swagger.annotations.ApiParam;
-import io.swagger.annotations.ApiResponse;
-import io.swagger.annotations.ApiResponses;
+import io.swagger.annotations.*;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.DeleteMapping;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.PutMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestParam;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
 import org.springframework.web.util.UriComponentsBuilder;
@@ -58,8 +48,13 @@ class PetsController {
 
     @ApiOperation(value = "Get all pets", responseContainer = "List")
     @GetMapping
-    public List<PetView> getAllPets() {
-        return petsService.findAllPets();
+    public List<PetView> getAllPets(@RequestParam(value = "admin", required = false) boolean isAdmin) {
+        if (isAdmin) {
+            final List<Pet> pets = petsService.findAllPets();
+            return ModelMapper.convertToView(pets, PetView.class);
+        }
+        final List<Pet> pets = petsService.findPetsWithFilledFields();
+        return ModelMapper.convertToView(pets, PetView.class);
     }
 
     @ApiOperation(value = "Get single pet by id")
@@ -68,7 +63,11 @@ class PetsController {
     })
     @GetMapping(value = "/{id}")
     public PetView getPetById(@ApiParam(required = true) @PathVariable UUID id) {
-        return petsService.findById(id);
+        return convertToView(petsService.findById(id));
+    }
+
+    private static PetView convertToView(final Pet pet) {
+        return ModelMapper.convertToView(pet, PetView.class);
     }
 
     @ApiOperation(value = "Create new pet", response = PetView.class)
@@ -76,14 +75,19 @@ class PetsController {
             @ApiResponse(code = 400, message = "Bad request", response = ValidationErrorResponse.class)
     })
     @PostMapping(consumes = MediaType.APPLICATION_JSON_VALUE)
-    public ResponseEntity<PetView> createPet(@Valid @RequestBody PetRequestBody pet) {
-        PetView createdPet = petsService.createPet(pet);
+    public ResponseEntity<PetView> createPet(@Valid @RequestBody PetRequestBody petView) {
+        final Pet createdPet = petsService.createPet(convertFromView(petView));
+        final PetView createdPetView = convertToView(createdPet);
         final URI baseLocation = ServletUriComponentsBuilder.fromCurrentRequest()
                 .build().toUri();
-        final String petLocationString = String.format("%s%s", baseLocation, createdPet.getId());
+        final String petLocationString = String.format("%s%s", baseLocation, createdPetView.getId());
         final URI location = UriComponentsBuilder.fromUriString(petLocationString).build().toUri();
         return ResponseEntity.created(location)
-                .body(createdPet);
+                .body(createdPetView);
+    }
+
+    private static Pet convertFromView(final PetView petView) {
+        return ModelMapper.convertToModel(petView, Pet.class);
     }
 
     @ApiOperation("Delete pet")
@@ -102,8 +106,10 @@ class PetsController {
             @ApiResponse(code = 400, message = "Bad request", response = ValidationErrorResponse.class)
     })
     @PutMapping(value = "/{id}", consumes = MediaType.APPLICATION_JSON_VALUE)
-    public PetView updatePet(@PathVariable UUID id, @Valid @RequestBody PetRequestBody pet) {
-        return petsService.updatePet(id, pet);
+    public PetView updatePet(@PathVariable UUID id, @Valid @RequestBody PetRequestBody petView) {
+        final Pet pet = convertFromView(petView);
+        final Pet updatedPet = petsService.updatePet(id, pet);
+        return convertToView(updatedPet);
     }
 
     @ApiOperation("Upload image")
@@ -116,7 +122,7 @@ class PetsController {
         validateImageArgument(file);
         final UploadedFile uploadedFile = storageService.store(file);
         UrlView urlView = new UrlView();
-        urlView.setUrl(String.format("%s/%s",this.storageProperties.getStoragePathRoot(), uploadedFile.getPath()));
+        urlView.setUrl(String.format("%s/%s", this.storageProperties.getStoragePathRoot(), uploadedFile.getPath()));
         petsService.updatePetImageUrl(id, urlView.getUrl());
         final URI location = ServletUriComponentsBuilder.fromCurrentRequest()
                 .build().toUri();
@@ -129,8 +135,7 @@ class PetsController {
         try (InputStream input = multipartFile.getInputStream()) {
             try {
                 ImageIO.read(input).toString();
-            }
-            catch (Exception e){
+            } catch (Exception e) {
                 throw new InvalidImageFileException(String.format("%s: %s", "Images ", e.getMessage()));
             }
         } catch (IOException e) {
