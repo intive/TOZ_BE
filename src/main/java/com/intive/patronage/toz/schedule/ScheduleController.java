@@ -75,12 +75,11 @@ public class ScheduleController {
 
     @ApiOperation("Get single reservation by id")
     @ApiResponses(value = {
-            @ApiResponse(code = 400, message = "Bad request", response = ArgumentErrorResponse.class),
             @ApiResponse(code = 404, message = "Not found", response = ErrorResponse.class)
     })
     @GetMapping(value = "/{id}")
     public ReservationResponseView getReservation(@PathVariable UUID id) {
-        return new ReservationResponseView();
+        return convertToReservationResponseView(reservationService.findReservation(id));
     }
 
     @ApiOperation("Make reservation")
@@ -93,14 +92,7 @@ public class ScheduleController {
     public ResponseEntity<ReservationResponseView> makeReservation(@Valid @RequestBody ReservationRequestView reservationRequestView) {
         ReservationResponseView createdReservation = convertToReservationResponseView(
                 reservationService.makeReservation(convertToReservation(reservationRequestView)));
-
-        final URI baseLocation = ServletUriComponentsBuilder.fromCurrentRequest()
-                .build()
-                .toUri();
-        final String reservationLocation = String.format("%s/%s", baseLocation, createdReservation.getId());
-        final URI location = UriComponentsBuilder.fromUriString(reservationLocation)
-                .build()
-                .toUri();
+        URI location = createLocationPath(createdReservation.getId());
         return ResponseEntity.created(location)
                 .body(createdReservation);
     }
@@ -112,20 +104,23 @@ public class ScheduleController {
     })
     @PutMapping(value = "/{id}", consumes = MediaType.APPLICATION_JSON_VALUE)
     @ResponseStatus(HttpStatus.CREATED)
-    public ReservationResponseView updateReservation(@PathVariable UUID id,
-                                                     @Valid @RequestBody ReservationRequestView reservation) {
-        return new ReservationResponseView();
+    public ResponseEntity<ReservationResponseView> updateReservation(@PathVariable UUID id,
+                                                                     @Valid @RequestBody ReservationRequestView reservationView) {
+        ReservationResponseView createdReservationResponseView = convertToReservationResponseView(
+                reservationService.updateReservation(id, convertToReservation(reservationView)));
+        URI location = createLocationPath(id);
+        return ResponseEntity.created(location)
+                .body(createdReservationResponseView);
     }
 
     @ApiOperation("Delete reservation")
     @ApiResponses(value = {
-            @ApiResponse(code = 400, message = "Bad request", response = ArgumentErrorResponse.class),
             @ApiResponse(code = 404, message = "Not found", response = ErrorResponse.class)
     })
     @DeleteMapping(value = "/{id}")
-    @ResponseStatus(HttpStatus.OK)
-    public ReservationResponseView removeReservation(@PathVariable UUID id) {
-        return new ReservationResponseView();
+    public ResponseEntity<?> removeReservation(@PathVariable UUID id) {
+        reservationService.removeReservation(id);
+        return ResponseEntity.noContent().build();
     }
 
     private Reservation convertToReservation(ReservationRequestView reservationRequestView) {
@@ -177,5 +172,13 @@ public class ScheduleController {
                 .getModificationAuthorUuid());
         reservationResponseView.setId(reservation.getId());
         return reservationResponseView;
+    }
+
+    private URI createLocationPath(UUID id) {
+        final URI baseLocation = ServletUriComponentsBuilder.fromCurrentRequest()
+                .build().toUri();
+        final String location = String.format("%s/%s", baseLocation, id);
+        return UriComponentsBuilder.fromUriString(location)
+                .build().toUri();
     }
 }
