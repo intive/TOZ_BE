@@ -9,4 +9,5 @@ import java.util.List;
 public interface ReservationRepository extends IdentifiableRepository<Reservation> {
 
     List<Reservation> findByStartDateBetween(Date from, Date to);
+    List<Reservation> findByStartDate(Date startDate);
 }

@@ -1,6 +1,7 @@
 package com.intive.patronage.toz.schedule.service;
 
 import com.intive.patronage.toz.exception.NotFoundException;
+import com.intive.patronage.toz.schedule.excception.ReservationAlreadyExistsException;
 import com.intive.patronage.toz.schedule.model.db.Reservation;
 import com.intive.patronage.toz.schedule.repository.ReservationRepository;
 import com.intive.patronage.toz.schedule.util.ScheduleParser;
@@ -55,7 +56,7 @@ public class ReservationService {
     }
 
     public Reservation makeReservation(Reservation reservation) {
-        //TODO: validate reservation already exists
+        ifReservationExistsThrowException(reservation.getStartDate());
         scheduleParser.validateHours(reservation.getStartDate(), reservation.getEndDate());
         return reservationRepository.save(reservation);
     }
@@ -79,5 +80,19 @@ public class ReservationService {
             throw new NotFoundException(RESERVATION);
         }
         reservationRepository.delete(id);
+    }
+
+    private void ifReservationExistsThrowException(Date reservationDate) {
+        if (reservationRepository.findByStartDate(reservationDate).size() > 0) {
+            LocalTime time = reservationDate
+                    .toInstant()
+                    .atOffset(ZoneOffset.of(zoneOffset))
+                    .toLocalTime();
+            LocalDate day = reservationDate
+                    .toInstant()
+                    .atOffset(ZoneOffset.of(zoneOffset))
+                    .toLocalDate();
+            throw new ReservationAlreadyExistsException(time, day);
+        }
     }
 }

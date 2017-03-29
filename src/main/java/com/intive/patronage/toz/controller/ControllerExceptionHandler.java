@@ -8,6 +8,7 @@ import com.intive.patronage.toz.exception.InvalidImageFileException;
 import com.intive.patronage.toz.exception.NotFoundException;
 import com.intive.patronage.toz.exception.WrongEnumValueException;
 import com.intive.patronage.toz.schedule.excception.InvalidReservationHoursException;
+import com.intive.patronage.toz.schedule.excception.ReservationAlreadyExistsException;
 import com.intive.patronage.toz.schedule.util.ScheduleParser;
 import liquibase.util.StringUtils;
 import org.slf4j.Logger;
@@ -135,5 +136,15 @@ class ControllerExceptionHandler {
                 new String[]{e.getInvalidHours(), day, allowedHours},
                 LocaleContextHolder.getLocale());
         return new ErrorResponse(HttpStatus.UNPROCESSABLE_ENTITY, message);
+    }
+
+    @ExceptionHandler(ReservationAlreadyExistsException.class)
+    @ResponseStatus(HttpStatus.CONFLICT)
+    @ResponseBody
+    public ErrorResponse handleReservationAlreadyExistsException(ReservationAlreadyExistsException e) {
+        final String message = messageSource.getMessage("reservationAlreadyExists",
+                new String[]{e.getInvalidTime().toString(), e.getDay().toString()},
+                LocaleContextHolder.getLocale());
+        return new ErrorResponse(HttpStatus.CONFLICT, message);
     }
 }
