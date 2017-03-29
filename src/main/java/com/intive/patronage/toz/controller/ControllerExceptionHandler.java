@@ -7,6 +7,8 @@ import com.intive.patronage.toz.exception.AlreadyExistsException;
 import com.intive.patronage.toz.exception.InvalidImageFileException;
 import com.intive.patronage.toz.exception.NotFoundException;
 import com.intive.patronage.toz.exception.WrongEnumValueException;
+import com.intive.patronage.toz.schedule.excception.InvalidReservationHoursException;
+import com.intive.patronage.toz.schedule.util.ScheduleParser;
 import liquibase.util.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -34,10 +36,12 @@ class ControllerExceptionHandler {
 
     private final static Logger logger = LoggerFactory.getLogger(ControllerExceptionHandler.class);
     private final MessageSource messageSource;
+    private final ScheduleParser scheduleParser;
 
     @Autowired
-    ControllerExceptionHandler(MessageSource messageSource) {
+    ControllerExceptionHandler(MessageSource messageSource, ScheduleParser scheduleParser) {
         this.messageSource = messageSource;
+        this.scheduleParser = scheduleParser;
     }
 
     @ExceptionHandler(RuntimeException.class)
@@ -117,6 +121,18 @@ class ControllerExceptionHandler {
         final String allowedValues = StringUtils.join(Arrays.asList(e.getAllowedValues()), ", ");
         final String message = messageSource.getMessage("mustHaveValue",
                 new String[]{typeName, allowedValues},
+                LocaleContextHolder.getLocale());
+        return new ErrorResponse(HttpStatus.UNPROCESSABLE_ENTITY, message);
+    }
+
+    @ExceptionHandler(InvalidReservationHoursException.class)
+    @ResponseStatus(HttpStatus.UNPROCESSABLE_ENTITY)
+    @ResponseBody
+    public ErrorResponse handleInvalidReservationHoursException(InvalidReservationHoursException e) {
+        final String allowedHours = Arrays.toString(scheduleParser.getSchedule().get(e.getDay()));
+        final String day = e.getDay().toString();
+        final String message = messageSource.getMessage("invalidScheduleHours",
+                new String[]{e.getInvalidHours(), day, allowedHours},
                 LocaleContextHolder.getLocale());
         return new ErrorResponse(HttpStatus.UNPROCESSABLE_ENTITY, message);
     }

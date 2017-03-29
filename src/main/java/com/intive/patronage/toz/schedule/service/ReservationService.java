@@ -42,13 +42,9 @@ public class ReservationService {
                 ZoneOffset.of(zoneOffset));
         Date dateTo = convertToDate(
                 to,
-                LocalDate.now()
-                        .atTime(LocalTime.MAX)
-                        .toLocalTime(),
+                LocalDate.now().atTime(LocalTime.MAX).toLocalTime(),
                 ZoneOffset.of(zoneOffset));
-        return reservationRepository
-                .findByStartDateBetween(dateFrom, dateTo);
-
+        return reservationRepository.findByStartDateBetween(dateFrom, dateTo);
     }
 
     public Reservation findReservation(UUID id) {
@@ -60,7 +56,7 @@ public class ReservationService {
 
     public Reservation makeReservation(Reservation reservation) {
         //TODO: validate reservation already exists
-        //TODO: validate correct start and end time
+        scheduleParser.validateHours(reservation.getStartDate(), reservation.getEndDate());
         return reservationRepository.save(reservation);
     }
 
@@ -68,6 +64,7 @@ public class ReservationService {
         if (!reservationRepository.exists(id)) {
             throw new NotFoundException(RESERVATION);
         }
+        scheduleParser.validateHours(newReservation.getStartDate(), newReservation.getEndDate());
         Reservation reservation = reservationRepository.findOne(id);
         reservation.setStartDate(newReservation.getStartDate());
         reservation.setEndDate(newReservation.getEndDate());

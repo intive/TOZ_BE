@@ -34,13 +34,13 @@ abstract class ReservationView {
     @JsonFormat(pattern = LOCAL_DATE_PATTERN)
     private LocalDate date;
 
-    @ApiModelProperty(value = "Start time in UTC", required = true, example = "13:59", position = 2)
+    @ApiModelProperty(value = "Start time in UTC", required = true, example = "08:00", position = 2)
     @DateTimeFormat(iso = DateTimeFormat.ISO.TIME)
     @NotNull
     @JsonFormat(pattern = LOCAL_TIME_PATTERN)
     private LocalTime startTime;
 
-    @ApiModelProperty(value = "End time in UTC", required = true, example = "17:59", position = 3)
+    @ApiModelProperty(value = "End time in UTC", required = true, example = "17:00", position = 3)
     @DateTimeFormat(iso = DateTimeFormat.ISO.TIME)
     @NotNull
     @JsonFormat(pattern = LOCAL_TIME_PATTERN)

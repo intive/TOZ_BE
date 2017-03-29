@@ -84,7 +84,8 @@ public class ScheduleController {
     @ApiOperation("Make reservation")
     @ApiResponses(value = {
             @ApiResponse(code = 400, message = "Bad request", response = ValidationErrorResponse.class),
-            @ApiResponse(code = 409, message = "Already exists", response = ErrorResponse.class)
+            @ApiResponse(code = 409, message = "Already exists", response = ErrorResponse.class),
+            @ApiResponse(code = 422, message = "Unprocessable Entity", response = ErrorResponse.class)
     })
     @PostMapping(consumes = MediaType.APPLICATION_JSON_VALUE)
     @ResponseStatus(HttpStatus.CREATED)
