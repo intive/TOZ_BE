@@ -15,6 +15,7 @@ import com.intive.patronage.toz.service.StorageProperties;
 import com.intive.patronage.toz.service.StorageService;
 import io.swagger.annotations.*;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -74,6 +75,7 @@ class PetsController {
     @ApiResponses(value = {
             @ApiResponse(code = 400, message = "Bad request", response = ValidationErrorResponse.class)
     })
+    @ResponseStatus(HttpStatus.CREATED)
     @PostMapping(consumes = MediaType.APPLICATION_JSON_VALUE)
     public ResponseEntity<PetView> createPet(@Valid @RequestBody PetRequestBody petView) {
         final Pet createdPet = petsService.createPet(convertFromView(petView));
@@ -117,6 +119,7 @@ class PetsController {
             @ApiResponse(code = 400, message = "Bad Request"),
             @ApiResponse(code = 422, message = "Invalid image file")
     })
+    @ResponseStatus(HttpStatus.CREATED)
     @PostMapping(value = "/{id}/images", consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
     public ResponseEntity<UrlView> uploadFile(@PathVariable UUID id, @RequestParam("file") MultipartFile file) {
         validateImageArgument(file);

@@ -42,6 +42,7 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 @RunWith(DataProviderRunner.class)
 public class PetsControllerTest {
 
+    private static final String ADMIN = "admin";
     private static final int PETS_LIST_SIZE = 5;
     private static final UUID EXPECTED_ID = UUID.randomUUID();
     private static final String EXPECTED_NAME = "Johny";
@@ -82,7 +83,7 @@ public class PetsControllerTest {
         final List<Pet> pets = getPets();
         when(petsService.findAllPets()).thenReturn(pets);
 
-        mvc.perform(get(ApiUrl.PET_PATH + "?admin=true"))
+        mvc.perform(get(ApiUrl.PET_PATH).param(ADMIN, Boolean.TRUE.toString()))
                 .andExpect(status().isOk())
                 .andExpect(content().contentType(CONTENT_TYPE))
                 .andExpect(jsonPath("$", hasSize(PETS_LIST_SIZE)));
