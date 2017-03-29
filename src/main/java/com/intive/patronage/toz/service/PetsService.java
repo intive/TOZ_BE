@@ -1,14 +1,11 @@
 package com.intive.patronage.toz.service;
 
-import com.intive.patronage.toz.model.ModelMapper;
 import com.intive.patronage.toz.exception.NotFoundException;
 import com.intive.patronage.toz.model.db.Pet;
-import com.intive.patronage.toz.model.view.PetView;
 import com.intive.patronage.toz.repository.PetsRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
-import java.util.ArrayList;
 import java.util.List;
 import java.util.UUID;
 
@@ -23,33 +20,21 @@ public class PetsService {
         this.petsRepository = petsRepository;
     }
 
-    public List<PetView> findAllPets() {
-        List<PetView> petViews = new ArrayList<>();
-        List<Pet> petDb = petsRepository.findByNameNotNullAndTypeNotNullAndSexNotNull();
-        for (Pet pet : petDb) {
-            PetView petView = convertToView(pet);
-            petViews.add(petView);
-        }
-        return petViews;
+    public List<Pet> findAllPets() {
+        return petsRepository.findAll();
     }
 
-    private PetView convertToView(final Pet pet) {
-        return ModelMapper.convertToView(pet, PetView.class);
+    public List<Pet> findPetsWithFilledFields() {
+        return petsRepository.findByNameNotNullAndTypeNotNullAndSexNotNull();
     }
 
-    public PetView findById(final UUID id) {
+    public Pet findById(final UUID id) {
         throwNotFoundExceptionIfNotExists(id);
-        Pet pet = petsRepository.findOne(id);
-        return convertToView(pet);
+        return petsRepository.findOne(id);
     }
 
-    public PetView createPet(final PetView petView) {
-        Pet pet = convertFromView(petView);
-        return convertToView(petsRepository.save(pet));
-    }
-
-    private Pet convertFromView(final PetView petView) {
-        return ModelMapper.convertToModel(petView, Pet.class);
+    public Pet createPet(final Pet pet) {
+        return petsRepository.save(pet);
     }
 
     public void deletePet(final UUID id) {
@@ -57,11 +42,10 @@ public class PetsService {
         petsRepository.delete(id);
     }
 
-    public PetView updatePet(final UUID id, final PetView petView) {
+    public Pet updatePet(final UUID id, final Pet pet) {
         throwNotFoundExceptionIfNotExists(id);
-        final Pet pet = convertFromView(petView);
         pet.setId(id);
-        return convertToView(petsRepository.save(pet));
+        return petsRepository.save(pet);
     }
 
     private void throwNotFoundExceptionIfNotExists(final UUID id) {
@@ -74,6 +58,6 @@ public class PetsService {
         throwNotFoundExceptionIfNotExists(id);
         final Pet pet = petsRepository.findOne(id);
         pet.setImageUrl(imageUrl);
-        updatePet(id, convertToView(pet));
+        updatePet(id, pet);
     }
 }

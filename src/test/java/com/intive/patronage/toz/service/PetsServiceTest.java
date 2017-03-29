@@ -2,10 +2,13 @@ package com.intive.patronage.toz.service;
 
 import com.intive.patronage.toz.exception.NotFoundException;
 import com.intive.patronage.toz.model.db.Pet;
-import com.intive.patronage.toz.model.view.PetView;
 import com.intive.patronage.toz.repository.PetsRepository;
+import com.tngtech.java.junit.dataprovider.DataProvider;
+import com.tngtech.java.junit.dataprovider.DataProviderRunner;
+import com.tngtech.java.junit.dataprovider.UseDataProvider;
 import org.junit.Before;
 import org.junit.Test;
+import org.junit.runner.RunWith;
 import org.mockito.Mock;
 import org.mockito.MockitoAnnotations;
 
@@ -17,16 +20,12 @@ import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertTrue;
 import static org.mockito.Mockito.*;
 
+@RunWith(DataProviderRunner.class)
 public class PetsServiceTest {
 
     private static final String EXPECTED_NAME = "Johny";
     private static final Pet.Type EXPECTED_TYPE = Pet.Type.DOG;
-    private static final String EXPECTED_TYPE_VALUE = EXPECTED_TYPE.toString();
     private static final Pet.Sex EXPECTED_SEX = Pet.Sex.MALE;
-    private static final String EXPECTED_SEX_VALUE = EXPECTED_SEX.toString();
-    private PetView petView;
-    private Pet petDb;
-    private UUID petId;
 
     @Mock
     private PetsRepository petsRepository;
@@ -36,35 +35,36 @@ public class PetsServiceTest {
     public void setUp() throws Exception {
         MockitoAnnotations.initMocks(this);
         petsService = new PetsService(petsRepository);
-        petView = new PetView();
-        petView.setName(EXPECTED_NAME);
-        petView.setType(EXPECTED_TYPE_VALUE);
-        petView.setSex(EXPECTED_SEX_VALUE);
-        petId = petView.getId();
+    }
 
-        petDb = new Pet();
-        petDb.setName(EXPECTED_NAME);
-        petDb.setType(EXPECTED_TYPE);
-        petDb.setSex(EXPECTED_SEX);
+    @DataProvider
+    public static Object[] getPet() {
+        Pet pet = new Pet();
+        pet.setName(EXPECTED_NAME);
+        pet.setType(EXPECTED_TYPE);
+        pet.setSex(EXPECTED_SEX);
+        return new Pet[]{pet};
     }
 
     @Test
     public void findAllPets() throws Exception {
         when(petsRepository.findAll()).thenReturn(Collections.emptyList());
 
-        List<PetView> pets = petsService.findAllPets();
+        List<Pet> pets = petsService.findAllPets();
         assertTrue(pets.isEmpty());
     }
 
     @Test
-    public void findById() throws Exception {
+    @UseDataProvider("getPet")
+    public void findById(final Pet pet) throws Exception {
+        final UUID petId = pet.getId();
         when(petsRepository.exists(petId)).thenReturn(true);
-        when(petsRepository.findOne(petId)).thenReturn(petDb);
+        when(petsRepository.findOne(petId)).thenReturn(pet);
 
-        PetView dbPet = petsService.findById(petId);
+        Pet dbPet = petsService.findById(petId);
         assertEquals(EXPECTED_NAME, dbPet.getName());
-        assertEquals(EXPECTED_TYPE_VALUE, dbPet.getType());
-        assertEquals(EXPECTED_SEX_VALUE, dbPet.getSex());
+        assertEquals(EXPECTED_TYPE, dbPet.getType());
+        assertEquals(EXPECTED_SEX, dbPet.getSex());
 
         verify(petsRepository, times(1)).exists(eq(petId));
         verify(petsRepository, times(1)).findOne(eq(petId));
@@ -73,21 +73,23 @@ public class PetsServiceTest {
 
     @Test(expected = NotFoundException.class)
     public void findByIdNotFoundException() throws Exception {
-        when(petsRepository.exists(petId)).thenReturn(false);
-        petsService.findById(petId);
+        final UUID id = UUID.randomUUID();
+        when(petsRepository.exists(id)).thenReturn(false);
+        petsService.findById(id);
 
-        verify(petsRepository, times(1)).exists(eq(petId));
+        verify(petsRepository, times(1)).exists(eq(id));
         verifyNoMoreInteractions(petsRepository);
     }
 
     @Test
-    public void createPet() throws Exception {
-        when(petsRepository.save(any(Pet.class))).thenReturn(petDb);
+    @UseDataProvider("getPet")
+    public void createPet(final Pet pet) throws Exception {
+        when(petsRepository.save(any(Pet.class))).thenReturn(pet);
 
-        PetView createdPet = petsService.createPet(petView);
+        Pet createdPet = petsService.createPet(pet);
         assertEquals(EXPECTED_NAME, createdPet.getName());
-        assertEquals(EXPECTED_TYPE_VALUE, createdPet.getType());
-        assertEquals(EXPECTED_SEX_VALUE, createdPet.getSex());
+        assertEquals(EXPECTED_TYPE, createdPet.getType());
+        assertEquals(EXPECTED_SEX, createdPet.getSex());
 
         verify(petsRepository, times(1)).save(any(Pet.class));
         verifyNoMoreInteractions(petsRepository);
@@ -95,6 +97,7 @@ public class PetsServiceTest {
 
     @Test
     public void deletePet() throws Exception {
+        final UUID petId = UUID.randomUUID();
         when(petsRepository.exists(petId)).thenReturn(true);
         petsService.deletePet(petId);
 
@@ -105,6 +108,7 @@ public class PetsServiceTest {
 
     @Test(expected = NotFoundException.class)
     public void deletePetNotFoundException() throws Exception {
+        final UUID petId = UUID.randomUUID();
         when(petsRepository.exists(petId)).thenReturn(false);
         petsService.deletePet(petId);
 
@@ -113,20 +117,24 @@ public class PetsServiceTest {
     }
 
     @Test
-    public void updatePet() throws Exception {
+    @UseDataProvider("getPet")
+    public void updatePet(final Pet pet) throws Exception {
+        final UUID petId = pet.getId();
         when(petsRepository.exists(petId)).thenReturn(true);
-        when(petsRepository.save(any(Pet.class))).thenReturn(petDb);
-        PetView savedPet = petsService.updatePet(petId, petView);
+        when(petsRepository.save(any(Pet.class))).thenReturn(pet);
+        Pet savedPet = petsService.updatePet(petId, pet);
 
         assertEquals(EXPECTED_NAME, savedPet.getName());
-        assertEquals(EXPECTED_TYPE_VALUE, savedPet.getType());
-        assertEquals(EXPECTED_SEX_VALUE, savedPet.getSex());
+        assertEquals(EXPECTED_TYPE, savedPet.getType());
+        assertEquals(EXPECTED_SEX, savedPet.getSex());
     }
 
     @Test(expected = NotFoundException.class)
-    public void updatePetNotFoundException() throws Exception {
+    @UseDataProvider("getPet")
+    public void updatePetNotFoundException(final Pet pet) throws Exception {
+        final UUID petId = pet.getId();
         when(petsRepository.exists(petId)).thenReturn(false);
-        petsService.updatePet(petId, petView);
+        petsService.updatePet(petId, pet);
 
         verify(petsRepository, times(1)).exists(eq(petId));
         verifyNoMoreInteractions(petsRepository);
