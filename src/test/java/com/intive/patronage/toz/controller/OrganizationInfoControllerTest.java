@@ -4,6 +4,7 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import com.intive.patronage.toz.model.constant.ApiUrl;
 import com.intive.patronage.toz.model.view.BankAccountView;
 import com.intive.patronage.toz.model.view.OrganizationInfoView;
+import com.intive.patronage.toz.schedule.util.ScheduleParser;
 import com.intive.patronage.toz.service.OrganizationInfoService;
 import org.junit.Before;
 import org.junit.Test;
@@ -46,6 +47,8 @@ public class OrganizationInfoControllerTest {
 
     @Mock
     private OrganizationInfoService organizationInfoService;
+    @Mock
+    private ScheduleParser scheduleParser;
     @SuppressWarnings("SpringJavaAutowiredMembersInspection")
     @Autowired
     private ObjectMapper objectMapper;
@@ -65,7 +68,7 @@ public class OrganizationInfoControllerTest {
                 Method method = new ExceptionHandlerMethodResolver(
                         ControllerExceptionHandler.class).resolveMethod(exception);
                 return new ServletInvocableHandlerMethod(
-                        new ControllerExceptionHandler(messageSource), method);
+                        new ControllerExceptionHandler(messageSource, scheduleParser), method);
             }
         };
         exceptionResolver.getMessageConverters().add(new MappingJackson2HttpMessageConverter());
