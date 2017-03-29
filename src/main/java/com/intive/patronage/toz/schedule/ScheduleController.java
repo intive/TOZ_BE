@@ -9,6 +9,7 @@ import com.intive.patronage.toz.schedule.model.view.ReservationRequestView;
 import com.intive.patronage.toz.schedule.model.view.ReservationResponseView;
 import com.intive.patronage.toz.schedule.model.view.ScheduleView;
 import com.intive.patronage.toz.schedule.service.ReservationService;
+import com.intive.patronage.toz.schedule.util.ScheduleParser;
 import io.swagger.annotations.ApiOperation;
 import io.swagger.annotations.ApiParam;
 import io.swagger.annotations.ApiResponse;
@@ -39,13 +40,15 @@ import static com.intive.patronage.toz.schedule.util.DateUtil.convertToDate;
 @RequestMapping(value = "/schedule", produces = MediaType.APPLICATION_JSON_VALUE)
 public class ScheduleController {
 
+    private final ScheduleParser scheduleParser;
     private final ReservationService reservationService;
     @Value("${timezoneOffset}")
     private String zoneOffset;
 
     @Autowired
-    ScheduleController(ReservationService reservationService) {
+    ScheduleController(ReservationService reservationService, ScheduleParser scheduleParser) {
         this.reservationService = reservationService;
+        this.scheduleParser = scheduleParser;
     }
 
     @ApiOperation("Get schedule")
@@ -66,8 +69,7 @@ public class ScheduleController {
         for (Reservation reservation : reservations) {
             reservationResponseViews.add(convertToReservationResponseView(reservation));
         }
-        //TODO:change, when day config properties is implemented
-        List<DayConfigView> dayConfigs = new ArrayList<>();
+        List<DayConfigView> dayConfigs = scheduleParser.getDaysConfig();
         return new ScheduleView(reservationResponseViews, dayConfigs);
 
     }

@@ -5,7 +5,6 @@ import io.swagger.annotations.ApiModel;
 import io.swagger.annotations.ApiModelProperty;
 import lombok.Getter;
 
-import java.time.DayOfWeek;
 import java.util.List;
 
 @ApiModel("Day configuration")
@@ -14,13 +13,13 @@ import java.util.List;
 public class DayConfigView {
 
     @ApiModelProperty(value = "Name of day")
-    private final DayOfWeek dayOfWeek;
+    private final String dayOfWeek;
 
     @ApiModelProperty(value = "List of periods in a day")
 
     private final List<PeriodView> periods;
 
-    public DayConfigView(DayOfWeek dayOfWeek, List<PeriodView> periods) {
+    public DayConfigView(String dayOfWeek, List<PeriodView> periods) {
         this.dayOfWeek = dayOfWeek;
         this.periods = periods;
     }

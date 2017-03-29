@@ -1,6 +1,8 @@
 package com.intive.patronage.toz.schedule.util;
 
 import com.intive.patronage.toz.schedule.excception.InvalidReservationHoursException;
+import com.intive.patronage.toz.schedule.model.view.DayConfigView;
+import com.intive.patronage.toz.schedule.model.view.PeriodView;
 import lombok.Getter;
 import lombok.Setter;
 import org.springframework.beans.factory.annotation.Value;
@@ -10,9 +12,7 @@ import org.springframework.stereotype.Component;
 import java.time.DayOfWeek;
 import java.time.LocalTime;
 import java.time.ZoneOffset;
-import java.util.Arrays;
-import java.util.Date;
-import java.util.EnumMap;
+import java.util.*;
 
 @Getter
 @Setter
@@ -47,5 +47,20 @@ public class ScheduleParser {
         if (!Arrays.asList(schedule.get(day)).contains(hours)) {
             throw new InvalidReservationHoursException(hours, day);
         }
+    }
+
+    public List<DayConfigView> getDaysConfig() {
+        final String DASH = "-";
+        List<DayConfigView> dayConfigs = new ArrayList<>();
+        for (DayOfWeek dayOfWeek : DayOfWeek.values()) {
+            List<PeriodView> periods = new ArrayList<>();
+            for (String dayHours : schedule.get(dayOfWeek)) {
+                String[] hours = dayHours.split(DASH);
+                periods.add(new PeriodView(hours[0], hours[1]));
+            }
+            String day = dayOfWeek.toString();
+            dayConfigs.add(new DayConfigView(day, periods));
+        }
+        return dayConfigs;
     }
 }
