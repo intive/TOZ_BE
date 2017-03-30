@@ -113,5 +113,4 @@ public class ScheduleControllerTest {
                 .content(new ObjectMapper().writeValueAsString(view)))
                 .andExpect(status().isBadRequest());
     }
-
 }
