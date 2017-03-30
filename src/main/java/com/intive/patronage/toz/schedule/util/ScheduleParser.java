@@ -50,17 +50,23 @@ public class ScheduleParser {
     }
 
     public List<DayConfigView> getDaysConfig() {
-        final String DASH = "-";
         List<DayConfigView> dayConfigs = new ArrayList<>();
         for (DayOfWeek dayOfWeek : DayOfWeek.values()) {
-            List<PeriodView> periods = new ArrayList<>();
-            for (String dayHours : schedule.get(dayOfWeek)) {
-                String[] hours = dayHours.split(DASH);
-                periods.add(new PeriodView(hours[0], hours[1]));
-            }
             String day = dayOfWeek.toString();
-            dayConfigs.add(new DayConfigView(day, periods));
+            dayConfigs.add(new DayConfigView(
+                    day,
+                    getPeriodsForDay(dayOfWeek)));
         }
         return dayConfigs;
+    }
+
+    private List<PeriodView> getPeriodsForDay(DayOfWeek dayOfWeek) {
+        final String DASH = "-";
+        List<PeriodView> periods = new ArrayList<>();
+        for (String dayHours : schedule.get(dayOfWeek)) {
+            String[] hours = dayHours.split(DASH);
+            periods.add(new PeriodView(hours[0], hours[1]));
+        }
+        return periods;
     }
 }

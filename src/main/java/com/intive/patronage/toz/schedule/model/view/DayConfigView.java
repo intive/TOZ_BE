@@ -16,7 +16,6 @@ public class DayConfigView {
     private final String dayOfWeek;
 
     @ApiModelProperty(value = "List of periods in a day")
-
     private final List<PeriodView> periods;
 
     public DayConfigView(String dayOfWeek, List<PeriodView> periods) {
