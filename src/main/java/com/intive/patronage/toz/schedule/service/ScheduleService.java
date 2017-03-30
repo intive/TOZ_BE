@@ -27,10 +27,10 @@ public class ScheduleService {
     private final ReservationRepository reservationRepository;
     private ScheduleParser scheduleParser;
     @Value("${timezoneOffset}")
-    private String zoneOffset;
+    private String zoneOffset = "Z";
 
     @Autowired
-    ScheduleService(ReservationRepository reservationRepository,
+    public ScheduleService(ReservationRepository reservationRepository,
                     ScheduleParser scheduleParser) {
         this.reservationRepository = reservationRepository;
         this.scheduleParser = scheduleParser;
