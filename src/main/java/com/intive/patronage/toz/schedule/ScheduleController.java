@@ -8,7 +8,7 @@ import com.intive.patronage.toz.schedule.model.view.DayConfigView;
 import com.intive.patronage.toz.schedule.model.view.ReservationRequestView;
 import com.intive.patronage.toz.schedule.model.view.ReservationResponseView;
 import com.intive.patronage.toz.schedule.model.view.ScheduleView;
-import com.intive.patronage.toz.schedule.service.ReservationService;
+import com.intive.patronage.toz.schedule.service.ScheduleService;
 import com.intive.patronage.toz.schedule.util.ScheduleParser;
 import io.swagger.annotations.ApiOperation;
 import io.swagger.annotations.ApiParam;
@@ -41,13 +41,13 @@ import static com.intive.patronage.toz.schedule.util.DateUtil.convertToDate;
 public class ScheduleController {
 
     private final ScheduleParser scheduleParser;
-    private final ReservationService reservationService;
+    private final ScheduleService scheduleService;
     @Value("${timezoneOffset}")
     private String zoneOffset;
 
     @Autowired
-    ScheduleController(ReservationService reservationService, ScheduleParser scheduleParser) {
-        this.reservationService = reservationService;
+    ScheduleController(ScheduleService scheduleService, ScheduleParser scheduleParser) {
+        this.scheduleService = scheduleService;
         this.scheduleParser = scheduleParser;
     }
 
@@ -64,7 +64,7 @@ public class ScheduleController {
                                     @DateTimeFormat(iso = DateTimeFormat.ISO.DATE)
                                     @RequestParam("to") LocalDate to) {
 
-        List<Reservation> reservations = reservationService.findScheduleReservations(from, to);
+        List<Reservation> reservations = scheduleService.findScheduleReservations(from, to);
         List<ReservationResponseView> reservationResponseViews = new ArrayList<ReservationResponseView>();
         for (Reservation reservation : reservations) {
             reservationResponseViews.add(convertToReservationResponseView(reservation));
@@ -80,7 +80,7 @@ public class ScheduleController {
     })
     @GetMapping(value = "/{id}")
     public ReservationResponseView getReservation(@PathVariable UUID id) {
-        return convertToReservationResponseView(reservationService.findReservation(id));
+        return convertToReservationResponseView(scheduleService.findReservation(id));
     }
 
     @ApiOperation("Make reservation")
@@ -93,7 +93,7 @@ public class ScheduleController {
     @ResponseStatus(HttpStatus.CREATED)
     public ResponseEntity<ReservationResponseView> makeReservation(@Valid @RequestBody ReservationRequestView reservationRequestView) {
         ReservationResponseView createdReservation = convertToReservationResponseView(
-                reservationService.makeReservation(convertToReservation(reservationRequestView)));
+                scheduleService.makeReservation(convertToReservation(reservationRequestView)));
         URI location = createLocationPath(createdReservation.getId());
         return ResponseEntity.created(location)
                 .body(createdReservation);
@@ -109,7 +109,7 @@ public class ScheduleController {
     public ResponseEntity<ReservationResponseView> updateReservation(@PathVariable UUID id,
                                                                      @Valid @RequestBody ReservationRequestView reservationView) {
         ReservationResponseView createdReservationResponseView = convertToReservationResponseView(
-                reservationService.updateReservation(id, convertToReservation(reservationView)));
+                scheduleService.updateReservation(id, convertToReservation(reservationView)));
         URI location = createLocationPath(id);
         return ResponseEntity.created(location)
                 .body(createdReservationResponseView);
@@ -121,7 +121,7 @@ public class ScheduleController {
     })
     @DeleteMapping(value = "/{id}")
     public ResponseEntity<?> removeReservation(@PathVariable UUID id) {
-        reservationService.removeReservation(id);
+        scheduleService.removeReservation(id);
         return ResponseEntity.noContent().build();
     }
 

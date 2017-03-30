@@ -1,6 +1,6 @@
 package com.intive.patronage.toz.schedule;
 
-import com.intive.patronage.toz.schedule.service.ReservationService;
+import com.intive.patronage.toz.schedule.service.ScheduleService;
 import com.intive.patronage.toz.schedule.util.ScheduleParser;
 import org.junit.Before;
 import org.junit.Test;
@@ -23,13 +23,13 @@ public class ScheduleControllerTest {
 
     private MockMvc mvc;
     @Mock
-    private ReservationService reservationService;
+    private ScheduleService scheduleService;
     @Mock
     private ScheduleParser scheduleParser;
 
     @Before
     public void setUp() throws Exception {
-        mvc = MockMvcBuilders.standaloneSetup(new ScheduleController(reservationService, scheduleParser)).build();
+        mvc = MockMvcBuilders.standaloneSetup(new ScheduleController(scheduleService, scheduleParser)).build();
     }
 
     @Test

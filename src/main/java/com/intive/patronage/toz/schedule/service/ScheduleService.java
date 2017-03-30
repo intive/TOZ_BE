@@ -21,7 +21,7 @@ import static com.intive.patronage.toz.schedule.util.DateUtil.convertToDate;
 
 @Service
 @PropertySource("classpath:application.properties")
-public class ReservationService {
+public class ScheduleService {
 
     private final String RESERVATION = "Reservation";
     private final ReservationRepository reservationRepository;
@@ -30,8 +30,8 @@ public class ReservationService {
     private String zoneOffset;
 
     @Autowired
-    ReservationService(ReservationRepository reservationRepository,
-                       ScheduleParser scheduleParser) {
+    ScheduleService(ReservationRepository reservationRepository,
+                    ScheduleParser scheduleParser) {
         this.reservationRepository = reservationRepository;
         this.scheduleParser = scheduleParser;
     }
