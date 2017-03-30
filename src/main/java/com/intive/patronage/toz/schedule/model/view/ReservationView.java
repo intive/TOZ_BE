@@ -1,19 +1,16 @@
 package com.intive.patronage.toz.schedule.model.view;
 
-import com.fasterxml.jackson.annotation.JsonFormat;
 import com.fasterxml.jackson.annotation.JsonInclude;
+import com.intive.patronage.toz.schedule.model.validator.ValidLocalDate;
+import com.intive.patronage.toz.schedule.model.validator.ValidLocalTime;
 import io.swagger.annotations.ApiModel;
 import io.swagger.annotations.ApiModelProperty;
-import lombok.AccessLevel;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
-import org.springframework.format.annotation.DateTimeFormat;
 
 import javax.validation.Valid;
 import javax.validation.constraints.NotNull;
-import java.time.LocalDate;
-import java.time.LocalTime;
 import java.util.UUID;
 
 @Getter
@@ -23,28 +20,22 @@ import java.util.UUID;
 @JsonInclude(JsonInclude.Include.NON_EMPTY)
 abstract class ReservationView {
 
-    @Getter(AccessLevel.NONE)
-    private final String LOCAL_DATE_PATTERN = "yyyy-MM-dd";
-    @Getter(AccessLevel.NONE)
-    private final String LOCAL_TIME_PATTERN = "HH:mm";
-
-    @ApiModelProperty(value = "Date in UTC", example = "2017-10-20", required = true, position = 1)
+    @ApiModelProperty(value = "Date in UTC", example = "2017-01-20", required = true, position = 1)
     @NotNull
-    @DateTimeFormat(iso = DateTimeFormat.ISO.DATE)
-    @JsonFormat(pattern = LOCAL_DATE_PATTERN)
-    private LocalDate date;
+    @ValidLocalDate
+//    @DateTimeFormat(iso = DateTimeFormat.ISO.DATE)
+//    @JsonFormat(pattern = LOCAL_DATE_PATTERN)
+    private String date;
 
     @ApiModelProperty(value = "Start time in UTC", required = true, example = "08:00", position = 2)
-    @DateTimeFormat(iso = DateTimeFormat.ISO.TIME)
     @NotNull
-    @JsonFormat(pattern = LOCAL_TIME_PATTERN)
-    private LocalTime startTime;
+    @ValidLocalTime
+    private String startTime;
 
     @ApiModelProperty(value = "End time in UTC", required = true, example = "17:00", position = 3)
-    @DateTimeFormat(iso = DateTimeFormat.ISO.TIME)
     @NotNull
-    @JsonFormat(pattern = LOCAL_TIME_PATTERN)
-    private LocalTime endTime;
+    @ValidLocalTime
+    private String endTime;
 
     @ApiModelProperty(value = "Owner ID", example = "c5296892-347f-4b2e-b1c6-6faff971f767", required = true, position = 4)
     @Valid

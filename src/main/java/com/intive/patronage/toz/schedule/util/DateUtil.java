@@ -13,4 +13,9 @@ public class DateUtil {
         LocalDateTime localDateTime = LocalDateTime.of(localDate, localTime);
         return Date.from(localDateTime.toInstant(zoneOffset));
     }
+
+    public static Date convertToDate(String localDate, String localTime, ZoneOffset zoneOffset) {
+        LocalDateTime localDateTime = LocalDateTime.of(LocalDate.parse(localDate), LocalTime.parse(localTime));
+        return Date.from(localDateTime.toInstant(zoneOffset));
+    }
 }

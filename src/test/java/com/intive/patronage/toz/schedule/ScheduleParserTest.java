@@ -15,7 +15,7 @@ import org.springframework.test.context.web.WebAppConfiguration;
 import java.time.DayOfWeek;
 import java.util.List;
 
-import static com.intive.patronage.toz.schedule.constant.DateTimeConsts.HOURS_24_FORMAT;
+import static com.intive.patronage.toz.schedule.constant.DateTimeConsts.HOURS_24_REGEX;
 import static org.assertj.core.api.Assertions.assertThat;
 
 @RunWith(SpringJUnit4ClassRunner.class)
@@ -31,7 +31,7 @@ public class ScheduleParserTest extends AbstractJUnit4SpringContextTests {
         for (DayOfWeek day : DayOfWeek.values()) {
             for (String hours : scheduleParser.getSchedule().get(day)) {
                 assertThat(hours.matches(String.format(
-                        "%s-%s", HOURS_24_FORMAT, HOURS_24_FORMAT))).isTrue();
+                        "%s-%s", HOURS_24_REGEX, HOURS_24_REGEX))).isTrue();
             }
         }
     }
@@ -44,8 +44,8 @@ public class ScheduleParserTest extends AbstractJUnit4SpringContextTests {
             assertThat(config).isNotNull();
             for (PeriodView period : config.getPeriods()){
                 assertThat(period).isNotNull();
-                assertThat(period.getPeriodStart()).matches(HOURS_24_FORMAT);
-                assertThat(period.getPeriodEnd()).matches(HOURS_24_FORMAT);
+                assertThat(period.getPeriodStart()).matches(HOURS_24_REGEX);
+                assertThat(period.getPeriodEnd()).matches(HOURS_24_REGEX);
             }
         }
     }
