@@ -31,10 +31,10 @@ databaseChangeLog:
                   type: varchar(255)
               - column:
                   name: house_number
-                  type: int
+                  type: varchar(10)
               - column:
                   name: apartment_number
-                  type: int
+                  type: varchar(10)
               - column:
                   name: email
                   type: varchar(255)

@@ -14,19 +14,19 @@ import javax.validation.constraints.Pattern;
 @JsonDeserialize(builder = AddressView.Builder.class)
 public class AddressView {
 
-    @ApiModelProperty(value = "Post code", example = "02-123")
+    @ApiModelProperty(value = "Post code", example = "02-123", position = 4)
     @Pattern(regexp = "[0-9]{2}-[0-9]{3}")
     private final String postCode;
-    @ApiModelProperty(value = "City")
+    @ApiModelProperty(value = "City", position = 5)
     private final String city;
-    @ApiModelProperty(value = "Street")
+    @ApiModelProperty(value = "Street", example = "ul. Przykładowa", position = 1)
     private final String street;
-    @ApiModelProperty(value = "Country")
+    @ApiModelProperty(value = "Country", position = 6)
     private final String country;
-    @ApiModelProperty(value = "House number")
-    private final Integer houseNumber;
-    @ApiModelProperty(value = "Apartment number")
-    private final Integer apartmentNumber;
+    @ApiModelProperty(value = "House number", example = "1", position = 2)
+    private final String houseNumber;
+    @ApiModelProperty(value = "Apartment number", example = "1", position = 3)
+    private final String apartmentNumber;
 
     private AddressView(Builder builder) {
         this.postCode = builder.postCode;
@@ -53,11 +53,11 @@ public class AddressView {
         return country;
     }
 
-    public Integer getHouseNumber() {
+    public String getHouseNumber() {
         return houseNumber;
     }
 
-    public Integer getApartmentNumber() {
+    public String getApartmentNumber() {
         return apartmentNumber;
     }
 
@@ -67,8 +67,8 @@ public class AddressView {
         private final String city;
         private final String street;
         private String country;
-        private Integer houseNumber;
-        private Integer apartmentNumber;
+        private String houseNumber;
+        private String apartmentNumber;
 
         public Builder(@JsonProperty("postCode") String postCode,
                        @JsonProperty("city") String city,
@@ -83,12 +83,12 @@ public class AddressView {
             return this;
         }
 
-        public Builder setHouseNumber(Integer houseNumber) {
+        public Builder setHouseNumber(String houseNumber) {
             this.houseNumber = houseNumber;
             return this;
         }
 
-        public Builder setApartmentNumber(Integer apartmentNumber) {
+        public Builder setApartmentNumber(String apartmentNumber) {
             this.apartmentNumber = apartmentNumber;
             return this;
         }

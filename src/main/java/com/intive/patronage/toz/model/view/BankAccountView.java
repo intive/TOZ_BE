@@ -13,10 +13,10 @@ import io.swagger.annotations.ApiModelProperty;
 @JsonDeserialize(builder = BankAccountView.Builder.class)
 public class BankAccountView {
 
-    @ApiModelProperty(value = "Number", required = true, example = "61109010140000071219812874")
+    @ApiModelProperty(value = "Number", required = true, example = "61109010140000071219812874", position = 1)
     @IbanFormat
     private final String number;
-    @ApiModelProperty(value = "Bank name")
+    @ApiModelProperty(value = "Bank name", position = 2)
     private final String bankName;
 
     private BankAccountView(Builder builder) {

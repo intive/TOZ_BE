@@ -16,8 +16,8 @@ public class OrganizationInfo extends Identifiable {
     private String city;
     private String street;
     private String country;
-    private Integer houseNumber;
-    private Integer apartmentNumber;
+    private String houseNumber;
+    private String apartmentNumber;
 
     private String email;
     private String phone;
@@ -76,11 +76,11 @@ public class OrganizationInfo extends Identifiable {
         return country;
     }
 
-    public Integer getHouseNumber() {
+    public String getHouseNumber() {
         return houseNumber;
     }
 
-    public Integer getApartmentNumber() {
+    public String getApartmentNumber() {
         return apartmentNumber;
     }
 
