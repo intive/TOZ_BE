@@ -16,13 +16,16 @@ import javax.validation.Valid;
 public class OrganizationInfoView {
 
     @NotEmpty
-    @ApiModelProperty(value = "Organization name", required = true)
+    @ApiModelProperty(value = "Organization name", required = true, example = "TOZ Szczecin", position = 1)
     private final String name;
     @Valid
+    @ApiModelProperty(position = 2)
     private final AddressView address;
     @Valid
+    @ApiModelProperty(position = 3)
     private final ContactView contact;
     @Valid
+    @ApiModelProperty(position = 4)
     private final BankAccountView bankAccount;
 
     private OrganizationInfoView(Builder builder) {

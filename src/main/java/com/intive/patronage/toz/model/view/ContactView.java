@@ -13,14 +13,14 @@ import org.hibernate.validator.constraints.URL;
 @JsonDeserialize(builder = ContactView.Builder.class)
 public class ContactView {
 
-    @ApiModelProperty(value = "Email", example = "mail@example.com")
+    @ApiModelProperty(value = "Email", example = "mail@example.com", position = 1)
     @Email
     private final String email;
-    @ApiModelProperty(value = "Phone number", example = "+48123123123")
+    @ApiModelProperty(value = "Phone number", example = "+48123123123", position = 2)
     private final String phone;
-    @ApiModelProperty(value = "Fax", example = "+48123123123")
+    @ApiModelProperty(value = "Fax", example = "+48123123123", position = 3)
     private final String fax;
-    @ApiModelProperty(value = "Website", example = "http://example.com/")
+    @ApiModelProperty(value = "Website", example = "http://example.com/", position = 4)
     @URL
     private final String website;
 
