@@ -7,7 +7,7 @@
 # generated files
 bin/
 gen/
-storage/
+/storage/
 
 # Intellij project files
 *.iml
@@ -20,6 +20,5 @@ storage/
 .gradle
 
 build/
-bin/
 out/
 logs

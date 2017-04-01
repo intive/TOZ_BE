@@ -1,8 +1,8 @@
 package com.intive.patronage.toz.schedule;
 
-import com.intive.patronage.toz.error.ArgumentErrorResponse;
-import com.intive.patronage.toz.error.ErrorResponse;
-import com.intive.patronage.toz.error.ValidationErrorResponse;
+import com.intive.patronage.toz.error.model.ArgumentErrorResponse;
+import com.intive.patronage.toz.error.model.ErrorResponse;
+import com.intive.patronage.toz.error.model.ValidationErrorResponse;
 import com.intive.patronage.toz.schedule.model.view.ReservationRequestView;
 import com.intive.patronage.toz.schedule.model.view.ReservationResponseView;
 import com.intive.patronage.toz.schedule.model.view.ScheduleView;
@@ -29,7 +29,7 @@ import java.util.UUID;
 
 @RestController
 @RequestMapping(value = "/schedule", produces = MediaType.APPLICATION_JSON_VALUE)
-public class ScheduleController {
+class ScheduleController {
 
     @Autowired
     public ScheduleController() {
