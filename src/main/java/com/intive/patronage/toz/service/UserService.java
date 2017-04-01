@@ -12,8 +12,14 @@ import java.util.UUID;
 @Service
 public class UserService {
 
-    @Autowired
+
     private UserRepository userRepository;
+
+    @Autowired
+    public UserService(UserRepository userRepository){
+        this.userRepository = userRepository;
+    }
+
     private static final String USER = "User";
 
     private void throwNotFoundExceptionIfNotExists(final UUID id) {
@@ -21,12 +27,10 @@ public class UserService {
             throw new NotFoundException(USER);
         }
     }
-
     public User findOneById(UUID id){
         throwNotFoundExceptionIfNotExists(id);
         return userRepository.findOne(id);
     }
-
     public List<User> findAll(){
         return userRepository.findAll();
     }
@@ -39,12 +43,7 @@ public class UserService {
     }
     public User update(final UUID id, final User user) {
         throwNotFoundExceptionIfNotExists(id);
-        User editUser = userRepository.findOne(user.getId());
-        editUser.setForename(user.getForename());
-        editUser.setSurname(user.getSurname());
-        editUser.setRole(user.getRole());
-        return userRepository.save(editUser);
-
+        user.setId(id);
+        return userRepository.save(user);
     }
-
 }

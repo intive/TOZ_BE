@@ -44,3 +44,7 @@ curl:
 ```
 curl -i -X POST -H "Content-Type:application/json" -d '{  "username" : "TOZ",  "password" : "admin", "forename" : "admin", "surname" : "admin","role" : "VOLUNTEER" }' http://localhost:8080/user
 ```
+Roles :
+TOZ - Organization admin.
+VOLUNTEER - A Person, who is a volunteer in TOZ Organization.
+

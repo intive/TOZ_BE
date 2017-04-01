@@ -6,6 +6,7 @@ import com.intive.patronage.toz.model.db.User;
 import com.intive.patronage.toz.service.UserService;
 import io.swagger.annotations.*;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -31,7 +32,7 @@ public class UsersController {
         this.userService = userService;
     }
 
-    @ApiOperation(value = "Get all pets", responseContainer = "List")
+    @ApiOperation(value = "Get all users", responseContainer = "List")
     @GetMapping
     public List<User> getAllUsers() {
         return userService.findAll();
@@ -46,7 +47,8 @@ public class UsersController {
         return userService.findOneById(id);
     }
 
-    @ApiOperation(value = "Create new pet", response = User.class)
+    @ResponseStatus(HttpStatus.CREATED)
+    @ApiOperation(value = "Create new user", response = User.class)
     @ApiResponses(value = {
             @ApiResponse(code = 400, message = "Bad request", response = ValidationErrorResponse.class)
     })
@@ -72,7 +74,7 @@ public class UsersController {
 
     @ApiOperation(value = "Update user information", response = User.class)
     @ApiResponses(value = {
-            @ApiResponse(code = 404, message = "Pet not found", response = ErrorResponse.class),
+            @ApiResponse(code = 404, message = "User not found", response = ErrorResponse.class),
             @ApiResponse(code = 400, message = "Bad request", response = ValidationErrorResponse.class)
     })
     @PutMapping(value = "/{id}", consumes = MediaType.APPLICATION_JSON_VALUE)
