@@ -145,3 +145,31 @@ databaseChangeLog:
               - column:
                   name: path
                   type: varchar(255)
+  - changeSet:
+        id : 3
+        author: ppiotr191
+        changes:
+          - createTable:
+              tableName: user
+              columns:
+                - column:
+                    name: id
+                    type: uuid
+                    constraints:
+                      - primaryKey: true
+                      - nullable: false
+                - column:
+                    name: username
+                    type: varchar(255)
+                - column:
+                    name: password
+                    type: varchar(255)
+                - column:
+                    name: forename
+                    type: varchar(255)
+                - column:
+                    name: surname
+                    type: varchar(255)
+                - column:
+                    name: role
+                    type: varchar(16)
