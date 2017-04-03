@@ -1,8 +1,7 @@
-package com.intive.patronage.toz.service;
+package com.intive.patronage.toz.users;
 
-import com.intive.patronage.toz.exception.NotFoundException;
-import com.intive.patronage.toz.model.db.User;
-import com.intive.patronage.toz.repository.UserRepository;
+import com.intive.patronage.toz.error.exception.NotFoundException;
+import com.intive.patronage.toz.users.model.db.User;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -16,7 +15,7 @@ public class UserService {
     private UserRepository userRepository;
 
     @Autowired
-    public UserService(UserRepository userRepository){
+    public UserService(UserRepository userRepository) {
         this.userRepository = userRepository;
     }
 
@@ -27,20 +26,25 @@ public class UserService {
             throw new NotFoundException(USER);
         }
     }
-    public User findOneById(UUID id){
+
+    public User findOneById(UUID id) {
         throwNotFoundExceptionIfNotExists(id);
         return userRepository.findOne(id);
     }
-    public List<User> findAll(){
+
+    public List<User> findAll() {
         return userRepository.findAll();
     }
-    public User create(User user){
+
+    public User create(User user) {
         return userRepository.save(user);
     }
-    public void delete(UUID id){
+
+    public void delete(UUID id) {
         throwNotFoundExceptionIfNotExists(id);
         userRepository.delete(id);
     }
+
     public User update(final UUID id, final User user) {
         throwNotFoundExceptionIfNotExists(id);
         user.setId(id);

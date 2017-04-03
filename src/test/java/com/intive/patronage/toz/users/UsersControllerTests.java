@@ -1,10 +1,9 @@
-package com.intive.patronage.toz.controller;
+package com.intive.patronage.toz.users;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
-import com.intive.patronage.toz.model.db.User;
-import com.intive.patronage.toz.model.enumerations.Role;
-import com.intive.patronage.toz.service.UserService;
+import com.intive.patronage.toz.users.model.db.User;
+import com.intive.patronage.toz.users.model.enumerations.Role;
 import com.tngtech.java.junit.dataprovider.DataProvider;
 import com.tngtech.java.junit.dataprovider.DataProviderRunner;
 import com.tngtech.java.junit.dataprovider.UseDataProvider;
@@ -23,10 +22,13 @@ import java.util.UUID;
 
 import static org.hamcrest.Matchers.hasSize;
 import static org.hamcrest.Matchers.is;
-import static org.mockito.Mockito.*;
-import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.content;
-import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
-import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
+import static org.mockito.Mockito.any;
+import static org.mockito.Mockito.doNothing;
+import static org.mockito.Mockito.eq;
+import static org.mockito.Mockito.times;
+import static org.mockito.Mockito.verify;
+import static org.mockito.Mockito.verifyNoMoreInteractions;
+import static org.mockito.Mockito.when;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.delete;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
@@ -38,7 +40,7 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 @RunWith(DataProviderRunner.class)
 public class UsersControllerTests {
 
-    private static final String URL_PATH = "/user";
+    private static final String URL_PATH = "/users";
     private static final int PETS_LIST_SIZE = 5;
     private static final UUID EXPECTED_ID = UUID.randomUUID();
     private static final String EXPECTED_USERNAME = "johny";

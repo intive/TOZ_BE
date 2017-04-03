@@ -1,15 +1,26 @@
-package com.intive.patronage.toz.controller;
+package com.intive.patronage.toz.users;
 
-import com.intive.patronage.toz.error.ErrorResponse;
-import com.intive.patronage.toz.error.ValidationErrorResponse;
-import com.intive.patronage.toz.model.db.User;
-import com.intive.patronage.toz.service.UserService;
-import io.swagger.annotations.*;
+import com.intive.patronage.toz.error.model.ErrorResponse;
+import com.intive.patronage.toz.error.model.ValidationErrorResponse;
+import com.intive.patronage.toz.users.model.db.User;
+import io.swagger.annotations.Api;
+import io.swagger.annotations.ApiOperation;
+import io.swagger.annotations.ApiParam;
+import io.swagger.annotations.ApiResponse;
+import io.swagger.annotations.ApiResponses;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.*;
+import org.springframework.web.bind.annotation.DeleteMapping;
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.PutMapping;
+import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.ResponseStatus;
+import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
 import org.springframework.web.util.UriComponentsBuilder;
 
@@ -21,14 +32,14 @@ import java.util.UUID;
 
 @Api(description = "Operations for users resource")
 @RestController
-@RequestMapping(value = "/user", produces = MediaType.APPLICATION_JSON_VALUE)
+@RequestMapping(value = "/users", produces = MediaType.APPLICATION_JSON_VALUE)
 public class UsersController {
 
 
     private final UserService userService;
 
     @Autowired
-    UsersController(UserService userService){
+    UsersController(UserService userService) {
         this.userService = userService;
     }
 

@@ -1,11 +1,9 @@
-package com.intive.patronage.toz.service;
+package com.intive.patronage.toz.users;
 
 
-import com.intive.patronage.toz.exception.NotFoundException;
-import com.intive.patronage.toz.model.db.User;
-import com.intive.patronage.toz.model.enumerations.Role;
-import com.intive.patronage.toz.repository.UserRepository;
-import com.tngtech.java.junit.dataprovider.DataProviderRunner;
+import com.intive.patronage.toz.error.exception.NotFoundException;
+import com.intive.patronage.toz.users.model.db.User;
+import com.intive.patronage.toz.users.model.enumerations.Role;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -21,9 +19,10 @@ import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertTrue;
 import static org.mockito.Matchers.any;
 import static org.mockito.Matchers.eq;
-import static org.mockito.Mockito.*;
 import static org.mockito.Mockito.times;
+import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.verifyNoMoreInteractions;
+import static org.mockito.Mockito.when;
 
 
 @RunWith(SpringJUnit4ClassRunner.class)
