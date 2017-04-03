@@ -1,13 +1,14 @@
-package com.intive.patronage.toz.model.db;
+package com.intive.patronage.toz.users.model.db;
 
-import com.intive.patronage.toz.model.enumerations.Role;
+import com.intive.patronage.toz.base.model.Identifiable;
+import com.intive.patronage.toz.users.model.enumerations.Role;
 
 import javax.persistence.Entity;
 import javax.persistence.EnumType;
 import javax.persistence.Enumerated;
 
 @Entity
-public class User extends Identifiable{
+public class User extends Identifiable {
     private String username;
     private String password;
     private String forename;
