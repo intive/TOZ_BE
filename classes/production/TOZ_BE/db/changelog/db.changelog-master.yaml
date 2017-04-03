@@ -1,0 +1,175 @@
+databaseChangeLog:
+  - changeSet:
+      id: 1
+      author: lukaszpiskadlo
+      changes:
+        - createTable:
+            tableName: organization_info
+            columns:
+              - column:
+                  name: id
+                  type: uuid
+                  constraints:
+                    - primaryKey: true
+                    - nullable: false
+              - column:
+                  name: name
+                  type: varchar(255)
+                  constraints:
+                    nullable: false
+              - column:
+                  name: post_code
+                  type: varchar(7)
+              - column:
+                  name: city
+                  type: varchar(255)
+              - column:
+                  name: street
+                  type: varchar(255)
+              - column:
+                  name: country
+                  type: varchar(255)
+              - column:
+                  name: house_number
+                  type: varchar(10)
+              - column:
+                  name: apartment_number
+                  type: varchar(10)
+              - column:
+                  name: email
+                  type: varchar(255)
+              - column:
+                  name: phone
+                  type: varchar(64)
+              - column:
+                  name: fax
+                  type: varchar(64)
+              - column:
+                  name: website
+                  type: varchar(255)
+              - column:
+                  name: bank_account_number
+                  type: varchar(255)
+                  constraints:
+                    nullable: false
+              - column:
+                  name: bank_name
+                  type: varchar(255)
+        - createTable:
+            tableName: pet
+            columns:
+              - column:
+                  name: id
+                  type: uuid
+                  constraints:
+                    - primaryKey: true
+                    - nullable: false
+              - column:
+                  name: name
+                  type: varchar(255)
+              - column:
+                  name: type
+                  type: varchar(255)
+                  constraints:
+                    - nullable: false
+              - column:
+                  name: sex
+                  type: varchar(255)
+              - column:
+                  name: description
+                  type: varchar(255)
+              - column:
+                  name: address
+                  type: varchar(255)
+              - column:
+                  name: created
+                  type: datetime
+              - column:
+                  name: last_modified
+                  type: datetime
+              - column:
+                  name: image_url
+                  type: varchar(255)
+        - createTable:
+            tableName: news
+            columns:
+              - column:
+                  name: id
+                  type: uuid
+                  constraints:
+                    - primaryKey: true
+                    - nullable: false
+              - column:
+                  name: title
+                  type: varchar(255)
+                  constraints:
+                    - nullable: false
+              - column:
+                  name: contents
+                  type: text
+                  constraints:
+                    - nullable: false
+              - column:
+                  name: type
+                  type: varchar(255)
+                  constraints:
+                    - nullable: false
+              - column:
+                  name: photo_url
+                  type: varchar(255)
+              - column:
+                  name: created
+                  type: datetime
+              - column:
+                  name: last_modified
+                  type: datetime
+              - column:
+                  name: published
+                  type: datetime
+  - changeSet:
+      id : 2
+      author: ppiotr191
+      changes:
+        - createTable:
+            tableName: uploaded_file
+            columns:
+              - column:
+                  name: id
+                  type: uuid
+                  constraints:
+                    - primaryKey: true
+                    - nullable: false
+              - column:
+                  name: create_date
+                  type: date
+              - column:
+                  name: path
+                  type: varchar(255)
+  - changeSet:
+        id : 3
+        author: ppiotr191
+        changes:
+          - createTable:
+              tableName: user
+              columns:
+                - column:
+                    name: id
+                    type: uuid
+                    constraints:
+                      - primaryKey: true
+                      - nullable: false
+                - column:
+                    name: username
+                    type: varchar(255)
+                - column:
+                    name: password
+                    type: varchar(255)
+                - column:
+                    name: forename
+                    type: varchar(255)
+                - column:
+                    name: surname
+                    type: varchar(255)
+                - column:
+                    name: role
+                    type: varchar(16)
