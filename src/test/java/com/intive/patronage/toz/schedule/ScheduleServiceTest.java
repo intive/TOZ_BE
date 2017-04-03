@@ -16,10 +16,7 @@ import org.mockito.MockitoAnnotations;
 
 import java.time.LocalDate;
 import java.time.ZoneOffset;
-import java.util.Collections;
-import java.util.Date;
-import java.util.List;
-import java.util.UUID;
+import java.util.*;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.mockito.Matchers.any;
@@ -72,6 +69,19 @@ public class ScheduleServiceTest {
 
     @Test
     @UseDataProvider("getReservationObject")
+    public void shouldReturnReservationList(Reservation reservation) {
+        List<Reservation> reservations = new ArrayList<>();
+        reservations.add(reservation);
+        when(reservationRepository
+                .findByStartDateBetween(any(Date.class), any(Date.class)))
+                .thenReturn(reservations);
+        List<Reservation> foundReservations =
+                scheduleService.findScheduleReservations(LOCAL_DATE_FROM, LOCAL_DATE_TO);
+        assertThat(foundReservations).isNotEmpty();
+    }
+
+    @Test
+    @UseDataProvider("getReservationObject")
     public void shouldReturnReservationWhenFindById(Reservation reservation) {
         when(reservationRepository.exists(any(UUID.class))).thenReturn(true);
         when(reservationRepository.findOne(any(UUID.class))).thenReturn(reservation);
@@ -112,11 +122,22 @@ public class ScheduleServiceTest {
     }
 
     @Test
-    public void shouldDeleteReservation() {
+    @UseDataProvider("getReservationObject")
+    public void shouldDeleteReservation(Reservation reservation) {
         when(reservationRepository.exists(any(UUID.class))).thenReturn(true);
-        scheduleService.removeReservation(UUID.randomUUID());
+        when(reservationRepository.findOne(any(UUID.class))).thenReturn(reservation);
+        doNothing().when(reservationRepository).delete(any(UUID.class));
+        Reservation deletedReservation = scheduleService.removeReservation(UUID.randomUUID());
+
+        assertThat(deletedReservation).isNotNull();
+        assertThat(deletedReservation.getStartDate()).isEqualTo(START_DATE);
+        assertThat(deletedReservation.getEndDate()).isEqualTo(END_DATE);
+        assertThat(deletedReservation.getModificationAuthorUuid()).isEqualTo(MODIFICATION_AUTHOR_UUID);
+        assertThat(deletedReservation.getModificationMessage()).isEqualTo(MODIFICATION_MESSAGE);
+        assertThat(deletedReservation.getOwnerUuid()).isEqualTo(OWNER_UUID);
 
         verify(reservationRepository, times(1)).exists(any(UUID.class));
+        verify(reservationRepository, times(1)).findOne(any(UUID.class));
         verify(reservationRepository, times(1)).delete(any(UUID.class));
         verifyNoMoreInteractions(reservationRepository);
     }

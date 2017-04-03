@@ -90,7 +90,6 @@ dependencies {
 	compile('org.springframework.boot:spring-boot-starter-mail')
 	compile('org.liquibase:liquibase-core')
 	compile('org.projectlombok:lombok')
-	testCompile('org.springframework.boot:spring-boot-starter-test')
 	compile('com.fasterxml.jackson.datatype:jackson-datatype-jsr310')
 	compile group: 'org.apache.commons', name: 'commons-lang3', version: '3.5'
 	compile group: 'org.assertj', name: 'assertj-core', version: '3.6.2'

@@ -30,10 +30,13 @@ import java.net.URI;
 import java.time.LocalDate;
 import java.time.LocalTime;
 import java.time.ZoneOffset;
+import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.UUID;
 
+import static com.intive.patronage.toz.schedule.constant.DateTimeConst.LOCAL_DATE_PATTERN;
+import static com.intive.patronage.toz.schedule.constant.DateTimeConst.LOCAL_TIME_PATTERN;
 import static com.intive.patronage.toz.schedule.util.DateUtil.convertToDate;
 
 @PropertySource("classpath:application.properties")
@@ -77,6 +80,7 @@ public class ScheduleController {
 
     @ApiOperation("Get single reservation by id")
     @ApiResponses(value = {
+            @ApiResponse(code = 400, message = "Bad request", response = ArgumentErrorResponse.class),
             @ApiResponse(code = 404, message = "Not found", response = ErrorResponse.class)
     })
     @GetMapping(value = "/{id}")
@@ -118,12 +122,13 @@ public class ScheduleController {
 
     @ApiOperation("Delete reservation")
     @ApiResponses(value = {
+            @ApiResponse(code = 400, message = "Bad request", response = ArgumentErrorResponse.class),
             @ApiResponse(code = 404, message = "Not found", response = ErrorResponse.class)
     })
     @DeleteMapping(value = "/{id}")
-    public ResponseEntity<?> removeReservation(@PathVariable UUID id) {
-        scheduleService.removeReservation(id);
-        return ResponseEntity.noContent().build();
+    @ResponseStatus(HttpStatus.OK)
+    public ReservationResponseView removeReservation(@PathVariable UUID id) {
+        return convertToReservationResponseView(scheduleService.removeReservation(id));
     }
 
     private Reservation convertToReservation(ReservationRequestView reservationRequestView) {
@@ -189,13 +194,10 @@ public class ScheduleController {
     }
 
     private String createStringFromLocalTime(LocalTime localTime) {
-        return String.format("%d:%d", localTime.getHour(), localTime.getMinute());
+        return localTime.format(DateTimeFormatter.ofPattern(LOCAL_TIME_PATTERN));
     }
 
     private String createStringFromLocalDate(LocalDate localDate) {
-        return String.format("%d-%d-%d",
-                localDate.getYear(),
-                localDate.getMonth().getValue(),
-                localDate.getDayOfMonth());
+        return localDate.format(DateTimeFormatter.ofPattern(LOCAL_DATE_PATTERN));
     }
 }

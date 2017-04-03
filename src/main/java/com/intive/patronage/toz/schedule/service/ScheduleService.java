@@ -75,11 +75,13 @@ public class ScheduleService {
         return reservationRepository.save(reservation);
     }
 
-    public void removeReservation(UUID id) {
+    public Reservation removeReservation(UUID id) {
         if (!reservationRepository.exists(id)) {
             throw new NotFoundException(RESERVATION);
         }
+        Reservation deletedReservation = reservationRepository.findOne(id);
         reservationRepository.delete(id);
+        return deletedReservation;
     }
 
     private void ifReservationExistsThrowException(Date reservationDate) {

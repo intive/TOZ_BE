@@ -6,7 +6,7 @@ import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.Date;
 
-import static com.intive.patronage.toz.schedule.constant.DateTimeConsts.LOCAL_DATE_REGEX;
+import static com.intive.patronage.toz.schedule.constant.DateTimeConst.LOCAL_DATE_REGEX;
 
 public class LocalDateValidator implements ConstraintValidator<ValidLocalDate, String> {
 

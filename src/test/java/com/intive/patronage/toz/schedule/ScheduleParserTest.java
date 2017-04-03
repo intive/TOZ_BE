@@ -20,7 +20,7 @@ import java.time.ZoneOffset;
 import java.util.Date;
 import java.util.List;
 
-import static com.intive.patronage.toz.schedule.constant.DateTimeConsts.HOURS_24_REGEX;
+import static com.intive.patronage.toz.schedule.constant.DateTimeConst.HOURS_24_REGEX;
 import static com.intive.patronage.toz.schedule.util.DateUtil.convertToDate;
 import static org.assertj.core.api.Assertions.assertThat;
 

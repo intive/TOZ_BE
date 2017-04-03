@@ -3,7 +3,7 @@ package com.intive.patronage.toz.schedule.model.validator;
 import javax.validation.ConstraintValidator;
 import javax.validation.ConstraintValidatorContext;
 
-import static com.intive.patronage.toz.schedule.constant.DateTimeConsts.HOURS_24_REGEX;
+import static com.intive.patronage.toz.schedule.constant.DateTimeConst.HOURS_24_REGEX;
 
 public class LocalTimeValidator implements ConstraintValidator<ValidLocalTime, String> {
 
