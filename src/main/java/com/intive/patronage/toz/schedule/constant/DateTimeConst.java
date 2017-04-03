@@ -1,8 +1,5 @@
 package com.intive.patronage.toz.schedule.constant;
 
-import lombok.Getter;
-
-@Getter
 public class DateTimeConsts {
     public static final String HOURS_24_REGEX = "([01]+[0-9]|2[0-3]):[0-5][0-9]";
     public static final String LOCAL_DATE_PATTERN = "yyyy-MM-dd";
