@@ -47,7 +47,7 @@ public class ScheduleController {
     private final ScheduleParser scheduleParser;
     private final ScheduleService scheduleService;
     @Value("${timezoneOffset}")
-    private String zoneOffset;
+    private String zoneOffset = "Z";
 
     @Autowired
     ScheduleController(ScheduleService scheduleService, ScheduleParser scheduleParser) {
@@ -84,6 +84,7 @@ public class ScheduleController {
             @ApiResponse(code = 404, message = "Not found", response = ErrorResponse.class)
     })
     @GetMapping(value = "/{id}")
+    @ResponseStatus(HttpStatus.OK)
     public ReservationResponseView getReservation(@PathVariable UUID id) {
         return convertToReservationResponseView(scheduleService.findReservation(id));
     }
@@ -131,7 +132,7 @@ public class ScheduleController {
         return convertToReservationResponseView(scheduleService.removeReservation(id));
     }
 
-    private Reservation convertToReservation(ReservationRequestView reservationRequestView) {
+    public Reservation convertToReservation(ReservationRequestView reservationRequestView) {
         Reservation reservation = new Reservation();
         reservation.setStartDate(
                 convertToDate(

@@ -1,24 +1,32 @@
 package com.intive.patronage.toz.schedule;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.intive.patronage.toz.schedule.model.db.Reservation;
 import com.intive.patronage.toz.schedule.model.view.ReservationRequestView;
 import com.intive.patronage.toz.schedule.service.ScheduleService;
 import com.intive.patronage.toz.schedule.util.ScheduleParser;
-import com.tngtech.java.junit.dataprovider.DataProvider;
 import com.tngtech.java.junit.dataprovider.DataProviderRunner;
 import com.tngtech.java.junit.dataprovider.UseDataProvider;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.mockito.Mock;
+import org.mockito.MockitoAnnotations;
 import org.springframework.http.MediaType;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.setup.MockMvcBuilders;
 
 import java.time.Instant;
+import java.time.LocalDate;
+import java.util.ArrayList;
 import java.util.Date;
+import java.util.List;
 import java.util.UUID;
 
+import static com.intive.patronage.toz.schedule.ScheduleDataProvider.VALID_LOCAL_DATE_FROM;
+import static com.intive.patronage.toz.schedule.ScheduleDataProvider.VALID_LOCAL_TIME;
+import static org.mockito.Matchers.any;
+import static org.mockito.Mockito.*;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
@@ -28,8 +36,7 @@ public class ScheduleControllerTest {
     private static final String SCHEDULE_PATH = "/schedule";
     private static final MediaType CONTENT_TYPE = MediaType.APPLICATION_JSON_UTF8;
 
-    private static final String VALID_LOCAL_DATE = "2017-03-01";
-    private static final String VALID_LOCAL_TIME = "10:00";
+    private static final String VALID_LOCAL_DATE_TO = "2017-12-01";
     private static final String INVALID_LOCAL_DATE = "2017-30-01";
     private static final String INVALID_LOCAL_TIME = "30:00";
 
@@ -41,19 +48,79 @@ public class ScheduleControllerTest {
 
     @Before
     public void setUp() throws Exception {
+        MockitoAnnotations.initMocks(this);
         mvc = MockMvcBuilders.standaloneSetup(new ScheduleController(scheduleService, scheduleParser)).build();
     }
 
-    @DataProvider
-    public static Object[] getReservationRequestView() {
+    @Test
+    @UseDataProvider(value = "getReservation",
+            location = ScheduleDataProvider.class)
+    public void shouldReturnOKWhenGetSchedule(Reservation reservation) throws Exception {
+        List<Reservation> reservations = new ArrayList<>();
+        reservations.add(reservation);
+        when(scheduleService.findScheduleReservations(any(LocalDate.class), any(LocalDate.class)))
+                .thenReturn(reservations);
+        mvc.perform(get(SCHEDULE_PATH)
+                .param("from", VALID_LOCAL_DATE_FROM)
+                .param("to", VALID_LOCAL_DATE_TO))
+                .andExpect(status().isOk());
+
+        verify(scheduleService, times(1))
+                .findScheduleReservations(any(LocalDate.class), any(LocalDate.class));
+        verifyNoMoreInteractions(scheduleService);
+    }
+
+    @Test
+    @UseDataProvider(value = "getReservation",
+            location = ScheduleDataProvider.class)
+    public void shouldReturnOKWhenGetReservationById(Reservation reservation) throws Exception {
+        when(scheduleService.findReservation(any(UUID.class)))
+                .thenReturn(reservation);
+        mvc.perform(get(String.format("%s/%s", SCHEDULE_PATH, UUID.randomUUID().toString()))
+                .param("id", VALID_LOCAL_DATE_TO))
+                .andExpect(status().isOk());
+
+        verify(scheduleService, times(1)).findReservation(any(UUID.class));
+        verifyNoMoreInteractions(scheduleService);
+    }
+
+    @Test
+    @UseDataProvider(value = "getReservation",
+            location = ScheduleDataProvider.class)
+    public void shouldReturnCreatedWhenUpdateReservation(Reservation reservation) throws Exception {
+        when(scheduleService.updateReservation(any(UUID.class), any(Reservation.class)))
+                .thenReturn(reservation);
         ReservationRequestView view = new ReservationRequestView();
-        view.setDate(VALID_LOCAL_DATE);
+        view.setDate(VALID_LOCAL_DATE_FROM);
         view.setStartTime(VALID_LOCAL_TIME);
-        view.setEndTime(VALID_LOCAL_TIME);
-        view.setOwnerId(UUID.randomUUID());
-        view.setModificationAuthorId(UUID.randomUUID());
         view.setModificationMessage("string");
-        return new ReservationRequestView[]{view};
+        view.setOwnerId(UUID.randomUUID());
+        view.setEndTime(VALID_LOCAL_TIME);
+        view.setModificationAuthorId(UUID.randomUUID());
+        mvc.perform(put(String.format("%s/%s", SCHEDULE_PATH, UUID.randomUUID().toString()))
+                .param("id", UUID.randomUUID().toString())
+                .contentType(CONTENT_TYPE)
+                .content(new ObjectMapper().writeValueAsString(view)))
+                .andExpect(status().isCreated());
+
+        verify(scheduleService, times(1))
+                .updateReservation(any(UUID.class), any(Reservation.class));
+        verifyNoMoreInteractions(scheduleService);
+    }
+
+    @Test
+    @UseDataProvider(value = "getReservation",
+            location = ScheduleDataProvider.class)
+    public void shouldReturnOKWhenDeleteReservation(Reservation reservation) throws Exception {
+        when(scheduleService.removeReservation(any(UUID.class)))
+                .thenReturn(reservation);
+        mvc.perform(delete(String.format("%s/%s", SCHEDULE_PATH, UUID.randomUUID().toString()))
+                .param("id", UUID.randomUUID().toString())
+                .contentType(CONTENT_TYPE))
+                .andExpect(status().isOk());
+
+        verify(scheduleService, times(1)).removeReservation(any(UUID.class));
+        verifyNoMoreInteractions(scheduleService);
     }
 
     @Test
@@ -95,22 +162,28 @@ public class ScheduleControllerTest {
     }
 
     @Test
-    @UseDataProvider("getReservationRequestView")
+    @UseDataProvider(value = "getReservationRequestView",
+            location = ScheduleDataProvider.class)
     public void shouldReturnBadRequestWhenLocalTimeIsInvalidInPost(ReservationRequestView view) throws Exception {
         view.setStartTime(INVALID_LOCAL_TIME);
         mvc.perform(post(SCHEDULE_PATH)
                 .contentType(CONTENT_TYPE)
                 .content(new ObjectMapper().writeValueAsString(view)))
                 .andExpect(status().isBadRequest());
+
+        verifyNoMoreInteractions(scheduleService);
     }
 
     @Test
-    @UseDataProvider("getReservationRequestView")
+    @UseDataProvider(value = "getReservationRequestView",
+            location = ScheduleDataProvider.class)
     public void shouldReturnBadRequestWhenLocalDateIsInvalidInPost(ReservationRequestView view) throws Exception {
         view.setDate(INVALID_LOCAL_DATE);
         mvc.perform(post(SCHEDULE_PATH)
                 .contentType(CONTENT_TYPE)
                 .content(new ObjectMapper().writeValueAsString(view)))
                 .andExpect(status().isBadRequest());
+
+        verifyNoMoreInteractions(scheduleService);
     }
 }
