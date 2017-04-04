@@ -159,13 +159,10 @@ databaseChangeLog:
                       - primaryKey: true
                       - nullable: false
                 - column:
-                    name: username
+                    name: name
                     type: varchar(255)
                 - column:
                     name: password
-                    type: varchar(255)
-                - column:
-                    name: forename
                     type: varchar(255)
                 - column:
                     name: surname
@@ -173,3 +170,9 @@ databaseChangeLog:
                 - column:
                     name: role
                     type: varchar(16)
+                - column:
+                    name: phone_number
+                    type: varchar(255)
+                - column:
+                    name: email
+                    type: varchar(255)

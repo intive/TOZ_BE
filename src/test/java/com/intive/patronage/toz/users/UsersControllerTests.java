@@ -61,31 +61,32 @@ public class UsersControllerTests {
         mvc = MockMvcBuilders.standaloneSetup(new UsersController(userService)).build();
 
     }
+
     @DataProvider
     public static Object[] getProperUser() {
         User user = new User();
         user.setId(EXPECTED_ID);
-        user.setUsername(EXPECTED_USERNAME);
+        user.setName(EXPECTED_USERNAME);
         user.setPassword(EXPECTED_PASSWORD);
-        user.setForename(EXPECTED_FORENAME);
         user.setSurname(EXPECTED_SURNAME);
         user.setRole(EXPECTED_ROLE);
         return new User[]{user};
     }
+
     private List<User> getUsers() {
         final List<User> users = new ArrayList<>();
         for (int i = 0; i < PETS_LIST_SIZE; i++) {
             User user = new User();
             user.setId(UUID.randomUUID());
-            user.setUsername(String.format("%s_%d","user", i));
-            user.setPassword(String.format("%s_%d","password", i));
-            user.setForename(String.format("%s_%d","Forename", i));
-            user.setSurname(String.format("%s_%d","Surname", i));
+            user.setName(String.format("%s_%d", "user", i));
+            user.setPassword(String.format("%s_%d", "password", i));
+            user.setSurname(String.format("%s_%d", "Surname", i));
             user.setRole(Role.values()[i % 2]);
             users.add(user);
         }
         return users;
     }
+
     private static String convertToJsonString(Object value) {
         try {
             return new ObjectMapper().writeValueAsString(value);
@@ -93,6 +94,7 @@ public class UsersControllerTests {
             throw new RuntimeException(e);
         }
     }
+
     @Test
     public void getAllUsersOk() throws Exception {
         final List<User> users = getUsers();
@@ -131,7 +133,7 @@ public class UsersControllerTests {
     public void deleteUserById() throws Exception {
         UUID id = UUID.randomUUID();
         doNothing().when(userService).delete(id);
-        mvc.perform(delete(String.format("%s/%s",URL_PATH,id)))
+        mvc.perform(delete(String.format("%s/%s", URL_PATH, id)))
                 .andExpect(status().isOk());
 
         verify(userService, times(1)).delete(id);
@@ -144,7 +146,7 @@ public class UsersControllerTests {
         String userJsonString = convertToJsonString(user);
 
         when(userService.update(eq(EXPECTED_ID), any(User.class))).thenReturn(user);
-        mvc.perform(put(String.format("%s/%s",URL_PATH,EXPECTED_ID))
+        mvc.perform(put(String.format("%s/%s", URL_PATH, EXPECTED_ID))
                 .contentType(CONTENT_TYPE)
                 .content(userJsonString))
                 .andExpect(status().isOk());

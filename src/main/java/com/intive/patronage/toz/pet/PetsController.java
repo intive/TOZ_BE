@@ -32,7 +32,7 @@ import java.util.UUID;
 
 @Api(description = "Operations for pet resources")
 @RestController
-@RequestMapping(value = ApiUrl.PET_PATH, produces = MediaType.APPLICATION_JSON_VALUE)
+@RequestMapping(value = ApiUrl.PETS_PATH, produces = MediaType.APPLICATION_JSON_VALUE)
 class PetsController {
 
     private final PetsService petsService;
@@ -49,7 +49,7 @@ class PetsController {
     @ApiOperation(value = "Get all pets", responseContainer = "List")
     @GetMapping
     public List<PetView> getAllPets(@RequestParam(value = "admin", required = false) boolean isAdmin) {
-        if (isAdmin) {
+        if (isAdmin) { // TODO
             final List<Pet> pets = petsService.findAllPets();
             return ModelMapper.convertToView(pets, PetView.class);
         }
@@ -77,17 +77,17 @@ class PetsController {
     @ResponseStatus(HttpStatus.CREATED)
     @PostMapping(consumes = MediaType.APPLICATION_JSON_VALUE)
     public ResponseEntity<PetView> createPet(@Valid @RequestBody PetRequestBody petView) {
-        final Pet createdPet = petsService.createPet(convertFromView(petView));
+        final Pet createdPet = petsService.createPet(convertToModel(petView));
         final PetView createdPetView = convertToView(createdPet);
         final URI baseLocation = ServletUriComponentsBuilder.fromCurrentRequest()
                 .build().toUri();
-        final String petLocationString = String.format("%s%s", baseLocation, createdPetView.getId());
+        final String petLocationString = String.format("%s/%s", baseLocation, createdPetView.getId());
         final URI location = UriComponentsBuilder.fromUriString(petLocationString).build().toUri();
         return ResponseEntity.created(location)
                 .body(createdPetView);
     }
 
-    private static Pet convertFromView(final PetView petView) {
+    private static Pet convertToModel(final PetView petView) {
         return ModelMapper.convertToModel(petView, Pet.class);
     }
 
@@ -108,7 +108,7 @@ class PetsController {
     })
     @PutMapping(value = "/{id}", consumes = MediaType.APPLICATION_JSON_VALUE)
     public PetView updatePet(@PathVariable UUID id, @Valid @RequestBody PetRequestBody petView) {
-        final Pet pet = convertFromView(petView);
+        final Pet pet = convertToModel(petView);
         final Pet updatedPet = petsService.updatePet(id, pet);
         return convertToView(updatedPet);
     }

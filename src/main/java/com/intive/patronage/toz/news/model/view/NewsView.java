@@ -11,7 +11,7 @@ import org.hibernate.validator.constraints.NotEmpty;
 
 import javax.validation.constraints.NotNull;
 
-@ApiModel(value = "News")
+@ApiModel(value = "News") // TODO lombook
 @JsonInclude(JsonInclude.Include.NON_EMPTY)
 public class NewsView extends IdentifiableView {
     @ApiModelProperty(example = "Do oddziału TOZ trafił nowy pies!", position = 1,

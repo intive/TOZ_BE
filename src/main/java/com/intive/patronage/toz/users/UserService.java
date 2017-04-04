@@ -11,15 +11,18 @@ import java.util.UUID;
 @Service
 public class UserService {
 
-
+    private static final String USER = "User";
     private UserRepository userRepository;
 
     @Autowired
-    public UserService(UserRepository userRepository) {
+    UserService(UserRepository userRepository) {
         this.userRepository = userRepository;
     }
 
-    private static final String USER = "User";
+    User findOneById(final UUID id) {
+        throwNotFoundExceptionIfNotExists(id);
+        return userRepository.findOne(id);
+    }
 
     private void throwNotFoundExceptionIfNotExists(final UUID id) {
         if (!userRepository.exists(id)) {
@@ -27,25 +30,20 @@ public class UserService {
         }
     }
 
-    public User findOneById(UUID id) {
-        throwNotFoundExceptionIfNotExists(id);
-        return userRepository.findOne(id);
-    }
-
-    public List<User> findAll() {
+    List<User> findAll() {
         return userRepository.findAll();
     }
 
-    public User create(User user) {
+    User create(final User user) {
         return userRepository.save(user);
     }
 
-    public void delete(UUID id) {
+    void delete(final UUID id) {
         throwNotFoundExceptionIfNotExists(id);
         userRepository.delete(id);
     }
 
-    public User update(final UUID id, final User user) {
+    User update(final UUID id, final User user) {
         throwNotFoundExceptionIfNotExists(id);
         user.setId(id);
         return userRepository.save(user);

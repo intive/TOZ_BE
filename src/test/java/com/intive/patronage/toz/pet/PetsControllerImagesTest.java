@@ -34,7 +34,7 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 @SpringBootTest
 public class PetsControllerImagesTest {
 
-    private final static String IMAGES_REQUEST_PATH_FORMAT = ApiUrl.PET_PATH + "/%s/images";
+    private final static String IMAGES_REQUEST_PATH_FORMAT = ApiUrl.PETS_PATH + "/%s/images";
     private final static String imageFileName = "/test.jpg";
     private final Pet pet = new Pet();
 

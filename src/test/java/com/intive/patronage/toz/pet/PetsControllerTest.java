@@ -72,7 +72,7 @@ public class PetsControllerTest {
         final List<Pet> pets = getPets();
         when(petsService.findAllPets()).thenReturn(pets);
 
-        mvc.perform(get(ApiUrl.PET_PATH).param(ADMIN, Boolean.TRUE.toString()))
+        mvc.perform(get(ApiUrl.PETS_PATH).param(ADMIN, Boolean.TRUE.toString()))
                 .andExpect(status().isOk())
                 .andExpect(content().contentType(CONTENT_TYPE))
                 .andExpect(jsonPath("$", hasSize(PETS_LIST_SIZE)));
@@ -97,7 +97,7 @@ public class PetsControllerTest {
     @UseDataProvider("getProperPet")
     public void getPetByIdOk(final Pet pet) throws Exception {
         when(petsService.findById(EXPECTED_ID)).thenReturn(pet);
-        mvc.perform(get(ApiUrl.PET_PATH + "/" + EXPECTED_ID))
+        mvc.perform(get(ApiUrl.PETS_PATH + "/" + EXPECTED_ID))
                 .andExpect(status().isOk())
                 .andExpect(content().contentType(CONTENT_TYPE))
                 .andExpect(jsonPath("$.id", is(EXPECTED_ID.toString())))
@@ -115,7 +115,7 @@ public class PetsControllerTest {
         String petJsonString = convertToJsonString(pet);
 
         when(petsService.createPet(any(Pet.class))).thenReturn(pet);
-        mvc.perform(post(ApiUrl.PET_PATH)
+        mvc.perform(post(ApiUrl.PETS_PATH)
                 .contentType(CONTENT_TYPE)
                 .content(petJsonString))
                 .andExpect(status().isCreated())
@@ -131,7 +131,7 @@ public class PetsControllerTest {
     public void deletePetById() throws Exception {
         UUID id = UUID.randomUUID();
         doNothing().when(petsService).deletePet(id);
-        mvc.perform(delete(ApiUrl.PET_PATH + "/" + id))
+        mvc.perform(delete(ApiUrl.PETS_PATH + "/" + id))
                 .andExpect(status().isOk());
 
         verify(petsService, times(1)).deletePet(id);
@@ -144,7 +144,7 @@ public class PetsControllerTest {
         String petJsonString = convertToJsonString(pet);
 
         when(petsService.updatePet(eq(EXPECTED_ID), any(Pet.class))).thenReturn(pet);
-        mvc.perform(put(ApiUrl.PET_PATH + "/" + EXPECTED_ID)
+        mvc.perform(put(ApiUrl.PETS_PATH + "/" + EXPECTED_ID)
                 .contentType(CONTENT_TYPE)
                 .content(petJsonString))
                 .andExpect(status().isOk());

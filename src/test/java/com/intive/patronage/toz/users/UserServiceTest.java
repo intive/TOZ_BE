@@ -29,7 +29,7 @@ import static org.mockito.Mockito.when;
 
 public class UserServiceTest {
     private static final UUID EXPECTED_ID = UUID.randomUUID();
-    private static final String EXPECTED_USERNAME = "johny";
+    private static final String EXPECTED_NAME = "johny";
     private static final String EXPECTED_PASSWORD = "";
     private static final String EXPECTED_SURNAME = "Johny";
     private static final String EXPECTED_FORENAME = "Cage";
@@ -50,9 +50,8 @@ public class UserServiceTest {
         userService = new UserService(userRepository);
         user = new User();
         user.setId(EXPECTED_ID);
-        user.setUsername(EXPECTED_USERNAME);
+        user.setName(EXPECTED_NAME);
         user.setPassword(EXPECTED_PASSWORD);
-        user.setForename(EXPECTED_FORENAME);
         user.setSurname(EXPECTED_SURNAME);
         user.setRole(EXPECTED_ROLE);
         userId = user.getId();
@@ -72,9 +71,8 @@ public class UserServiceTest {
         when(userRepository.findOne(userId)).thenReturn(user);
 
         User dbUser = userService.findOneById(userId);
-        assertEquals(EXPECTED_USERNAME, dbUser.getUsername());
+        assertEquals(EXPECTED_NAME, dbUser.getName());
         assertEquals(EXPECTED_PASSWORD, dbUser.getPassword());
-        assertEquals(EXPECTED_FORENAME, dbUser.getForename());
         assertEquals(EXPECTED_SURNAME, dbUser.getSurname());
         assertEquals(EXPECTED_ROLE, dbUser.getRole());
 
@@ -96,9 +94,8 @@ public class UserServiceTest {
     public void createUser() throws Exception {
         when(userRepository.save(any(User.class))).thenReturn(user);
         User createdUser = userService.create(user);
-        assertEquals(EXPECTED_USERNAME, createdUser.getUsername());
+        assertEquals(EXPECTED_NAME, createdUser.getName());
         assertEquals(EXPECTED_PASSWORD, createdUser.getPassword());
-        assertEquals(EXPECTED_FORENAME, createdUser.getForename());
         assertEquals(EXPECTED_SURNAME, createdUser.getSurname());
         assertEquals(EXPECTED_ROLE, createdUser.getRole());
         verify(userRepository, times(1)).save(any(User.class));
@@ -130,9 +127,8 @@ public class UserServiceTest {
         when(userRepository.save(any(User.class))).thenReturn(user);
         User savedUser = userService.update(userId, user);
 
-        assertEquals(EXPECTED_USERNAME, savedUser.getUsername());
+        assertEquals(EXPECTED_NAME, savedUser.getName());
         assertEquals(EXPECTED_PASSWORD, savedUser.getPassword());
-        assertEquals(EXPECTED_FORENAME, savedUser.getForename());
         assertEquals(EXPECTED_SURNAME, savedUser.getSurname());
         assertEquals(EXPECTED_ROLE, savedUser.getRole());
     }
