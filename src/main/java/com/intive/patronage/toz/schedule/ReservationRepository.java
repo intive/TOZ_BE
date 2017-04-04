@@ -1,4 +1,4 @@
-package com.intive.patronage.toz.schedule.repository;
+package com.intive.patronage.toz.schedule;
 
 import com.intive.patronage.toz.base.repository.IdentifiableRepository;
 import com.intive.patronage.toz.schedule.model.db.Reservation;

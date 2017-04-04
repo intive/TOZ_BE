@@ -3,7 +3,6 @@ package com.intive.patronage.toz.schedule;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.intive.patronage.toz.schedule.model.db.Reservation;
 import com.intive.patronage.toz.schedule.model.view.ReservationRequestView;
-import com.intive.patronage.toz.schedule.service.ScheduleService;
 import com.intive.patronage.toz.schedule.util.ScheduleParser;
 import com.tngtech.java.junit.dataprovider.DataProviderRunner;
 import com.tngtech.java.junit.dataprovider.UseDataProvider;

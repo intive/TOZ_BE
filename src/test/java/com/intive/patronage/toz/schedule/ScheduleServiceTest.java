@@ -2,8 +2,6 @@ package com.intive.patronage.toz.schedule;
 
 import com.intive.patronage.toz.error.exception.NotFoundException;
 import com.intive.patronage.toz.schedule.model.db.Reservation;
-import com.intive.patronage.toz.schedule.repository.ReservationRepository;
-import com.intive.patronage.toz.schedule.service.ScheduleService;
 import com.intive.patronage.toz.schedule.util.ScheduleParser;
 import com.tngtech.java.junit.dataprovider.DataProviderRunner;
 import com.tngtech.java.junit.dataprovider.UseDataProvider;

@@ -1,9 +1,8 @@
-package com.intive.patronage.toz.schedule.service;
+package com.intive.patronage.toz.schedule;
 
 import com.intive.patronage.toz.error.exception.NotFoundException;
 import com.intive.patronage.toz.schedule.excception.ReservationAlreadyExistsException;
 import com.intive.patronage.toz.schedule.model.db.Reservation;
-import com.intive.patronage.toz.schedule.repository.ReservationRepository;
 import com.intive.patronage.toz.schedule.util.ScheduleParser;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
@@ -21,7 +20,7 @@ import static com.intive.patronage.toz.schedule.util.DateUtil.convertToDate;
 
 @Service
 @PropertySource("classpath:application.properties")
-public class ScheduleService {
+class ScheduleService {
 
     private final String RESERVATION = "Reservation";
     private final ReservationRepository reservationRepository;
@@ -30,13 +29,13 @@ public class ScheduleService {
     private String zoneOffset = "Z";
 
     @Autowired
-    public ScheduleService(ReservationRepository reservationRepository,
+    ScheduleService(ReservationRepository reservationRepository,
                     ScheduleParser scheduleParser) {
         this.reservationRepository = reservationRepository;
         this.scheduleParser = scheduleParser;
     }
 
-    public List<Reservation> findScheduleReservations(LocalDate from, LocalDate to) {
+    List<Reservation> findScheduleReservations(LocalDate from, LocalDate to) {
         Date dateFrom = convertToDate(
                 from,
                 from.atStartOfDay().toLocalTime(),
@@ -48,20 +47,20 @@ public class ScheduleService {
         return reservationRepository.findByStartDateBetween(dateFrom, dateTo);
     }
 
-    public Reservation findReservation(UUID id) {
+    Reservation findReservation(UUID id) {
         if (!reservationRepository.exists(id)) {
             throw new NotFoundException(RESERVATION);
         }
         return reservationRepository.findOne(id);
     }
 
-    public Reservation makeReservation(Reservation reservation) {
+    Reservation makeReservation(Reservation reservation) {
         ifReservationExistsThrowException(reservation.getStartDate());
         scheduleParser.validateHours(reservation.getStartDate(), reservation.getEndDate());
         return reservationRepository.save(reservation);
     }
 
-    public Reservation updateReservation(UUID id, Reservation newReservation) {
+    Reservation updateReservation(UUID id, Reservation newReservation) {
         if (!reservationRepository.exists(id)) {
             throw new NotFoundException(RESERVATION);
         }

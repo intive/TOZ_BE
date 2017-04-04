@@ -8,7 +8,6 @@ import com.intive.patronage.toz.schedule.model.view.DayConfigView;
 import com.intive.patronage.toz.schedule.model.view.ReservationRequestView;
 import com.intive.patronage.toz.schedule.model.view.ReservationResponseView;
 import com.intive.patronage.toz.schedule.model.view.ScheduleView;
-import com.intive.patronage.toz.schedule.service.ScheduleService;
 import com.intive.patronage.toz.schedule.util.ScheduleParser;
 import io.swagger.annotations.ApiOperation;
 import io.swagger.annotations.ApiParam;
@@ -132,7 +131,7 @@ class ScheduleController {
         return convertToReservationResponseView(scheduleService.removeReservation(id));
     }
 
-    public Reservation convertToReservation(ReservationRequestView reservationRequestView) {
+    private Reservation convertToReservation(ReservationRequestView reservationRequestView) {
         Reservation reservation = new Reservation();
         reservation.setStartDate(
                 convertToDate(
