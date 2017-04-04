@@ -3,6 +3,7 @@ package com.intive.patronage.toz.schedule;
 import com.intive.patronage.toz.error.exception.NotFoundException;
 import com.intive.patronage.toz.schedule.model.db.Reservation;
 import com.intive.patronage.toz.schedule.util.ScheduleParser;
+import com.intive.patronage.toz.users.UserRepository;
 import com.tngtech.java.junit.dataprovider.DataProviderRunner;
 import com.tngtech.java.junit.dataprovider.UseDataProvider;
 import org.junit.Before;
@@ -24,13 +25,15 @@ public class ScheduleServiceTest {
     @Mock
     private ReservationRepository reservationRepository;
     @Mock
+    private UserRepository userRepository;
+    @Mock
     private ScheduleParser scheduleParser;
     private ScheduleService scheduleService;
 
     @Before
     public void setUp() {
         MockitoAnnotations.initMocks(this);
-        scheduleService = new ScheduleService(reservationRepository, scheduleParser);
+        scheduleService = new ScheduleService(reservationRepository, scheduleParser, userRepository);
     }
 
 
@@ -85,10 +88,10 @@ public class ScheduleServiceTest {
         when(reservationRepository.save(any(Reservation.class))).thenReturn(reservation);
         when(reservationRepository.findOne(any(UUID.class))).thenReturn(reservation);
         when(reservationRepository.exists(any(UUID.class))).thenReturn(true);
+        when(userRepository.exists(any(UUID.class))).thenReturn(true);
         Reservation updatedReservation =
                 scheduleService.updateReservation(UUID.randomUUID(), reservation);
 
-        assertThat(updatedReservation).isNotNull();
         assertThat(updatedReservation.getStartDate()).isEqualTo(START_DATE);
         assertThat(updatedReservation.getEndDate()).isEqualTo(END_DATE);
         assertThat(updatedReservation.getModificationAuthorUuid()).isEqualTo(MODIFICATION_AUTHOR_UUID);
@@ -96,9 +99,33 @@ public class ScheduleServiceTest {
         assertThat(updatedReservation.getOwnerUuid()).isEqualTo(OWNER_UUID);
 
         verify(reservationRepository, times(1)).exists(any(UUID.class));
+        verify(userRepository, times(2)).exists(any(UUID.class));
         verify(reservationRepository, times(1)).findOne(any(UUID.class));
         verify(reservationRepository, times(1)).save(any(Reservation.class));
         verifyNoMoreInteractions(reservationRepository);
+        verifyNoMoreInteractions(userRepository);
+    }
+
+    @Test
+    @UseDataProvider(value = "getReservation",
+            location = ScheduleDataProvider.class)
+    public void shouldCreateReservation(Reservation reservation) {
+        when(reservationRepository.save(any(Reservation.class))).thenReturn(reservation);
+        when(userRepository.exists(any(UUID.class))).thenReturn(true);
+        Reservation updatedReservation =
+                scheduleService.makeReservation(reservation);
+
+        assertThat(updatedReservation.getStartDate()).isEqualTo(START_DATE);
+        assertThat(updatedReservation.getEndDate()).isEqualTo(END_DATE);
+        assertThat(updatedReservation.getModificationAuthorUuid()).isEqualTo(MODIFICATION_AUTHOR_UUID);
+        assertThat(updatedReservation.getModificationMessage()).isEqualTo(MODIFICATION_MESSAGE);
+        assertThat(updatedReservation.getOwnerUuid()).isEqualTo(OWNER_UUID);
+
+        verify(userRepository, times(2)).exists(any(UUID.class));
+        verify(reservationRepository, times(1)).save(any(Reservation.class));
+        verify(reservationRepository, times(1)).findByStartDate(any(Date.class));
+        verifyNoMoreInteractions(reservationRepository);
+        verifyNoMoreInteractions(userRepository);
     }
 
     @Test
@@ -133,5 +160,12 @@ public class ScheduleServiceTest {
     public void shouldReturnErrorWhenRemoveReservationNotFound() {
         when(reservationRepository.exists(any(UUID.class))).thenReturn(false);
         scheduleService.removeReservation(UUID.randomUUID());
+    }
+
+    @Test(expected = NotFoundException.class)
+    public void shouldReturnErrorWhenUserOwnerNotFound() {
+        when(reservationRepository.exists(any(UUID.class))).thenReturn(true);
+        when(userRepository.exists(any(UUID.class))).thenReturn(false);
+        scheduleService.updateReservation(UUID.randomUUID(), new Reservation());
     }
 }
