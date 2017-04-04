@@ -1,0 +1,149 @@
+package com.intive.patronage.toz.users;
+
+
+import com.intive.patronage.toz.error.exception.NotFoundException;
+import com.intive.patronage.toz.users.model.db.User;
+import com.intive.patronage.toz.users.model.enumerations.Role;
+import org.junit.Before;
+import org.junit.Test;
+import org.junit.runner.RunWith;
+import org.mockito.Mock;
+import org.mockito.MockitoAnnotations;
+import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
+
+import java.util.Collections;
+import java.util.List;
+import java.util.UUID;
+
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertTrue;
+import static org.mockito.Matchers.any;
+import static org.mockito.Matchers.eq;
+import static org.mockito.Mockito.times;
+import static org.mockito.Mockito.verify;
+import static org.mockito.Mockito.verifyNoMoreInteractions;
+import static org.mockito.Mockito.when;
+
+
+@RunWith(SpringJUnit4ClassRunner.class)
+
+public class UserServiceTest {
+    private static final UUID EXPECTED_ID = UUID.randomUUID();
+    private static final String EXPECTED_USERNAME = "johny";
+    private static final String EXPECTED_PASSWORD = "";
+    private static final String EXPECTED_SURNAME = "Johny";
+    private static final String EXPECTED_FORENAME = "Cage";
+    private static final Role EXPECTED_ROLE = Role.TOZ;
+
+    private User user;
+    private UUID userId;
+
+    @Mock
+    private UserRepository userRepository;
+
+    @Mock
+    private UserService userService;
+
+    @Before
+    public void setUp() throws Exception {
+        MockitoAnnotations.initMocks(this);
+        userService = new UserService(userRepository);
+        user = new User();
+        user.setId(EXPECTED_ID);
+        user.setUsername(EXPECTED_USERNAME);
+        user.setPassword(EXPECTED_PASSWORD);
+        user.setForename(EXPECTED_FORENAME);
+        user.setSurname(EXPECTED_SURNAME);
+        user.setRole(EXPECTED_ROLE);
+        userId = user.getId();
+    }
+
+    @Test
+    public void findAllUsers() throws Exception {
+        when(userRepository.findAll()).thenReturn(Collections.emptyList());
+
+        List<User> users = userService.findAll();
+        assertTrue(users.isEmpty());
+    }
+
+    @Test
+    public void findById() throws Exception {
+        when(userRepository.exists(userId)).thenReturn(true);
+        when(userRepository.findOne(userId)).thenReturn(user);
+
+        User dbUser = userService.findOneById(userId);
+        assertEquals(EXPECTED_USERNAME, dbUser.getUsername());
+        assertEquals(EXPECTED_PASSWORD, dbUser.getPassword());
+        assertEquals(EXPECTED_FORENAME, dbUser.getForename());
+        assertEquals(EXPECTED_SURNAME, dbUser.getSurname());
+        assertEquals(EXPECTED_ROLE, dbUser.getRole());
+
+        verify(userRepository, times(1)).exists(eq(userId));
+        verify(userRepository, times(1)).findOne(eq(userId));
+        verifyNoMoreInteractions(userRepository);
+    }
+
+    @Test(expected = NotFoundException.class)
+    public void findByIdNotFoundException() throws Exception {
+        when(userRepository.exists(userId)).thenReturn(false);
+        userService.findOneById(userId);
+
+        verify(userRepository, times(1)).exists(eq(userId));
+        verifyNoMoreInteractions(userRepository);
+    }
+
+    @Test
+    public void createUser() throws Exception {
+        when(userRepository.save(any(User.class))).thenReturn(user);
+        User createdUser = userService.create(user);
+        assertEquals(EXPECTED_USERNAME, createdUser.getUsername());
+        assertEquals(EXPECTED_PASSWORD, createdUser.getPassword());
+        assertEquals(EXPECTED_FORENAME, createdUser.getForename());
+        assertEquals(EXPECTED_SURNAME, createdUser.getSurname());
+        assertEquals(EXPECTED_ROLE, createdUser.getRole());
+        verify(userRepository, times(1)).save(any(User.class));
+        verifyNoMoreInteractions(userRepository);
+    }
+
+    @Test
+    public void deleteUser() throws Exception {
+        when(userRepository.exists(userId)).thenReturn(true);
+        userService.delete(userId);
+
+        verify(userRepository, times(1)).exists(eq(userId));
+        verify(userRepository, times(1)).delete(eq(userId));
+        verifyNoMoreInteractions(userRepository);
+    }
+
+    @Test(expected = NotFoundException.class)
+    public void deleteUserNotFoundException() throws Exception {
+        when(userRepository.exists(userId)).thenReturn(false);
+        userService.delete(userId);
+
+        verify(userRepository, times(1)).exists(eq(userId));
+        verifyNoMoreInteractions(userRepository);
+    }
+
+    @Test
+    public void updateUser() throws Exception {
+        when(userRepository.exists(userId)).thenReturn(true);
+        when(userRepository.save(any(User.class))).thenReturn(user);
+        User savedUser = userService.update(userId, user);
+
+        assertEquals(EXPECTED_USERNAME, savedUser.getUsername());
+        assertEquals(EXPECTED_PASSWORD, savedUser.getPassword());
+        assertEquals(EXPECTED_FORENAME, savedUser.getForename());
+        assertEquals(EXPECTED_SURNAME, savedUser.getSurname());
+        assertEquals(EXPECTED_ROLE, savedUser.getRole());
+    }
+
+    @Test(expected = NotFoundException.class)
+    public void updateUserNotFoundException() throws Exception {
+        when(userRepository.exists(userId)).thenReturn(false);
+        userService.update(userId, user);
+
+        verify(userRepository, times(1)).exists(eq(userId));
+        verifyNoMoreInteractions(userRepository);
+    }
+
+}

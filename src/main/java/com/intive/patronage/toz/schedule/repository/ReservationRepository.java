@@ -1,6 +1,6 @@
 package com.intive.patronage.toz.schedule.repository;
 
-import com.intive.patronage.toz.repository.IdentifiableRepository;
+import com.intive.patronage.toz.base.repository.IdentifiableRepository;
 import com.intive.patronage.toz.schedule.model.db.Reservation;
 
 import java.util.Date;

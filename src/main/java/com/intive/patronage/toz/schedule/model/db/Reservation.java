@@ -1,6 +1,6 @@
 package com.intive.patronage.toz.schedule.model.db;
 
-import com.intive.patronage.toz.model.db.Identifiable;
+import com.intive.patronage.toz.base.model.Identifiable;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;

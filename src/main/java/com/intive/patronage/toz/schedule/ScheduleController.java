@@ -1,8 +1,8 @@
 package com.intive.patronage.toz.schedule;
 
-import com.intive.patronage.toz.error.ArgumentErrorResponse;
-import com.intive.patronage.toz.error.ErrorResponse;
-import com.intive.patronage.toz.error.ValidationErrorResponse;
+import com.intive.patronage.toz.error.model.ArgumentErrorResponse;
+import com.intive.patronage.toz.error.model.ErrorResponse;
+import com.intive.patronage.toz.error.model.ValidationErrorResponse;
 import com.intive.patronage.toz.schedule.model.db.Reservation;
 import com.intive.patronage.toz.schedule.model.view.DayConfigView;
 import com.intive.patronage.toz.schedule.model.view.ReservationRequestView;
@@ -42,7 +42,7 @@ import static com.intive.patronage.toz.schedule.util.DateUtil.convertToDate;
 @PropertySource("classpath:application.properties")
 @RestController
 @RequestMapping(value = "/schedule", produces = MediaType.APPLICATION_JSON_VALUE)
-public class ScheduleController {
+class ScheduleController {
 
     private final ScheduleParser scheduleParser;
     private final ScheduleService scheduleService;
