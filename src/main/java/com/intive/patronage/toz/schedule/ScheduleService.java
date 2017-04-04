@@ -1,9 +1,11 @@
 package com.intive.patronage.toz.schedule;
 
+import com.intive.patronage.toz.base.repository.IdentifiableRepository;
 import com.intive.patronage.toz.error.exception.NotFoundException;
 import com.intive.patronage.toz.schedule.excception.ReservationAlreadyExistsException;
 import com.intive.patronage.toz.schedule.model.db.Reservation;
 import com.intive.patronage.toz.schedule.util.ScheduleParser;
+import com.intive.patronage.toz.users.UserRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.PropertySource;
@@ -23,16 +25,20 @@ import static com.intive.patronage.toz.schedule.util.DateUtil.convertToDate;
 class ScheduleService {
 
     private final String RESERVATION = "Reservation";
+    private final String USER = "User";
     private final ReservationRepository reservationRepository;
+    private final UserRepository userRepository;
     private ScheduleParser scheduleParser;
     @Value("${timezoneOffset}")
     private String zoneOffset = "Z";
 
     @Autowired
     ScheduleService(ReservationRepository reservationRepository,
-                    ScheduleParser scheduleParser) {
+                    ScheduleParser scheduleParser,
+                    UserRepository userRepository) {
         this.reservationRepository = reservationRepository;
         this.scheduleParser = scheduleParser;
+        this.userRepository = userRepository;
     }
 
     List<Reservation> findScheduleReservations(LocalDate from, LocalDate to) {
@@ -48,22 +54,22 @@ class ScheduleService {
     }
 
     Reservation findReservation(UUID id) {
-        if (!reservationRepository.exists(id)) {
-            throw new NotFoundException(RESERVATION);
-        }
+        ifReservationDoesntExistThrowException(id);
         return reservationRepository.findOne(id);
     }
 
     Reservation makeReservation(Reservation reservation) {
+        ifUserDoesntExistThrowException(reservation.getOwnerUuid());
+        ifUserDoesntExistThrowException(reservation.getModificationAuthorUuid());
         ifReservationExistsThrowException(reservation.getStartDate());
         scheduleParser.validateHours(reservation.getStartDate(), reservation.getEndDate());
         return reservationRepository.save(reservation);
     }
 
     Reservation updateReservation(UUID id, Reservation newReservation) {
-        if (!reservationRepository.exists(id)) {
-            throw new NotFoundException(RESERVATION);
-        }
+        ifUserDoesntExistThrowException(newReservation.getOwnerUuid());
+        ifUserDoesntExistThrowException(newReservation.getModificationAuthorUuid());
+        ifReservationDoesntExistThrowException(id);
         scheduleParser.validateHours(newReservation.getStartDate(), newReservation.getEndDate());
         Reservation reservation = reservationRepository.findOne(id);
         reservation.setStartDate(newReservation.getStartDate());
@@ -74,10 +80,8 @@ class ScheduleService {
         return reservationRepository.save(reservation);
     }
 
-    public Reservation removeReservation(UUID id) {
-        if (!reservationRepository.exists(id)) {
-            throw new NotFoundException(RESERVATION);
-        }
+    Reservation removeReservation(UUID id) {
+        ifReservationDoesntExistThrowException(id);
         Reservation deletedReservation = reservationRepository.findOne(id);
         reservationRepository.delete(id);
         return deletedReservation;
@@ -94,6 +98,24 @@ class ScheduleService {
                     .atOffset(ZoneOffset.of(zoneOffset))
                     .toLocalDate();
             throw new ReservationAlreadyExistsException(time, day);
+        }
+    }
+
+    private void ifEntityDoesntExistThrowException(UUID id, IdentifiableRepository repo, String entityName){
+        if (!repo.exists(id)){
+            throw new NotFoundException(entityName);
+        }
+    }
+
+    private void ifUserDoesntExistThrowException(UUID userId) {
+        if (!userRepository.exists(userId)) {
+            throw new NotFoundException(USER);
+        }
+    }
+
+    private void ifReservationDoesntExistThrowException(UUID userId) {
+        if (!reservationRepository.exists(userId)) {
+            throw new NotFoundException(RESERVATION);
         }
     }
 }
