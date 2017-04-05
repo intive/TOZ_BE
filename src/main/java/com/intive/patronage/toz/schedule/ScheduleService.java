@@ -54,22 +54,22 @@ class ScheduleService {
     }
 
     Reservation findReservation(UUID id) {
-        ifReservationDoesntExistThrowException(id);
+        ifEntityDoesntExistInRepoThrowException(id, reservationRepository, RESERVATION);
         return reservationRepository.findOne(id);
     }
 
     Reservation makeReservation(Reservation reservation) {
-        ifUserDoesntExistThrowException(reservation.getOwnerUuid());
-        ifUserDoesntExistThrowException(reservation.getModificationAuthorUuid());
+        ifEntityDoesntExistInRepoThrowException(reservation.getOwnerUuid(), userRepository, USER);
+        ifEntityDoesntExistInRepoThrowException(reservation.getModificationAuthorUuid(), userRepository, USER);
         ifReservationExistsThrowException(reservation.getStartDate());
         scheduleParser.validateHours(reservation.getStartDate(), reservation.getEndDate());
         return reservationRepository.save(reservation);
     }
 
     Reservation updateReservation(UUID id, Reservation newReservation) {
-        ifUserDoesntExistThrowException(newReservation.getOwnerUuid());
-        ifUserDoesntExistThrowException(newReservation.getModificationAuthorUuid());
-        ifReservationDoesntExistThrowException(id);
+        ifEntityDoesntExistInRepoThrowException(newReservation.getOwnerUuid(), userRepository, USER);
+        ifEntityDoesntExistInRepoThrowException(newReservation.getModificationAuthorUuid(), userRepository, USER);
+        ifEntityDoesntExistInRepoThrowException(id, reservationRepository, RESERVATION);
         scheduleParser.validateHours(newReservation.getStartDate(), newReservation.getEndDate());
         Reservation reservation = reservationRepository.findOne(id);
         reservation.setStartDate(newReservation.getStartDate());
@@ -81,7 +81,7 @@ class ScheduleService {
     }
 
     Reservation removeReservation(UUID id) {
-        ifReservationDoesntExistThrowException(id);
+        ifEntityDoesntExistInRepoThrowException(id, reservationRepository, RESERVATION);
         Reservation deletedReservation = reservationRepository.findOne(id);
         reservationRepository.delete(id);
         return deletedReservation;
@@ -101,21 +101,9 @@ class ScheduleService {
         }
     }
 
-    private void ifEntityDoesntExistThrowException(UUID id, IdentifiableRepository repo, String entityName){
+    private void ifEntityDoesntExistInRepoThrowException(UUID id, IdentifiableRepository repo, String entityName){
         if (!repo.exists(id)){
             throw new NotFoundException(entityName);
-        }
-    }
-
-    private void ifUserDoesntExistThrowException(UUID userId) {
-        if (!userRepository.exists(userId)) {
-            throw new NotFoundException(USER);
-        }
-    }
-
-    private void ifReservationDoesntExistThrowException(UUID userId) {
-        if (!reservationRepository.exists(userId)) {
-            throw new NotFoundException(RESERVATION);
         }
     }
 }
