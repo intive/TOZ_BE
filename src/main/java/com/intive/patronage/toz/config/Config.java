@@ -41,6 +41,9 @@ class Config extends WebMvcConfigurerAdapter {
     @Value("${server.external.url.context}")
     private String serverContext;
 
+    @Value("${bcrypt.security.level}")
+    private int securityLevel;
+
     @Autowired
     public Config(ServletContext servletContext) {
         this.servletContext = servletContext;
@@ -78,6 +81,13 @@ class Config extends WebMvcConfigurerAdapter {
         };
     }
 
+    @Bean
+    public PasswordEncoder passwordEncoder() {
+        SecureRandom secureRandom = new SecureRandom();
+        secureRandom.nextBytes(new byte[20]);
+        return new BCryptPasswordEncoder(securityLevel, secureRandom);
+    }
+
     private static ApiInfo apiInfo() {
         return new ApiInfoBuilder()
                 .title("Patronage 2017 TOZ-BE")
@@ -98,13 +108,5 @@ class Config extends WebMvcConfigurerAdapter {
                 return serverContext;
             }
         };
-    }
-
-    @Bean
-    public PasswordEncoder passwordEncoder() {
-        int strength =  10;
-        SecureRandom random = new SecureRandom();
-        random.nextBytes(new byte[20]);
-        return new BCryptPasswordEncoder(strength, random);
     }
 }

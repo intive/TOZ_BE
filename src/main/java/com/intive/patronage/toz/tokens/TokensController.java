@@ -12,7 +12,6 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.ResponseStatus;
 import org.springframework.web.bind.annotation.RestController;
 
 import javax.validation.Valid;
@@ -32,21 +31,20 @@ class TokensController {
     @ApiOperation("Login to api")
     @ApiResponses(value = {
             @ApiResponse(code = 200, message = "Logged in"),
-            @ApiResponse(code = 422, message = "Incorrect user or password")
+            @ApiResponse(code = 403, message = "Incorrect user or password")
     })
     @PostMapping(value = "/acquire", consumes = MediaType.APPLICATION_JSON_VALUE)
-    @ResponseStatus(HttpStatus.CREATED)
     public ResponseEntity<?> login(@Valid @RequestBody UserView userView) {
-        final boolean login = tokensService.login(userView);
-        if (login) {
-            return ResponseEntity
-                    .status(HttpStatus.OK)
-                    .body(null);
+        Boolean isLoggedIn = tokensService.login(userView);
+        HttpStatus httpStatus;
+        if (isLoggedIn) {
+            httpStatus = HttpStatus.OK;
         } else {
-            return ResponseEntity
-                    .status(HttpStatus.FORBIDDEN)
-                    .body(null);
+           httpStatus = HttpStatus.FORBIDDEN;
         }
+        return  ResponseEntity
+                .status(httpStatus)
+                .body(null);
     }
 
 }

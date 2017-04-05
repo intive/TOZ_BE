@@ -53,6 +53,15 @@ public class TokenControllerTest {
                 .andExpect(status().isOk());
     }
 
+    @Test
+    public void shouldReturnForbiddenWhenImproperUserAndPassword() throws Exception {
+        when(tokensService.login(any(UserView.class))).thenReturn(false);
+        this.mockMvc.perform(post(String.format("%s/%s", TOKENS_PATH, "acquire"))
+                .contentType(CONTENT_TYPE)
+                .content(convertToJsonString(userView)))
+                .andExpect(status().isForbidden());
+    }
+
     private static String convertToJsonString(Object value) {
         try {
             return new ObjectMapper().writeValueAsString(value);
