@@ -73,12 +73,11 @@ public class UsersController {
     })
     @PostMapping(consumes = MediaType.APPLICATION_JSON_VALUE)
     public ResponseEntity<UserView> createUser(@Valid @RequestBody UserView userView) {
-        final User s = ModelMapper.convertToModel(userView, User.class);
         final User createdUser = userService.create(convertToModel(userView));
         final UserView createdUserView = convertToView(createdUser);
         final URI baseLocation = ServletUriComponentsBuilder.fromCurrentRequest()
                 .build().toUri();
-        final String userLocationString = String.format("%s%s", baseLocation, createdUser.getId());
+        final String userLocationString = String.format("%s/%s", baseLocation, createdUser.getId());
         final URI location = UriComponentsBuilder.fromUriString(userLocationString).build().toUri();
         return ResponseEntity.created(location).body(createdUserView);
     }

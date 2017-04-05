@@ -153,7 +153,7 @@ public class PetsControllerTest {
         verifyNoMoreInteractions(petsService);
     }
 
-    private static String convertToJsonString(Object value) {
+    private static String convertToJsonString(Object value) { // TODO model mapper
         try {
             return new ObjectMapper().writeValueAsString(value);
         } catch (JsonProcessingException e) {

@@ -1,7 +1,6 @@
 package com.intive.patronage.toz.users.model.db;
 
 import com.intive.patronage.toz.base.model.Identifiable;
-import com.intive.patronage.toz.users.model.enumerations.Role;
 import lombok.Getter;
 import lombok.Setter;
 
@@ -20,4 +19,8 @@ public class User extends Identifiable {
     private String email; // TODO
     @Enumerated(EnumType.STRING)
     private Role role;
+
+    public enum Role {
+        SU, TOZ, VOLUNTEER
+    }
 }

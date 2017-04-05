@@ -3,7 +3,6 @@ package com.intive.patronage.toz.users;
 
 import com.intive.patronage.toz.error.exception.NotFoundException;
 import com.intive.patronage.toz.users.model.db.User;
-import com.intive.patronage.toz.users.model.enumerations.Role;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -29,11 +28,10 @@ import static org.mockito.Mockito.when;
 
 public class UserServiceTest {
     private static final UUID EXPECTED_ID = UUID.randomUUID();
-    private static final String EXPECTED_NAME = "johny";
-    private static final String EXPECTED_PASSWORD = "";
-    private static final String EXPECTED_SURNAME = "Johny";
-    private static final String EXPECTED_FORENAME = "Cage";
-    private static final Role EXPECTED_ROLE = Role.TOZ;
+    private static final String EXPECTED_NAME = "Johny";
+    private static final String EXPECTED_PASSWORD = "secret";
+    private static final String EXPECTED_SURNAME = "Bravo";
+    private static final User.Role EXPECTED_ROLE = User.Role.TOZ;
 
     private User user;
     private UUID userId;
@@ -45,7 +43,7 @@ public class UserServiceTest {
     private UserService userService;
 
     @Before
-    public void setUp() throws Exception {
+    public void setUp() throws Exception { // TODO: data provider
         MockitoAnnotations.initMocks(this);
         userService = new UserService(userRepository);
         user = new User();
