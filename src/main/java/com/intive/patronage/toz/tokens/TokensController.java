@@ -1,7 +1,9 @@
 package com.intive.patronage.toz.tokens;
 
 import com.intive.patronage.toz.config.ApiUrl;
+import com.intive.patronage.toz.users.model.db.User;
 import com.intive.patronage.toz.users.model.view.UserView;
+import com.intive.patronage.toz.util.ModelMapper;
 import io.swagger.annotations.ApiOperation;
 import io.swagger.annotations.ApiResponse;
 import io.swagger.annotations.ApiResponses;
@@ -35,16 +37,16 @@ class TokensController {
     })
     @PostMapping(value = "/acquire", consumes = MediaType.APPLICATION_JSON_VALUE)
     public ResponseEntity<?> login(@Valid @RequestBody UserView userView) {
-        Boolean isLoggedIn = tokensService.login(userView);
+        Boolean isLoggedIn = tokensService.isUserAuthenticated(ModelMapper.convertToModel(userView, User.class));
         HttpStatus httpStatus;
         if (isLoggedIn) {
             httpStatus = HttpStatus.OK;
         } else {
-           httpStatus = HttpStatus.FORBIDDEN;
+            httpStatus = HttpStatus.FORBIDDEN;
         }
-        return  ResponseEntity
+        return ResponseEntity
                 .status(httpStatus)
-                .body(null);
+                .body(null); //TODO - create and return to client JWT token
     }
 
 }
