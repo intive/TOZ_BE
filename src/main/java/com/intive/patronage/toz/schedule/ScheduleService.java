@@ -60,7 +60,9 @@ class ScheduleService {
 
     Reservation makeReservation(Reservation reservation) {
         ifEntityDoesntExistInRepoThrowException(reservation.getOwnerUuid(), userRepository, USER);
-        ifEntityDoesntExistInRepoThrowException(reservation.getModificationAuthorUuid(), userRepository, USER);
+        //TODO: waits for security users implementation, to get info from Principal
+        //Uuid modificationAuthorId = getUserByEmail(principal.getName()).getId;
+        //ifEntityDoesntExistInRepoThrowException(reservation.getModificationAuthorUuid(), userRepository, USER);
         ifReservationExistsThrowException(reservation.getStartDate());
         scheduleParser.validateHours(reservation.getStartDate(), reservation.getEndDate());
         return reservationRepository.save(reservation);
@@ -68,7 +70,9 @@ class ScheduleService {
 
     Reservation updateReservation(UUID id, Reservation newReservation) {
         ifEntityDoesntExistInRepoThrowException(newReservation.getOwnerUuid(), userRepository, USER);
-        ifEntityDoesntExistInRepoThrowException(newReservation.getModificationAuthorUuid(), userRepository, USER);
+        //TODO: waits for security users implementation, to get info from Principal
+        //Uuid modificationAuthorId = getUserByEmail(principal.getName()).getId;
+        //ifEntityDoesntExistInRepoThrowException(newReservation.getModificationAuthorUuid(), userRepository, USER);
         ifEntityDoesntExistInRepoThrowException(id, reservationRepository, RESERVATION);
         scheduleParser.validateHours(newReservation.getStartDate(), newReservation.getEndDate());
         Reservation reservation = reservationRepository.findOne(id);

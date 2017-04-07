@@ -42,7 +42,4 @@ abstract class ReservationView {
 
     @ApiModelProperty(value = "Modification message", position = 7)
     private String modificationMessage;
-
-    @ApiModelProperty(value = "Modification author ID", example = "c5296892-347f-4b2e-b1c6-6faff971f767", position = 8)
-    private UUID modificationAuthorId;
 }

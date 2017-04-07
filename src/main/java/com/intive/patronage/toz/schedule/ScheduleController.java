@@ -9,6 +9,7 @@ import com.intive.patronage.toz.schedule.model.view.ReservationRequestView;
 import com.intive.patronage.toz.schedule.model.view.ReservationResponseView;
 import com.intive.patronage.toz.schedule.model.view.ScheduleView;
 import com.intive.patronage.toz.schedule.util.ScheduleParser;
+import com.intive.patronage.toz.users.UserRepository;
 import io.swagger.annotations.ApiOperation;
 import io.swagger.annotations.ApiParam;
 import io.swagger.annotations.ApiResponse;
@@ -26,6 +27,7 @@ import org.springframework.web.util.UriComponentsBuilder;
 
 import javax.validation.Valid;
 import java.net.URI;
+import java.security.Principal;
 import java.time.LocalDate;
 import java.time.LocalTime;
 import java.time.ZoneOffset;
@@ -45,13 +47,15 @@ class ScheduleController {
 
     private final ScheduleParser scheduleParser;
     private final ScheduleService scheduleService;
+    private final UserRepository userRepository;
     @Value("${timezoneOffset}")
     private String zoneOffset = "Z";
 
     @Autowired
-    ScheduleController(ScheduleService scheduleService, ScheduleParser scheduleParser) {
+    ScheduleController(ScheduleService scheduleService, ScheduleParser scheduleParser, UserRepository userRepository) {
         this.scheduleService = scheduleService;
         this.scheduleParser = scheduleParser;
+        this.userRepository = userRepository;
     }
 
     @ApiOperation("Get schedule")
@@ -96,12 +100,18 @@ class ScheduleController {
     })
     @PostMapping(consumes = MediaType.APPLICATION_JSON_VALUE)
     @ResponseStatus(HttpStatus.CREATED)
-    public ResponseEntity<ReservationResponseView> makeReservation(@Valid @RequestBody ReservationRequestView reservationRequestView) {
-        ReservationResponseView createdReservation = convertToReservationResponseView(
-                scheduleService.makeReservation(convertToReservation(reservationRequestView)));
-        URI location = createLocationPath(createdReservation.getId());
+    public ResponseEntity<ReservationResponseView> makeReservation(@Valid @RequestBody ReservationRequestView reservationRequestView,
+                                                                   Principal principal) {
+        //TODO: wait for security users auth to get author id from java.secuity.Principal
+        //UUID modificationAuthorId = userRepository.findByEmail(principal.getName()).getId();
+        Reservation createdReservation = convertToReservation(reservationRequestView);
+        //TODO: change this when users auth is ready
+        createdReservation.setModificationAuthorUuid(UUID.randomUUID());
+        ReservationResponseView createdReservationResponseView = convertToReservationResponseView(
+                scheduleService.makeReservation(createdReservation));
+        URI location = createLocationPath(createdReservationResponseView.getId());
         return ResponseEntity.created(location)
-                .body(createdReservation);
+                .body(createdReservationResponseView);
     }
 
     @ApiOperation("Update reservation")
@@ -112,12 +122,18 @@ class ScheduleController {
     @PutMapping(value = "/{id}", consumes = MediaType.APPLICATION_JSON_VALUE)
     @ResponseStatus(HttpStatus.CREATED)
     public ResponseEntity<ReservationResponseView> updateReservation(@PathVariable UUID id,
-                                                                     @Valid @RequestBody ReservationRequestView reservationView) {
-        ReservationResponseView createdReservationResponseView = convertToReservationResponseView(
-                scheduleService.updateReservation(id, convertToReservation(reservationView)));
+                                                                     @Valid @RequestBody ReservationRequestView reservationRequestView,
+                                                                     Principal principal) {
+        //TODO: wait for security users auth to get author id from java.secuity.Principal
+        //UUID modificationAuthorId = userRepository.findByEmail(principal.getName()).getId();
+        Reservation updatedReservation = convertToReservation(reservationRequestView);
+        //TODO: change this when users auth is ready
+        updatedReservation.setModificationAuthorUuid(UUID.randomUUID());
+        ReservationResponseView updatedReservationResponseView = convertToReservationResponseView(
+                scheduleService.updateReservation(id, updatedReservation));
         URI location = createLocationPath(id);
         return ResponseEntity.created(location)
-                .body(createdReservationResponseView);
+                .body(updatedReservationResponseView);
     }
 
     @ApiOperation("Delete reservation")
@@ -145,7 +161,6 @@ class ScheduleController {
                         ZoneOffset.of(zoneOffset)));
         reservation.setOwnerUuid(reservationRequestView.getOwnerId());
         reservation.setModificationMessage(reservationRequestView.getModificationMessage());
-        reservation.setModificationAuthorUuid(reservationRequestView.getModificationAuthorId());
         return reservation;
     }
 

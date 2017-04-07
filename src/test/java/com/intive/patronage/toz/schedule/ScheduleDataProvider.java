@@ -31,7 +31,6 @@ public class ScheduleDataProvider {
         view.setStartTime(VALID_LOCAL_TIME);
         view.setEndTime(VALID_LOCAL_TIME);
         view.setOwnerId(UUID.randomUUID());
-        view.setModificationAuthorId(UUID.randomUUID());
         view.setModificationMessage("string");
         return new ReservationRequestView[]{view};
     }

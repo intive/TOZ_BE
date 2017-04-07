@@ -99,7 +99,7 @@ public class ScheduleServiceTest {
         assertThat(updatedReservation.getOwnerUuid()).isEqualTo(OWNER_UUID);
 
         verify(reservationRepository, times(1)).exists(any(UUID.class));
-        verify(userRepository, times(2)).exists(any(UUID.class));
+        verify(userRepository, times(1)).exists(any(UUID.class));
         verify(reservationRepository, times(1)).findOne(any(UUID.class));
         verify(reservationRepository, times(1)).save(any(Reservation.class));
         verifyNoMoreInteractions(reservationRepository);
@@ -121,7 +121,7 @@ public class ScheduleServiceTest {
         assertThat(updatedReservation.getModificationMessage()).isEqualTo(MODIFICATION_MESSAGE);
         assertThat(updatedReservation.getOwnerUuid()).isEqualTo(OWNER_UUID);
 
-        verify(userRepository, times(2)).exists(any(UUID.class));
+        verify(userRepository, times(1)).exists(any(UUID.class));
         verify(reservationRepository, times(1)).save(any(Reservation.class));
         verify(reservationRepository, times(1)).findByStartDate(any(Date.class));
         verifyNoMoreInteractions(reservationRepository);

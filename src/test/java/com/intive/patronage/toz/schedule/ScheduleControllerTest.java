@@ -95,7 +95,6 @@ public class ScheduleControllerTest {
         view.setModificationMessage("string");
         view.setOwnerId(UUID.randomUUID());
         view.setEndTime(VALID_LOCAL_TIME);
-        view.setModificationAuthorId(UUID.randomUUID());
         mvc.perform(put(String.format("%s/%s", SCHEDULE_PATH, UUID.randomUUID().toString()))
                 .param("id", UUID.randomUUID().toString())
                 .contentType(CONTENT_TYPE)
