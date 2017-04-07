@@ -4,6 +4,7 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import com.intive.patronage.toz.schedule.model.db.Reservation;
 import com.intive.patronage.toz.schedule.model.view.ReservationRequestView;
 import com.intive.patronage.toz.schedule.util.ScheduleParser;
+import com.intive.patronage.toz.users.UserRepository;
 import com.tngtech.java.junit.dataprovider.DataProviderRunner;
 import com.tngtech.java.junit.dataprovider.UseDataProvider;
 import org.junit.Before;
@@ -44,11 +45,13 @@ public class ScheduleControllerTest {
     private ScheduleService scheduleService;
     @Mock
     private ScheduleParser scheduleParser;
+    @Mock
+    private UserRepository userRepository;
 
     @Before
     public void setUp() throws Exception {
         MockitoAnnotations.initMocks(this);
-        mvc = MockMvcBuilders.standaloneSetup(new ScheduleController(scheduleService, scheduleParser)).build();
+        mvc = MockMvcBuilders.standaloneSetup(new ScheduleController(scheduleService, scheduleParser, userRepository)).build();
     }
 
     @Test
