@@ -18,8 +18,8 @@ public class TokensService {
         this.passwordEncoder = passwordEncoder;
     }
 
-    boolean isUserAuthenticated(String plainPaassword, String userEmail) {
+    boolean isUserAuthenticated(String plainPassword, String userEmail) {
         User userFromDatabase = userService.findOneByEmail(userEmail);
-        return passwordEncoder.matches(plainPaassword, userFromDatabase.getPassword());
+        return passwordEncoder.matches(plainPassword, userFromDatabase.getPassword());
     }
 }
