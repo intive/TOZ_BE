@@ -38,7 +38,7 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
 @RunWith(DataProviderRunner.class)
-public class UsersControllerTests {
+public class UsersControllerTest {
 
     private static final String URL_PATH = "/users";
     private static final int PETS_LIST_SIZE = 5;
@@ -65,7 +65,7 @@ public class UsersControllerTests {
     public static Object[] getProperUser() {
         User user = new User();
         user.setId(EXPECTED_ID);
-        user.setUsername(EXPECTED_USERNAME);
+        user.setEmail(EXPECTED_USERNAME);
         user.setPassword(EXPECTED_PASSWORD);
         user.setForename(EXPECTED_FORENAME);
         user.setSurname(EXPECTED_SURNAME);
@@ -77,7 +77,7 @@ public class UsersControllerTests {
         for (int i = 0; i < PETS_LIST_SIZE; i++) {
             User user = new User();
             user.setId(UUID.randomUUID());
-            user.setUsername(String.format("%s_%d","user", i));
+            user.setEmail(String.format("%s_%d","user", i));
             user.setPassword(String.format("%s_%d","password", i));
             user.setForename(String.format("%s_%d","Forename", i));
             user.setSurname(String.format("%s_%d","Surname", i));
@@ -117,7 +117,7 @@ public class UsersControllerTests {
                 .contentType(CONTENT_TYPE)
                 .content(userJsonString))
                 .andExpect(status().isCreated())
-                .andExpect(jsonPath("$.username", is(EXPECTED_USERNAME)))
+                .andExpect(jsonPath("$.email", is(EXPECTED_USERNAME)))
                 .andExpect(jsonPath("$.password", is(EXPECTED_PASSWORD)))
                 .andExpect(jsonPath("$.forename", is(EXPECTED_FORENAME)))
                 .andExpect(jsonPath("$.surname", is(EXPECTED_SURNAME)))
