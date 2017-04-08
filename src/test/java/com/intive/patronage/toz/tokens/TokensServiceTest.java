@@ -2,8 +2,6 @@ package com.intive.patronage.toz.tokens;
 
 import com.intive.patronage.toz.users.UserService;
 import com.intive.patronage.toz.users.model.db.User;
-import com.intive.patronage.toz.users.model.view.UserView;
-import com.intive.patronage.toz.util.ModelMapper;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -48,10 +46,7 @@ public class TokensServiceTest {
     @Test
     public void login() throws Exception {
         when(userService.findOneByEmail(EXPECTED_EMAIL)).thenReturn(user);
-        UserView userView = new UserView();
-        userView.setEmail(EXPECTED_EMAIL);
-        userView.setPassword(EXPECTED_PASSWORD);
-        assertTrue(tokensService.isUserAuthenticated(ModelMapper.convertToModel(userView, User.class)));
+        assertTrue(tokensService.isUserAuthenticated(EXPECTED_PASSWORD, EXPECTED_EMAIL));
     }
 
 }

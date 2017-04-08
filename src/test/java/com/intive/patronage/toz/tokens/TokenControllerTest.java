@@ -2,7 +2,6 @@ package com.intive.patronage.toz.tokens;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
-import com.intive.patronage.toz.users.model.db.User;
 import com.intive.patronage.toz.users.model.view.UserView;
 import org.junit.Before;
 import org.junit.Test;
@@ -47,7 +46,7 @@ public class TokenControllerTest {
 
     @Test
     public void shouldReturnOkWhenProperUserAndPassword() throws Exception {
-        when(tokensService.isUserAuthenticated(any(User.class))).thenReturn(true);
+        when(tokensService.isUserAuthenticated(any(String.class), any(String.class))).thenReturn(true);
         this.mockMvc.perform(post(String.format("%s/%s", TOKENS_PATH, "acquire"))
                 .contentType(CONTENT_TYPE)
                 .content(convertToJsonString(userView)))
@@ -56,7 +55,7 @@ public class TokenControllerTest {
 
     @Test
     public void shouldReturnForbiddenWhenImproperUserAndPassword() throws Exception {
-        when(tokensService.isUserAuthenticated(any(User.class))).thenReturn(false);
+        when(tokensService.isUserAuthenticated(any(String.class), any(String.class))).thenReturn(false);
         this.mockMvc.perform(post(String.format("%s/%s", TOKENS_PATH, "acquire"))
                 .contentType(CONTENT_TYPE)
                 .content(convertToJsonString(userView)))
