@@ -1,6 +1,8 @@
 package com.intive.patronage.toz.mail;
 
-import javax.mail.*;
+import javax.mail.Authenticator;
+import javax.mail.PasswordAuthentication;
+import javax.mail.Session;
 import java.io.IOException;
 import java.io.InputStream;
 import java.util.Properties;
