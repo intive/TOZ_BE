@@ -27,6 +27,17 @@ public class UserService {
         }
     }
 
+    void throwNotFoundExceptionIfNotExists(final String email) {
+        if (!userRepository.existsByEmail(email)) {
+            throw new NotFoundException(USER);
+        }
+    }
+
+    public User findOneByEmail(String email) {
+        throwNotFoundExceptionIfNotExists(email);
+        return userRepository.findByEmail(email);
+    }
+
     public User findOneById(UUID id) {
         throwNotFoundExceptionIfNotExists(id);
         return userRepository.findOne(id);

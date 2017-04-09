@@ -189,7 +189,7 @@ databaseChangeLog:
                       - primaryKey: true
                       - nullable: false
                 - column:
-                    name: username
+                    name: email
                     type: varchar(255)
                 - column:
                     name: password

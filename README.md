@@ -42,7 +42,7 @@ It should be self explanatory. You can:
 # Create user
 curl:
 ```
-curl -i -X POST -H "Content-Type:application/json" -d '{  "username" : "TOZ",  "password" : "admin", "forename" : "admin", "surname" : "admin","role" : "VOLUNTEER" }' http://localhost:8080/user
+curl -i -X POST -H "Content-Type:application/json" -d '{  "email" : "TOZ",  "password" : "admin", "forename" : "admin", "surname" : "admin","role" : "VOLUNTEER" }' http://localhost:8080/user
 ```
 Roles :
 TOZ - Organization admin.

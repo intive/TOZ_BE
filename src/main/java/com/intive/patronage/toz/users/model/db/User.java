@@ -9,19 +9,19 @@ import javax.persistence.Enumerated;
 
 @Entity
 public class User extends Identifiable {
-    private String username;
+    private String email;
     private String password;
     private String forename;
     private String surname;
     @Enumerated(EnumType.STRING)
     private Role role;
 
-    public String getUsername() {
-        return username;
+    public String getEmail() {
+        return email;
     }
 
-    public void setUsername(String username) {
-        this.username = username;
+    public void setEmail(String email) {
+        this.email = email;
     }
 
     public String getPassword() {
