@@ -8,7 +8,6 @@ import io.swagger.annotations.ApiModelProperty;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
-import org.springframework.format.annotation.DateTimeFormat;
 
 import javax.validation.Valid;
 import javax.validation.constraints.NotNull;
@@ -29,7 +28,6 @@ abstract class ReservationView {
     @ApiModelProperty(value = "Start time in UTC", required = true, example = "08:00", position = 2)
     @NotNull
     @ValidLocalTime
-    @DateTimeFormat(iso = DateTimeFormat.ISO.TIME)
     private String startTime;
 
     @ApiModelProperty(value = "End time in UTC", required = true, example = "17:00", position = 3)
