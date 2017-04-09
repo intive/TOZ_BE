@@ -36,8 +36,8 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.UUID;
 
-import static com.intive.patronage.toz.schedule.constant.DateTimeConst.LOCAL_DATE_PATTERN;
-import static com.intive.patronage.toz.schedule.constant.DateTimeConst.LOCAL_TIME_PATTERN;
+import static com.intive.patronage.toz.schedule.constant.DateTimeFormat.LOCAL_DATE_FORMAT;
+import static com.intive.patronage.toz.schedule.constant.DateTimeFormat.LOCAL_TIME_FORMAT;
 import static com.intive.patronage.toz.schedule.util.DateUtil.convertToDate;
 
 @PropertySource("classpath:application.properties")
@@ -209,10 +209,10 @@ class ScheduleController {
     }
 
     private String createStringFromLocalTime(LocalTime localTime) {
-        return localTime.format(DateTimeFormatter.ofPattern(LOCAL_TIME_PATTERN));
+        return localTime.format(DateTimeFormatter.ofPattern(LOCAL_TIME_FORMAT));
     }
 
     private String createStringFromLocalDate(LocalDate localDate) {
-        return localDate.format(DateTimeFormatter.ofPattern(LOCAL_DATE_PATTERN));
+        return localDate.format(DateTimeFormatter.ofPattern(LOCAL_DATE_FORMAT));
     }
 }

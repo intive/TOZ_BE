@@ -1,12 +1,14 @@
 package com.intive.patronage.toz.schedule.model.validator;
 
+import com.intive.patronage.toz.schedule.constant.DateTimePattern;
+
 import javax.validation.ConstraintValidator;
 import javax.validation.ConstraintValidatorContext;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.Date;
 
-import static com.intive.patronage.toz.schedule.constant.DateTimeConst.LOCAL_DATE_REGEX;
+import static com.intive.patronage.toz.schedule.constant.DateTimeFormat.LOCAL_DATE_FORMAT;
 
 public class LocalDateValidator implements ConstraintValidator<ValidLocalDate, String> {
 
@@ -16,8 +18,9 @@ public class LocalDateValidator implements ConstraintValidator<ValidLocalDate, S
 
     @Override
     public boolean isValid(String value, ConstraintValidatorContext context) {
-        SimpleDateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd");
-        if (!value.matches(LOCAL_DATE_REGEX)){
+        //TODO find other way to validate dates
+        SimpleDateFormat dateFormat = new SimpleDateFormat(LOCAL_DATE_FORMAT);
+        if (!DateTimePattern.localDate().matcher(value).matches()) {
             return false;
         }
         try {

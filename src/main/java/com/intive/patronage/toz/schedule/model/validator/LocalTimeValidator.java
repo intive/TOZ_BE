@@ -1,9 +1,9 @@
 package com.intive.patronage.toz.schedule.model.validator;
 
+import com.intive.patronage.toz.schedule.constant.DateTimePattern;
+
 import javax.validation.ConstraintValidator;
 import javax.validation.ConstraintValidatorContext;
-
-import static com.intive.patronage.toz.schedule.constant.DateTimeConst.HOURS_24_REGEX;
 
 public class LocalTimeValidator implements ConstraintValidator<ValidLocalTime, String> {
 
@@ -13,6 +13,6 @@ public class LocalTimeValidator implements ConstraintValidator<ValidLocalTime, S
 
     @Override
     public boolean isValid(String value, ConstraintValidatorContext context) {
-        return value.matches(HOURS_24_REGEX);
+        return DateTimePattern.localTime24().matcher(value).matches();
     }
 }

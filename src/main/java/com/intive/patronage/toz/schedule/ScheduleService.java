@@ -24,7 +24,7 @@ import static com.intive.patronage.toz.schedule.util.DateUtil.convertToDate;
 @PropertySource("classpath:application.properties")
 class ScheduleService {
 
-    private final String RESERVATION = "Reservation";
+    private static final String RESERVATION = "Reservation";
     private final String USER = "User";
     private final ReservationRepository reservationRepository;
     private final UserRepository userRepository;

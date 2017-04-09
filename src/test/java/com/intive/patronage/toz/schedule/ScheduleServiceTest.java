@@ -67,15 +67,9 @@ public class ScheduleServiceTest {
     public void shouldReturnReservationWhenFindById(Reservation reservation) {
         when(reservationRepository.exists(any(UUID.class))).thenReturn(true);
         when(reservationRepository.findOne(any(UUID.class))).thenReturn(reservation);
-        Reservation foundReservation = scheduleService.findReservation(UUID.randomUUID());
-
-        assertThat(foundReservation).isNotNull();
-        assertThat(foundReservation.getStartDate()).isEqualTo(START_DATE);
-        assertThat(foundReservation.getEndDate()).isEqualTo(END_DATE);
-        assertThat(foundReservation.getModificationAuthorUuid()).isEqualTo(MODIFICATION_AUTHOR_UUID);
-        assertThat(foundReservation.getModificationMessage()).isEqualTo(MODIFICATION_MESSAGE);
-        assertThat(foundReservation.getOwnerUuid()).isEqualTo(OWNER_UUID);
-
+        Reservation foundReservation =
+                scheduleService.findReservation(UUID.randomUUID());
+        assertThat(foundReservation).isEqualToComparingFieldByField(reservation);
         verify(reservationRepository, times(1)).exists(any(UUID.class));
         verify(reservationRepository, times(1)).findOne(any(UUID.class));
         verifyNoMoreInteractions(reservationRepository);
@@ -91,13 +85,7 @@ public class ScheduleServiceTest {
         when(userRepository.exists(any(UUID.class))).thenReturn(true);
         Reservation updatedReservation =
                 scheduleService.updateReservation(UUID.randomUUID(), reservation);
-
-        assertThat(updatedReservation.getStartDate()).isEqualTo(START_DATE);
-        assertThat(updatedReservation.getEndDate()).isEqualTo(END_DATE);
-        assertThat(updatedReservation.getModificationAuthorUuid()).isEqualTo(MODIFICATION_AUTHOR_UUID);
-        assertThat(updatedReservation.getModificationMessage()).isEqualTo(MODIFICATION_MESSAGE);
-        assertThat(updatedReservation.getOwnerUuid()).isEqualTo(OWNER_UUID);
-
+        assertThat(updatedReservation).isEqualToComparingFieldByField(reservation);
         verify(reservationRepository, times(1)).exists(any(UUID.class));
         verify(userRepository, times(1)).exists(any(UUID.class));
         verify(reservationRepository, times(1)).findOne(any(UUID.class));
@@ -112,15 +100,9 @@ public class ScheduleServiceTest {
     public void shouldCreateReservation(Reservation reservation) {
         when(reservationRepository.save(any(Reservation.class))).thenReturn(reservation);
         when(userRepository.exists(any(UUID.class))).thenReturn(true);
-        Reservation updatedReservation =
+        Reservation createdReservation =
                 scheduleService.makeReservation(reservation);
-
-        assertThat(updatedReservation.getStartDate()).isEqualTo(START_DATE);
-        assertThat(updatedReservation.getEndDate()).isEqualTo(END_DATE);
-        assertThat(updatedReservation.getModificationAuthorUuid()).isEqualTo(MODIFICATION_AUTHOR_UUID);
-        assertThat(updatedReservation.getModificationMessage()).isEqualTo(MODIFICATION_MESSAGE);
-        assertThat(updatedReservation.getOwnerUuid()).isEqualTo(OWNER_UUID);
-
+        assertThat(createdReservation).isEqualToComparingFieldByField(reservation);
         verify(userRepository, times(1)).exists(any(UUID.class));
         verify(reservationRepository, times(1)).save(any(Reservation.class));
         verify(reservationRepository, times(1)).findByStartDate(any(Date.class));
@@ -136,14 +118,7 @@ public class ScheduleServiceTest {
         when(reservationRepository.findOne(any(UUID.class))).thenReturn(reservation);
         doNothing().when(reservationRepository).delete(any(UUID.class));
         Reservation deletedReservation = scheduleService.removeReservation(UUID.randomUUID());
-
-        assertThat(deletedReservation).isNotNull();
-        assertThat(deletedReservation.getStartDate()).isEqualTo(START_DATE);
-        assertThat(deletedReservation.getEndDate()).isEqualTo(END_DATE);
-        assertThat(deletedReservation.getModificationAuthorUuid()).isEqualTo(MODIFICATION_AUTHOR_UUID);
-        assertThat(deletedReservation.getModificationMessage()).isEqualTo(MODIFICATION_MESSAGE);
-        assertThat(deletedReservation.getOwnerUuid()).isEqualTo(OWNER_UUID);
-
+        assertThat(deletedReservation).isEqualToComparingFieldByField(reservation);
         verify(reservationRepository, times(1)).exists(any(UUID.class));
         verify(reservationRepository, times(1)).findOne(any(UUID.class));
         verify(reservationRepository, times(1)).delete(any(UUID.class));
