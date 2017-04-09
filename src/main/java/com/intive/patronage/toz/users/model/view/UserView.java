@@ -10,10 +10,8 @@ import io.swagger.annotations.ApiModelProperty;
 import lombok.Getter;
 import lombok.Setter;
 import org.hibernate.validator.constraints.Email;
-import org.hibernate.validator.constraints.NotEmpty;
 
-import javax.persistence.EnumType;
-import javax.persistence.Enumerated;
+import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Size;
 
 @ApiModel(value = "User")
@@ -23,28 +21,27 @@ import javax.validation.constraints.Size;
 public class UserView extends IdentifiableView {
 
     @ApiModelProperty(example = "Johny", required = true, position = 1)
-    @Size(max = 35)
-    @NotEmpty
+    @Size(min = 3, max = 35)
+    @NotNull
     private String name;
 
     @JsonProperty(access = JsonProperty.Access.WRITE_ONLY)
     private String password; // TODO
 
     @ApiModelProperty(example = "Bravo", position = 2)
-    @Size(max = 35)
-    @NotEmpty
+    @Size(min = 3, max = 35)
+    @NotNull
     private String surname;
 
-    @ApiModelProperty(example = "111 222 333", position = 3)
-    @NotEmpty
+    @ApiModelProperty(example = "111222333", position = 3)
     @Phone
     private String phoneNumber;
 
     @ApiModelProperty(example = "johny.bravo@gmail.com", position = 4)
-    @NotEmpty
+    @NotNull
     @Email
     private String email;
 
-    @Enumerated(EnumType.STRING)
+    @NotNull
     private User.Role role;
 }

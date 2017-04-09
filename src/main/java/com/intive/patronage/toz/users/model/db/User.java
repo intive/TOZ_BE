@@ -16,7 +16,7 @@ public class User extends Identifiable {
     private String password;
     private String surname;
     private String phoneNumber;
-    private String email; // TODO
+    private String email;
     @Enumerated(EnumType.STRING)
     private Role role;
 

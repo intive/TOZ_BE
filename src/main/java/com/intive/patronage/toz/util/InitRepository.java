@@ -4,33 +4,47 @@ import com.intive.patronage.toz.news.NewsRepository;
 import com.intive.patronage.toz.news.model.db.News;
 import com.intive.patronage.toz.pet.PetsRepository;
 import com.intive.patronage.toz.pet.model.db.Pet;
+import com.intive.patronage.toz.users.UserRepository;
+import com.intive.patronage.toz.users.model.db.User;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.CommandLineRunner;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Profile;
 import org.springframework.stereotype.Component;
 
+import java.util.Random;
+
 
 @Component
 @Profile("dev")
 class InitRepository {
 
+    private static final Random NUMBER_GENERATOR = new Random();
+    private static final int NUMBER_UPPER_BOUND = 999;
+
     @Autowired
     private PetsRepository petsRepository;
+
     @Autowired
     private NewsRepository newsRepository;
+
+    @Autowired
+    private UserRepository userRepository;
 
     @Bean
     public CommandLineRunner initDatabase() {
         return args -> {
             for (int i = 0; i < 5; i++) {
-                Pet pet = createPetWithValue(i);
-                Pet emptyPet = createPetWithEmptyFields(i);
+                final Pet pet = createPetWithValue(i);
+                final Pet emptyPet = createPetWithEmptyFields(i);
                 petsRepository.save(pet);
                 petsRepository.save(emptyPet);
 
-                News news = createNewsWithValue(i);
+                final News news = createNewsWithValue(i);
                 newsRepository.save(news);
+
+                final User user = createUserWithValue(i);
+                userRepository.save(user);
             }
         };
     }
@@ -62,5 +76,21 @@ class InitRepository {
         news.setContents("contents:" + value);
         news.setPhotoUrl("photo:" + value);
         return news;
+    }
+
+    private static User createUserWithValue(int value) {
+        final User user = new User();
+        user.setName(String.format("name:%d", value));
+        user.setSurname(String.format("surname:%d", value));
+        user.setPassword(String.format("password:%d", value));
+        user.setEmail(String.format("user:%d.email@gmail.com", value));
+        user.setPhoneNumber(getRandomPhoneNumber());
+        user.setRole(User.Role.VOLUNTEER);
+        return user;
+    }
+
+    private static String getRandomPhoneNumber() {
+        final int randomNumber = NUMBER_GENERATOR.nextInt(NUMBER_UPPER_BOUND);
+        return String.format("111222%03d", randomNumber);
     }
 }

@@ -10,7 +10,7 @@ import java.lang.annotation.*;
 @Target(ElementType.FIELD)
 public @interface Phone {
 
-    String message() default "value not valid";
+    String message() default "phone number should consist of 9 or 11 digits";
 
     Class<?>[] groups() default {};
 

@@ -14,8 +14,8 @@ public class PhoneValidator implements ConstraintValidator<Phone, String> {
         if (phoneNumber == null) {
             return false;
         }
-        int phoneNumberLength = phoneNumber.length();
-        return phoneNumberLength == 9 || phoneNumberLength == 11;
+        int numberLength = phoneNumber.length(); // TODO pattern regex
+        return numberLength == 9 || numberLength == 11;
     }
 
 }
