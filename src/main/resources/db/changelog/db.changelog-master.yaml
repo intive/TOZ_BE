@@ -173,3 +173,28 @@ databaseChangeLog:
                 - column:
                     name: role
                     type: varchar(16)
+  - changeSet:
+        id : 4
+        author: ppiotr191
+        changes:
+          - createTable:
+              tableName: user_activation
+              columns:
+                - column:
+                    name: id
+                    type: uuid
+                    constraints:
+                      - primaryKey: true
+                      - nullable: false
+                - column:
+                    name: created
+                    type: datetime
+                - column:
+                    name: expired_date
+                    type: datetime
+                - column:
+                    name: is_activated
+                    type: boolean
+                - id_user:
+                    name: id_user
+                    type: uuid
