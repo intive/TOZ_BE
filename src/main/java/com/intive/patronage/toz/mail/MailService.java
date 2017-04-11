@@ -1,32 +1,39 @@
 package com.intive.patronage.toz.mail;
 
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.core.io.InputStreamSource;
+import org.springframework.mail.javamail.JavaMailSender;
+import org.springframework.mail.javamail.MimeMessageHelper;
 import org.springframework.stereotype.Service;
 
-import javax.mail.Message;
 import javax.mail.MessagingException;
-import javax.mail.Session;
-import javax.mail.Transport;
-import javax.mail.internet.InternetAddress;
 import javax.mail.internet.MimeMessage;
-import java.io.IOException;
-import java.util.Properties;
 
 @Service
 public class MailService {
-    private Message createMessage(Session session, String subject, String messageContent,
-                                  String recipient) throws MessagingException {
-        Message message = new MimeMessage(session);
-        message.setRecipients(Message.RecipientType.TO,
-                InternetAddress.parse(recipient));
-        message.setSubject(subject);
-        message.setText(messageContent);
-        return message;
+    private JavaMailSender javaMailSender;
+
+    @Autowired
+    public MailService(JavaMailSender javaMailSender) {
+        this.javaMailSender = javaMailSender;
     }
 
     public void sendMail(String subject, String messageContent, String recipient)
-            throws IOException, MessagingException {
-        Properties properties = MailConfiguration.readProperties();
-        Session session = MailConfiguration.authenticate(properties);
-        Transport.send(createMessage(session, subject, messageContent, recipient));
+            throws MessagingException {
+        sendMail(subject, messageContent, recipient, null, null);
+    }
+
+    public void sendMail(String subject, String messageContent, String recipient,
+                         String attachmentFileName, InputStreamSource attachmentFile)
+            throws MessagingException {
+        MimeMessage mimeMessage = javaMailSender.createMimeMessage();
+        MimeMessageHelper messageHelper = new MimeMessageHelper(mimeMessage, true);
+        messageHelper.setTo(recipient);
+        messageHelper.setSubject(subject);
+        messageHelper.setText(messageContent);
+        if (attachmentFileName != null) {
+            messageHelper.addAttachment(attachmentFileName, attachmentFile);
+        }
+        javaMailSender.send(mimeMessage);
     }
 }
