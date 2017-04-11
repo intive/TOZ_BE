@@ -44,7 +44,11 @@ class NewsService {
 
     News createNews(final NewsView newsView) {
         News news = ModelMapper.convertToModel(newsView, News.class);
-        setPublishedDate(news);
+        if (news.getType() == News.Type.RELEASED) {
+            news.setPublished(new Date());
+        } else {
+            news.setPublished(null);
+        }
         return newsRepository.save(news);
     }
 
@@ -57,15 +61,12 @@ class NewsService {
         throwNotFoundExceptionIfNotExists(id);
         News news = ModelMapper.convertToModel(newsView, News.class);
         news.setId(id);
-        news.setPublished(newsRepository.findOne(id).getPublished());
-        setPublishedDate(news);
-        return newsRepository.save(news);
-    }
-
-    private void setPublishedDate(News news) {
-        if (news.getType() == News.Type.RELEASED) {
+        if (news.getType() == News.Type.RELEASED && newsRepository.findOne(id).getPublished() == null) {
             news.setPublished(new Date());
+        } else {
+            news.setPublished(newsRepository.findOne(id).getPublished());
         }
+        return newsRepository.save(news);
     }
 
     private List<News> createShortenedNewsContents(Boolean shortened, List<News> newsList) {
