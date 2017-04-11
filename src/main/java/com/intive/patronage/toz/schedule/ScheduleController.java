@@ -166,24 +166,9 @@ class ScheduleController {
 
     private ReservationResponseView convertToReservationResponseView(Reservation reservation) {
         ReservationResponseView reservationResponseView = new ReservationResponseView();
-        reservationResponseView.setDate(createStringFromLocalDate(
-                reservation
-                        .getStartDate()
-                        .toInstant()
-                        .atOffset(ZoneOffset.of(zoneOffset))
-                        .toLocalDate()));
-        reservationResponseView.setStartTime(createStringFromLocalTime(
-                reservation
-                        .getStartDate()
-                        .toInstant()
-                        .atOffset(ZoneOffset.of(zoneOffset))
-                        .toLocalTime()));
-        reservationResponseView.setEndTime(createStringFromLocalTime(
-                reservation
-                        .getEndDate()
-                        .toInstant()
-                        .atOffset(ZoneOffset.of(zoneOffset))
-                        .toLocalTime()));
+        reservationResponseView.setDate(reservation.getStartDate().toInstant().atOffset(ZoneOffset.of(zoneOffset)).toLocalDate());
+        reservationResponseView.setStartTime(reservation.getStartDate().toInstant().atOffset(ZoneOffset.of(zoneOffset)).toLocalTime());
+        reservationResponseView.setEndTime(reservation.getEndDate().toInstant().atOffset(ZoneOffset.of(zoneOffset)).toLocalTime());
         reservationResponseView.setOwnerId(reservation
                 .getOwnerUuid());
         reservationResponseView.setCreated(reservation
