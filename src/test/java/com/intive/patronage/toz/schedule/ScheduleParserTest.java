@@ -1,7 +1,6 @@
 package com.intive.patronage.toz.schedule;
 
 import com.intive.patronage.toz.Application;
-import com.intive.patronage.toz.schedule.constant.DateTimePattern;
 import com.intive.patronage.toz.schedule.excception.InvalidReservationHoursException;
 import com.intive.patronage.toz.schedule.model.view.DayConfigView;
 import com.intive.patronage.toz.schedule.model.view.PeriodView;
@@ -22,6 +21,7 @@ import java.util.Date;
 import java.util.List;
 import java.util.regex.Pattern;
 
+import static com.intive.patronage.toz.schedule.constant.LocalDateTimePattern.HOURS_24_REGEX;
 import static com.intive.patronage.toz.schedule.util.DateUtil.convertToDate;
 import static org.assertj.core.api.Assertions.assertThat;
 
@@ -32,7 +32,7 @@ public class ScheduleParserTest extends AbstractJUnit4SpringContextTests {
 
     private static final String DASH = "-";
     private final Pattern CONFIG_HOURS = Pattern.compile(
-            String.format("%s-%s", DateTimePattern.localTime24(), DateTimePattern.localTime24()));
+            String.format("%s-%s", HOURS_24_REGEX, HOURS_24_REGEX));
 
     @Autowired
     private ScheduleParser scheduleParser;
@@ -52,7 +52,7 @@ public class ScheduleParserTest extends AbstractJUnit4SpringContextTests {
         assertThat(dayConfigs).extracting(DayConfigView::getPeriods).isNotNull();
         assertThat(dayConfigs).flatExtracting(DayConfigView::getPeriods)
                 .flatExtracting(PeriodView::getPeriodStart, PeriodView::getPeriodEnd)
-                .allMatch(hour -> DateTimePattern.localTime24().matcher(hour.toString()).matches());
+                .allMatch(hour -> HOURS_24_REGEX.matcher(hour.toString()).matches());
     }
 
     @Test

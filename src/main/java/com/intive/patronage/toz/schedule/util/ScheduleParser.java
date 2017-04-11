@@ -21,6 +21,7 @@ import java.util.*;
 public class ScheduleParser {
 
     private EnumMap<DayOfWeek, String[]> schedule;
+    public static final String HOURS_SEPARATOR = "-";
 
     public ScheduleParser(@Value("${MONDAY}") String[] mondaySchedule,
                           @Value("${TUESDAY}") String[] tuesdaySchedule,
@@ -61,10 +62,9 @@ public class ScheduleParser {
     }
 
     private List<PeriodView> getPeriodsForDay(DayOfWeek dayOfWeek) {
-        final String DASH = "-";
         List<PeriodView> periods = new ArrayList<>();
         for (String dayHours : schedule.get(dayOfWeek)) {
-            String[] hours = dayHours.split(DASH);
+            String[] hours = dayHours.split(HOURS_SEPARATOR);
             periods.add(new PeriodView(hours[0], hours[1]));
         }
         return periods;

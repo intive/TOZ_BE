@@ -3,6 +3,7 @@ package com.intive.patronage.toz.schedule;
 import com.intive.patronage.toz.error.model.ArgumentErrorResponse;
 import com.intive.patronage.toz.error.model.ErrorResponse;
 import com.intive.patronage.toz.error.model.ValidationErrorResponse;
+import com.intive.patronage.toz.schedule.constant.LocalDateTimeFormat;
 import com.intive.patronage.toz.schedule.model.db.Reservation;
 import com.intive.patronage.toz.schedule.model.view.DayConfigView;
 import com.intive.patronage.toz.schedule.model.view.ReservationRequestView;
@@ -27,17 +28,13 @@ import org.springframework.web.util.UriComponentsBuilder;
 
 import javax.validation.Valid;
 import java.net.URI;
-import java.security.Principal;
 import java.time.LocalDate;
 import java.time.LocalTime;
 import java.time.ZoneOffset;
-import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.UUID;
 
-import static com.intive.patronage.toz.schedule.constant.DateTimeFormat.LOCAL_DATE_FORMAT;
-import static com.intive.patronage.toz.schedule.constant.DateTimeFormat.LOCAL_TIME_FORMAT;
 import static com.intive.patronage.toz.schedule.util.DateUtil.convertToDate;
 
 @PropertySource("classpath:application.properties")
@@ -100,8 +97,7 @@ class ScheduleController {
     })
     @PostMapping(consumes = MediaType.APPLICATION_JSON_VALUE)
     @ResponseStatus(HttpStatus.CREATED)
-    public ResponseEntity<ReservationResponseView> makeReservation(@Valid @RequestBody ReservationRequestView reservationRequestView,
-                                                                   Principal principal) {
+    public ResponseEntity<ReservationResponseView> makeReservation(@Valid @RequestBody ReservationRequestView reservationRequestView) {
         //TODO: wait for security users auth to get author id from java.secuity.Principal
         //UUID modificationAuthorId = userRepository.findByEmail(principal.getName()).getId();
         Reservation createdReservation = convertToReservation(reservationRequestView);
@@ -122,8 +118,7 @@ class ScheduleController {
     @PutMapping(value = "/{id}", consumes = MediaType.APPLICATION_JSON_VALUE)
     @ResponseStatus(HttpStatus.CREATED)
     public ResponseEntity<ReservationResponseView> updateReservation(@PathVariable UUID id,
-                                                                     @Valid @RequestBody ReservationRequestView reservationRequestView,
-                                                                     Principal principal) {
+                                                                     @Valid @RequestBody ReservationRequestView reservationRequestView) {
         //TODO: wait for security users auth to get author id from java.secuity.Principal
         //UUID modificationAuthorId = userRepository.findByEmail(principal.getName()).getId();
         Reservation updatedReservation = convertToReservation(reservationRequestView);
@@ -194,10 +189,10 @@ class ScheduleController {
     }
 
     private String createStringFromLocalTime(LocalTime localTime) {
-        return localTime.format(DateTimeFormatter.ofPattern(LOCAL_TIME_FORMAT));
+        return localTime.format(LocalDateTimeFormat.getInstanceOfLocalTimeFormatter());
     }
 
     private String createStringFromLocalDate(LocalDate localDate) {
-        return localDate.format(DateTimeFormatter.ofPattern(LOCAL_DATE_FORMAT));
+        return localDate.format(LocalDateTimeFormat.getInstanceOfLocalDateFormatter());
     }
 }
