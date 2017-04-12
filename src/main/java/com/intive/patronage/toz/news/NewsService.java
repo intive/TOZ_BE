@@ -61,10 +61,11 @@ class NewsService {
         throwNotFoundExceptionIfNotExists(id);
         News news = ModelMapper.convertToModel(newsView, News.class);
         news.setId(id);
-        if (news.getType() == News.Type.RELEASED && newsRepository.findOne(id).getPublished() == null) {
+        Date published = newsRepository.findOne(id).getPublished();
+        if (news.getType() == News.Type.RELEASED && published == null) {
             news.setPublished(new Date());
         } else {
-            news.setPublished(newsRepository.findOne(id).getPublished());
+            news.setPublished(published);
         }
         return newsRepository.save(news);
     }
