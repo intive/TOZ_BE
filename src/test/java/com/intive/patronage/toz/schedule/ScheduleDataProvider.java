@@ -41,8 +41,6 @@ public class ScheduleDataProvider {
         Reservation reservation = new Reservation();
         reservation.setStartDate(START_DATE);
         reservation.setEndDate(END_DATE);
-        reservation.setModificationMessage(MODIFICATION_MESSAGE);
-        reservation.setModificationAuthorUuid(MODIFICATION_AUTHOR_UUID);
         reservation.setOwnerUuid(OWNER_UUID);
         reservation.setCreationDate(new Date(EXAMPLE_TIMESTAMP));
         reservation.setModificationDate(new Date(EXAMPLE_TIMESTAMP));

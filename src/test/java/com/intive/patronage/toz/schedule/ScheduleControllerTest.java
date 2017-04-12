@@ -98,7 +98,7 @@ public class ScheduleControllerTest {
     @UseDataProvider(value = "getReservation",
             location = ScheduleDataProvider.class)
     public void shouldReturnCreatedWhenCreateReservation(Reservation reservation) throws Exception {
-        when(scheduleService.makeReservation(any(Reservation.class)))
+        when(scheduleService.makeReservation(any(Reservation.class), anyString()))
                 .thenReturn(reservation);
         ReservationRequestView view = new ReservationRequestView();
         view.setDate(VALID_LOCAL_DATE_FROM);
@@ -113,7 +113,7 @@ public class ScheduleControllerTest {
                 .andExpect(status().isCreated());
 
         verify(scheduleService, times(1))
-                .makeReservation(any(Reservation.class));
+                .makeReservation(any(Reservation.class), anyString());
         verifyNoMoreInteractions(scheduleService);
     }
 
@@ -121,7 +121,7 @@ public class ScheduleControllerTest {
     @UseDataProvider(value = "getReservation",
             location = ScheduleDataProvider.class)
     public void shouldReturnCreatedWhenUpdateReservation(Reservation reservation) throws Exception {
-        when(scheduleService.updateReservation(any(UUID.class), any(Reservation.class)))
+        when(scheduleService.updateReservation(any(UUID.class), any(Reservation.class), anyString()))
                 .thenReturn(reservation);
         ReservationRequestView view = new ReservationRequestView();
         view.setDate(VALID_LOCAL_DATE_FROM);
@@ -136,7 +136,7 @@ public class ScheduleControllerTest {
                 .andExpect(status().isCreated());
 
         verify(scheduleService, times(1))
-                .updateReservation(any(UUID.class), any(Reservation.class));
+                .updateReservation(any(UUID.class), any(Reservation.class), anyString());
         verifyNoMoreInteractions(scheduleService);
     }
 

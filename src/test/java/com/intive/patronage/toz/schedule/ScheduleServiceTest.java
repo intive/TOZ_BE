@@ -2,6 +2,7 @@ package com.intive.patronage.toz.schedule;
 
 import com.intive.patronage.toz.error.exception.NotFoundException;
 import com.intive.patronage.toz.schedule.model.db.Reservation;
+import com.intive.patronage.toz.schedule.model.db.ReservationChangelog;
 import com.intive.patronage.toz.schedule.util.ScheduleParser;
 import com.intive.patronage.toz.users.UserRepository;
 import com.tngtech.java.junit.dataprovider.DataProviderRunner;
@@ -25,6 +26,8 @@ public class ScheduleServiceTest {
     @Mock
     private ReservationRepository reservationRepository;
     @Mock
+    private ReservationChangelogRepository reservationChangelogRepository;
+    @Mock
     private UserRepository userRepository;
     @Mock
     private ScheduleParser scheduleParser;
@@ -33,7 +36,7 @@ public class ScheduleServiceTest {
     @Before
     public void setUp() {
         MockitoAnnotations.initMocks(this);
-        scheduleService = new ScheduleService(reservationRepository, scheduleParser, userRepository);
+        scheduleService = new ScheduleService(reservationRepository, scheduleParser, userRepository, reservationChangelogRepository);
     }
 
 
@@ -84,8 +87,9 @@ public class ScheduleServiceTest {
         when(reservationRepository.exists(any(UUID.class))).thenReturn(true);
         when(userRepository.exists(any(UUID.class))).thenReturn(true);
         Reservation updatedReservation =
-                scheduleService.updateReservation(UUID.randomUUID(), reservation);
+                scheduleService.updateReservation(UUID.randomUUID(), reservation, MODIFICATION_MESSAGE);
         assertThat(updatedReservation).isEqualToComparingFieldByField(reservation);
+        verify(reservationChangelogRepository, times(1)).save(any(ReservationChangelog.class));
         verify(reservationRepository, times(1)).exists(any(UUID.class));
         verify(userRepository, times(1)).exists(any(UUID.class));
         verify(reservationRepository, times(1)).findOne(any(UUID.class));
@@ -101,8 +105,9 @@ public class ScheduleServiceTest {
         when(reservationRepository.save(any(Reservation.class))).thenReturn(reservation);
         when(userRepository.exists(any(UUID.class))).thenReturn(true);
         Reservation createdReservation =
-                scheduleService.makeReservation(reservation);
+                scheduleService.makeReservation(reservation, MODIFICATION_MESSAGE);
         assertThat(createdReservation).isEqualToComparingFieldByField(reservation);
+        verify(reservationChangelogRepository, times(1)).save(any(ReservationChangelog.class));
         verify(userRepository, times(1)).exists(any(UUID.class));
         verify(reservationRepository, times(1)).save(any(Reservation.class));
         verify(reservationRepository, times(1)).findByStartDate(any(Date.class));
@@ -119,6 +124,7 @@ public class ScheduleServiceTest {
         doNothing().when(reservationRepository).delete(any(UUID.class));
         Reservation deletedReservation = scheduleService.removeReservation(UUID.randomUUID());
         assertThat(deletedReservation).isEqualToComparingFieldByField(reservation);
+        verify(reservationChangelogRepository, times(1)).save(any(ReservationChangelog.class));
         verify(reservationRepository, times(1)).exists(any(UUID.class));
         verify(reservationRepository, times(1)).findOne(any(UUID.class));
         verify(reservationRepository, times(1)).delete(any(UUID.class));
@@ -128,19 +134,22 @@ public class ScheduleServiceTest {
     @Test(expected = NotFoundException.class)
     public void shouldReturnErrorWhenUpdateReservationNotFound() {
         when(reservationRepository.exists(any(UUID.class))).thenReturn(false);
-        scheduleService.updateReservation(UUID.randomUUID(), new Reservation());
+        scheduleService.updateReservation(UUID.randomUUID(), new Reservation(), anyString());
+        verify(reservationChangelogRepository, times(0)).save(any(ReservationChangelog.class));
     }
 
     @Test(expected = NotFoundException.class)
     public void shouldReturnErrorWhenRemoveReservationNotFound() {
         when(reservationRepository.exists(any(UUID.class))).thenReturn(false);
         scheduleService.removeReservation(UUID.randomUUID());
+        verify(reservationChangelogRepository, times(0)).save(any(ReservationChangelog.class));
     }
 
     @Test(expected = NotFoundException.class)
     public void shouldReturnErrorWhenUserOwnerNotFound() {
         when(reservationRepository.exists(any(UUID.class))).thenReturn(true);
         when(userRepository.exists(any(UUID.class))).thenReturn(false);
-        scheduleService.updateReservation(UUID.randomUUID(), new Reservation());
+        scheduleService.updateReservation(UUID.randomUUID(), new Reservation(), anyString());
+        verify(reservationChangelogRepository, times(0)).save(any(ReservationChangelog.class));
     }
 }

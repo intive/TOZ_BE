@@ -101,10 +101,8 @@ class ScheduleController {
         //TODO: wait for security users auth to get author id from java.secuity.Principal
         //UUID modificationAuthorId = userRepository.findByEmail(principal.getName()).getId();
         Reservation createdReservation = convertToReservation(reservationRequestView);
-        //TODO: change this when users auth is ready
-        createdReservation.setModificationAuthorUuid(UUID.randomUUID());
         ReservationResponseView createdReservationResponseView = convertToReservationResponseView(
-                scheduleService.makeReservation(createdReservation));
+                scheduleService.makeReservation(createdReservation, reservationRequestView.getModificationMessage()));
         URI location = createLocationPath(createdReservationResponseView.getId());
         return ResponseEntity.created(location)
                 .body(createdReservationResponseView);
@@ -122,10 +120,8 @@ class ScheduleController {
         //TODO: wait for security users auth to get author id from java.secuity.Principal
         //UUID modificationAuthorId = userRepository.findByEmail(principal.getName()).getId();
         Reservation updatedReservation = convertToReservation(reservationRequestView);
-        //TODO: change this when users auth is ready
-        updatedReservation.setModificationAuthorUuid(UUID.randomUUID());
         ReservationResponseView updatedReservationResponseView = convertToReservationResponseView(
-                scheduleService.updateReservation(id, updatedReservation));
+                scheduleService.updateReservation(id, updatedReservation, reservationRequestView.getModificationMessage()));
         URI location = createLocationPath(id);
         return ResponseEntity.created(location)
                 .body(updatedReservationResponseView);
@@ -155,7 +151,6 @@ class ScheduleController {
                         reservationRequestView.getEndTime(),
                         ZoneOffset.of(zoneOffset)));
         reservation.setOwnerUuid(reservationRequestView.getOwnerId());
-        reservation.setModificationMessage(reservationRequestView.getModificationMessage());
         return reservation;
     }
 
@@ -172,10 +167,6 @@ class ScheduleController {
         reservationResponseView.setLastModified(reservation
                 .getModificationDate()
                 .getTime());
-        reservationResponseView.setModificationMessage(reservation
-                .getModificationMessage());
-        reservationResponseView.setModificationAuthorId(reservation
-                .getModificationAuthorUuid());
         reservationResponseView.setId(reservation.getId());
         return reservationResponseView;
     }
