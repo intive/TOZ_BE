@@ -56,7 +56,7 @@ databaseChangeLog:
                   name: bank_name
                   type: varchar(255)
         - createTable:
-            tableName: reservation
+            tableName: scheduleReservation
             columns:
               - column:
                   name: id

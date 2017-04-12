@@ -4,7 +4,7 @@ import com.intive.patronage.toz.error.model.ArgumentErrorResponse;
 import com.intive.patronage.toz.error.model.ErrorResponse;
 import com.intive.patronage.toz.error.model.ValidationErrorResponse;
 import com.intive.patronage.toz.schedule.constant.LocalDateTimeFormat;
-import com.intive.patronage.toz.schedule.model.db.Reservation;
+import com.intive.patronage.toz.schedule.model.db.ScheduleReservation;
 import com.intive.patronage.toz.schedule.model.view.DayConfigView;
 import com.intive.patronage.toz.schedule.model.view.ReservationRequestView;
 import com.intive.patronage.toz.schedule.model.view.ReservationResponseView;
@@ -68,10 +68,10 @@ class ScheduleController {
                                     @DateTimeFormat(iso = DateTimeFormat.ISO.DATE)
                                     @RequestParam("to") LocalDate to) {
 
-        List<Reservation> reservations = scheduleService.findScheduleReservations(from, to);
+        List<ScheduleReservation> scheduleReservations = scheduleService.findScheduleReservations(from, to);
         List<ReservationResponseView> reservationResponseViews = new ArrayList<ReservationResponseView>();
-        for (Reservation reservation : reservations) {
-            reservationResponseViews.add(convertToReservationResponseView(reservation));
+        for (ScheduleReservation scheduleReservation : scheduleReservations) {
+            reservationResponseViews.add(convertToReservationResponseView(scheduleReservation));
         }
         List<DayConfigView> dayConfigs = scheduleParser.getDaysConfig();
         return new ScheduleView(reservationResponseViews, dayConfigs);
@@ -100,9 +100,9 @@ class ScheduleController {
     public ResponseEntity<ReservationResponseView> makeReservation(@Valid @RequestBody ReservationRequestView reservationRequestView) {
         //TODO: wait for security users auth to get author id from java.secuity.Principal
         //UUID modificationAuthorId = userRepository.findByEmail(principal.getName()).getId();
-        Reservation createdReservation = convertToReservation(reservationRequestView);
+        ScheduleReservation createdScheduleReservation = convertToReservation(reservationRequestView);
         ReservationResponseView createdReservationResponseView = convertToReservationResponseView(
-                scheduleService.makeReservation(createdReservation, reservationRequestView.getModificationMessage()));
+                scheduleService.makeReservation(createdScheduleReservation, reservationRequestView.getModificationMessage()));
         URI location = createLocationPath(createdReservationResponseView.getId());
         return ResponseEntity.created(location)
                 .body(createdReservationResponseView);
@@ -119,9 +119,9 @@ class ScheduleController {
                                                                      @Valid @RequestBody ReservationRequestView reservationRequestView) {
         //TODO: wait for security users auth to get author id from java.secuity.Principal
         //UUID modificationAuthorId = userRepository.findByEmail(principal.getName()).getId();
-        Reservation updatedReservation = convertToReservation(reservationRequestView);
+        ScheduleReservation updatedScheduleReservation = convertToReservation(reservationRequestView);
         ReservationResponseView updatedReservationResponseView = convertToReservationResponseView(
-                scheduleService.updateReservation(id, updatedReservation, reservationRequestView.getModificationMessage()));
+                scheduleService.updateReservation(id, updatedScheduleReservation, reservationRequestView.getModificationMessage()));
         URI location = createLocationPath(id);
         return ResponseEntity.created(location)
                 .body(updatedReservationResponseView);
@@ -138,36 +138,36 @@ class ScheduleController {
         return convertToReservationResponseView(scheduleService.removeReservation(id));
     }
 
-    private Reservation convertToReservation(ReservationRequestView reservationRequestView) {
-        Reservation reservation = new Reservation();
-        reservation.setStartDate(
+    private ScheduleReservation convertToReservation(ReservationRequestView reservationRequestView) {
+        ScheduleReservation scheduleReservation = new ScheduleReservation();
+        scheduleReservation.setStartDate(
                 convertToDate(
                         reservationRequestView.getDate(),
                         reservationRequestView.getStartTime(),
                         ZoneOffset.of(zoneOffset)));
-        reservation.setEndDate(
+        scheduleReservation.setEndDate(
                 convertToDate(
                         reservationRequestView.getDate(),
                         reservationRequestView.getEndTime(),
                         ZoneOffset.of(zoneOffset)));
-        reservation.setOwnerUuid(reservationRequestView.getOwnerId());
-        return reservation;
+        scheduleReservation.setOwnerUuid(reservationRequestView.getOwnerId());
+        return scheduleReservation;
     }
 
-    private ReservationResponseView convertToReservationResponseView(Reservation reservation) {
+    private ReservationResponseView convertToReservationResponseView(ScheduleReservation scheduleReservation) {
         ReservationResponseView reservationResponseView = new ReservationResponseView();
-        reservationResponseView.setDate(reservation.getStartDate().toInstant().atOffset(ZoneOffset.of(zoneOffset)).toLocalDate());
-        reservationResponseView.setStartTime(reservation.getStartDate().toInstant().atOffset(ZoneOffset.of(zoneOffset)).toLocalTime());
-        reservationResponseView.setEndTime(reservation.getEndDate().toInstant().atOffset(ZoneOffset.of(zoneOffset)).toLocalTime());
-        reservationResponseView.setOwnerId(reservation
+        reservationResponseView.setDate(scheduleReservation.getStartDate().toInstant().atOffset(ZoneOffset.of(zoneOffset)).toLocalDate());
+        reservationResponseView.setStartTime(scheduleReservation.getStartDate().toInstant().atOffset(ZoneOffset.of(zoneOffset)).toLocalTime());
+        reservationResponseView.setEndTime(scheduleReservation.getEndDate().toInstant().atOffset(ZoneOffset.of(zoneOffset)).toLocalTime());
+        reservationResponseView.setOwnerId(scheduleReservation
                 .getOwnerUuid());
-        reservationResponseView.setCreated(reservation
+        reservationResponseView.setCreated(scheduleReservation
                 .getCreationDate()
                 .getTime());
-        reservationResponseView.setLastModified(reservation
+        reservationResponseView.setLastModified(scheduleReservation
                 .getModificationDate()
                 .getTime());
-        reservationResponseView.setId(reservation.getId());
+        reservationResponseView.setId(scheduleReservation.getId());
         return reservationResponseView;
     }
 

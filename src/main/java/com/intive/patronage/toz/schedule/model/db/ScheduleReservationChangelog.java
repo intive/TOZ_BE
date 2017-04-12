@@ -14,7 +14,7 @@ import java.util.UUID;
 @NoArgsConstructor
 @Entity
 @ToString
-public class ReservationChangelog extends BaseReservation {
+public class ScheduleReservationChangelog extends Reservation {
 
     private UUID reservationId;
     private OperationType operationType;

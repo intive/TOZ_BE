@@ -1,13 +1,13 @@
 package com.intive.patronage.toz.schedule;
 
 import com.intive.patronage.toz.base.repository.IdentifiableRepository;
-import com.intive.patronage.toz.schedule.model.db.Reservation;
+import com.intive.patronage.toz.schedule.model.db.ScheduleReservation;
 
 import java.util.Date;
 import java.util.List;
 
-public interface ReservationRepository extends IdentifiableRepository<Reservation> {
+public interface ReservationRepository extends IdentifiableRepository<ScheduleReservation> {
 
-    List<Reservation> findByStartDateBetween(Date from, Date to);
-    List<Reservation> findByStartDate(Date startDate);
+    List<ScheduleReservation> findByStartDateBetween(Date from, Date to);
+    List<ScheduleReservation> findByStartDate(Date startDate);
 }

@@ -13,7 +13,7 @@ import java.util.UUID;
 @Getter
 @Setter
 @NoArgsConstructor
-@ApiModel("Reservation Response")
+@ApiModel("ScheduleReservation Response")
 @JsonInclude(JsonInclude.Include.NON_EMPTY)
 public class ReservationResponseView extends ReservationView {
 

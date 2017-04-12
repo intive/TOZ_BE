@@ -18,7 +18,7 @@ import java.util.UUID;
 @Getter
 @Setter
 @NoArgsConstructor
-@ApiModel(value = "Reservation")
+@ApiModel(value = "ScheduleReservation")
 @JsonInclude(JsonInclude.Include.NON_EMPTY)
 abstract class ReservationView {
 

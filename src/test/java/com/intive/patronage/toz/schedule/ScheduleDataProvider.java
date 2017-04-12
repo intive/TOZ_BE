@@ -1,6 +1,6 @@
 package com.intive.patronage.toz.schedule;
 
-import com.intive.patronage.toz.schedule.model.db.Reservation;
+import com.intive.patronage.toz.schedule.model.db.ScheduleReservation;
 import com.intive.patronage.toz.schedule.model.view.ReservationRequestView;
 import com.tngtech.java.junit.dataprovider.DataProvider;
 
@@ -38,12 +38,12 @@ public class ScheduleDataProvider {
 
     @DataProvider
     public static Object[] getReservation() {
-        Reservation reservation = new Reservation();
-        reservation.setStartDate(START_DATE);
-        reservation.setEndDate(END_DATE);
-        reservation.setOwnerUuid(OWNER_UUID);
-        reservation.setCreationDate(new Date(EXAMPLE_TIMESTAMP));
-        reservation.setModificationDate(new Date(EXAMPLE_TIMESTAMP));
-        return new Reservation[]{reservation};
+        ScheduleReservation scheduleReservation = new ScheduleReservation();
+        scheduleReservation.setStartDate(START_DATE);
+        scheduleReservation.setEndDate(END_DATE);
+        scheduleReservation.setOwnerUuid(OWNER_UUID);
+        scheduleReservation.setCreationDate(new Date(EXAMPLE_TIMESTAMP));
+        scheduleReservation.setModificationDate(new Date(EXAMPLE_TIMESTAMP));
+        return new ScheduleReservation[]{scheduleReservation};
     }
 }

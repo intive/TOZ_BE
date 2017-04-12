@@ -3,7 +3,7 @@ package com.intive.patronage.toz.schedule;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.datatype.jsr310.JavaTimeModule;
 import com.fasterxml.jackson.datatype.jsr310.deser.LocalDateTimeDeserializer;
-import com.intive.patronage.toz.schedule.model.db.Reservation;
+import com.intive.patronage.toz.schedule.model.db.ScheduleReservation;
 import com.intive.patronage.toz.schedule.model.view.ReservationRequestView;
 import com.intive.patronage.toz.schedule.util.ScheduleParser;
 import com.intive.patronage.toz.users.UserRepository;
@@ -65,11 +65,11 @@ public class ScheduleControllerTest {
     @Test
     @UseDataProvider(value = "getReservation",
             location = ScheduleDataProvider.class)
-    public void shouldReturnOKWhenGetSchedule(Reservation reservation) throws Exception {
-        List<Reservation> reservations = new ArrayList<>();
-        reservations.add(reservation);
+    public void shouldReturnOKWhenGetSchedule(ScheduleReservation scheduleReservation) throws Exception {
+        List<ScheduleReservation> scheduleReservations = new ArrayList<>();
+        scheduleReservations.add(scheduleReservation);
         when(scheduleService.findScheduleReservations(any(LocalDate.class), any(LocalDate.class)))
-                .thenReturn(reservations);
+                .thenReturn(scheduleReservations);
         mvc.perform(get(SCHEDULE_PATH)
                 .param("from", VALID_LOCAL_DATE_FROM.toString())
                 .param("to", VALID_LOCAL_DATE_TO))
@@ -83,9 +83,9 @@ public class ScheduleControllerTest {
     @Test
     @UseDataProvider(value = "getReservation",
             location = ScheduleDataProvider.class)
-    public void shouldReturnOKWhenGetReservationById(Reservation reservation) throws Exception {
+    public void shouldReturnOKWhenGetReservationById(ScheduleReservation scheduleReservation) throws Exception {
         when(scheduleService.findReservation(any(UUID.class)))
-                .thenReturn(reservation);
+                .thenReturn(scheduleReservation);
         mvc.perform(get(String.format("%s/%s", SCHEDULE_PATH, UUID.randomUUID().toString()))
                 .param("id", VALID_LOCAL_DATE_TO))
                 .andExpect(status().isOk());
@@ -97,9 +97,9 @@ public class ScheduleControllerTest {
     @Test
     @UseDataProvider(value = "getReservation",
             location = ScheduleDataProvider.class)
-    public void shouldReturnCreatedWhenCreateReservation(Reservation reservation) throws Exception {
-        when(scheduleService.makeReservation(any(Reservation.class), anyString()))
-                .thenReturn(reservation);
+    public void shouldReturnCreatedWhenCreateReservation(ScheduleReservation scheduleReservation) throws Exception {
+        when(scheduleService.makeReservation(any(ScheduleReservation.class), anyString()))
+                .thenReturn(scheduleReservation);
         ReservationRequestView view = new ReservationRequestView();
         view.setDate(VALID_LOCAL_DATE_FROM);
         view.setStartTime(VALID_LOCAL_TIME);
@@ -113,16 +113,16 @@ public class ScheduleControllerTest {
                 .andExpect(status().isCreated());
 
         verify(scheduleService, times(1))
-                .makeReservation(any(Reservation.class), anyString());
+                .makeReservation(any(ScheduleReservation.class), anyString());
         verifyNoMoreInteractions(scheduleService);
     }
 
     @Test
     @UseDataProvider(value = "getReservation",
             location = ScheduleDataProvider.class)
-    public void shouldReturnCreatedWhenUpdateReservation(Reservation reservation) throws Exception {
-        when(scheduleService.updateReservation(any(UUID.class), any(Reservation.class), anyString()))
-                .thenReturn(reservation);
+    public void shouldReturnCreatedWhenUpdateReservation(ScheduleReservation scheduleReservation) throws Exception {
+        when(scheduleService.updateReservation(any(UUID.class), any(ScheduleReservation.class), anyString()))
+                .thenReturn(scheduleReservation);
         ReservationRequestView view = new ReservationRequestView();
         view.setDate(VALID_LOCAL_DATE_FROM);
         view.setStartTime(VALID_LOCAL_TIME);
@@ -136,16 +136,16 @@ public class ScheduleControllerTest {
                 .andExpect(status().isCreated());
 
         verify(scheduleService, times(1))
-                .updateReservation(any(UUID.class), any(Reservation.class), anyString());
+                .updateReservation(any(UUID.class), any(ScheduleReservation.class), anyString());
         verifyNoMoreInteractions(scheduleService);
     }
 
     @Test
     @UseDataProvider(value = "getReservation",
             location = ScheduleDataProvider.class)
-    public void shouldReturnOKWhenDeleteReservation(Reservation reservation) throws Exception {
+    public void shouldReturnOKWhenDeleteReservation(ScheduleReservation scheduleReservation) throws Exception {
         when(scheduleService.removeReservation(any(UUID.class)))
-                .thenReturn(reservation);
+                .thenReturn(scheduleReservation);
         mvc.perform(delete(String.format("%s/%s", SCHEDULE_PATH, UUID.randomUUID().toString()))
                 .param("id", UUID.randomUUID().toString())
                 .contentType(CONTENT_TYPE))

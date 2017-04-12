@@ -1,8 +1,8 @@
 package com.intive.patronage.toz.schedule;
 
 import com.intive.patronage.toz.error.exception.NotFoundException;
-import com.intive.patronage.toz.schedule.model.db.Reservation;
-import com.intive.patronage.toz.schedule.model.db.ReservationChangelog;
+import com.intive.patronage.toz.schedule.model.db.ScheduleReservation;
+import com.intive.patronage.toz.schedule.model.db.ScheduleReservationChangelog;
 import com.intive.patronage.toz.schedule.util.ScheduleParser;
 import com.intive.patronage.toz.users.UserRepository;
 import com.tngtech.java.junit.dataprovider.DataProviderRunner;
@@ -45,34 +45,34 @@ public class ScheduleServiceTest {
         when(reservationRepository
                 .findByStartDateBetween(any(Date.class), any(Date.class)))
                 .thenReturn(Collections.emptyList());
-        List<Reservation> reservations =
+        List<ScheduleReservation> scheduleReservations =
                 scheduleService.findScheduleReservations(LOCAL_DATE_FROM, LOCAL_DATE_TO);
-        assertThat(reservations).isEmpty();
+        assertThat(scheduleReservations).isEmpty();
     }
 
     @Test
     @UseDataProvider(value = "getReservation",
             location = ScheduleDataProvider.class)
-    public void shouldReturnReservationList(Reservation reservation) {
-        List<Reservation> reservations = new ArrayList<>();
-        reservations.add(reservation);
+    public void shouldReturnReservationList(ScheduleReservation scheduleReservation) {
+        List<ScheduleReservation> scheduleReservations = new ArrayList<>();
+        scheduleReservations.add(scheduleReservation);
         when(reservationRepository
                 .findByStartDateBetween(any(Date.class), any(Date.class)))
-                .thenReturn(reservations);
-        List<Reservation> foundReservations =
+                .thenReturn(scheduleReservations);
+        List<ScheduleReservation> foundScheduleReservations =
                 scheduleService.findScheduleReservations(LOCAL_DATE_FROM, LOCAL_DATE_TO);
-        assertThat(foundReservations).isNotEmpty();
+        assertThat(foundScheduleReservations).isNotEmpty();
     }
 
     @Test
     @UseDataProvider(value = "getReservation",
             location = ScheduleDataProvider.class)
-    public void shouldReturnReservationWhenFindById(Reservation reservation) {
+    public void shouldReturnReservationWhenFindById(ScheduleReservation scheduleReservation) {
         when(reservationRepository.exists(any(UUID.class))).thenReturn(true);
-        when(reservationRepository.findOne(any(UUID.class))).thenReturn(reservation);
-        Reservation foundReservation =
+        when(reservationRepository.findOne(any(UUID.class))).thenReturn(scheduleReservation);
+        ScheduleReservation foundScheduleReservation =
                 scheduleService.findReservation(UUID.randomUUID());
-        assertThat(foundReservation).isEqualToComparingFieldByField(reservation);
+        assertThat(foundScheduleReservation).isEqualToComparingFieldByField(scheduleReservation);
         verify(reservationRepository, times(1)).exists(any(UUID.class));
         verify(reservationRepository, times(1)).findOne(any(UUID.class));
         verifyNoMoreInteractions(reservationRepository);
@@ -81,19 +81,19 @@ public class ScheduleServiceTest {
     @Test
     @UseDataProvider(value = "getReservation",
             location = ScheduleDataProvider.class)
-    public void shouldUpdateReservation(Reservation reservation) {
-        when(reservationRepository.save(any(Reservation.class))).thenReturn(reservation);
-        when(reservationRepository.findOne(any(UUID.class))).thenReturn(reservation);
+    public void shouldUpdateReservation(ScheduleReservation scheduleReservation) {
+        when(reservationRepository.save(any(ScheduleReservation.class))).thenReturn(scheduleReservation);
+        when(reservationRepository.findOne(any(UUID.class))).thenReturn(scheduleReservation);
         when(reservationRepository.exists(any(UUID.class))).thenReturn(true);
         when(userRepository.exists(any(UUID.class))).thenReturn(true);
-        Reservation updatedReservation =
-                scheduleService.updateReservation(UUID.randomUUID(), reservation, MODIFICATION_MESSAGE);
-        assertThat(updatedReservation).isEqualToComparingFieldByField(reservation);
-        verify(reservationChangelogRepository, times(1)).save(any(ReservationChangelog.class));
+        ScheduleReservation updatedScheduleReservation =
+                scheduleService.updateReservation(UUID.randomUUID(), scheduleReservation, MODIFICATION_MESSAGE);
+        assertThat(updatedScheduleReservation).isEqualToComparingFieldByField(scheduleReservation);
+        verify(reservationChangelogRepository, times(1)).save(any(ScheduleReservationChangelog.class));
         verify(reservationRepository, times(1)).exists(any(UUID.class));
         verify(userRepository, times(1)).exists(any(UUID.class));
         verify(reservationRepository, times(1)).findOne(any(UUID.class));
-        verify(reservationRepository, times(1)).save(any(Reservation.class));
+        verify(reservationRepository, times(1)).save(any(ScheduleReservation.class));
         verifyNoMoreInteractions(reservationRepository);
         verifyNoMoreInteractions(userRepository);
     }
@@ -101,15 +101,15 @@ public class ScheduleServiceTest {
     @Test
     @UseDataProvider(value = "getReservation",
             location = ScheduleDataProvider.class)
-    public void shouldCreateReservation(Reservation reservation) {
-        when(reservationRepository.save(any(Reservation.class))).thenReturn(reservation);
+    public void shouldCreateReservation(ScheduleReservation scheduleReservation) {
+        when(reservationRepository.save(any(ScheduleReservation.class))).thenReturn(scheduleReservation);
         when(userRepository.exists(any(UUID.class))).thenReturn(true);
-        Reservation createdReservation =
-                scheduleService.makeReservation(reservation, MODIFICATION_MESSAGE);
-        assertThat(createdReservation).isEqualToComparingFieldByField(reservation);
-        verify(reservationChangelogRepository, times(1)).save(any(ReservationChangelog.class));
+        ScheduleReservation createdScheduleReservation =
+                scheduleService.makeReservation(scheduleReservation, MODIFICATION_MESSAGE);
+        assertThat(createdScheduleReservation).isEqualToComparingFieldByField(scheduleReservation);
+        verify(reservationChangelogRepository, times(1)).save(any(ScheduleReservationChangelog.class));
         verify(userRepository, times(1)).exists(any(UUID.class));
-        verify(reservationRepository, times(1)).save(any(Reservation.class));
+        verify(reservationRepository, times(1)).save(any(ScheduleReservation.class));
         verify(reservationRepository, times(1)).findByStartDate(any(Date.class));
         verifyNoMoreInteractions(reservationRepository);
         verifyNoMoreInteractions(userRepository);
@@ -118,13 +118,13 @@ public class ScheduleServiceTest {
     @Test
     @UseDataProvider(value = "getReservation",
             location = ScheduleDataProvider.class)
-    public void shouldDeleteReservation(Reservation reservation) {
+    public void shouldDeleteReservation(ScheduleReservation scheduleReservation) {
         when(reservationRepository.exists(any(UUID.class))).thenReturn(true);
-        when(reservationRepository.findOne(any(UUID.class))).thenReturn(reservation);
+        when(reservationRepository.findOne(any(UUID.class))).thenReturn(scheduleReservation);
         doNothing().when(reservationRepository).delete(any(UUID.class));
-        Reservation deletedReservation = scheduleService.removeReservation(UUID.randomUUID());
-        assertThat(deletedReservation).isEqualToComparingFieldByField(reservation);
-        verify(reservationChangelogRepository, times(1)).save(any(ReservationChangelog.class));
+        ScheduleReservation deletedScheduleReservation = scheduleService.removeReservation(UUID.randomUUID());
+        assertThat(deletedScheduleReservation).isEqualToComparingFieldByField(scheduleReservation);
+        verify(reservationChangelogRepository, times(1)).save(any(ScheduleReservationChangelog.class));
         verify(reservationRepository, times(1)).exists(any(UUID.class));
         verify(reservationRepository, times(1)).findOne(any(UUID.class));
         verify(reservationRepository, times(1)).delete(any(UUID.class));
@@ -134,22 +134,22 @@ public class ScheduleServiceTest {
     @Test(expected = NotFoundException.class)
     public void shouldReturnErrorWhenUpdateReservationNotFound() {
         when(reservationRepository.exists(any(UUID.class))).thenReturn(false);
-        scheduleService.updateReservation(UUID.randomUUID(), new Reservation(), anyString());
-        verify(reservationChangelogRepository, times(0)).save(any(ReservationChangelog.class));
+        scheduleService.updateReservation(UUID.randomUUID(), new ScheduleReservation(), anyString());
+        verify(reservationChangelogRepository, times(0)).save(any(ScheduleReservationChangelog.class));
     }
 
     @Test(expected = NotFoundException.class)
     public void shouldReturnErrorWhenRemoveReservationNotFound() {
         when(reservationRepository.exists(any(UUID.class))).thenReturn(false);
         scheduleService.removeReservation(UUID.randomUUID());
-        verify(reservationChangelogRepository, times(0)).save(any(ReservationChangelog.class));
+        verify(reservationChangelogRepository, times(0)).save(any(ScheduleReservationChangelog.class));
     }
 
     @Test(expected = NotFoundException.class)
     public void shouldReturnErrorWhenUserOwnerNotFound() {
         when(reservationRepository.exists(any(UUID.class))).thenReturn(true);
         when(userRepository.exists(any(UUID.class))).thenReturn(false);
-        scheduleService.updateReservation(UUID.randomUUID(), new Reservation(), anyString());
-        verify(reservationChangelogRepository, times(0)).save(any(ReservationChangelog.class));
+        scheduleService.updateReservation(UUID.randomUUID(), new ScheduleReservation(), anyString());
+        verify(reservationChangelogRepository, times(0)).save(any(ScheduleReservationChangelog.class));
     }
 }
