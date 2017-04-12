@@ -20,14 +20,19 @@ public class ReservationResponseView extends ReservationView {
     @ApiModelProperty(example = "c5296892-347f-4b2e-b1c6-6faff971f767")
     private UUID id;
 
+    @ApiModelProperty(example = "John", position = 5)
+    private String ownerForename;
+
+    @ApiModelProperty(example = "Doe", position = 6)
+    private String ownerSurname;
+
     @JsonProperty(access = JsonProperty.Access.READ_ONLY)
-    @ApiModelProperty(example = "1490134074968", position = 5)
+    @ApiModelProperty(example = "1490134074968", position = 7)
     private Long created;
 
     @JsonProperty(access = JsonProperty.Access.READ_ONLY)
-    @ApiModelProperty(example = "1490134074968", position = 6)
+    @ApiModelProperty(example = "1490134074968", position = 8)
     private Long lastModified;
 
-    @ApiModelProperty(value = "Modification author ID", example = "c5296892-347f-4b2e-b1c6-6faff971f767", position = 8)
-    private UUID modificationAuthorId;
+
 }

@@ -3,7 +3,6 @@ package com.intive.patronage.toz.schedule;
 import com.intive.patronage.toz.error.model.ArgumentErrorResponse;
 import com.intive.patronage.toz.error.model.ErrorResponse;
 import com.intive.patronage.toz.error.model.ValidationErrorResponse;
-import com.intive.patronage.toz.schedule.constant.LocalDateTimeFormat;
 import com.intive.patronage.toz.schedule.model.db.ScheduleReservation;
 import com.intive.patronage.toz.schedule.model.view.DayConfigView;
 import com.intive.patronage.toz.schedule.model.view.ReservationRequestView;
@@ -29,7 +28,6 @@ import org.springframework.web.util.UriComponentsBuilder;
 import javax.validation.Valid;
 import java.net.URI;
 import java.time.LocalDate;
-import java.time.LocalTime;
 import java.time.ZoneOffset;
 import java.util.ArrayList;
 import java.util.List;
@@ -168,6 +166,10 @@ class ScheduleController {
                 .getModificationDate()
                 .getTime());
         reservationResponseView.setId(scheduleReservation.getId());
+        reservationResponseView.setOwnerForename(
+                userRepository.findOne(scheduleReservation.getOwnerUuid()).getForename());
+        reservationResponseView.setOwnerSurname(
+                userRepository.findOne(scheduleReservation.getOwnerUuid()).getSurname());
         return reservationResponseView;
     }
 
@@ -177,13 +179,5 @@ class ScheduleController {
         final String location = String.format("%s/%s", baseLocation, id);
         return UriComponentsBuilder.fromUriString(location)
                 .build().toUri();
-    }
-
-    private String createStringFromLocalTime(LocalTime localTime) {
-        return localTime.format(LocalDateTimeFormat.getInstanceOfLocalTimeFormatter());
-    }
-
-    private String createStringFromLocalDate(LocalDate localDate) {
-        return localDate.format(LocalDateTimeFormat.getInstanceOfLocalDateFormatter());
     }
 }

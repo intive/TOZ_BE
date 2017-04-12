@@ -44,7 +44,4 @@ abstract class ReservationView {
     @Valid
     @NotNull
     private UUID ownerId;
-
-    @ApiModelProperty(value = "Modification message", position = 7)
-    private String modificationMessage;
 }

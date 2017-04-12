@@ -7,6 +7,8 @@ import com.intive.patronage.toz.schedule.model.db.ScheduleReservation;
 import com.intive.patronage.toz.schedule.model.view.ReservationRequestView;
 import com.intive.patronage.toz.schedule.util.ScheduleParser;
 import com.intive.patronage.toz.users.UserRepository;
+import com.intive.patronage.toz.users.model.db.User;
+import com.intive.patronage.toz.users.model.enumerations.Role;
 import com.tngtech.java.junit.dataprovider.DataProviderRunner;
 import com.tngtech.java.junit.dataprovider.UseDataProvider;
 import org.junit.Before;
@@ -39,10 +41,8 @@ public class ScheduleControllerTest {
 
     private static final String SCHEDULE_PATH = "/schedule";
     private static final MediaType CONTENT_TYPE = MediaType.APPLICATION_JSON_UTF8;
-
     private static final String VALID_LOCAL_DATE_TO = "2017-12-01";
-    private static final String INVALID_LOCAL_DATE = "2017-30-01";
-    private static final String INVALID_LOCAL_TIME = "30:00";
+    private static final String EXAMPLE_NAME = "name";
 
     private MockMvc mvc;
     @Mock
@@ -70,6 +70,8 @@ public class ScheduleControllerTest {
         scheduleReservations.add(scheduleReservation);
         when(scheduleService.findScheduleReservations(any(LocalDate.class), any(LocalDate.class)))
                 .thenReturn(scheduleReservations);
+        when(userRepository.findOne(any(UUID.class)))
+                .thenReturn(new User(null, null, EXAMPLE_NAME,EXAMPLE_NAME, Role.VOLUNTEER));
         mvc.perform(get(SCHEDULE_PATH)
                 .param("from", VALID_LOCAL_DATE_FROM.toString())
                 .param("to", VALID_LOCAL_DATE_TO))
@@ -86,6 +88,8 @@ public class ScheduleControllerTest {
     public void shouldReturnOKWhenGetReservationById(ScheduleReservation scheduleReservation) throws Exception {
         when(scheduleService.findReservation(any(UUID.class)))
                 .thenReturn(scheduleReservation);
+        when(userRepository.findOne(any(UUID.class)))
+                .thenReturn(new User(null, null, EXAMPLE_NAME,EXAMPLE_NAME, Role.VOLUNTEER));
         mvc.perform(get(String.format("%s/%s", SCHEDULE_PATH, UUID.randomUUID().toString()))
                 .param("id", VALID_LOCAL_DATE_TO))
                 .andExpect(status().isOk());
@@ -100,6 +104,8 @@ public class ScheduleControllerTest {
     public void shouldReturnCreatedWhenCreateReservation(ScheduleReservation scheduleReservation) throws Exception {
         when(scheduleService.makeReservation(any(ScheduleReservation.class), anyString()))
                 .thenReturn(scheduleReservation);
+        when(userRepository.findOne(any(UUID.class)))
+                .thenReturn(new User(null, null, EXAMPLE_NAME,EXAMPLE_NAME, Role.VOLUNTEER));
         ReservationRequestView view = new ReservationRequestView();
         view.setDate(VALID_LOCAL_DATE_FROM);
         view.setStartTime(VALID_LOCAL_TIME);
@@ -123,6 +129,8 @@ public class ScheduleControllerTest {
     public void shouldReturnCreatedWhenUpdateReservation(ScheduleReservation scheduleReservation) throws Exception {
         when(scheduleService.updateReservation(any(UUID.class), any(ScheduleReservation.class), anyString()))
                 .thenReturn(scheduleReservation);
+        when(userRepository.findOne(any(UUID.class)))
+                .thenReturn(new User(null, null, EXAMPLE_NAME,EXAMPLE_NAME, Role.VOLUNTEER));
         ReservationRequestView view = new ReservationRequestView();
         view.setDate(VALID_LOCAL_DATE_FROM);
         view.setStartTime(VALID_LOCAL_TIME);
@@ -146,6 +154,8 @@ public class ScheduleControllerTest {
     public void shouldReturnOKWhenDeleteReservation(ScheduleReservation scheduleReservation) throws Exception {
         when(scheduleService.removeReservation(any(UUID.class)))
                 .thenReturn(scheduleReservation);
+        when(userRepository.findOne(any(UUID.class)))
+                .thenReturn(new User(null, null, EXAMPLE_NAME,EXAMPLE_NAME, Role.VOLUNTEER));
         mvc.perform(delete(String.format("%s/%s", SCHEDULE_PATH, UUID.randomUUID().toString()))
                 .param("id", UUID.randomUUID().toString())
                 .contentType(CONTENT_TYPE))
