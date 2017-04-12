@@ -13,16 +13,12 @@ import java.util.UUID;
 public class ScheduleDataProvider {
 
     static final LocalDate VALID_LOCAL_DATE_FROM = LocalDate.parse("2017-03-01");
+    static final LocalDate VALID_LOCAL_DATE_TO = LocalDate.parse("2018-03-01");
     static final LocalTime VALID_LOCAL_TIME = LocalTime.parse("10:00");
-
-    static final LocalDate LOCAL_DATE_FROM = LocalDate.parse("2017-03-01");
-    static final LocalDate LOCAL_DATE_TO = LocalDate.parse("2018-03-01");
-
-    static final Date START_DATE = Date.from(LocalDate.parse("2017-03-01").atStartOfDay().toInstant(ZoneOffset.UTC));
-    static final Date END_DATE = Date.from(LocalDate.parse("2017-03-02").atStartOfDay().toInstant(ZoneOffset.UTC));
-    static final UUID OWNER_UUID = UUID.randomUUID();
-    static final UUID MODIFICATION_AUTHOR_UUID = UUID.randomUUID();
     static final String MODIFICATION_MESSAGE = "string";
+    private static final Date VALID_DATE_FROM = Date.from(LocalDate.parse("2017-03-01").atStartOfDay().toInstant(ZoneOffset.UTC));
+    private static final Date VALID_DATE_TO = Date.from(LocalDate.parse("2017-03-02").atStartOfDay().toInstant(ZoneOffset.UTC));
+    private static final UUID OWNER_UUID = UUID.randomUUID();
     private static final Long EXAMPLE_TIMESTAMP = 1490134074968L;
 
     @DataProvider
@@ -39,8 +35,8 @@ public class ScheduleDataProvider {
     @DataProvider
     public static Object[] getReservation() {
         ScheduleReservation scheduleReservation = new ScheduleReservation();
-        scheduleReservation.setStartDate(START_DATE);
-        scheduleReservation.setEndDate(END_DATE);
+        scheduleReservation.setStartDate(VALID_DATE_FROM);
+        scheduleReservation.setEndDate(VALID_DATE_TO);
         scheduleReservation.setOwnerUuid(OWNER_UUID);
         scheduleReservation.setCreationDate(new Date(EXAMPLE_TIMESTAMP));
         scheduleReservation.setModificationDate(new Date(EXAMPLE_TIMESTAMP));

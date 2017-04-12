@@ -46,7 +46,7 @@ public class ScheduleServiceTest {
                 .findByStartDateBetween(any(Date.class), any(Date.class)))
                 .thenReturn(Collections.emptyList());
         List<ScheduleReservation> scheduleReservations =
-                scheduleService.findScheduleReservations(LOCAL_DATE_FROM, LOCAL_DATE_TO);
+                scheduleService.findScheduleReservations(VALID_LOCAL_DATE_FROM, VALID_LOCAL_DATE_TO);
         assertThat(scheduleReservations).isEmpty();
     }
 
@@ -60,7 +60,7 @@ public class ScheduleServiceTest {
                 .findByStartDateBetween(any(Date.class), any(Date.class)))
                 .thenReturn(scheduleReservations);
         List<ScheduleReservation> foundScheduleReservations =
-                scheduleService.findScheduleReservations(LOCAL_DATE_FROM, LOCAL_DATE_TO);
+                scheduleService.findScheduleReservations(VALID_LOCAL_DATE_FROM, VALID_LOCAL_DATE_TO);
         assertThat(foundScheduleReservations).isNotEmpty();
     }
 
