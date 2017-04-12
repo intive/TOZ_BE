@@ -3,7 +3,6 @@ package com.intive.patronage.toz.news;
 import com.intive.patronage.toz.error.exception.NotFoundException;
 import com.intive.patronage.toz.error.exception.WrongEnumValueException;
 import com.intive.patronage.toz.news.model.db.News;
-import com.intive.patronage.toz.news.model.view.NewsView;
 import com.tngtech.java.junit.dataprovider.DataProvider;
 import com.tngtech.java.junit.dataprovider.DataProviderRunner;
 import com.tngtech.java.junit.dataprovider.UseDataProvider;
@@ -34,10 +33,9 @@ public class NewsServiceTest {
     private static final News.Type EXPECTED_TYPE_VALUE = EXPECTED_TYPE;
     private static final Boolean DEFAULT_SHORTENED = false;
     private static final String DEFAULT_TYPE = null;
-    private static final Long EXPECTED_PUBLISHED = 12412412412L;
+    private static final Date EXPECTED_PUBLISHED = new Date(12412412412L);
     private static final UUID EXPECTED_ID = UUID.randomUUID();
-    private static final Date EXPECTED_PUBLISHED_DATE = new Date(12412412412L);
-    private NewsView newsView;
+    private News news;
 
     @Mock
     private NewsRepository newsRepository;
@@ -48,11 +46,11 @@ public class NewsServiceTest {
     public void setUp() throws Exception {
         MockitoAnnotations.initMocks(this);
         newsService = new NewsService(newsRepository);
-        newsView = new NewsView();
-        newsView.setTitle(EXPECTED_TITLE);
-        newsView.setContents(EXPECTED_CONTENTS);
-        newsView.setType(EXPECTED_TYPE_VALUE.toString());
-        newsView.setPublished(EXPECTED_PUBLISHED);
+        news = new News();
+        news.setTitle(EXPECTED_TITLE);
+        news.setContents(EXPECTED_CONTENTS);
+        news.setType(EXPECTED_TYPE_VALUE);
+        news.setPublished(EXPECTED_PUBLISHED);
     }
 
     @DataProvider
@@ -62,7 +60,7 @@ public class NewsServiceTest {
         newsDb.setTitle(EXPECTED_TITLE);
         newsDb.setContents(EXPECTED_CONTENTS);
         newsDb.setType(EXPECTED_TYPE);
-        newsDb.setPublished(new Date(EXPECTED_PUBLISHED));
+        newsDb.setPublished(EXPECTED_PUBLISHED);
         return new News[]{newsDb};
     }
 
@@ -121,7 +119,7 @@ public class NewsServiceTest {
     public void createNews(final News newsDb) throws Exception {
         when(newsRepository.save(any(News.class))).thenReturn(newsDb);
 
-        News news = newsService.createNews(newsView);
+        News news = newsService.createNews(this.news);
         assertEquals(EXPECTED_TITLE, news.getTitle());
         assertEquals(EXPECTED_CONTENTS, news.getContents());
         assertEquals(EXPECTED_TYPE_VALUE, news.getType());
@@ -155,18 +153,18 @@ public class NewsServiceTest {
         when(newsRepository.exists(EXPECTED_ID)).thenReturn(true);
         when(newsRepository.save(any(News.class))).thenReturn(newsDb);
         when(newsRepository.findOne(EXPECTED_ID)).thenReturn(newsDb);
-        News news = newsService.updateNews(EXPECTED_ID, newsView);
+        News news = newsService.updateNews(EXPECTED_ID, this.news);
 
         assertEquals(EXPECTED_TITLE, news.getTitle());
         assertEquals(EXPECTED_TYPE_VALUE, news.getType());
         assertEquals(EXPECTED_CONTENTS, news.getContents());
-        assertEquals(EXPECTED_PUBLISHED_DATE, news.getPublished());
+        assertEquals(EXPECTED_PUBLISHED, news.getPublished());
     }
 
     @Test(expected = NotFoundException.class)
     public void updateNewsNotFoundException() throws Exception {
         when(newsRepository.exists(EXPECTED_ID)).thenReturn(false);
-        newsService.updateNews(EXPECTED_ID, newsView);
+        newsService.updateNews(EXPECTED_ID, news);
 
         verify(newsRepository, times(1)).exists(eq(EXPECTED_ID));
         verifyNoMoreInteractions(newsRepository);
