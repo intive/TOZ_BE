@@ -56,7 +56,7 @@ databaseChangeLog:
                   name: bank_name
                   type: varchar(255)
         - createTable:
-            tableName: scheduleReservation
+            tableName: schedule_reservation
             columns:
               - column:
                   name: id
@@ -80,7 +80,7 @@ databaseChangeLog:
                   name: modification_date
                   type: datetime
         - createTable:
-            tableName: reservation_changelog
+            tableName: schedule_reservation_changelog
             columns:
               - column:
                   name: id
