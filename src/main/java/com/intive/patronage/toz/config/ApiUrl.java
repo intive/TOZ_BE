@@ -5,6 +5,7 @@ public final class ApiUrl {
     public final static String NEWS_PATH = "/news";
     public final static String USERS_PATH = "/users";
     public final static String ORGANIZATION_INFO_PATH = "/organization/info";
+    public final static String TOKENS_PATH = "/tokens";
 
     private ApiUrl() {
     }

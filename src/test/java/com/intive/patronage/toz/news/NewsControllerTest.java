@@ -3,7 +3,6 @@ package com.intive.patronage.toz.news;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.intive.patronage.toz.config.ApiUrl;
 import com.intive.patronage.toz.news.model.db.News;
-import com.intive.patronage.toz.news.model.view.NewsView;
 import com.tngtech.java.junit.dataprovider.DataProvider;
 import com.tngtech.java.junit.dataprovider.DataProviderRunner;
 import com.tngtech.java.junit.dataprovider.UseDataProvider;
@@ -151,7 +150,7 @@ public class NewsControllerTest {
     @Test
     @UseDataProvider("getProperNews")
     public void createNews(final News news) throws Exception {
-        when(newsService.createNews(any(NewsView.class))).thenReturn(news);
+        when(newsService.createNews(any(News.class))).thenReturn(news);
         mvc.perform(post(ApiUrl.NEWS_PATH)
                 .contentType(CONTENT_TYPE)
                 .content(new ObjectMapper().writeValueAsString(news)))
@@ -162,14 +161,14 @@ public class NewsControllerTest {
                 .andExpect(jsonPath("$.type", is(EXPECTED_TYPE)));
 
         verify(newsService, times(1)).
-                createNews(any(NewsView.class));
+                createNews(any(News.class));
         verifyNoMoreInteractions(newsService);
     }
 
     @Test
     @UseDataProvider("getProperNews")
     public void updateNews(final News news) throws Exception {
-        when(newsService.updateNews(eq(EXPECTED_ID), any(NewsView.class))).
+        when(newsService.updateNews(eq(EXPECTED_ID), any(News.class))).
                 thenReturn(news);
         mvc.perform(put(String.format("%s/%s", ApiUrl.NEWS_PATH, EXPECTED_ID))
                 .contentType(CONTENT_TYPE)
@@ -181,7 +180,7 @@ public class NewsControllerTest {
                 .andExpect(jsonPath("$.type", is(EXPECTED_TYPE)));
 
         verify(newsService, times(1)).
-                updateNews(eq(EXPECTED_ID), any(NewsView.class));
+                updateNews(eq(EXPECTED_ID), any(News.class));
         verifyNoMoreInteractions(newsService);
     }
 
