@@ -3,8 +3,6 @@ package com.intive.patronage.toz.news;
 import com.intive.patronage.toz.error.exception.NotFoundException;
 import com.intive.patronage.toz.error.exception.WrongEnumValueException;
 import com.intive.patronage.toz.news.model.db.News;
-import com.intive.patronage.toz.news.model.view.NewsView;
-import com.intive.patronage.toz.util.ModelMapper;
 import com.intive.patronage.toz.util.StringFormatter;
 import org.apache.commons.lang3.EnumUtils;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -42,8 +40,7 @@ class NewsService {
         return newsRepository.findOne(id);
     }
 
-    News createNews(final NewsView newsView) {
-        News news = ModelMapper.convertToModel(newsView, News.class);
+    News createNews(final News news) {
         if (news.getType() == News.Type.RELEASED) {
             news.setPublished(new Date());
         } else {
@@ -57,9 +54,8 @@ class NewsService {
         newsRepository.delete(id);
     }
 
-    News updateNews(final UUID id, final NewsView newsView) {
+    News updateNews(final UUID id, final News news) {
         throwNotFoundExceptionIfNotExists(id);
-        News news = ModelMapper.convertToModel(newsView, News.class);
         news.setId(id);
         Date published = newsRepository.findOne(id).getPublished();
         if (news.getType() == News.Type.RELEASED && published == null) {

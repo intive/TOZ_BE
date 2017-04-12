@@ -7,11 +7,15 @@ import com.intive.patronage.toz.news.model.db.News;
 import com.intive.patronage.toz.util.EnumValidate;
 import io.swagger.annotations.ApiModel;
 import io.swagger.annotations.ApiModelProperty;
+import lombok.Getter;
+import lombok.Setter;
 import org.hibernate.validator.constraints.NotEmpty;
 
 import javax.validation.constraints.NotNull;
 
 @ApiModel(value = "News")
+@Getter
+@Setter
 @JsonInclude(JsonInclude.Include.NON_EMPTY)
 public class NewsView extends IdentifiableView {
     @ApiModelProperty(example = "Do oddziału TOZ trafił nowy pies!", position = 1,
@@ -47,60 +51,4 @@ public class NewsView extends IdentifiableView {
     @ApiModelProperty(example = "1222333444555", position = 7)
     @JsonProperty(access = JsonProperty.Access.READ_WRITE)
     private Long published;
-
-    public String getTitle() {
-        return title;
-    }
-
-    public void setTitle(String title) {
-        this.title = title;
-    }
-
-    public String getContents() {
-        return contents;
-    }
-
-    public void setContents(String contents) {
-        this.contents = contents;
-    }
-
-    public String getType() {
-        return type;
-    }
-
-    public void setType(String type) {
-        this.type = type;
-    }
-
-    public String getPhotoUrl() {
-        return photoUrl;
-    }
-
-    public void setPhotoUrl(String photoUrl) {
-        this.photoUrl = photoUrl;
-    }
-
-    public Long getCreated() {
-        return created;
-    }
-
-    public void setCreated(Long created) {
-        this.created = created;
-    }
-
-    public Long getLastModified() {
-        return lastModified;
-    }
-
-    public void setLastModified(Long lastModified) {
-        this.lastModified = lastModified;
-    }
-
-    public Long getPublished() {
-        return published;
-    }
-
-    public void setPublished(Long published) {
-        this.published = published;
-    }
 }
