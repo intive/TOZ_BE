@@ -21,7 +21,7 @@ import javax.validation.constraints.Size;
 public class UserView extends IdentifiableView {
 
     @ApiModelProperty(example = "Johny", required = true, position = 1)
-    @Size(min = 3, max = 35)
+    @Size(min = 1, max = 35)
     @NotNull
     private String name;
 
@@ -29,7 +29,7 @@ public class UserView extends IdentifiableView {
     private String password; // TODO
 
     @ApiModelProperty(example = "Bravo", position = 2)
-    @Size(min = 3, max = 35)
+    @Size(min = 1, max = 35)
     @NotNull
     private String surname;
 
@@ -44,4 +44,16 @@ public class UserView extends IdentifiableView {
 
     @NotNull
     private User.Role role;
+
+    public void setName(String name) {
+        if (name != null) {
+            this.name = name.trim();
+        }
+    }
+
+    public void setSurname(String surname) {
+        if (surname != null) {
+            this.surname = surname.trim();
+        }
+    }
 }

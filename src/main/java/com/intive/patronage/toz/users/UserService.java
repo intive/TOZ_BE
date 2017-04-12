@@ -9,7 +9,7 @@ import java.util.List;
 import java.util.UUID;
 
 @Service
-class UserService {
+public class UserService {
 
     private static final String USER = "User";
     private UserRepository userRepository;
@@ -26,6 +26,17 @@ class UserService {
 
     private void throwNotFoundExceptionIfNotExists(final UUID id) {
         if (!userRepository.exists(id)) {
+            throw new NotFoundException(USER);
+        }
+    }
+
+    public User findOneByEmail(String email) {
+        throwNotFoundExceptionIfNotExists(email);
+        return userRepository.findByEmail(email);
+    }
+
+    private void throwNotFoundExceptionIfNotExists(final String email) {
+        if (!userRepository.existsByEmail(email)) {
             throw new NotFoundException(USER);
         }
     }
