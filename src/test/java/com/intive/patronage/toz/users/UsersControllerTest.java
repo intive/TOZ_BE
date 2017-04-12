@@ -26,7 +26,7 @@ import static org.springframework.test.web.servlet.request.MockMvcRequestBuilder
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
 
 @RunWith(DataProviderRunner.class)
-public class UsersControllerTests {
+public class UsersControllerTest {
 
     private static final int USERS_LIST_SIZE = 5;
     private static final UUID EXPECTED_ID = UUID.randomUUID();
