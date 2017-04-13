@@ -94,7 +94,7 @@ public class UsersController {
             @ApiResponse(code = 400, message = "Bad request", response = ValidationErrorResponse.class)
     })
     @PutMapping(value = "/{id}", consumes = MediaType.APPLICATION_JSON_VALUE)
-    public UserView updateUser(@PathVariable UUID id, @Valid @RequestBody UserView userView) { // TODO
+    public UserView updateUser(@PathVariable UUID id, @Valid @RequestBody UserView userView) {
         final User user = convertToModel(userView);
         return convertToView(userService.update(id, user));
     }

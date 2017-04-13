@@ -6,6 +6,6 @@ import lombok.Setter;
 @Getter
 @Setter
 public class UserCredentials {
-    private String email; // TODO validation
+    private String email;
     private String password;
 }

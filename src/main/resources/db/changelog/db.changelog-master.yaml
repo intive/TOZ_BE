@@ -176,3 +176,21 @@ databaseChangeLog:
                 - column:
                     name: email
                     type: varchar(255)
+  - changeSet:
+        id : 4
+        author: marek.macko
+        changes:
+          - createTable:
+              tableName: user_roles
+              columns:
+                - column:
+                    name: user_id
+                    type: uuid
+                    constraints:
+                      - primaryKey: true
+                      - nullable: false
+                - column:
+                    name: role
+                    type: varchar(255)
+                    constraints:
+                      - nullable: false
