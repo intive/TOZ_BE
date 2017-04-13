@@ -39,7 +39,6 @@ public class UsersController {
 
     @ApiOperation(value = "Get all users", responseContainer = "List")
     @GetMapping
-    @CrossOrigin(origins = "http://localhost:8080")
     public List<UserView> getAllUsers() {
         final List<User> users = userService.findAll();
         return ModelMapper.convertToView(users, UserView.class);
@@ -66,7 +65,7 @@ public class UsersController {
     })
     @PostMapping(consumes = MediaType.APPLICATION_JSON_VALUE)
     public ResponseEntity<UserView> createUser(@Valid @RequestBody UserView userView) {
-        final User createdUser = userService.create(convertToModel(userView));
+        final User createdUser = userService.createWithPassword(convertToModel(userView), userView.getPassword());
         final UserView createdUserView = convertToView(createdUser);
         final URI baseLocation = ServletUriComponentsBuilder.fromCurrentRequest()
                 .build().toUri();
@@ -95,7 +94,7 @@ public class UsersController {
             @ApiResponse(code = 400, message = "Bad request", response = ValidationErrorResponse.class)
     })
     @PutMapping(value = "/{id}", consumes = MediaType.APPLICATION_JSON_VALUE)
-    public UserView updateUser(@PathVariable UUID id, @Valid @RequestBody UserView userView) {
+    public UserView updateUser(@PathVariable UUID id, @Valid @RequestBody UserView userView) { // TODO
         final User user = convertToModel(userView);
         return convertToView(userService.update(id, user));
     }

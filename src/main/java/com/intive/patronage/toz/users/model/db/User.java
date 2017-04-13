@@ -13,7 +13,7 @@ import javax.persistence.Enumerated;
 @Entity
 public class User extends Identifiable {
     private String name;
-    private String password;
+    private String passwordHash;
     private String surname;
     private String phoneNumber;
     private String email;

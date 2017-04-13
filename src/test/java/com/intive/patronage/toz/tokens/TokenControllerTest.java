@@ -1,8 +1,7 @@
 package com.intive.patronage.toz.tokens;
 
-import com.fasterxml.jackson.core.JsonProcessingException;
-import com.fasterxml.jackson.databind.ObjectMapper;
-import com.intive.patronage.toz.users.model.view.UserView;
+import com.intive.patronage.toz.users.model.view.UserCredentials;
+import com.intive.patronage.toz.util.ModelMapper;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -31,17 +30,15 @@ public class TokenControllerTest {
     @Mock
     private TokensService tokensService;
     private MockMvc mockMvc;
-
-    private UserView userView;
+    private UserCredentials userCredentials;
 
     @Before
     public void setUp() throws Exception {
         MockitoAnnotations.initMocks(this);
         mockMvc = MockMvcBuilders.standaloneSetup(new TokensController(tokensService)).build();
-
-        userView = new UserView();
-        userView.setPassword("123456");
-        userView.setEmail("test@poczta.pl");
+        userCredentials = new UserCredentials();
+        userCredentials.setPassword("123456");
+        userCredentials.setEmail("test@poczta.pl");
     }
 
     @Test
@@ -49,7 +46,7 @@ public class TokenControllerTest {
         when(tokensService.isUserAuthenticated(any(String.class), any(String.class))).thenReturn(true);
         this.mockMvc.perform(post(String.format("%s/%s", TOKENS_PATH, "acquire"))
                 .contentType(CONTENT_TYPE)
-                .content(convertToJsonString(userView)))
+                .content(ModelMapper.convertToJsonString(userCredentials)))
                 .andExpect(status().isOk());
     }
 
@@ -58,15 +55,8 @@ public class TokenControllerTest {
         when(tokensService.isUserAuthenticated(any(String.class), any(String.class))).thenReturn(false);
         this.mockMvc.perform(post(String.format("%s/%s", TOKENS_PATH, "acquire"))
                 .contentType(CONTENT_TYPE)
-                .content(convertToJsonString(userView)))
+                .content(ModelMapper.convertToJsonString(userCredentials)))
                 .andExpect(status().isForbidden());
     }
 
-    private static String convertToJsonString(Object value) {
-        try {
-            return new ObjectMapper().writeValueAsString(value);
-        } catch (JsonProcessingException e) {
-            throw new RuntimeException(e);
-        }
-    }
 }

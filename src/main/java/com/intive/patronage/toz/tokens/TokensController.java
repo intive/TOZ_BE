@@ -1,7 +1,7 @@
 package com.intive.patronage.toz.tokens;
 
 import com.intive.patronage.toz.config.ApiUrl;
-import com.intive.patronage.toz.users.model.view.UserView;
+import com.intive.patronage.toz.users.model.view.UserCredentials;
 import io.swagger.annotations.ApiOperation;
 import io.swagger.annotations.ApiResponse;
 import io.swagger.annotations.ApiResponses;
@@ -23,10 +23,9 @@ class TokensController {
     private final TokensService tokensService;
 
     @Autowired
-    public TokensController(TokensService tokensService) {
+    TokensController(TokensService tokensService) {
         this.tokensService = tokensService;
     }
-
 
     @ApiOperation("Login to api")
     @ApiResponses(value = {
@@ -34,14 +33,11 @@ class TokensController {
             @ApiResponse(code = 403, message = "Incorrect user or password")
     })
     @PostMapping(value = "/acquire", consumes = MediaType.APPLICATION_JSON_VALUE)
-    public ResponseEntity<?> login(@Valid @RequestBody UserView userView) {
-        Boolean isLoggedIn = tokensService.isUserAuthenticated(userView.getPassword(), userView.getEmail());
-        HttpStatus httpStatus;
-        if (isLoggedIn) {
-            httpStatus = HttpStatus.OK;
-        } else {
-            httpStatus = HttpStatus.FORBIDDEN;
-        }
+    public ResponseEntity<?> login(@Valid @RequestBody UserCredentials userCredentials) {
+        final String email = userCredentials.getEmail();
+        final String password = userCredentials.getPassword();
+        Boolean isLoggedIn = tokensService.isUserAuthenticated(email, password);
+        HttpStatus httpStatus = isLoggedIn ? HttpStatus.OK : HttpStatus.FORBIDDEN;
         return ResponseEntity
                 .status(httpStatus)
                 .body(null); //TODO - create and return to client JWT token

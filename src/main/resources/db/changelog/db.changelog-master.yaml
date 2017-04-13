@@ -162,7 +162,7 @@ databaseChangeLog:
                     name: name
                     type: varchar(255)
                 - column:
-                    name: password
+                    name: password_hash
                     type: varchar(255)
                 - column:
                     name: surname

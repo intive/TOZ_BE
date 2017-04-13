@@ -11,6 +11,7 @@ import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.mockito.Mock;
 import org.mockito.MockitoAnnotations;
+import org.springframework.security.crypto.password.PasswordEncoder;
 
 import java.util.Collections;
 import java.util.List;
@@ -27,7 +28,7 @@ import static org.mockito.Mockito.*;
 public class UserServiceTest {
     private static final UUID EXPECTED_ID = UUID.randomUUID();
     private static final String EXPECTED_NAME = "Johny";
-    private static final String EXPECTED_PASSWORD = "secret";
+    private static final String EXPECTED_PASSWORD_HASH = "a7sd6a7sd67asd";
     private static final String EXPECTED_SURNAME = "Bravo";
     private static final User.Role EXPECTED_ROLE = User.Role.TOZ;
 
@@ -35,12 +36,15 @@ public class UserServiceTest {
     private UserRepository userRepository;
 
     @Mock
+    private PasswordEncoder passwordEncoder;
+
+    @Mock
     private UserService userService;
 
     @Before
     public void setUp() throws Exception {
         MockitoAnnotations.initMocks(this);
-        userService = new UserService(userRepository);
+        userService = new UserService(userRepository, passwordEncoder);
     }
 
     @DataProvider
@@ -48,7 +52,7 @@ public class UserServiceTest {
         final User user = new User();
         user.setId(EXPECTED_ID);
         user.setName(EXPECTED_NAME);
-        user.setPassword(EXPECTED_PASSWORD);
+        user.setPasswordHash(EXPECTED_PASSWORD_HASH);
         user.setSurname(EXPECTED_SURNAME);
         user.setRole(EXPECTED_ROLE);
         return new User[]{user};
@@ -70,7 +74,7 @@ public class UserServiceTest {
 
         final User dbUser = userService.findOneById(EXPECTED_ID);
         assertEquals(EXPECTED_NAME, dbUser.getName());
-        assertEquals(EXPECTED_PASSWORD, dbUser.getPassword());
+        assertEquals(EXPECTED_PASSWORD_HASH, dbUser.getPasswordHash());
         assertEquals(EXPECTED_SURNAME, dbUser.getSurname());
         assertEquals(EXPECTED_ROLE, dbUser.getRole());
 
@@ -92,9 +96,11 @@ public class UserServiceTest {
     @UseDataProvider("getProperUser")
     public void createUser(final User user) throws Exception {
         when(userRepository.save(any(User.class))).thenReturn(user);
-        final User createdUser = userService.create(user);
+        when(passwordEncoder.encode(any(String.class))).thenReturn(EXPECTED_PASSWORD_HASH);
+
+        final User createdUser = userService.createWithPassword(user, any(String.class));
         assertEquals(EXPECTED_NAME, createdUser.getName());
-        assertEquals(EXPECTED_PASSWORD, createdUser.getPassword());
+        assertEquals(EXPECTED_PASSWORD_HASH, createdUser.getPasswordHash());
         assertEquals(EXPECTED_SURNAME, createdUser.getSurname());
         assertEquals(EXPECTED_ROLE, createdUser.getRole());
         verify(userRepository, times(1)).save(any(User.class));
@@ -128,7 +134,7 @@ public class UserServiceTest {
         final User savedUser = userService.update(EXPECTED_ID, user);
 
         assertEquals(EXPECTED_NAME, savedUser.getName());
-        assertEquals(EXPECTED_PASSWORD, savedUser.getPassword());
+        assertEquals(EXPECTED_PASSWORD_HASH, savedUser.getPasswordHash());
         assertEquals(EXPECTED_SURNAME, savedUser.getSurname());
         assertEquals(EXPECTED_ROLE, savedUser.getRole());
     }

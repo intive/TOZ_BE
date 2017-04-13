@@ -1,6 +1,7 @@
 package com.intive.patronage.toz.util;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
+import com.fasterxml.jackson.databind.DeserializationFeature;
 import com.fasterxml.jackson.databind.MapperFeature;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.intive.patronage.toz.base.model.Identifiable;
@@ -12,8 +13,9 @@ import java.util.List;
 public class ModelMapper {
 
     private static final ObjectMapper OBJECT_MAPPER_ENABLED_ANNOTATIONS = new ObjectMapper();
-    private static final ObjectMapper OBJECT_MAPPER_DISABLED_ANNOTATIONS =
-            new ObjectMapper().disable(MapperFeature.USE_ANNOTATIONS);
+    private static final ObjectMapper OBJECT_MAPPER_DISABLED_ANNOTATIONS = new ObjectMapper()
+            .disable(MapperFeature.USE_ANNOTATIONS)
+            .configure(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES, false);
 
     public static <T extends IdentifiableView> T convertToView(Object model, Class<T> viewClass) {
         return OBJECT_MAPPER_DISABLED_ANNOTATIONS.convertValue(model, viewClass);
@@ -34,7 +36,7 @@ public class ModelMapper {
 
     public static String convertToJsonString(Object value) {
         try {
-            return new ObjectMapper().writeValueAsString(value);
+            return OBJECT_MAPPER_DISABLED_ANNOTATIONS.writeValueAsString(value);
         } catch (JsonProcessingException e) {
             throw new RuntimeException(e);
         }

@@ -20,12 +20,11 @@ import static org.mockito.Mockito.when;
 public class TokensServiceTest {
 
     private static final String EXPECTED_EMAIL = "test@wp.pl";
-    private static final String EXPECTED_PASSWORD = "123456";
+    private static final String EXPECTED_PASSWORD_HASH = "123456";
 
     private TokensService tokensService;
     @Mock
     private UserService userService;
-    private PasswordEncoder passwordEncoder;
     private User user;
 
     @Before
@@ -34,19 +33,19 @@ public class TokensServiceTest {
 
         SecureRandom random = new SecureRandom();
         random.nextBytes(new byte[20]);
-        passwordEncoder = new BCryptPasswordEncoder(10, random);
+        PasswordEncoder passwordEncoder = new BCryptPasswordEncoder(10, random);
 
         tokensService = new TokensService(userService, passwordEncoder);
 
         user = new User();
         user.setEmail(EXPECTED_EMAIL);
-        user.setPassword(passwordEncoder.encode(EXPECTED_PASSWORD));
+        user.setPasswordHash(passwordEncoder.encode(EXPECTED_PASSWORD_HASH));
     }
 
     @Test
     public void login() throws Exception {
         when(userService.findOneByEmail(EXPECTED_EMAIL)).thenReturn(user);
-        assertTrue(tokensService.isUserAuthenticated(EXPECTED_PASSWORD, EXPECTED_EMAIL));
+        assertTrue(tokensService.isUserAuthenticated(EXPECTED_EMAIL, EXPECTED_PASSWORD_HASH));
     }
 
 }

@@ -7,19 +7,19 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
 @Service
-public class TokensService {
+class TokensService {
 
     private final UserService userService;
     private final PasswordEncoder passwordEncoder;
 
     @Autowired
-    public TokensService(UserService userService, PasswordEncoder passwordEncoder) {
+    TokensService(UserService userService, PasswordEncoder passwordEncoder) {
         this.userService = userService;
         this.passwordEncoder = passwordEncoder;
     }
 
-    boolean isUserAuthenticated(String plainPassword, String userEmail) {
+    boolean isUserAuthenticated(String userEmail, String plainPassword) {
         User userFromDatabase = userService.findOneByEmail(userEmail);
-        return passwordEncoder.matches(plainPassword, userFromDatabase.getPassword());
+        return passwordEncoder.matches(plainPassword, userFromDatabase.getPasswordHash());
     }
 }

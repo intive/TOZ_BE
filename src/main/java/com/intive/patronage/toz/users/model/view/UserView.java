@@ -10,6 +10,7 @@ import io.swagger.annotations.ApiModelProperty;
 import lombok.Getter;
 import lombok.Setter;
 import org.hibernate.validator.constraints.Email;
+import org.hibernate.validator.constraints.NotEmpty;
 
 import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Size;
@@ -26,7 +27,8 @@ public class UserView extends IdentifiableView {
     private String name;
 
     @JsonProperty(access = JsonProperty.Access.WRITE_ONLY)
-    private String password; // TODO
+    @NotEmpty
+    private String password;
 
     @ApiModelProperty(example = "Bravo", position = 2)
     @Size(min = 1, max = 35)

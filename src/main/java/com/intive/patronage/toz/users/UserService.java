@@ -3,6 +3,7 @@ package com.intive.patronage.toz.users;
 import com.intive.patronage.toz.error.exception.NotFoundException;
 import com.intive.patronage.toz.users.model.db.User;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
@@ -12,11 +13,13 @@ import java.util.UUID;
 public class UserService {
 
     private static final String USER = "User";
-    private UserRepository userRepository;
+    private final UserRepository userRepository;
+    private final PasswordEncoder passwordEncoder;
 
     @Autowired
-    UserService(UserRepository userRepository) {
+    UserService(UserRepository userRepository, PasswordEncoder passwordEncoder) {
         this.userRepository = userRepository;
+        this.passwordEncoder = passwordEncoder;
     }
 
     User findOneById(final UUID id) {
@@ -45,7 +48,9 @@ public class UserService {
         return userRepository.findAll();
     }
 
-    User create(final User user) {
+    User createWithPassword(final User user, final String password) {
+        final String passwordHash = passwordEncoder.encode(password);
+        user.setPasswordHash(passwordHash);
         return userRepository.save(user);
     }
 
