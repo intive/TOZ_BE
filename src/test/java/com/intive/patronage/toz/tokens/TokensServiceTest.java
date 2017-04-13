@@ -40,7 +40,8 @@ public class TokensServiceTest {
 
         user = new User();
         user.setEmail(EXPECTED_EMAIL);
-        user.setPassword(passwordEncoder.encode(EXPECTED_PASSWORD));
+        user.setPassword(EXPECTED_PASSWORD);
+        //user.setPassword(passwordEncoder.encode(EXPECTED_PASSWORD));
     }
 
     @Test
