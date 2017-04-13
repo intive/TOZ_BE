@@ -4,9 +4,9 @@ import com.intive.patronage.toz.base.model.Identifiable;
 import lombok.Getter;
 import lombok.Setter;
 
-import javax.persistence.Entity;
-import javax.persistence.EnumType;
-import javax.persistence.Enumerated;
+import javax.persistence.*;
+import java.util.ArrayList;
+import java.util.List;
 
 @Getter
 @Setter
@@ -17,8 +17,15 @@ public class User extends Identifiable {
     private String surname;
     private String phoneNumber;
     private String email;
-    @Enumerated(EnumType.STRING)
-    private Role role;
+
+    @OneToMany(cascade = CascadeType.ALL) // TODO
+    private List<RoleEntity> roles = new ArrayList<>();
+
+    public void addRole(Role role) {
+        final RoleEntity roleEntity = new RoleEntity();
+        roleEntity.setRole(role);
+        roles.add(roleEntity);
+    }
 
     public enum Role {
         SU, TOZ, VOLUNTEER

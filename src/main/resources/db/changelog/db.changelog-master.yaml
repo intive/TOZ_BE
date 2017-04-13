@@ -166,10 +166,7 @@ databaseChangeLog:
                     type: varchar(255)
                 - column:
                     name: surname
-                    type: varchar(255)
-                - column:
-                    name: role
-                    type: varchar(16)
+                    type: varchar(255) varchar(16)
                 - column:
                     name: phone_number
                     type: varchar(255)
@@ -181,6 +178,15 @@ databaseChangeLog:
         author: marek.macko
         changes:
           - createTable:
+              tableName: role_entity
+              columns:
+                - column:
+                    name: role
+                    type: varchar(255)
+                    constraints:
+                      - primaryKey: true
+                      - nullable: false
+          - createTable:
               tableName: user_roles
               columns:
                 - column:
@@ -190,7 +196,7 @@ databaseChangeLog:
                       - primaryKey: true
                       - nullable: false
                 - column:
-                    name: role
+                    name: roles_role
                     type: varchar(255)
                     constraints:
                       - nullable: false

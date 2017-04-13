@@ -85,7 +85,7 @@ class InitRepository {
         user.setPasswordHash(String.format("passwordHash:%d", value));
         user.setEmail(String.format("user%d.email@gmail.com", value));
         user.setPhoneNumber(getRandomPhoneNumber());
-        user.setRole(User.Role.VOLUNTEER);
+        user.addRole(User.Role.VOLUNTEER);
         return user;
     }
 
