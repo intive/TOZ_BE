@@ -38,6 +38,10 @@ It should be self explanatory. You can:
 - create container: `gradle createContainer`
 - run functional test on docker by: `gradle functionalTest` (TODO)
 
+## JWT 
+
+To configure secret for JWT add `TOZ_BE_JWT_SECRET` environmental variable with base64 encoded secret.
+
 # Temporary server
 
 [Heroku temporary hosting](https://vast-plains-10769.herokuapp.com/)

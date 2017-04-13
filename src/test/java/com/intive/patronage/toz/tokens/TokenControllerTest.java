@@ -30,14 +30,16 @@ public class TokenControllerTest {
 
     @Mock
     private TokensService tokensService;
-    private MockMvc mockMvc;
+    @Mock
+    private JwtService jwtService;
 
+    private MockMvc mockMvc;
     private UserView userView;
 
     @Before
     public void setUp() throws Exception {
         MockitoAnnotations.initMocks(this);
-        mockMvc = MockMvcBuilders.standaloneSetup(new TokensController(tokensService)).build();
+        mockMvc = MockMvcBuilders.standaloneSetup(new TokensController(tokensService, jwtService)).build();
 
         userView = new UserView();
         userView.setPassword("123456");

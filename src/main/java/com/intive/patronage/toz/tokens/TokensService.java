@@ -20,6 +20,12 @@ public class TokensService {
 
     boolean isUserAuthenticated(String plainPassword, String userEmail) {
         User userFromDatabase = userService.findOneByEmail(userEmail);
-        return passwordEncoder.matches(plainPassword, userFromDatabase.getPassword());
+        // TODO remove this line and uncomment line below when hashes of pass are stored in db
+        return plainPassword.matches(userFromDatabase.getPassword());
+        //return passwordEncoder.matches(plainPassword, userFromDatabase.getPassword());
+    }
+
+    User getUserByMail(String userEmail) {
+        return userService.findOneByEmail(userEmail);
     }
 }

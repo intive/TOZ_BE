@@ -6,14 +6,8 @@ import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.data.jpa.repository.config.EnableJpaAuditing;
 import org.springframework.http.ResponseEntity;
-import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
-import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.web.bind.annotation.RestController;
-import org.springframework.web.servlet.config.annotation.CorsRegistry;
-import org.springframework.web.servlet.config.annotation.EnableWebMvc;
-import org.springframework.web.servlet.config.annotation.ResourceHandlerRegistry;
-import org.springframework.web.servlet.config.annotation.WebMvcConfigurer;
-import org.springframework.web.servlet.config.annotation.WebMvcConfigurerAdapter;
+import org.springframework.web.servlet.config.annotation.*;
 import springfox.documentation.builders.ApiInfoBuilder;
 import springfox.documentation.builders.PathSelectors;
 import springfox.documentation.builders.RequestHandlerSelectors;
@@ -24,7 +18,6 @@ import springfox.documentation.spring.web.plugins.Docket;
 import springfox.documentation.swagger2.annotations.EnableSwagger2;
 
 import javax.servlet.ServletContext;
-import java.security.SecureRandom;
 import java.time.LocalTime;
 
 @EnableWebMvc
@@ -41,12 +34,16 @@ class Config extends WebMvcConfigurerAdapter {
     @Value("${server.external.url.context}")
     private String serverContext;
 
-    @Value("${bcrypt.security.level}")
-    private int securityLevel;
-
     @Autowired
     public Config(ServletContext servletContext) {
         this.servletContext = servletContext;
+    }
+
+    private static ApiInfo apiInfo() {
+        return new ApiInfoBuilder()
+                .title("Patronage 2017 TOZ-BE")
+                .description("REST API made in Spring Boot")
+                .build();
     }
 
     @Override
@@ -79,20 +76,6 @@ class Config extends WebMvcConfigurerAdapter {
                         .allowedMethods("GET", "POST", "PUT", "DELETE");
             }
         };
-    }
-
-    @Bean
-    public PasswordEncoder passwordEncoder() {
-        SecureRandom secureRandom = new SecureRandom();
-        secureRandom.nextBytes(new byte[20]);
-        return new BCryptPasswordEncoder(securityLevel, secureRandom);
-    }
-
-    private static ApiInfo apiInfo() {
-        return new ApiInfoBuilder()
-                .title("Patronage 2017 TOZ-BE")
-                .description("REST API made in Spring Boot")
-                .build();
     }
 
     private Docket handleReverseProxyMapping(Docket docket) {
