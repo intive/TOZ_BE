@@ -6,6 +6,8 @@ import com.intive.patronage.toz.schedule.constant.OperationType;
 import com.intive.patronage.toz.schedule.excception.ReservationAlreadyExistsException;
 import com.intive.patronage.toz.schedule.model.db.ScheduleReservation;
 import com.intive.patronage.toz.schedule.model.db.ScheduleReservationChangelog;
+import com.intive.patronage.toz.schedule.model.view.ReservationRequestView;
+import com.intive.patronage.toz.schedule.model.view.ReservationResponseView;
 import com.intive.patronage.toz.schedule.util.ScheduleParser;
 import com.intive.patronage.toz.users.UserRepository;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -16,6 +18,7 @@ import org.springframework.stereotype.Service;
 import java.time.LocalDate;
 import java.time.LocalTime;
 import java.time.ZoneOffset;
+import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 import java.util.UUID;
@@ -46,7 +49,7 @@ class ScheduleService {
         this.reservationChangelogRepository = reservationChangelogRepository;
     }
 
-    List<ScheduleReservation> findScheduleReservations(LocalDate from, LocalDate to) {
+    List<ReservationResponseView> findScheduleReservations(LocalDate from, LocalDate to) {
         Date dateFrom = convertToDate(
                 from,
                 from.atStartOfDay().toLocalTime(),
@@ -55,25 +58,30 @@ class ScheduleService {
                 to,
                 LocalDate.now().atTime(LocalTime.MAX).toLocalTime(),
                 ZoneOffset.of(zoneOffset));
-
-        return reservationRepository.findByStartDateBetween(dateFrom, dateTo);
+        List<ReservationResponseView> reservationViews = new ArrayList<>();
+        for (ScheduleReservation reservation : reservationRepository.findByStartDateBetween(dateFrom, dateTo)) {
+            reservationViews.add(convertToReservationResponseView(reservation));
+        }
+        return reservationViews;
     }
 
-    ScheduleReservation findReservation(UUID id) {
+    ReservationResponseView findReservation(UUID id) {
         ifEntityDoesntExistInRepoThrowException(id, reservationRepository, RESERVATION);
-        return reservationRepository.findOne(id);
+        return convertToReservationResponseView(reservationRepository.findOne(id));
     }
 
-    ScheduleReservation makeReservation(ScheduleReservation scheduleReservation, String modificationMessage) {
+    ReservationResponseView makeReservation(ReservationRequestView reservationRequestView) {
+        ScheduleReservation scheduleReservation = convertToReservation(reservationRequestView);
         ifEntityDoesntExistInRepoThrowException(scheduleReservation.getOwnerUuid(), userRepository, USER);
         ifReservationExistsThrowException(scheduleReservation.getStartDate());
         scheduleParser.validateHours(scheduleReservation.getStartDate(), scheduleReservation.getEndDate());
         ScheduleReservation newScheduleReservation = reservationRepository.save(scheduleReservation);
-        saveReservationChangelog(newScheduleReservation, modificationMessage, OperationType.CREATE);
-        return newScheduleReservation;
+        saveReservationChangelog(newScheduleReservation, reservationRequestView.getModificationMessage(), OperationType.CREATE);
+        return convertToReservationResponseView(newScheduleReservation);
     }
 
-    ScheduleReservation updateReservation(UUID id, ScheduleReservation newScheduleReservation, String modificationMessage) {
+    ReservationResponseView updateReservation(UUID id, ReservationRequestView reservationRequestView) {
+        ScheduleReservation newScheduleReservation = convertToReservation(reservationRequestView);
         ifEntityDoesntExistInRepoThrowException(newScheduleReservation.getOwnerUuid(), userRepository, USER);
         ifEntityDoesntExistInRepoThrowException(id, reservationRepository, RESERVATION);
         scheduleParser.validateHours(newScheduleReservation.getStartDate(), newScheduleReservation.getEndDate());
@@ -82,16 +90,16 @@ class ScheduleService {
         scheduleReservation.setEndDate(newScheduleReservation.getEndDate());
         scheduleReservation.setOwnerUuid(newScheduleReservation.getOwnerUuid());
         ScheduleReservation updatedScheduleReservation = reservationRepository.save(scheduleReservation);
-        saveReservationChangelog(updatedScheduleReservation, modificationMessage, OperationType.UPDATE);
-        return updatedScheduleReservation;
+        saveReservationChangelog(updatedScheduleReservation, reservationRequestView.getModificationMessage(), OperationType.UPDATE);
+        return convertToReservationResponseView(updatedScheduleReservation);
     }
 
-    ScheduleReservation removeReservation(UUID id) {
+    ReservationResponseView removeReservation(UUID id) {
         ifEntityDoesntExistInRepoThrowException(id, reservationRepository, RESERVATION);
         ScheduleReservation deletedScheduleReservation = reservationRepository.findOne(id);
         reservationRepository.delete(id);
         saveReservationChangelog(deletedScheduleReservation, null, OperationType.DELETE);
-        return deletedScheduleReservation;
+        return convertToReservationResponseView(deletedScheduleReservation);
     }
 
     private void ifReservationExistsThrowException(Date reservationDate) {
@@ -127,4 +135,42 @@ class ScheduleService {
         newLog.setEndDate(scheduleReservation.getEndDate());
         reservationChangelogRepository.save(newLog);
     }
+
+    public ScheduleReservation convertToReservation(ReservationRequestView reservationRequestView) {
+        ScheduleReservation scheduleReservation = new ScheduleReservation();
+        scheduleReservation.setStartDate(
+                convertToDate(
+                        reservationRequestView.getDate(),
+                        reservationRequestView.getStartTime(),
+                        ZoneOffset.of(zoneOffset)));
+        scheduleReservation.setEndDate(
+                convertToDate(
+                        reservationRequestView.getDate(),
+                        reservationRequestView.getEndTime(),
+                        ZoneOffset.of(zoneOffset)));
+        scheduleReservation.setOwnerUuid(reservationRequestView.getOwnerId());
+        return scheduleReservation;
+    }
+
+    public ReservationResponseView convertToReservationResponseView(ScheduleReservation scheduleReservation) {
+        ReservationResponseView reservationResponseView = new ReservationResponseView();
+        reservationResponseView.setDate(scheduleReservation.getStartDate().toInstant().atOffset(ZoneOffset.of(zoneOffset)).toLocalDate());
+        reservationResponseView.setStartTime(scheduleReservation.getStartDate().toInstant().atOffset(ZoneOffset.of(zoneOffset)).toLocalTime());
+        reservationResponseView.setEndTime(scheduleReservation.getEndDate().toInstant().atOffset(ZoneOffset.of(zoneOffset)).toLocalTime());
+        reservationResponseView.setOwnerId(scheduleReservation
+                .getOwnerUuid());
+        reservationResponseView.setCreated(scheduleReservation
+                .getCreationDate()
+                .getTime());
+        reservationResponseView.setLastModified(scheduleReservation
+                .getModificationDate()
+                .getTime());
+        reservationResponseView.setId(scheduleReservation.getId());
+        reservationResponseView.setOwnerForename(
+                userRepository.findOne(scheduleReservation.getOwnerUuid()).getForename());
+        reservationResponseView.setOwnerSurname(
+                userRepository.findOne(scheduleReservation.getOwnerUuid()).getSurname());
+        return reservationResponseView;
+    }
+
 }

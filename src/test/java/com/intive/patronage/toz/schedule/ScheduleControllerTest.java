@@ -3,12 +3,10 @@ package com.intive.patronage.toz.schedule;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.datatype.jsr310.JavaTimeModule;
 import com.fasterxml.jackson.datatype.jsr310.deser.LocalDateTimeDeserializer;
-import com.intive.patronage.toz.schedule.model.db.ScheduleReservation;
 import com.intive.patronage.toz.schedule.model.view.ReservationRequestView;
+import com.intive.patronage.toz.schedule.model.view.ReservationResponseView;
 import com.intive.patronage.toz.schedule.util.ScheduleParser;
 import com.intive.patronage.toz.users.UserRepository;
-import com.intive.patronage.toz.users.model.db.User;
-import com.intive.patronage.toz.users.model.enumerations.Role;
 import com.tngtech.java.junit.dataprovider.DataProviderRunner;
 import com.tngtech.java.junit.dataprovider.UseDataProvider;
 import org.junit.Before;
@@ -29,8 +27,7 @@ import java.util.Date;
 import java.util.List;
 import java.util.UUID;
 
-import static com.intive.patronage.toz.schedule.ScheduleDataProvider.VALID_LOCAL_DATE_FROM;
-import static com.intive.patronage.toz.schedule.ScheduleDataProvider.VALID_LOCAL_TIME;
+import static com.intive.patronage.toz.schedule.ScheduleDataProvider.*;
 import static org.mockito.Matchers.any;
 import static org.mockito.Mockito.*;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
@@ -42,7 +39,6 @@ public class ScheduleControllerTest {
     private static final String SCHEDULE_PATH = "/schedule";
     private static final MediaType CONTENT_TYPE = MediaType.APPLICATION_JSON_UTF8;
     private static final String VALID_LOCAL_DATE_TO = "2017-12-01";
-    private static final String EXAMPLE_NAME = "name";
 
     private MockMvc mvc;
     @Mock
@@ -56,22 +52,22 @@ public class ScheduleControllerTest {
     @Before
     public void setUp() throws Exception {
         MockitoAnnotations.initMocks(this);
-        mvc = MockMvcBuilders.standaloneSetup(new ScheduleController(scheduleService, scheduleParser, userRepository)).build();
+        mvc = MockMvcBuilders.standaloneSetup(new ScheduleController(scheduleService, scheduleParser)).build();
         JavaTimeModule javaTimeModule=new JavaTimeModule();
         javaTimeModule.addDeserializer(LocalDateTime.class, new LocalDateTimeDeserializer(DateTimeFormatter.ISO_DATE_TIME));
         objectMapper = new ObjectMapper().registerModule(javaTimeModule);
     }
 
     @Test
-    @UseDataProvider(value = "getReservation",
+    @UseDataProvider(value = "getReservationResponseView",
             location = ScheduleDataProvider.class)
-    public void shouldReturnOKWhenGetSchedule(ScheduleReservation scheduleReservation) throws Exception {
-        List<ScheduleReservation> scheduleReservations = new ArrayList<>();
-        scheduleReservations.add(scheduleReservation);
+    public void shouldReturnOKWhenGetSchedule(ReservationResponseView reservationResponseView) throws Exception {
+        List<ReservationResponseView> scheduleReservationViews = new ArrayList<>();
+        scheduleReservationViews.add(reservationResponseView);
         when(scheduleService.findScheduleReservations(any(LocalDate.class), any(LocalDate.class)))
-                .thenReturn(scheduleReservations);
+                .thenReturn(scheduleReservationViews);
         when(userRepository.findOne(any(UUID.class)))
-                .thenReturn(new User(null, null, EXAMPLE_NAME,EXAMPLE_NAME, Role.VOLUNTEER));
+                .thenReturn(EXAMPLE_USER);
         mvc.perform(get(SCHEDULE_PATH)
                 .param("from", VALID_LOCAL_DATE_FROM.toString())
                 .param("to", VALID_LOCAL_DATE_TO))
@@ -83,13 +79,13 @@ public class ScheduleControllerTest {
     }
 
     @Test
-    @UseDataProvider(value = "getReservation",
+    @UseDataProvider(value = "getReservationResponseView",
             location = ScheduleDataProvider.class)
-    public void shouldReturnOKWhenGetReservationById(ScheduleReservation scheduleReservation) throws Exception {
+    public void shouldReturnOKWhenGetReservationById(ReservationResponseView reservationResponseView) throws Exception {
         when(scheduleService.findReservation(any(UUID.class)))
-                .thenReturn(scheduleReservation);
+                .thenReturn(reservationResponseView);
         when(userRepository.findOne(any(UUID.class)))
-                .thenReturn(new User(null, null, EXAMPLE_NAME,EXAMPLE_NAME, Role.VOLUNTEER));
+                .thenReturn(EXAMPLE_USER);
         mvc.perform(get(String.format("%s/%s", SCHEDULE_PATH, UUID.randomUUID().toString()))
                 .param("id", VALID_LOCAL_DATE_TO))
                 .andExpect(status().isOk());
@@ -99,13 +95,13 @@ public class ScheduleControllerTest {
     }
 
     @Test
-    @UseDataProvider(value = "getReservation",
+    @UseDataProvider(value = "getReservationResponseView",
             location = ScheduleDataProvider.class)
-    public void shouldReturnCreatedWhenCreateReservation(ScheduleReservation scheduleReservation) throws Exception {
-        when(scheduleService.makeReservation(any(ScheduleReservation.class), anyString()))
-                .thenReturn(scheduleReservation);
+    public void shouldReturnCreatedWhenCreateReservation(ReservationResponseView reservationResponseView) throws Exception {
+        when(scheduleService.makeReservation(any(ReservationRequestView.class)))
+                .thenReturn(reservationResponseView);
         when(userRepository.findOne(any(UUID.class)))
-                .thenReturn(new User(null, null, EXAMPLE_NAME,EXAMPLE_NAME, Role.VOLUNTEER));
+                .thenReturn(EXAMPLE_USER);
         ReservationRequestView view = new ReservationRequestView();
         view.setDate(VALID_LOCAL_DATE_FROM);
         view.setStartTime(VALID_LOCAL_TIME);
@@ -119,18 +115,18 @@ public class ScheduleControllerTest {
                 .andExpect(status().isCreated());
 
         verify(scheduleService, times(1))
-                .makeReservation(any(ScheduleReservation.class), anyString());
+                .makeReservation(any(ReservationRequestView.class));
         verifyNoMoreInteractions(scheduleService);
     }
 
     @Test
-    @UseDataProvider(value = "getReservation",
+    @UseDataProvider(value = "getReservationResponseView",
             location = ScheduleDataProvider.class)
-    public void shouldReturnCreatedWhenUpdateReservation(ScheduleReservation scheduleReservation) throws Exception {
-        when(scheduleService.updateReservation(any(UUID.class), any(ScheduleReservation.class), anyString()))
-                .thenReturn(scheduleReservation);
+    public void shouldReturnCreatedWhenUpdateReservation(ReservationResponseView reservationResponseView) throws Exception {
+        when(scheduleService.updateReservation(any(UUID.class), any(ReservationRequestView.class)))
+                .thenReturn(reservationResponseView);
         when(userRepository.findOne(any(UUID.class)))
-                .thenReturn(new User(null, null, EXAMPLE_NAME,EXAMPLE_NAME, Role.VOLUNTEER));
+                .thenReturn(EXAMPLE_USER);
         ReservationRequestView view = new ReservationRequestView();
         view.setDate(VALID_LOCAL_DATE_FROM);
         view.setStartTime(VALID_LOCAL_TIME);
@@ -144,18 +140,18 @@ public class ScheduleControllerTest {
                 .andExpect(status().isCreated());
 
         verify(scheduleService, times(1))
-                .updateReservation(any(UUID.class), any(ScheduleReservation.class), anyString());
+                .updateReservation(any(UUID.class), any(ReservationRequestView.class));
         verifyNoMoreInteractions(scheduleService);
     }
 
     @Test
-    @UseDataProvider(value = "getReservation",
+    @UseDataProvider(value = "getReservationResponseView",
             location = ScheduleDataProvider.class)
-    public void shouldReturnOKWhenDeleteReservation(ScheduleReservation scheduleReservation) throws Exception {
+    public void shouldReturnOKWhenDeleteReservation(ReservationResponseView reservationResponseView) throws Exception {
         when(scheduleService.removeReservation(any(UUID.class)))
-                .thenReturn(scheduleReservation);
+                .thenReturn(reservationResponseView);
         when(userRepository.findOne(any(UUID.class)))
-                .thenReturn(new User(null, null, EXAMPLE_NAME,EXAMPLE_NAME, Role.VOLUNTEER));
+                .thenReturn(EXAMPLE_USER);
         mvc.perform(delete(String.format("%s/%s", SCHEDULE_PATH, UUID.randomUUID().toString()))
                 .param("id", UUID.randomUUID().toString())
                 .contentType(CONTENT_TYPE))
