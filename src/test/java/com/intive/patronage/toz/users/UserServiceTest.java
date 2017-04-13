@@ -54,7 +54,7 @@ public class UserServiceTest {
         user.setName(EXPECTED_NAME);
         user.setPasswordHash(EXPECTED_PASSWORD_HASH);
         user.setSurname(EXPECTED_SURNAME);
-        user.setRole(EXPECTED_ROLE);
+        user.addRole(EXPECTED_ROLE);
         return new User[]{user};
     }
 
@@ -76,7 +76,7 @@ public class UserServiceTest {
         assertEquals(EXPECTED_NAME, dbUser.getName());
         assertEquals(EXPECTED_PASSWORD_HASH, dbUser.getPasswordHash());
         assertEquals(EXPECTED_SURNAME, dbUser.getSurname());
-        assertEquals(EXPECTED_ROLE, dbUser.getRole());
+        assertTrue(dbUser.hasRole(EXPECTED_ROLE));
 
         verify(userRepository, times(1)).exists(eq(EXPECTED_ID));
         verify(userRepository, times(1)).findOne(eq(EXPECTED_ID));
@@ -102,7 +102,7 @@ public class UserServiceTest {
         assertEquals(EXPECTED_NAME, createdUser.getName());
         assertEquals(EXPECTED_PASSWORD_HASH, createdUser.getPasswordHash());
         assertEquals(EXPECTED_SURNAME, createdUser.getSurname());
-        assertEquals(EXPECTED_ROLE, createdUser.getRole());
+        assertTrue(createdUser.hasRole(EXPECTED_ROLE));
         verify(userRepository, times(1)).save(any(User.class));
         verifyNoMoreInteractions(userRepository);
     }
@@ -136,7 +136,7 @@ public class UserServiceTest {
         assertEquals(EXPECTED_NAME, savedUser.getName());
         assertEquals(EXPECTED_PASSWORD_HASH, savedUser.getPasswordHash());
         assertEquals(EXPECTED_SURNAME, savedUser.getSurname());
-        assertEquals(EXPECTED_ROLE, savedUser.getRole());
+        assertTrue(savedUser.hasRole(EXPECTED_ROLE));
     }
 
     @Test(expected = NotFoundException.class)

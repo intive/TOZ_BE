@@ -4,9 +4,11 @@ import com.intive.patronage.toz.base.model.Identifiable;
 import lombok.Getter;
 import lombok.Setter;
 
-import javax.persistence.*;
-import java.util.ArrayList;
-import java.util.List;
+import javax.persistence.CascadeType;
+import javax.persistence.Entity;
+import javax.persistence.OneToMany;
+import java.util.HashSet;
+import java.util.Set;
 
 @Getter
 @Setter
@@ -18,13 +20,16 @@ public class User extends Identifiable {
     private String phoneNumber;
     private String email;
 
-    @OneToMany(cascade = CascadeType.ALL) // TODO
-    private List<RoleEntity> roles = new ArrayList<>();
+    @OneToMany(cascade = CascadeType.ALL) // TODO change to set and cascade type
+    private Set<RoleEntity> roles = new HashSet<>();
 
-    public void addRole(Role role) {
-        final RoleEntity roleEntity = new RoleEntity();
-        roleEntity.setRole(role);
-        roles.add(roleEntity);
+    public void addRole(final Role role) {
+        roles.add(RoleEntity.buildWithRole(role));
+    }
+
+    public boolean hasRole(final Role role) {
+        return roles.stream().anyMatch(
+                roleEntity -> roleEntity.getRole().equals(role));
     }
 
     public enum Role {

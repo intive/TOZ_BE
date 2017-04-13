@@ -61,7 +61,7 @@ public class UsersControllerTest {
         user.setSurname(EXPECTED_SURNAME);
         user.setPhoneNumber(EXPECTED_PHONE_NUMBER);
         user.setEmail(EXPECTED_EMAIL);
-        user.setRole(EXPECTED_ROLE);
+        user.addRole(EXPECTED_ROLE);
 
         final UserView userView = ModelMapper.convertToView(user, UserView.class);
         userView.setPassword(EXPECTED_PASSWORD);
@@ -78,7 +78,7 @@ public class UsersControllerTest {
             user.setSurname(String.format("%s_%d", "surname", i));
             user.setPhoneNumber(String.format("%s_%d", "phone number", i));
             user.setEmail(String.format("%s_%d", "email", i));
-            user.setRole(User.Role.values()[i % 2]);
+            user.addRole(User.Role.values()[i % 2]);
             users.add(user);
         }
         return users;
