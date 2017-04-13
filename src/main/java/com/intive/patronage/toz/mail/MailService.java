@@ -11,6 +11,7 @@ import javax.mail.internet.MimeMessage;
 
 @Service
 public class MailService {
+    private static final boolean ENABLE_MULTIPART = true;
     private JavaMailSender javaMailSender;
 
     @Autowired
@@ -27,7 +28,7 @@ public class MailService {
                          String attachmentFileName, InputStreamSource attachmentFile)
             throws MessagingException {
         MimeMessage mimeMessage = javaMailSender.createMimeMessage();
-        MimeMessageHelper messageHelper = new MimeMessageHelper(mimeMessage, true);
+        MimeMessageHelper messageHelper = new MimeMessageHelper(mimeMessage, ENABLE_MULTIPART);
         messageHelper.setTo(recipient);
         messageHelper.setSubject(subject);
         messageHelper.setText(messageContent);
