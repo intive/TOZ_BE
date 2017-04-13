@@ -19,7 +19,6 @@ public class MailServiceTest {
     private JavaMailSender javaMailSender;
     @InjectMocks
     private MailService service = new MailService(javaMailSender);
-    private Session session;
 
     @Test
     public void shouldSendMessage() throws Exception {
@@ -27,6 +26,7 @@ public class MailServiceTest {
         String subject = "Test subject";
         String messageContent = "Test message";
 
+        Session session = null;
         MimeMessage mimeMessage = new MimeMessage(session);
         when(javaMailSender.createMimeMessage()).thenReturn(mimeMessage);
         service.sendMail(subject, messageContent, recipient);
