@@ -43,7 +43,7 @@ class WebSecurityConfig extends WebSecurityConfigurerAdapter {
 
     @Bean
     public PasswordEncoder passwordEncoder() {
-        SecureRandom secureRandom = new SecureRandom();
+        final SecureRandom secureRandom = new SecureRandom();
         secureRandom.nextBytes(new byte[20]);
         return new BCryptPasswordEncoder(securityLevel, secureRandom);
     }
@@ -59,10 +59,8 @@ class WebSecurityConfig extends WebSecurityConfigurerAdapter {
         http.csrf().disable()
                 .exceptionHandling().authenticationEntryPoint(new UnauthorizedEntryPoint())
                 .and().sessionManagement().sessionCreationPolicy(SessionCreationPolicy.STATELESS)
-                .and().authorizeRequests()
-                .antMatchers(ACQUIRE_TOKEN_ENTRY_POINT).permitAll()
-                .and().authorizeRequests()
-                .antMatchers(REST_ENTRY_POINT).authenticated()
+                .and().authorizeRequests().antMatchers(ACQUIRE_TOKEN_ENTRY_POINT).permitAll()
+                .and().authorizeRequests().antMatchers(REST_ENTRY_POINT).authenticated()
                 .and().addFilterBefore(getAuthenticationFilter(), UsernamePasswordAuthenticationFilter.class);
     }
 }

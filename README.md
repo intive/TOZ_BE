@@ -38,6 +38,18 @@ It should be self explanatory. You can:
 - create container: `gradle createContainer`
 - run functional test on docker by: `gradle functionalTest` (TODO)
 
+## Authorization
+
+To authorize send JWT token in `Authorization` header with `Bearer ` prefix in request.
+
+Example curl:
+```
+curl -X GET \
+  http://localhost:8080/users \
+  -H 'Accept: application/json' \
+  -H 'Authorization: Bearer eyJhbGciOiJIUzI1NiJ9.eyJzdWIiOiI0YjVlZmE0MC1lNjQ5LTQ3ZmQtOThkNy1jZTk3NzBlYTZlY2QiLCJlbWFpbCI6InVzZXJAbWFpbC5jb20iLCJzY29wZXMiOlsiVE9aIl0sImlhdCI6MTQ5MjE3MTY4MSwiZXhwIjoxNDkyMjU4MDgxfQ.Z3iZ3zlgV0_iZAk-iCTPr68hLBL5CvyoSHUbn3Htprc'
+```
+
 ## JWT 
 
 To configure secret for JWT add `TOZ_BE_JWT_SECRET` environmental variable with base64 encoded secret.

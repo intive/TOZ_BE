@@ -15,6 +15,9 @@ import java.util.Date;
 @Component
 class JwtFactory {
 
+    private static final String EMAIL_CLAIM_NAME = "email";
+    private static final String SCOPES_CLAIM_NAME = "scopes";
+
     @Value("${jwt.expiration-time-minutes}")
     private long expirationTime;
 
@@ -25,8 +28,8 @@ class JwtFactory {
 
         return Jwts.builder()
                 .setSubject(user.getId().toString())
-                .claim("email", user.getEmail())
-                .claim("scopes", Collections.singleton(user.getRole()))
+                .claim(EMAIL_CLAIM_NAME, user.getEmail())
+                .claim(SCOPES_CLAIM_NAME, Collections.singleton(user.getRole()))
                 .setIssuedAt(new Date(Instant.now().toEpochMilli()))
                 .setExpiration(new Date(Instant.now().plus(expirationTime, ChronoUnit.MINUTES).toEpochMilli()))
                 .signWith(SignatureAlgorithm.HS256, TextCodec.BASE64.decode(secret))

@@ -1,8 +1,11 @@
 package com.intive.patronage.toz.tokens;
 
 import com.intive.patronage.toz.config.ApiUrl;
+import com.intive.patronage.toz.error.model.ErrorResponse;
+import com.intive.patronage.toz.error.model.ValidationErrorResponse;
 import com.intive.patronage.toz.tokens.model.UserContext;
-import com.intive.patronage.toz.users.model.view.UserView;
+import com.intive.patronage.toz.tokens.model.view.JwtView;
+import com.intive.patronage.toz.tokens.model.view.UserCredentialsView;
 import io.swagger.annotations.ApiOperation;
 import io.swagger.annotations.ApiResponse;
 import io.swagger.annotations.ApiResponses;
@@ -17,39 +20,39 @@ import org.springframework.web.bind.annotation.*;
 import javax.validation.Valid;
 
 @RestController
-@RequestMapping(value = ApiUrl.TOKENS_PATH)
+@RequestMapping(value = ApiUrl.TOKENS_PATH, produces = MediaType.APPLICATION_JSON_VALUE)
 class TokensController {
 
     private final TokensService tokensService;
-    private final JwtFactory jwtFactory;
 
     @Autowired
-    public TokensController(TokensService tokensService, JwtFactory jwtFactory) {
+    TokensController(TokensService tokensService) {
         this.tokensService = tokensService;
-        this.jwtFactory = jwtFactory;
     }
 
     @ApiOperation("Login to api")
     @ApiResponses(value = {
-            @ApiResponse(code = 200, message = "Logged in"),
-            @ApiResponse(code = 401, message = "Incorrect user or password")
+            @ApiResponse(code = 201, message = "JWT Token"),
+            @ApiResponse(code = 400, message = "Validation error", response = ValidationErrorResponse.class),
+            @ApiResponse(code = 401, message = "Incorrect user or password", response = ErrorResponse.class)
     })
-    @ResponseStatus(HttpStatus.OK)
+    @ResponseStatus(HttpStatus.CREATED)
     @PostMapping(value = ApiUrl.ACQUIRE_TOKEN_PATH, consumes = MediaType.APPLICATION_JSON_VALUE)
     @ResponseBody
-    public String login(@Valid @RequestBody UserView userView) {
-        final Boolean isAuthenticated = tokensService.isUserAuthenticated(userView.getPassword(), userView.getEmail());
+    public JwtView login(@Valid @RequestBody UserCredentialsView credentials) {
+        final Boolean isAuthenticated =
+                tokensService.isUserAuthenticated(credentials.getPassword(), credentials.getEmail());
+
         if (!isAuthenticated) {
             throw new BadCredentialsException("Incorrect email or password");
         }
 
-        return jwtFactory.generateToken(tokensService.getUserByMail(userView.getEmail()));
+        return new JwtView(tokensService.getToken(credentials.getEmail()));
     }
 
-    @ApiOperation(value = "Show current user content", hidden = true)
+    @ApiOperation(value = "Show current user", hidden = true)
     @PreAuthorize("hasAuthority('TOZ')")
     @ResponseStatus(HttpStatus.OK)
-    @ResponseBody
     @GetMapping(value = "/whoami")
     public UserContext whoAmI(@AuthenticationPrincipal UserContext userContext) {
         return userContext;

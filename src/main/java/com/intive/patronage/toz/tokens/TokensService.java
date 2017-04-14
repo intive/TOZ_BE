@@ -7,15 +7,17 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
 @Service
-public class TokensService {
+class TokensService {
 
     private final UserService userService;
     private final PasswordEncoder passwordEncoder;
+    private final JwtFactory jwtFactory;
 
     @Autowired
-    public TokensService(UserService userService, PasswordEncoder passwordEncoder) {
+    TokensService(UserService userService, PasswordEncoder passwordEncoder, JwtFactory jwtFactory) {
         this.userService = userService;
         this.passwordEncoder = passwordEncoder;
+        this.jwtFactory = jwtFactory;
     }
 
     boolean isUserAuthenticated(String plainPassword, String userEmail) {
@@ -25,7 +27,7 @@ public class TokensService {
         //return passwordEncoder.matches(plainPassword, userFromDatabase.getPassword());
     }
 
-    User getUserByMail(String userEmail) {
-        return userService.findOneByEmail(userEmail);
+    String getToken(String userEmail) {
+        return jwtFactory.generateToken(userService.findOneByEmail(userEmail));
     }
 }

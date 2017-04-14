@@ -1,5 +1,6 @@
 package com.intive.patronage.toz.error.model;
 
+import java.util.Date;
 import java.util.List;
 
 public class ValidationErrorResponse {
@@ -7,11 +8,13 @@ public class ValidationErrorResponse {
     private final int code;
     private final String message;
     private final List<SingleFieldError> errors;
+    private final Date timestamp;
 
     public ValidationErrorResponse(int code, String message, List<SingleFieldError> errors) {
         this.code = code;
         this.message = message;
         this.errors = errors;
+        timestamp = new Date();
     }
 
     public int getCode() {
@@ -24,6 +27,10 @@ public class ValidationErrorResponse {
 
     public List<SingleFieldError> getErrors() {
         return errors;
+    }
+
+    public Date getTimestamp() {
+        return timestamp;
     }
 
     public static class SingleFieldError {

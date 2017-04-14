@@ -38,8 +38,6 @@ public class TokenControllerTest {
 
     @Mock
     private TokensService tokensService;
-    @Mock
-    private JwtFactory jwtFactory;
 
     private MockMvc mockMvc;
     private UserView userView;
@@ -55,7 +53,7 @@ public class TokenControllerTest {
     @Before
     public void setUp() throws Exception {
         MockitoAnnotations.initMocks(this);
-        mockMvc = MockMvcBuilders.standaloneSetup(new TokensController(tokensService, jwtFactory)).build();
+        mockMvc = MockMvcBuilders.standaloneSetup(new TokensController(tokensService)).build();
 
         userView = new UserView();
         userView.setPassword("123456");
@@ -68,7 +66,7 @@ public class TokenControllerTest {
         this.mockMvc.perform(post(String.format("%s%s", TOKENS_PATH, ACQUIRE_TOKEN_PATH))
                 .contentType(CONTENT_TYPE)
                 .content(convertToJsonString(userView)))
-                .andExpect(status().isOk());
+                .andExpect(status().isCreated());
     }
 
     @Test

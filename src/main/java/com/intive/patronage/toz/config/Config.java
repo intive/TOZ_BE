@@ -12,6 +12,7 @@ import springfox.documentation.builders.ApiInfoBuilder;
 import springfox.documentation.builders.PathSelectors;
 import springfox.documentation.builders.RequestHandlerSelectors;
 import springfox.documentation.service.ApiInfo;
+import springfox.documentation.service.ApiKey;
 import springfox.documentation.spi.DocumentationType;
 import springfox.documentation.spring.web.paths.RelativePathProvider;
 import springfox.documentation.spring.web.plugins.Docket;
@@ -19,6 +20,7 @@ import springfox.documentation.swagger2.annotations.EnableSwagger2;
 
 import javax.servlet.ServletContext;
 import java.time.LocalTime;
+import java.util.Collections;
 
 @EnableWebMvc
 @Configuration
@@ -64,7 +66,8 @@ class Config extends WebMvcConfigurerAdapter {
                 .build()
                 .apiInfo(apiInfo())
                 .directModelSubstitute(LocalTime.class, String.class)
-                .genericModelSubstitutes(ResponseEntity.class);
+                .genericModelSubstitutes(ResponseEntity.class)
+                .securitySchemes(Collections.singletonList(apiKey()));
     }
 
     @Bean
@@ -91,5 +94,9 @@ class Config extends WebMvcConfigurerAdapter {
                 return serverContext;
             }
         };
+    }
+
+    private ApiKey apiKey() {
+        return new ApiKey("Authorization", "jwt", "header");
     }
 }
