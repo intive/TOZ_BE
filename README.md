@@ -21,13 +21,16 @@ TODO [short description](https://en.support.wordpress.com/markdown-quick-referen
 
 ## REST API documentation
 
-    [Production](http://patronage2017.blstream.com/swagger-ui.html)
-    [Testbed](http://testbed.patronage2017.blstream.com/swagger-ui.html)
-    [Bleeding edge](http://dev.patronage2017.blstream.com/swagger-ui.html)
+[Production](http://patronage2017.blstream.com/swagger-ui.html)
+
+[Testbed](http://testbed.patronage2017.blstream.com/swagger-ui.html)
+
+[Bleeding edge](http://dev.patronage2017.blstream.com/swagger-ui.html)
 
 ## Slack (private)
 
-[Contact us](https://patronage-2017.slack.com/messages/backend)
+[Contact us](https://patronage-2017.slack.com/messages/backend-public)
+
 [Developer news](https://patronage-2017.slack.com/messages/backend-ci/)
 
 ## Docker
