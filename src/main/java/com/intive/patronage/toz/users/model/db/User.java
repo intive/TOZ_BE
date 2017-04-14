@@ -20,7 +20,7 @@ public class User extends Identifiable {
     private String phoneNumber;
     private String email;
 
-    @OneToMany(cascade = CascadeType.ALL) // TODO and cascade type
+    @OneToMany(cascade = CascadeType.MERGE)
     private Set<RoleEntity> roles = new HashSet<>();
 
     public void addRole(final Role role) {
