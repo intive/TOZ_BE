@@ -14,6 +14,7 @@ import org.hibernate.validator.constraints.NotEmpty;
 
 import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Size;
+import java.util.List;
 
 @ApiModel(value = "User")
 @Getter
@@ -45,7 +46,7 @@ public class UserView extends IdentifiableView {
     private String email;
 
     @NotNull
-    private User.Role role;
+    private List<User.Role> roles;
 
     public void setName(String name) {
         if (name != null) {

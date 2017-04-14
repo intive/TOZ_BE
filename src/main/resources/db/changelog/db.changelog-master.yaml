@@ -193,7 +193,6 @@ databaseChangeLog:
                     name: user_id
                     type: uuid
                     constraints:
-                      - primaryKey: true
                       - nullable: false
                 - column:
                     name: roles_role

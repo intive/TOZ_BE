@@ -1,18 +1,14 @@
 package com.intive.patronage.toz.users.model.db;
 
 import lombok.Getter;
-import lombok.Setter;
 
-import javax.persistence.Entity;
-import javax.persistence.EnumType;
-import javax.persistence.Enumerated;
-import javax.persistence.Id;
+import javax.persistence.*;
 import javax.validation.constraints.NotNull;
+import java.io.Serializable;
 
 @Getter
-@Setter
 @Entity
-class RoleEntity {
+public class RoleEntity implements Serializable {
 
     @Id
     @Enumerated(EnumType.STRING)
@@ -21,11 +17,9 @@ class RoleEntity {
     private RoleEntity() {
     }
 
-    private RoleEntity(User.Role role) {
-        this.role = role;
-    }
-
     static RoleEntity buildWithRole(@NotNull User.Role role) {
-        return new RoleEntity(role);
+        final RoleEntity roleEntity = new RoleEntity();
+        roleEntity.role = role;
+        return roleEntity;
     }
 }

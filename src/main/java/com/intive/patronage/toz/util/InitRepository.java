@@ -43,21 +43,24 @@ class InitRepository {
                 final News news = createNewsWithValue(i);
                 newsRepository.save(news);
 
-                final User user = createUserWithValue(i);
-                userRepository.save(user);
+                final User volunteer = createUserWithRole(User.Role.VOLUNTEER, i);
+                userRepository.save(volunteer);
+
+                final User toz = createUserWithRole(User.Role.TOZ, i);
+                userRepository.save(toz);
             }
         };
     }
 
     private static Pet createPetWithValue(int value) {
         Pet pet = new Pet();
-        pet.setName("Name:" + value);
+        pet.setName(String.format("name_%s", value));
         Pet.Type[] types = Pet.Type.values();
         Pet.Sex[] sexes = Pet.Sex.values();
         pet.setType(types[value % types.length]);
         pet.setSex(sexes[value % sexes.length]);
-        pet.setDescription("description:" + value);
-        pet.setAddress("address:" + value);
+        pet.setDescription(String.format("description_%s", value));
+        pet.setAddress(String.format("address_%s", value));
         return pet;
     }
 
@@ -70,22 +73,23 @@ class InitRepository {
 
     private static News createNewsWithValue(int value) {
         News news = new News();
-        news.setTitle("Title:" + value);
+        news.setTitle(String.format("title_%s", value));
         News.Type[] newsTypes = News.Type.values();
         news.setType(newsTypes[value % newsTypes.length]);
-        news.setContents("contents:" + value);
-        news.setPhotoUrl("photo:" + value);
+        news.setContents(String.format("contents_%s", value));
+        news.setPhotoUrl(String.format("photo_%s", value));
         return news;
     }
 
-    private static User createUserWithValue(int value) {
+    private static User createUserWithRole(User.Role role, int value) {
+        final String roleString = role.toString();
         final User user = new User();
-        user.setName(String.format("name:%d", value));
-        user.setSurname(String.format("surname:%d", value));
-        user.setPasswordHash(String.format("passwordHash:%d", value));
-        user.setEmail(String.format("user%d.email@gmail.com", value));
+        user.setName(String.format("%s_name_%d", roleString, value));
+        user.setSurname(String.format("%s_surname_%d", roleString, value));
+        user.setPasswordHash(String.format("%s_passwordHash_%d", roleString, value));
+        user.setEmail(String.format("%s_user%d.email@gmail.com", roleString, value));
         user.setPhoneNumber(getRandomPhoneNumber());
-        user.addRole(User.Role.VOLUNTEER);
+        user.addRole(role);
         return user;
     }
 
