@@ -38,7 +38,6 @@ class TokensController {
     })
     @ResponseStatus(HttpStatus.CREATED)
     @PostMapping(value = ApiUrl.ACQUIRE_TOKEN_PATH, consumes = MediaType.APPLICATION_JSON_VALUE)
-    @ResponseBody
     public JwtView login(@Valid @RequestBody UserCredentialsView credentials) {
         final Boolean isAuthenticated =
                 tokensService.isUserAuthenticated(credentials.getPassword(), credentials.getEmail());

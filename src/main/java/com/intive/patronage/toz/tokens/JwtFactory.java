@@ -18,11 +18,14 @@ class JwtFactory {
     private static final String EMAIL_CLAIM_NAME = "email";
     private static final String SCOPES_CLAIM_NAME = "scopes";
 
-    @Value("${jwt.expiration-time-minutes}")
-    private long expirationTime;
+    private final long expirationTime;
+    private final String secret;
 
-    @Value("${jwt.secret-base64}")
-    private String secret;
+    public JwtFactory(@Value("${jwt.expiration-time-minutes}") long expirationTime,
+                      @Value("${jwt.secret-base64}") String secret) {
+        this.expirationTime = expirationTime;
+        this.secret = secret;
+    }
 
     String generateToken(User user) {
 

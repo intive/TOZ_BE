@@ -23,7 +23,7 @@ public class JwtAuthenticationProvider implements AuthenticationProvider {
 
     private final String secret;
 
-    public JwtAuthenticationProvider() {
+    JwtAuthenticationProvider() {
         secret = null;
     }
 
@@ -56,9 +56,9 @@ public class JwtAuthenticationProvider implements AuthenticationProvider {
 
         final UUID userID = UUID.fromString(claims.getBody().getSubject());
         final String email = claims.getBody().get("email", String.class);
-        final List<String> scope = claims.getBody().get("scopes", List.class);
+        final List<String> scopes = claims.getBody().get("scopes", List.class);
 
-        Set<GrantedAuthority> authorities = scope.stream()
+        Set<GrantedAuthority> authorities = scopes.stream()
                 .map(SimpleGrantedAuthority::new)
                 .collect(Collectors.toSet());
 
