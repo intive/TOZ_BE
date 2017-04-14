@@ -12,10 +12,11 @@ import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.stereotype.Component;
 
-import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
+import java.util.Set;
 import java.util.UUID;
+import java.util.stream.Collectors;
 
 @Component
 public class JwtAuthenticationProvider implements AuthenticationProvider {
@@ -55,10 +56,11 @@ public class JwtAuthenticationProvider implements AuthenticationProvider {
 
         final UUID userID = UUID.fromString(claims.getBody().getSubject());
         final String email = claims.getBody().get("email", String.class);
-        final String scope = claims.getBody().get("scope", String.class);
+        final List<String> scope = claims.getBody().get("scopes", List.class);
 
-        List<GrantedAuthority> authorities = new ArrayList<>();
-        authorities.add(new SimpleGrantedAuthority(scope));
+        Set<GrantedAuthority> authorities = scope.stream()
+                .map(SimpleGrantedAuthority::new)
+                .collect(Collectors.toSet());
 
         final UserContext userContext = new UserContext(userID, email, authorities);
         return new JwtAuthenticationToken(userContext, authorities);

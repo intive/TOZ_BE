@@ -9,6 +9,7 @@ import org.springframework.stereotype.Component;
 
 import java.time.Instant;
 import java.time.temporal.ChronoUnit;
+import java.util.Collections;
 import java.util.Date;
 
 @Component
@@ -25,7 +26,7 @@ class JwtFactory {
         return Jwts.builder()
                 .setSubject(user.getId().toString())
                 .claim("email", user.getEmail())
-                .claim("scope", user.getRole()) // TODO add set of roles
+                .claim("scopes", Collections.singleton(user.getRole()))
                 .setIssuedAt(new Date(Instant.now().toEpochMilli()))
                 .setExpiration(new Date(Instant.now().plus(expirationTime, ChronoUnit.MINUTES).toEpochMilli()))
                 .signWith(SignatureAlgorithm.HS256, TextCodec.BASE64.decode(secret))

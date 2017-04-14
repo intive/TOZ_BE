@@ -2,16 +2,16 @@ package com.intive.patronage.toz.tokens.model;
 
 import org.springframework.security.core.GrantedAuthority;
 
-import java.util.List;
+import java.util.Set;
 import java.util.UUID;
 
 public class UserContext {
 
     private final UUID userId;
     private final String email;
-    private final List<GrantedAuthority> authorities;
+    private final Set<GrantedAuthority> authorities;
 
-    public UserContext(UUID userId, String email, List<GrantedAuthority> authorities) {
+    public UserContext(UUID userId, String email, Set<GrantedAuthority> authorities) {
         this.userId = userId;
         this.email = email;
         this.authorities = authorities;
@@ -25,7 +25,7 @@ public class UserContext {
         return email;
     }
 
-    public List<GrantedAuthority> getAuthorities() {
+    public Set<GrantedAuthority> getAuthorities() {
         return authorities;
     }
 }
