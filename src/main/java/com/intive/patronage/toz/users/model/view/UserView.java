@@ -14,8 +14,8 @@ import org.hibernate.validator.constraints.NotEmpty;
 
 import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Size;
-import java.util.ArrayList;
-import java.util.List;
+import java.util.HashSet;
+import java.util.Set;
 
 @ApiModel(value = "User")
 @Getter
@@ -47,7 +47,7 @@ public class UserView extends IdentifiableView {
     private String email;
 
     @NotNull
-    private List<User.Role> roles = new ArrayList<>();
+    private Set<User.Role> roles = new HashSet<>();
 
     public void setName(String name) {
         if (name != null) {
