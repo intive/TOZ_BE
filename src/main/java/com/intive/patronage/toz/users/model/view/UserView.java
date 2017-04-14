@@ -14,6 +14,7 @@ import org.hibernate.validator.constraints.NotEmpty;
 
 import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Size;
+import java.util.ArrayList;
 import java.util.List;
 
 @ApiModel(value = "User")
@@ -46,7 +47,7 @@ public class UserView extends IdentifiableView {
     private String email;
 
     @NotNull
-    private List<User.Role> roles;
+    private List<User.Role> roles = new ArrayList<>();
 
     public void setName(String name) {
         if (name != null) {
@@ -58,5 +59,9 @@ public class UserView extends IdentifiableView {
         if (surname != null) {
             this.surname = surname.trim();
         }
+    }
+
+    public void addRole(User.Role role) {
+        roles.add(role);
     }
 }

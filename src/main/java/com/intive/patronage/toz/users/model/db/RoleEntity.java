@@ -2,8 +2,10 @@ package com.intive.patronage.toz.users.model.db;
 
 import lombok.Getter;
 
-import javax.persistence.*;
-import javax.validation.constraints.NotNull;
+import javax.persistence.Entity;
+import javax.persistence.EnumType;
+import javax.persistence.Enumerated;
+import javax.persistence.Id;
 import java.io.Serializable;
 
 @Getter
@@ -17,9 +19,11 @@ public class RoleEntity implements Serializable {
     private RoleEntity() {
     }
 
-    static RoleEntity buildWithRole(@NotNull User.Role role) {
-        final RoleEntity roleEntity = new RoleEntity();
-        roleEntity.role = role;
-        return roleEntity;
+    RoleEntity(User.Role role) {
+        this.role = role;
+    }
+
+    public RoleEntity(String role) {
+        this.role = User.Role.valueOf(role);
     }
 }

@@ -112,7 +112,7 @@ public class UsersControllerTest {
                 .andExpect(jsonPath("$.surname", is(EXPECTED_SURNAME)))
                 .andExpect(jsonPath("$.phoneNumber", is(EXPECTED_PHONE_NUMBER)))
                 .andExpect(jsonPath("$.email", is(EXPECTED_EMAIL)))
-                .andExpect(jsonPath("$.role", is(EXPECTED_ROLE.toString()))).andReturn();
+                .andExpect(jsonPath("$.roles[0]", is(EXPECTED_ROLE.toString())));
 
         verify(userService, times(1)).createWithPassword(any(User.class), eq(EXPECTED_PASSWORD));
         verifyNoMoreInteractions(userService);

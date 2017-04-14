@@ -22,7 +22,8 @@ public class User extends Identifiable {
     private List<RoleEntity> roles = new ArrayList<>();
 
     public void addRole(final Role role) {
-        roles.add(RoleEntity.buildWithRole(role));
+        final RoleEntity roleEntity = new RoleEntity(role);
+        roles.add(roleEntity);
     }
 
     public boolean hasRole(final Role role) {
