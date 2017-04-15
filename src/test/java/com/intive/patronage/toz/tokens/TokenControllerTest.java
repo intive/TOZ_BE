@@ -30,7 +30,6 @@ import java.util.Collections;
 import java.util.Date;
 
 import static com.intive.patronage.toz.config.ApiUrl.ACQUIRE_TOKEN_PATH;
-import static com.intive.patronage.toz.config.ApiUrl.TOKENS_PATH;
 import static org.hamcrest.CoreMatchers.is;
 import static org.hamcrest.CoreMatchers.isA;
 import static org.mockito.Matchers.any;
@@ -51,8 +50,6 @@ public class TokenControllerTest {
 
     private static final String EMAIL = "user@mail.com";
     private static final String PASSWORD = "Password";
-    private static final String AUTHORIZATION_HEADER = "Authorization";
-    private static final String TOKEN_PREFIX = "Bearer ";
     private static final String EMAIL_CLAIM_NAME = "email";
     private static final String SCOPES_CLAIM_NAME = "scopes";
     private static final long EXPIRATION_TIME = 5;
@@ -88,7 +85,7 @@ public class TokenControllerTest {
     @Test
     public void shouldReturnCreatedWhenProperUserAndPassword() throws Exception {
         when(tokensService.isUserAuthenticated(any(String.class), any(String.class))).thenReturn(true);
-        this.mockMvc.perform(post(String.format("%s%s", TOKENS_PATH, ACQUIRE_TOKEN_PATH))
+        this.mockMvc.perform(post(ACQUIRE_TOKEN_PATH)
                 .contentType(CONTENT_TYPE)
                 .content(convertToJsonString(credentialsView)))
                 .andExpect(status().isCreated());
@@ -99,7 +96,7 @@ public class TokenControllerTest {
         expectedException.expectCause(isA(BadCredentialsException.class));
 
         when(tokensService.isUserAuthenticated(any(String.class), any(String.class))).thenReturn(false);
-        this.mockMvc.perform(post(String.format("%s%s", TOKENS_PATH, ACQUIRE_TOKEN_PATH))
+        this.mockMvc.perform(post(ACQUIRE_TOKEN_PATH)
                 .contentType(CONTENT_TYPE)
                 .content(convertToJsonString(credentialsView)))
                 .andExpect(status().isUnauthorized());
@@ -116,8 +113,7 @@ public class TokenControllerTest {
         when(tokensService.isUserAuthenticated(any(String.class), any(String.class))).thenReturn(true);
         when(tokensService.getToken(EMAIL)).thenReturn(token);
 
-        mockMvc.perform(post(String.format("%s%s", TOKENS_PATH, ACQUIRE_TOKEN_PATH))
-                .header(AUTHORIZATION_HEADER, TOKEN_PREFIX + token)
+        mockMvc.perform(post(ACQUIRE_TOKEN_PATH)
                 .contentType(CONTENT_TYPE)
                 .content(convertToJsonString(credentialsView)))
                 .andExpect(status().isCreated())

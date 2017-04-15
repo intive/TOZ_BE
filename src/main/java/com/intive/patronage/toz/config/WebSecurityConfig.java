@@ -23,7 +23,6 @@ import java.util.List;
 @EnableGlobalMethodSecurity(prePostEnabled = true)
 class WebSecurityConfig extends WebSecurityConfigurerAdapter {
 
-    private static final String ACQUIRE_TOKEN_ENTRY_POINT = ApiUrl.TOKENS_PATH + ApiUrl.ACQUIRE_TOKEN_PATH;
     private static final String REST_ENTRY_POINT = "/**";
 
     @Value("${bcrypt.security.level}")
@@ -33,7 +32,7 @@ class WebSecurityConfig extends WebSecurityConfigurerAdapter {
     private String secret;
 
     private TokenAuthenticationFilter getAuthenticationFilter() throws Exception {
-        final List<String> pathsToSkip = Collections.singletonList(ACQUIRE_TOKEN_ENTRY_POINT);
+        final List<String> pathsToSkip = Collections.singletonList(ApiUrl.ACQUIRE_TOKEN_PATH);
         final AuthenticationRequestMatcher matcher = new AuthenticationRequestMatcher(pathsToSkip);
         final TokenAuthenticationFilter filter =
                 new TokenAuthenticationFilter(new TokenAuthenticationFailureHandler(), matcher);
@@ -59,7 +58,7 @@ class WebSecurityConfig extends WebSecurityConfigurerAdapter {
         http.csrf().disable()
                 .exceptionHandling().authenticationEntryPoint(new UnauthorizedEntryPoint())
                 .and().sessionManagement().sessionCreationPolicy(SessionCreationPolicy.STATELESS)
-                .and().authorizeRequests().antMatchers(ACQUIRE_TOKEN_ENTRY_POINT).permitAll()
+                .and().authorizeRequests().antMatchers(ApiUrl.ACQUIRE_TOKEN_PATH).permitAll()
                 .and().authorizeRequests().antMatchers(REST_ENTRY_POINT).authenticated()
                 .and().addFilterBefore(getAuthenticationFilter(), UsernamePasswordAuthenticationFilter.class);
     }

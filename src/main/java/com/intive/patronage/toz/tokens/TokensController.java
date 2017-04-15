@@ -38,7 +38,7 @@ class TokensController {
             @ApiResponse(code = 401, message = "Incorrect user or password", response = ErrorResponse.class)
     })
     @ResponseStatus(HttpStatus.CREATED)
-    @PostMapping(value = ApiUrl.ACQUIRE_TOKEN_PATH, consumes = MediaType.APPLICATION_JSON_VALUE)
+    @PostMapping(value = "/acquire", consumes = MediaType.APPLICATION_JSON_VALUE)
     public JwtView login(@Valid @RequestBody UserCredentialsView credentials) {
         final Boolean isAuthenticated =
                 tokensService.isUserAuthenticated(credentials.getPassword(), credentials.getEmail());
