@@ -6,6 +6,7 @@ import lombok.Setter;
 
 import javax.persistence.CascadeType;
 import javax.persistence.Entity;
+import javax.persistence.FetchType;
 import javax.persistence.OneToMany;
 import java.util.HashSet;
 import java.util.Set;
@@ -20,7 +21,7 @@ public class User extends Identifiable {
     private String phoneNumber;
     private String email;
 
-    @OneToMany(cascade = CascadeType.MERGE)
+    @OneToMany(cascade = CascadeType.MERGE, fetch = FetchType.EAGER)
     private Set<RoleEntity> roles = new HashSet<>();
 
     public void addRole(final Role role) {
@@ -33,11 +34,11 @@ public class User extends Identifiable {
                 roleEntity -> roleEntity.getRole().equals(role));
     }
 
-    public boolean isSuperUser() {
-        return hasRole(Role.SU);
+    public boolean isSuperAdmin() {
+        return hasRole(Role.SA);
     }
 
     public enum Role {
-        SU, TOZ, VOLUNTEER
+        SA, TOZ, VOLUNTEER
     }
 }

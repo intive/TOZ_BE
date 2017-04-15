@@ -1,9 +1,11 @@
 package com.intive.patronage.toz.config;
 
+import com.intive.patronage.toz.users.UserService;
 import com.intive.patronage.toz.users.model.db.User;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.security.authentication.AuthenticationProvider;
+import org.springframework.security.authentication.BadCredentialsException;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.config.annotation.authentication.builders.AuthenticationManagerBuilder;
 import org.springframework.security.config.annotation.method.configuration.EnableGlobalMethodSecurity;
@@ -25,37 +27,42 @@ import java.util.Collections;
 public class SecurityConfig extends WebSecurityConfigurerAdapter {
 
     @Autowired
-    private SuperUserAuthenticationProvider superUserAuthenticationProvider;
+    private SuperAdminAuthenticationProvider superAdminAuthenticationProvider;
 
     @Override
     protected void configure(HttpSecurity http) throws Exception {
         http.csrf().disable()
                 .authorizeRequests()
-                .antMatchers("/users*").authenticated()
+                .antMatchers("/admin/**").authenticated()
                 .and().httpBasic()
                 .and().headers().frameOptions().disable();
     }
 
     @Override
     protected void configure(AuthenticationManagerBuilder auth) throws Exception {
-        auth.authenticationProvider(superUserAuthenticationProvider);
+        auth.authenticationProvider(superAdminAuthenticationProvider);
     }
 
     @Component
-    private static class SuperUserAuthenticationProvider implements AuthenticationProvider {
+    private static class SuperAdminAuthenticationProvider implements AuthenticationProvider {
+        private final UserService userService;
+
+        @Autowired
+        public SuperAdminAuthenticationProvider(UserService userService) {
+            this.userService = userService;
+        }
 
         @Override
         public Authentication authenticate(Authentication authentication) throws AuthenticationException {
             final String name = authentication.getName();
-            User.Role role;
-            if (name.equals("vol")) {
-                role = User.Role.VOLUNTEER;
-            } else {
-                role = User.Role.TOZ;
-            } // TODO: get from service
-            Collection<? extends GrantedAuthority> authorities = Collections.singleton(new SimpleGrantedAuthority(role.toString()));
-            final String password = (String) authentication.getCredentials();
-            return new UsernamePasswordAuthenticationToken(name, authentication.getCredentials(), authorities);
+            final User user = userService.findOneByName(name);
+            if (user.isSuperAdmin()) {
+                final String superAdminRole = User.Role.SA.toString();
+                Collection<? extends GrantedAuthority> authorities =
+                        Collections.singleton(new SimpleGrantedAuthority(superAdminRole));
+                return new UsernamePasswordAuthenticationToken(name, authentication.getCredentials(), authorities);
+            }
+            throw new BadCredentialsException("Wrong name or password!");
         }
 
         @Override

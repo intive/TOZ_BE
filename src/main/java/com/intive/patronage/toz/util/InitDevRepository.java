@@ -17,7 +17,7 @@ import java.util.Random;
 
 @Component
 @Profile("dev")
-class InitRepository {
+class InitDevRepository {
 
     private static final Random NUMBER_GENERATOR = new Random();
     private static final int NUMBER_UPPER_BOUND = 999;

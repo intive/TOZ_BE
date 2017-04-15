@@ -199,13 +199,3 @@ databaseChangeLog:
                     type: varchar(255)
                     constraints:
                       - nullable: false
-          - insert:
-              tableName: user
-              columns:
-                - column:
-                    name: id
-                    value: "1"
-                - column:
-                    name: name
-                    value: "super user"
-

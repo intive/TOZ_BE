@@ -23,25 +23,28 @@ public class UserService {
     }
 
     User findOneById(final UUID id) {
-        throwNotFoundExceptionIfNotExists(id);
+        throwNotFoundExceptionIfIdNotExists(id);
         return userRepository.findOne(id);
     }
 
-    private void throwNotFoundExceptionIfNotExists(final UUID id) {
+    private void throwNotFoundExceptionIfIdNotExists(final UUID id) {
         if (!userRepository.exists(id)) {
             throw new NotFoundException(USER);
         }
     }
 
     public User findOneByEmail(String email) {
-        throwNotFoundExceptionIfNotExists(email);
-        return userRepository.findByEmail(email);
-    }
-
-    private void throwNotFoundExceptionIfNotExists(final String email) {
         if (!userRepository.existsByEmail(email)) {
             throw new NotFoundException(USER);
         }
+        return userRepository.findByEmail(email);
+    }
+
+    public User findOneByName(String name) {
+        if (!userRepository.existsByName(name)) {
+            throw new NotFoundException(USER);
+        }
+        return userRepository.findByName(name);
     }
 
     List<User> findAll() {
@@ -55,12 +58,12 @@ public class UserService {
     }
 
     void delete(final UUID id) {
-        throwNotFoundExceptionIfNotExists(id);
+        throwNotFoundExceptionIfIdNotExists(id);
         userRepository.delete(id);
     }
 
     User update(final UUID id, final User user) {
-        throwNotFoundExceptionIfNotExists(id);
+        throwNotFoundExceptionIfIdNotExists(id);
         user.setId(id);
         return userRepository.save(user);
     }
