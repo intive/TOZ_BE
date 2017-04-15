@@ -44,6 +44,7 @@ public class TokensServiceTest {
         user = new User();
         user.setEmail(EXPECTED_EMAIL);
         user.setPassword(EXPECTED_PASSWORD);
+        // TODO remove line above and uncomment one below once database stores hashed passwords
         //user.setPassword(passwordEncoder.encode(EXPECTED_PASSWORD));
     }
 

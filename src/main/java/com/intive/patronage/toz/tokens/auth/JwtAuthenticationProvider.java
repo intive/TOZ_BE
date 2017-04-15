@@ -47,11 +47,11 @@ public class JwtAuthenticationProvider implements AuthenticationProvider {
                     .setSigningKey(TextCodec.BASE64.decode(secret))
                     .parseClaimsJws(token);
         } catch (UnsupportedJwtException | MalformedJwtException | IllegalArgumentException e) {
-            throw new JwtAuthenticationException("Invalid token!");
+            throw new JwtAuthenticationException("Invalid token");
         } catch (SignatureException e) {
-            throw new JwtAuthenticationException("Invalid signature!");
+            throw new JwtAuthenticationException("Invalid signature");
         } catch (ExpiredJwtException e) {
-            throw new JwtAuthenticationException("Token expired!");
+            throw new JwtAuthenticationException("Token expired");
         }
 
         final UUID userID = UUID.fromString(claims.getBody().getSubject());

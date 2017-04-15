@@ -14,6 +14,8 @@ import java.io.IOException;
 
 public class TokenAuthenticationFailureHandler implements AuthenticationFailureHandler {
 
+    private static final ObjectMapper MAPPER = new ObjectMapper();
+
     @Override
     public void onAuthenticationFailure(HttpServletRequest request, HttpServletResponse response,
                                         AuthenticationException exception)
@@ -22,7 +24,6 @@ public class TokenAuthenticationFailureHandler implements AuthenticationFailureH
         response.setStatus(HttpStatus.UNAUTHORIZED.value());
         response.setContentType(MediaType.APPLICATION_JSON_VALUE);
 
-        final ObjectMapper mapper = new ObjectMapper();
-        mapper.writeValue(response.getWriter(), new ErrorResponse(HttpStatus.UNAUTHORIZED, exception.getMessage()));
+        MAPPER.writeValue(response.getWriter(), new ErrorResponse(HttpStatus.UNAUTHORIZED, exception.getMessage()));
     }
 }
