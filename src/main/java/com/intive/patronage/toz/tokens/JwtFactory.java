@@ -28,14 +28,13 @@ class JwtFactory {
     }
 
     String generateToken(User user) {
-
         return Jwts.builder()
                 .setSubject(user.getId().toString())
                 .claim(EMAIL_CLAIM_NAME, user.getEmail())
                 .claim(SCOPES_CLAIM_NAME, Collections.singleton(user.getRole()))
                 .setIssuedAt(new Date(Instant.now().toEpochMilli()))
                 .setExpiration(new Date(Instant.now().plus(expirationTime, ChronoUnit.MINUTES).toEpochMilli()))
-                .signWith(SignatureAlgorithm.HS256, TextCodec.BASE64.decode(secret))
+                .signWith(SignatureAlgorithm.HS512, TextCodec.BASE64.decode(secret))
                 .compact();
     }
 }

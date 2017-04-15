@@ -131,7 +131,7 @@ public class TokenControllerTest {
                 .claim(SCOPES_CLAIM_NAME, Collections.singleton(user.getRole()))
                 .setIssuedAt(new Date(Instant.now().toEpochMilli()))
                 .setExpiration(new Date(Instant.now().plus(EXPIRATION_TIME, ChronoUnit.MINUTES).toEpochMilli()))
-                .signWith(SignatureAlgorithm.HS256, TextCodec.BASE64.decode(secret))
+                .signWith(SignatureAlgorithm.HS512, TextCodec.BASE64.decode(secret))
                 .compact();
     }
 }
