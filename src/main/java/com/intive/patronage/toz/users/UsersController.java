@@ -6,16 +6,13 @@ import com.intive.patronage.toz.error.model.ValidationErrorResponse;
 import com.intive.patronage.toz.users.model.db.User;
 import com.intive.patronage.toz.users.model.view.UserView;
 import com.intive.patronage.toz.util.ModelMapper;
-import io.swagger.annotations.Api;
-import io.swagger.annotations.ApiOperation;
-import io.swagger.annotations.ApiParam;
-import io.swagger.annotations.ApiResponse;
-import io.swagger.annotations.ApiResponses;
+import io.swagger.annotations.*;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
-import org.springframework.security.access.annotation.Secured;
+import org.springframework.security.access.prepost.PreAuthorize;
+import org.springframework.security.core.Authentication;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
 import org.springframework.web.util.UriComponentsBuilder;
@@ -39,6 +36,7 @@ public class UsersController {
     }
 
     @ApiOperation(value = "Get all users", responseContainer = "List")
+    @PreAuthorize("hasAuthority('SU','TOZ')")
     @GetMapping
     public List<UserView> getAllUsers() {
         final List<User> users = userService.findAll();
@@ -49,6 +47,7 @@ public class UsersController {
     @ApiResponses(value = {
             @ApiResponse(code = 404, message = "User not found", response = ErrorResponse.class),
     })
+    @PreAuthorize("hasAuthority('SU','TOZ')")
     @GetMapping(value = "/{id}")
     public UserView getUserById(@ApiParam(required = true) @PathVariable UUID id) {
         final User user = userService.findOneById(id);
@@ -64,9 +63,9 @@ public class UsersController {
     @ApiResponses(value = {
             @ApiResponse(code = 400, message = "Bad request", response = ValidationErrorResponse.class)
     })
-    @Secured("ROLE_SUPER_USER")
+    @PreAuthorize("hasAuthority('SU','TOZ')")
     @PostMapping(consumes = MediaType.APPLICATION_JSON_VALUE)
-    public ResponseEntity<UserView> createUser(@Valid @RequestBody UserView userView) {
+    public ResponseEntity<UserView> createUser(@Valid @RequestBody UserView userView, Authentication authentication) {
         final User createdUser = userService.createWithPassword(convertToModel(userView), userView.getPassword());
         final UserView createdUserView = convertToView(createdUser);
         final URI baseLocation = ServletUriComponentsBuilder.fromCurrentRequest()
@@ -84,6 +83,7 @@ public class UsersController {
     @ApiResponses(value = {
             @ApiResponse(code = 404, message = "User not found", response = ErrorResponse.class)
     })
+    @PreAuthorize("hasAuthority('SU','TOZ')")
     @DeleteMapping(value = "/{id}")
     public ResponseEntity<?> deleteUser(@PathVariable UUID id) {
         userService.delete(id);
@@ -95,6 +95,7 @@ public class UsersController {
             @ApiResponse(code = 404, message = "User not found", response = ErrorResponse.class),
             @ApiResponse(code = 400, message = "Bad request", response = ValidationErrorResponse.class)
     })
+    @PreAuthorize("hasAuthority('SU','TOZ','VOLUNTEER')")
     @PutMapping(value = "/{id}", consumes = MediaType.APPLICATION_JSON_VALUE)
     public UserView updateUser(@PathVariable UUID id, @Valid @RequestBody UserView userView) {
         final User user = convertToModel(userView);

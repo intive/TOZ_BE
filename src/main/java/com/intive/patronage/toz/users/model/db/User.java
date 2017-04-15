@@ -33,6 +33,10 @@ public class User extends Identifiable {
                 roleEntity -> roleEntity.getRole().equals(role));
     }
 
+    public boolean isSuperUser() {
+        return hasRole(Role.SU);
+    }
+
     public enum Role {
         SU, TOZ, VOLUNTEER
     }

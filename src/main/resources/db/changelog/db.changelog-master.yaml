@@ -147,7 +147,7 @@ databaseChangeLog:
                   type: varchar(255)
   - changeSet:
         id : 3
-        author: ppiotr191
+        author: marek.macko
         changes:
           - createTable:
               tableName: user
@@ -166,7 +166,7 @@ databaseChangeLog:
                     type: varchar(255)
                 - column:
                     name: surname
-                    type: varchar(255) varchar(16)
+                    type: varchar(255)
                 - column:
                     name: phone_number
                     type: varchar(255)
@@ -199,3 +199,13 @@ databaseChangeLog:
                     type: varchar(255)
                     constraints:
                       - nullable: false
+          - insert:
+              tableName: user
+              columns:
+                - column:
+                    name: id
+                    value: "1"
+                - column:
+                    name: name
+                    value: "super user"
+
