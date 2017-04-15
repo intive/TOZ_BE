@@ -43,12 +43,21 @@ It should be self explanatory. You can:
 
 ## Authorization
 
+To acquire token `POST` credentials to `/tokens/acquire`
+
+Example curl:
+```
+curl -X POST --header 'Content-Type: application/json' --header 'Accept: application/json' -d '{ 
+    "email": "user@mail.com",
+    "password": "P4ssw0rd" 
+}' 'http://localhost:8080/tokens/acquire'
+```
+
 To authorize send JWT token in `Authorization` header with `Bearer ` prefix in request.
 
 Example curl:
 ```
-curl -X GET \
-  http://localhost:8080/users \
+curl http://localhost:8080/users \
   -H 'Accept: application/json' \
   -H 'Authorization: Bearer eyJhbGciOiJIUzI1NiJ9.eyJzdWIiOiI0YjVlZmE0MC1lNjQ5LTQ3ZmQtOThkNy1jZTk3NzBlYTZlY2QiLCJlbWFpbCI6InVzZXJAbWFpbC5jb20iLCJzY29wZXMiOlsiVE9aIl0sImlhdCI6MTQ5MjE3MTY4MSwiZXhwIjoxNDkyMjU4MDgxfQ.Z3iZ3zlgV0_iZAk-iCTPr68hLBL5CvyoSHUbn3Htprc'
 ```
