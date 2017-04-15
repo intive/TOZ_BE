@@ -89,7 +89,7 @@ public class UsersControllerTest {
         final List<User> users = getUsers();
         when(userService.findAll()).thenReturn(users);
 
-        mvc.perform(get(ApiUrl.USERS_PATH))
+        mvc.perform(get(ApiUrl.ADMIN_USERS_PATH))
                 .andExpect(status().isOk())
                 .andExpect(content().contentType(CONTENT_TYPE))
                 .andExpect(jsonPath("$", hasSize(USERS_LIST_SIZE)));
@@ -104,7 +104,7 @@ public class UsersControllerTest {
         final String userViewJsonString = ModelMapper.convertToJsonString(userView);
 
         when(userService.createWithPassword(any(User.class), eq(EXPECTED_PASSWORD))).thenReturn(user);
-        mvc.perform(post(ApiUrl.USERS_PATH)
+        mvc.perform(post(ApiUrl.ADMIN_USERS_PATH)
                 .contentType(CONTENT_TYPE)
                 .content(userViewJsonString))
                 .andExpect(status().isCreated())
@@ -122,7 +122,7 @@ public class UsersControllerTest {
     public void deleteUserById() throws Exception {
         final UUID id = UUID.randomUUID();
         doNothing().when(userService).delete(id);
-        mvc.perform(delete(String.format("%s/%s", ApiUrl.USERS_PATH, id)))
+        mvc.perform(delete(String.format("%s/%s", ApiUrl.ADMIN_USERS_PATH, id)))
                 .andExpect(status().isOk());
 
         verify(userService, times(1)).delete(id);
@@ -135,7 +135,7 @@ public class UsersControllerTest {
         final String userJsonString = ModelMapper.convertToJsonString(userView);
 
         when(userService.update(eq(EXPECTED_ID), any(User.class))).thenReturn(user);
-        mvc.perform(put(String.format("%s/%s", ApiUrl.USERS_PATH, EXPECTED_ID))
+        mvc.perform(put(String.format("%s/%s", ApiUrl.ADMIN_USERS_PATH, EXPECTED_ID))
                 .contentType(CONTENT_TYPE)
                 .content(userJsonString))
                 .andExpect(status().isOk());

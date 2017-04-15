@@ -32,7 +32,7 @@ class InitDevRepository {
     private UserRepository userRepository;
 
     @Bean
-    public CommandLineRunner initDatabase() {
+    public CommandLineRunner initDevDatabase() {
         return args -> {
             for (int i = 0; i < 5; i++) {
                 final Pet pet = createPetWithValue(i);

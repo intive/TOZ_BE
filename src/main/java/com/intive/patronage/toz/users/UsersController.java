@@ -24,7 +24,7 @@ import java.util.UUID;
 
 @Api(description = "Operations for users resource")
 @RestController
-@RequestMapping(value = ApiUrl.ADMIN_PATH + ApiUrl.USERS_PATH, produces = MediaType.APPLICATION_JSON_VALUE)
+@RequestMapping(value = ApiUrl.ADMIN_USERS_PATH, produces = MediaType.APPLICATION_JSON_VALUE)
 public class UsersController {
 
     private final UserService userService;

@@ -56,7 +56,7 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
         public Authentication authenticate(Authentication authentication) throws AuthenticationException {
             final String name = authentication.getName();
             final User user = userService.findOneByName(name);
-            if (user.isSuperAdmin()) {
+            if (user.isSuperAdmin()) { // TODO check password
                 final String superAdminRole = User.Role.SA.toString();
                 Collection<? extends GrantedAuthority> authorities =
                         Collections.singleton(new SimpleGrantedAuthority(superAdminRole));
