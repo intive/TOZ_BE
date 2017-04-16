@@ -61,7 +61,7 @@ public class UsersController {
             @ApiResponse(code = 400, message = "Bad request", response = ValidationErrorResponse.class)
     })
     @PostMapping(consumes = MediaType.APPLICATION_JSON_VALUE)
-    public ResponseEntity<UserView> createUser(@Valid @RequestBody UserView userView, Authentication authentication) {
+    public ResponseEntity<UserView> createUser(@Valid @RequestBody UserView userView) {
         final User createdUser = userService.createWithPassword(convertToModel(userView), userView.getPassword());
         final UserView createdUserView = convertToView(createdUser);
         final URI baseLocation = ServletUriComponentsBuilder.fromCurrentRequest()

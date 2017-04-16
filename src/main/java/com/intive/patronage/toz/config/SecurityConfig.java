@@ -16,6 +16,7 @@ import org.springframework.security.core.Authentication;
 import org.springframework.security.core.AuthenticationException;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Component;
 
 import java.util.Collection;
@@ -25,6 +26,8 @@ import java.util.Collections;
 @EnableWebSecurity
 @EnableGlobalMethodSecurity(prePostEnabled = true)
 public class SecurityConfig extends WebSecurityConfigurerAdapter {
+
+    private static final String BAD_CREDENTIALS_MESSAGE = "Wrong name or password!";
 
     @Autowired
     private SuperAdminAuthenticationProvider superAdminAuthenticationProvider;
@@ -46,23 +49,34 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
     @Component
     private static class SuperAdminAuthenticationProvider implements AuthenticationProvider {
         private final UserService userService;
+        private final PasswordEncoder passwordEncoder;
 
         @Autowired
-        public SuperAdminAuthenticationProvider(UserService userService) {
+        public SuperAdminAuthenticationProvider(UserService userService, PasswordEncoder passwordEncoder) {
             this.userService = userService;
+            this.passwordEncoder = passwordEncoder;
         }
 
         @Override
         public Authentication authenticate(Authentication authentication) throws AuthenticationException {
             final String name = authentication.getName();
             final User user = userService.findOneByName(name);
-            if (user.isSuperAdmin()) { // TODO check password
+            if (user.isSuperAdmin()) {
+                checkPasswordMatching(authentication, user);
                 final String superAdminRole = User.Role.SA.toString();
                 Collection<? extends GrantedAuthority> authorities =
                         Collections.singleton(new SimpleGrantedAuthority(superAdminRole));
                 return new UsernamePasswordAuthenticationToken(name, authentication.getCredentials(), authorities);
             }
-            throw new BadCredentialsException("Wrong name or password!");
+            throw new BadCredentialsException(BAD_CREDENTIALS_MESSAGE);
+        }
+
+        private void checkPasswordMatching(Authentication authentication, User user) {
+            String password = (String) authentication.getCredentials();
+            boolean isPasswordMatch = passwordEncoder.matches(password, user.getPasswordHash());
+            if (!isPasswordMatch) {
+                throw new BadCredentialsException(BAD_CREDENTIALS_MESSAGE);
+            }
         }
 
         @Override
