@@ -21,7 +21,7 @@ import java.util.List;
 import java.util.UUID;
 
 
-@Api(description = "Operations for users resource")
+@Api(description = "Operations for users resource", hidden = true)
 @RestController
 @RequestMapping(value = ApiUrl.ADMIN_USERS_PATH, produces = MediaType.APPLICATION_JSON_VALUE)
 public class UsersController {

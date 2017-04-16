@@ -46,7 +46,7 @@ public class UserView extends IdentifiableView {
     @Email
     private String email;
 
-    @NotNull
+    @NotEmpty
     private Set<User.Role> roles = new HashSet<>();
 
     public void setName(String name) {
