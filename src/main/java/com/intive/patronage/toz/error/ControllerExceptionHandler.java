@@ -7,6 +7,9 @@ import com.intive.patronage.toz.error.exception.WrongEnumValueException;
 import com.intive.patronage.toz.error.model.ArgumentErrorResponse;
 import com.intive.patronage.toz.error.model.ErrorResponse;
 import com.intive.patronage.toz.error.model.ValidationErrorResponse;
+import com.intive.patronage.toz.schedule.excception.InvalidReservationHoursException;
+import com.intive.patronage.toz.schedule.excception.ReservationAlreadyExistsException;
+import com.intive.patronage.toz.schedule.util.ScheduleParser;
 import liquibase.util.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -35,10 +38,12 @@ public class ControllerExceptionHandler {
 
     private final static Logger logger = LoggerFactory.getLogger(ControllerExceptionHandler.class);
     private final MessageSource messageSource;
+    private final ScheduleParser scheduleParser;
 
     @Autowired
-    public ControllerExceptionHandler(MessageSource messageSource) {
+    public ControllerExceptionHandler(MessageSource messageSource, ScheduleParser scheduleParser) {
         this.messageSource = messageSource;
+        this.scheduleParser = scheduleParser;
     }
 
     @ExceptionHandler(RuntimeException.class)
@@ -120,6 +125,28 @@ public class ControllerExceptionHandler {
                 new String[]{typeName, allowedValues},
                 LocaleContextHolder.getLocale());
         return new ErrorResponse(HttpStatus.UNPROCESSABLE_ENTITY, message);
+    }
+
+    @ExceptionHandler(InvalidReservationHoursException.class)
+    @ResponseStatus(HttpStatus.UNPROCESSABLE_ENTITY)
+    @ResponseBody
+    public ErrorResponse handleInvalidReservationHoursException(InvalidReservationHoursException e) {
+        final String allowedHours = Arrays.toString(scheduleParser.getSchedule().get(e.getDay()));
+        final String day = e.getDay().toString();
+        final String message = messageSource.getMessage("invalidScheduleHours",
+                new String[]{e.getInvalidHours(), day, allowedHours},
+                LocaleContextHolder.getLocale());
+        return new ErrorResponse(HttpStatus.UNPROCESSABLE_ENTITY, message);
+    }
+
+    @ExceptionHandler(ReservationAlreadyExistsException.class)
+    @ResponseStatus(HttpStatus.CONFLICT)
+    @ResponseBody
+    public ErrorResponse handleReservationAlreadyExistsException(ReservationAlreadyExistsException e) {
+        final String message = messageSource.getMessage("reservationAlreadyExists",
+                new String[]{e.getInvalidTime().toString(), e.getDay().toString()},
+                LocaleContextHolder.getLocale());
+        return new ErrorResponse(HttpStatus.CONFLICT, message);
     }
 
     @ExceptionHandler(HttpMessageNotReadableException.class)

@@ -2,11 +2,15 @@ package com.intive.patronage.toz.users.model.db;
 
 import com.intive.patronage.toz.base.model.Identifiable;
 import com.intive.patronage.toz.users.model.enumerations.Role;
+import lombok.AllArgsConstructor;
+import lombok.NoArgsConstructor;
 
 import javax.persistence.Entity;
 import javax.persistence.EnumType;
 import javax.persistence.Enumerated;
 
+@NoArgsConstructor
+@AllArgsConstructor
 @Entity
 public class User extends Identifiable {
     private String email;
