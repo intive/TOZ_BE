@@ -2,8 +2,11 @@ package com.intive.patronage.toz.util.validation;
 
 import javax.validation.ConstraintValidator;
 import javax.validation.ConstraintValidatorContext;
+import java.util.regex.Pattern;
 
 public class PhoneValidator implements ConstraintValidator<Phone, String> {
+
+    private static final Pattern PATTERN_9_OR_11_DIGITS = Pattern.compile("\\d{9}(\\d{2})?");
 
     @Override
     public void initialize(Phone constraintAnnotation) {
@@ -11,11 +14,7 @@ public class PhoneValidator implements ConstraintValidator<Phone, String> {
 
     @Override
     public boolean isValid(String phoneNumber, ConstraintValidatorContext context) {
-        if (phoneNumber == null) {
-            return false;
-        }
-        int numberLength = phoneNumber.length(); // TODO pattern regex
-        return numberLength == 9 || numberLength == 11;
+        return phoneNumber != null && PATTERN_9_OR_11_DIGITS.matcher(phoneNumber).matches();
     }
 
 }
