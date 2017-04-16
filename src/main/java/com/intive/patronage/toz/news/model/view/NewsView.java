@@ -4,7 +4,7 @@ import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import com.intive.patronage.toz.base.model.IdentifiableView;
 import com.intive.patronage.toz.news.model.db.News;
-import com.intive.patronage.toz.util.EnumValidate;
+import com.intive.patronage.toz.util.validation.EnumValidate;
 import io.swagger.annotations.ApiModel;
 import io.swagger.annotations.ApiModelProperty;
 import lombok.Getter;

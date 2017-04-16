@@ -1,4 +1,4 @@
-package com.intive.patronage.toz.util;
+package com.intive.patronage.toz.util.validation;
 
 import javax.validation.ConstraintValidator;
 import javax.validation.ConstraintValidatorContext;
