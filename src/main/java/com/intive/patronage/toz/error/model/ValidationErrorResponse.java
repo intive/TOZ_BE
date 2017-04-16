@@ -8,13 +8,11 @@ public class ValidationErrorResponse {
     private final int code;
     private final String message;
     private final List<SingleFieldError> errors;
-    private final Date timestamp;
 
     public ValidationErrorResponse(int code, String message, List<SingleFieldError> errors) {
         this.code = code;
         this.message = message;
         this.errors = errors;
-        timestamp = new Date();
     }
 
     public int getCode() {
@@ -30,7 +28,7 @@ public class ValidationErrorResponse {
     }
 
     public Date getTimestamp() {
-        return timestamp;
+        return new Date();
     }
 
     public static class SingleFieldError {
@@ -53,7 +51,7 @@ public class ValidationErrorResponse {
             return message;
         }
 
-        public String getRejectedValue(){
+        public String getRejectedValue() {
             return rejectedValue;
         }
     }
