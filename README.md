@@ -42,12 +42,17 @@ It should be self explanatory. You can:
 
 [Heroku temporary hosting](https://vast-plains-10769.herokuapp.com/)
 
+# Super admin
+Set `TOZ_BE_SA_PASSWORD` environmental variable with super admin password before starting server.
+This password will be used to initialize super admin database entity.
+
 # Create user
 curl:
 ```
-curl -i -X POST -H "Content-Type:application/json" -d '{  "email" : "TOZ",  "password" : "admin", "forename" : "admin", "surname" : "admin","role" : "VOLUNTEER" }' http://localhost:8080/user
+curl -X POST -H 'Content-Type: application/json' -u SA:$TOZ_BE_SA_PASSWORD -d '{ "name": "Johny", "password": "johnySecret", "surname":"Bravo", "phoneNumber":"111222333", "email": "johny.bravo@gmail.com", "roles": ["VOLUNTEER"]}' http://localhost:8080/admin/users
 ```
 Roles :
+SA - Super admin.
 TOZ - Organization admin.
 VOLUNTEER - A Person, who is a volunteer in TOZ Organization.
 
