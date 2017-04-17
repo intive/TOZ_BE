@@ -10,6 +10,7 @@ import java.util.List;
 @Getter
 @JsonInclude(JsonInclude.Include.NON_EMPTY)
 public class ScheduleView {
+
     private final List<ReservationResponseView> reservations;
     private final List<DayConfigView> configs;
 

@@ -56,6 +56,66 @@ databaseChangeLog:
                   name: bank_name
                   type: varchar(255)
         - createTable:
+            tableName: schedule_reservation
+            columns:
+              - column:
+                  name: id
+                  type: uuid
+                  constraints:
+                    - primaryKey: true
+                    - nullable: false
+              - column:
+                  name: start_date
+                  type: datetime
+              - column:
+                  name: end_date
+                  type: datetime
+              - column:
+                  name: owner_uuid
+                  type: uuid
+              - column:
+                  name: creation_date
+                  type: datetime
+              - column:
+                  name: modification_date
+                  type: datetime
+        - createTable:
+            tableName: schedule_reservation_changelog
+            columns:
+              - column:
+                  name: id
+                  type: uuid
+                  constraints:
+                    - primaryKey: true
+                    - nullable: false
+              - column:
+                  name: reservation_id
+                  type: uuid
+              - column:
+                  name: start_date
+                  type: datetime
+              - column:
+                  name: end_date
+                  type: datetime
+              - column:
+                  name: owner_uuid
+                  type: uuid
+              - column:
+                  name: creation_date
+                  type: datetime
+              - column:
+                  name: modification_date
+                  type: datetime
+              - column:
+                  name: modification_message
+                  type: varchar(255)
+              - column:
+                  name: modification_author_uuid
+                  type: uuid
+              - column:
+                  name: operation_type
+                  type: varchar(255)
+        - createTable:
             tableName: pet
             columns:
               - column:

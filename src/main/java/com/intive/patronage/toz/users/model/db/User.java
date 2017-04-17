@@ -1,7 +1,9 @@
 package com.intive.patronage.toz.users.model.db;
 
 import com.intive.patronage.toz.base.model.Identifiable;
+import lombok.AllArgsConstructor;
 import lombok.Getter;
+import lombok.NoArgsConstructor;
 import lombok.Setter;
 
 import javax.persistence.CascadeType;
@@ -14,6 +16,8 @@ import java.util.Set;
 @Getter
 @Setter
 @Entity
+@NoArgsConstructor
+@AllArgsConstructor
 public class User extends Identifiable {
     private String name;
     private String passwordHash;
