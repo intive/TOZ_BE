@@ -9,7 +9,6 @@ import com.intive.patronage.toz.users.model.enumerations.Role;
 import io.jsonwebtoken.Claims;
 import io.jsonwebtoken.Jws;
 import io.jsonwebtoken.Jwts;
-import io.jsonwebtoken.SignatureAlgorithm;
 import io.jsonwebtoken.impl.TextCodec;
 import org.junit.After;
 import org.junit.Before;
@@ -25,16 +24,14 @@ import org.springframework.test.context.junit4.SpringRunner;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.MvcResult;
 
-import java.time.Instant;
-import java.time.temporal.ChronoUnit;
-import java.util.Collections;
-import java.util.Date;
+import java.util.List;
 
 import static com.intive.patronage.toz.config.ApiUrl.ACQUIRE_TOKEN_PATH;
 import static com.intive.patronage.toz.config.ApiUrl.TOKENS_PATH;
 import static org.hamcrest.CoreMatchers.is;
 import static org.hamcrest.CoreMatchers.notNullValue;
 import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertTrue;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
@@ -66,6 +63,9 @@ public class TokenControllerTest {
 
     @Autowired
     private MockMvc mockMvc;
+
+    @Autowired
+    private JwtFactory jwtFactory;
 
     private UserCredentialsView credentialsView;
     private User user;
@@ -142,13 +142,15 @@ public class TokenControllerTest {
 
         assertEquals(claims.getBody().getSubject(), user.getId().toString());
         assertEquals(claims.getBody().get(EMAIL_CLAIM_NAME, String.class), user.getEmail());
+        final List<String> scopes = claims.getBody().get(SCOPES_CLAIM_NAME, List.class);
+        assertTrue(scopes.contains(user.getRole().toString()));
     }
 
     @Profile("dev")
     @Test
     public void shouldReturnUserContext() throws Exception {
         mockMvc.perform(get(TOKENS_PATH + "/whoami")
-                .header(AUTHORIZATION_HEADER, TOKEN_PREFIX + generateToken(user)))
+                .header(AUTHORIZATION_HEADER, TOKEN_PREFIX + jwtFactory.generateToken(user)))
                 .andExpect(content().contentType(CONTENT_TYPE))
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("userId", is(user.getId().toString())))
@@ -163,16 +165,5 @@ public class TokenControllerTest {
                 .header(AUTHORIZATION_HEADER, TOKEN_PREFIX))
                 .andExpect(content().contentType(CONTENT_TYPE))
                 .andExpect(status().isUnauthorized());
-    }
-
-    private String generateToken(User user) {
-        return Jwts.builder()
-                .setSubject(user.getId().toString())
-                .claim(EMAIL_CLAIM_NAME, user.getEmail())
-                .claim(SCOPES_CLAIM_NAME, Collections.singleton(user.getRole()))
-                .setIssuedAt(new Date(Instant.now().toEpochMilli()))
-                .setExpiration(new Date(Instant.now().plus(expirationTime, ChronoUnit.MINUTES).toEpochMilli()))
-                .signWith(SignatureAlgorithm.HS512, TextCodec.BASE64.decode(secret))
-                .compact();
     }
 }
