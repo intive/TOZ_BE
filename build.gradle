@@ -3,12 +3,12 @@ buildscript {
 		springBootVersion = '1.5.2.RELEASE'
 	}
 	repositories {
-    	mavenCentral()
-    	jcenter()
+		mavenCentral()
+		jcenter()
 	}
 	dependencies {
 		classpath("org.springframework.boot:spring-boot-gradle-plugin:${springBootVersion}")
-    	classpath 'com.bmuschko:gradle-docker-plugin:3.0.6'
+		classpath 'com.bmuschko:gradle-docker-plugin:3.0.6'
 		classpath 'org.hidetake:gradle-ssh-plugin:2.8.0'
 	}
 }
@@ -35,29 +35,29 @@ springBoot {
 }
 
 task buildImage(type: DockerBuildImage) {
-    inputDir = file('./')
-    tag = 'toz/backend'
+	inputDir = file('./')
+	tag = 'toz/backend'
 }
 
 task createContainer(type: DockerCreateContainer) {
-    dependsOn buildImage
-    targetImageId { buildImage.getImageId() }
-    portBindings = ['8080:8080']
+	dependsOn buildImage
+	targetImageId { buildImage.getImageId() }
+	portBindings = ['8080:8080']
 }
 
 task startContainer(type: DockerStartContainer) {
-    dependsOn createContainer
-    targetContainerId { createContainer.getContainerId() }
+	dependsOn createContainer
+	targetContainerId { createContainer.getContainerId() }
 }
 
 task stopContainer(type: DockerStopContainer) {
-    targetContainerId { createContainer.getContainerId() }
+	targetContainerId { createContainer.getContainerId() }
 }
 
 task functionalTest(type: Test) {
-    dependsOn startContainer
-    // TODO is anybody hear me? What should I call here?
-    finalizedBy stopContainer
+	dependsOn startContainer
+	// TODO is anybody hear me? What should I call here?
+	finalizedBy stopContainer
 }
 
 remotes {
@@ -81,10 +81,10 @@ task deploy {
 }
 
 dependencies {
-    compile("org.springframework.boot:spring-boot-starter-web") {
-        exclude module: "spring-boot-starter-tomcat"
-    }
-    compile("org.springframework.boot:spring-boot-starter-jetty")
+	compile("org.springframework.boot:spring-boot-starter-web") {
+		exclude module: "spring-boot-starter-tomcat"
+	}
+	compile("org.springframework.boot:spring-boot-starter-jetty")
 	compile('org.springframework.boot:spring-boot-starter-actuator')
 	compile('org.springframework.boot:spring-boot-starter-data-jpa')
 	compile('org.springframework.boot:spring-boot-starter-mail')
