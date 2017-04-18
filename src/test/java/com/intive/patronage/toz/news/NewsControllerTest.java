@@ -3,7 +3,6 @@ package com.intive.patronage.toz.news;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.intive.patronage.toz.config.ApiUrl;
 import com.intive.patronage.toz.news.model.db.News;
-import com.intive.patronage.toz.news.model.view.NewsView;
 import com.tngtech.java.junit.dataprovider.DataProvider;
 import com.tngtech.java.junit.dataprovider.DataProviderRunner;
 import com.tngtech.java.junit.dataprovider.UseDataProvider;
@@ -12,6 +11,7 @@ import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.mockito.Mock;
 import org.mockito.MockitoAnnotations;
+import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.http.MediaType;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.setup.MockMvcBuilders;
@@ -27,6 +27,10 @@ import static org.springframework.test.web.servlet.request.MockMvcRequestBuilder
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
 
 @RunWith(DataProviderRunner.class)
+@SpringBootTest(
+        webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT,
+        properties = "jwt.secret-base64=c2VjcmV0"
+)
 public class NewsControllerTest {
     private static final int NEWS_LIST_SIZE = 5;
     private static final Boolean DEFAULT_SHORTENED = false;
@@ -151,7 +155,7 @@ public class NewsControllerTest {
     @Test
     @UseDataProvider("getProperNews")
     public void createNews(final News news) throws Exception {
-        when(newsService.createNews(any(NewsView.class))).thenReturn(news);
+        when(newsService.createNews(any(News.class))).thenReturn(news);
         mvc.perform(post(ApiUrl.NEWS_PATH)
                 .contentType(CONTENT_TYPE)
                 .content(new ObjectMapper().writeValueAsString(news)))
@@ -162,14 +166,14 @@ public class NewsControllerTest {
                 .andExpect(jsonPath("$.type", is(EXPECTED_TYPE)));
 
         verify(newsService, times(1)).
-                createNews(any(NewsView.class));
+                createNews(any(News.class));
         verifyNoMoreInteractions(newsService);
     }
 
     @Test
     @UseDataProvider("getProperNews")
     public void updateNews(final News news) throws Exception {
-        when(newsService.updateNews(eq(EXPECTED_ID), any(NewsView.class))).
+        when(newsService.updateNews(eq(EXPECTED_ID), any(News.class))).
                 thenReturn(news);
         mvc.perform(put(String.format("%s/%s", ApiUrl.NEWS_PATH, EXPECTED_ID))
                 .contentType(CONTENT_TYPE)
@@ -181,7 +185,7 @@ public class NewsControllerTest {
                 .andExpect(jsonPath("$.type", is(EXPECTED_TYPE)));
 
         verify(newsService, times(1)).
-                updateNews(eq(EXPECTED_ID), any(NewsView.class));
+                updateNews(eq(EXPECTED_ID), any(News.class));
         verifyNoMoreInteractions(newsService);
     }
 

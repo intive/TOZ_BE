@@ -4,9 +4,6 @@ import com.fasterxml.jackson.annotation.JsonInclude;
 import io.swagger.annotations.ApiModel;
 import io.swagger.annotations.ApiModelProperty;
 import lombok.Getter;
-import org.springframework.format.annotation.DateTimeFormat;
-
-import java.time.LocalTime;
 
 @ApiModel("Period")
 @Getter
@@ -14,14 +11,12 @@ import java.time.LocalTime;
 public class PeriodView {
 
     @ApiModelProperty(value = "Start time in UTC", example = "08:00")
-    @DateTimeFormat(iso = DateTimeFormat.ISO.TIME)
-    private final LocalTime periodStart;
+    private final String periodStart;
 
     @ApiModelProperty(value = "End time in UTC", example = "17:00")
-    @DateTimeFormat(iso = DateTimeFormat.ISO.TIME)
-    private final LocalTime periodEnd;
+    private final String periodEnd;
 
-    public PeriodView(LocalTime periodStart, LocalTime periodEnd) {
+    public PeriodView(String periodStart, String periodEnd) {
         this.periodStart = periodStart;
         this.periodEnd = periodEnd;
     }

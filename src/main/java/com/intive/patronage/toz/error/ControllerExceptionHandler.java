@@ -7,6 +7,9 @@ import com.intive.patronage.toz.error.exception.WrongEnumValueException;
 import com.intive.patronage.toz.error.model.ArgumentErrorResponse;
 import com.intive.patronage.toz.error.model.ErrorResponse;
 import com.intive.patronage.toz.error.model.ValidationErrorResponse;
+import com.intive.patronage.toz.schedule.excception.InvalidReservationHoursException;
+import com.intive.patronage.toz.schedule.excception.ReservationAlreadyExistsException;
+import com.intive.patronage.toz.schedule.util.ScheduleParser;
 import liquibase.util.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -15,6 +18,7 @@ import org.springframework.context.MessageSource;
 import org.springframework.context.i18n.LocaleContextHolder;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.converter.HttpMessageNotReadableException;
+import org.springframework.security.authentication.BadCredentialsException;
 import org.springframework.validation.FieldError;
 import org.springframework.web.bind.MethodArgumentNotValidException;
 import org.springframework.web.bind.annotation.ControllerAdvice;
@@ -24,6 +28,7 @@ import org.springframework.web.bind.annotation.ResponseStatus;
 import org.springframework.web.method.annotation.MethodArgumentTypeMismatchException;
 import org.springframework.web.servlet.config.annotation.EnableWebMvc;
 
+import javax.mail.MessagingException;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
@@ -35,10 +40,12 @@ public class ControllerExceptionHandler {
 
     private final static Logger logger = LoggerFactory.getLogger(ControllerExceptionHandler.class);
     private final MessageSource messageSource;
+    private final ScheduleParser scheduleParser;
 
     @Autowired
-    public ControllerExceptionHandler(MessageSource messageSource) {
+    public ControllerExceptionHandler(MessageSource messageSource, ScheduleParser scheduleParser) {
         this.messageSource = messageSource;
+        this.scheduleParser = scheduleParser;
     }
 
     @ExceptionHandler(RuntimeException.class)
@@ -122,10 +129,46 @@ public class ControllerExceptionHandler {
         return new ErrorResponse(HttpStatus.UNPROCESSABLE_ENTITY, message);
     }
 
+    @ExceptionHandler(InvalidReservationHoursException.class)
+    @ResponseStatus(HttpStatus.UNPROCESSABLE_ENTITY)
+    @ResponseBody
+    public ErrorResponse handleInvalidReservationHoursException(InvalidReservationHoursException e) {
+        final String allowedHours = Arrays.toString(scheduleParser.getSchedule().get(e.getDay()));
+        final String day = e.getDay().toString();
+        final String message = messageSource.getMessage("invalidScheduleHours",
+                new String[]{e.getInvalidHours(), day, allowedHours},
+                LocaleContextHolder.getLocale());
+        return new ErrorResponse(HttpStatus.UNPROCESSABLE_ENTITY, message);
+    }
+
+    @ExceptionHandler(ReservationAlreadyExistsException.class)
+    @ResponseStatus(HttpStatus.CONFLICT)
+    @ResponseBody
+    public ErrorResponse handleReservationAlreadyExistsException(ReservationAlreadyExistsException e) {
+        final String message = messageSource.getMessage("reservationAlreadyExists",
+                new String[]{e.getInvalidTime().toString(), e.getDay().toString()},
+                LocaleContextHolder.getLocale());
+        return new ErrorResponse(HttpStatus.CONFLICT, message);
+    }
+
     @ExceptionHandler(HttpMessageNotReadableException.class)
     @ResponseStatus(HttpStatus.BAD_REQUEST)
     @ResponseBody
     public ErrorResponse handleHttpMessageNotReadableException(HttpMessageNotReadableException e) {
         return new ErrorResponse(HttpStatus.BAD_REQUEST, e.getRootCause().getMessage());
+    }
+
+    @ExceptionHandler(MessagingException.class)
+    @ResponseStatus(HttpStatus.INTERNAL_SERVER_ERROR)
+    @ResponseBody
+    public ErrorResponse handleMessagingException(MessagingException e) {
+        return new ErrorResponse(HttpStatus.INTERNAL_SERVER_ERROR, e.getMessage());
+    }
+
+    @ExceptionHandler(BadCredentialsException.class)
+    @ResponseStatus(HttpStatus.UNAUTHORIZED)
+    @ResponseBody
+    public ErrorResponse handleBadCredentialsException(BadCredentialsException e) {
+        return new ErrorResponse(HttpStatus.UNAUTHORIZED, e.getMessage());
     }
 }
