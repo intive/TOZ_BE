@@ -2,7 +2,7 @@ package com.intive.patronage.toz.tokens.auth;
 
 import com.intive.patronage.toz.error.exception.JwtAuthenticationException;
 import com.intive.patronage.toz.tokens.model.UserContext;
-import com.intive.patronage.toz.users.model.enumerations.Role;
+import com.intive.patronage.toz.users.model.db.User;
 import io.jsonwebtoken.*;
 import io.jsonwebtoken.impl.TextCodec;
 import org.springframework.security.authentication.AuthenticationProvider;
@@ -37,7 +37,7 @@ public class JwtAuthenticationProvider implements AuthenticationProvider {
 
         if (token == null) {
             List<GrantedAuthority> authorities =
-                    Collections.singletonList(new SimpleGrantedAuthority(Role.ANONYMOUS.toString()));
+                    Collections.singletonList(new SimpleGrantedAuthority(User.Role.ANONYMOUS.toString())); // TODO
             return new JwtAuthenticationToken(null, authorities);
         }
 

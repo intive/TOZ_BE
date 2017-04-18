@@ -41,6 +41,6 @@ public class User extends Identifiable {
     }
 
     public enum Role {
-        SA, TOZ, VOLUNTEER
+        SA, TOZ, VOLUNTEER, ANONYMOUS
     }
 }

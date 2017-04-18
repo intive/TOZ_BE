@@ -1,11 +1,10 @@
 package com.intive.patronage.toz.tokens;
 
-import com.fasterxml.jackson.core.JsonProcessingException;
-import com.fasterxml.jackson.databind.ObjectMapper;
 import com.intive.patronage.toz.tokens.model.view.UserCredentialsView;
 import com.intive.patronage.toz.users.UserService;
+import com.intive.patronage.toz.users.model.db.RoleEntity;
 import com.intive.patronage.toz.users.model.db.User;
-import com.intive.patronage.toz.users.model.enumerations.Role;
+import com.intive.patronage.toz.util.ModelMapper;
 import io.jsonwebtoken.Claims;
 import io.jsonwebtoken.Jws;
 import io.jsonwebtoken.Jwts;
@@ -25,6 +24,7 @@ import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.MvcResult;
 
 import java.util.List;
+import java.util.Set;
 
 import static com.intive.patronage.toz.config.ApiUrl.ACQUIRE_TOKEN_PATH;
 import static com.intive.patronage.toz.config.ApiUrl.TOKENS_PATH;
@@ -70,21 +70,13 @@ public class TokenControllerTest {
     private UserCredentialsView credentialsView;
     private User user;
 
-    private static String convertToJsonString(Object value) {
-        try {
-            return new ObjectMapper().writeValueAsString(value);
-        } catch (JsonProcessingException e) {
-            throw new RuntimeException(e);
-        }
-    }
-
     @Before
     public void setUp() throws Exception {
         user = new User();
-        user.setRole(Role.TOZ);
+        user.addRole(User.Role.TOZ);
         user.setEmail(EMAIL);
-        user.setPassword(PASSWORD);
-        userService.create(user);
+        user.setPasswordHash(PASSWORD); // TODO
+        userService.createWithPassword(user, PASSWORD);
 
         credentialsView = new UserCredentialsView(EMAIL, PASSWORD);
     }
@@ -98,7 +90,7 @@ public class TokenControllerTest {
     public void shouldReturnCreatedWhenProperUserAndPassword() throws Exception {
         this.mockMvc.perform(post(ACQUIRE_TOKEN_PATH)
                 .contentType(CONTENT_TYPE)
-                .content(convertToJsonString(credentialsView)))
+                .content(ModelMapper.convertToJsonString(credentialsView)))
                 .andExpect(content().contentType(CONTENT_TYPE))
                 .andExpect(status().isCreated());
     }
@@ -108,7 +100,7 @@ public class TokenControllerTest {
         UserCredentialsView wrongCredentials = new UserCredentialsView(EMAIL, "WrongPass");
         this.mockMvc.perform(post(ACQUIRE_TOKEN_PATH)
                 .contentType(CONTENT_TYPE)
-                .content(convertToJsonString(wrongCredentials)))
+                .content(ModelMapper.convertToJsonString(wrongCredentials)))
                 .andExpect(content().contentType(CONTENT_TYPE))
                 .andExpect(status().isUnauthorized());
     }
@@ -118,7 +110,7 @@ public class TokenControllerTest {
         UserCredentialsView nonExisting = new UserCredentialsView("other@mail.com", PASSWORD);
         this.mockMvc.perform(post(ACQUIRE_TOKEN_PATH)
                 .contentType(CONTENT_TYPE)
-                .content(convertToJsonString(nonExisting)))
+                .content(ModelMapper.convertToJsonString(nonExisting)))
                 .andExpect(content().contentType(CONTENT_TYPE))
                 .andExpect(status().isNotFound());
     }
@@ -127,7 +119,7 @@ public class TokenControllerTest {
     public void shouldReturnValidToken() throws Exception {
         MvcResult result = mockMvc.perform(post(ACQUIRE_TOKEN_PATH)
                 .contentType(CONTENT_TYPE)
-                .content(convertToJsonString(credentialsView)))
+                .content(ModelMapper.convertToJsonString(credentialsView)))
                 .andExpect(content().contentType(CONTENT_TYPE))
                 .andExpect(status().isCreated())
                 .andExpect(jsonPath("jwt", notNullValue()))
@@ -142,8 +134,8 @@ public class TokenControllerTest {
 
         assertEquals(claims.getBody().getSubject(), user.getId().toString());
         assertEquals(claims.getBody().get(EMAIL_CLAIM_NAME, String.class), user.getEmail());
-        final List<String> scopes = claims.getBody().get(SCOPES_CLAIM_NAME, List.class);
-        assertTrue(scopes.contains(user.getRole().toString()));
+        final List<Set<User.Role>> scopes = claims.getBody().get(SCOPES_CLAIM_NAME, List.class);
+        assertTrue(scopes.contains(getRoleStringFromUser(user)));
     }
 
     @Profile("dev")
@@ -155,7 +147,13 @@ public class TokenControllerTest {
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("userId", is(user.getId().toString())))
                 .andExpect(jsonPath("email", is(user.getEmail())))
-                .andExpect(jsonPath("authorities[0].authority", is(user.getRole().toString())));
+                .andExpect(jsonPath("authorities[0].authority", is(getRoleStringFromUser(user))));
+    }
+
+    private String getRoleStringFromUser(final User user) {
+        final RoleEntity roleEntity = (RoleEntity) user.getRoles().toArray()[0];
+        final User.Role role = roleEntity.getRole();
+        return role.toString();
     }
 
     @Profile("dev")

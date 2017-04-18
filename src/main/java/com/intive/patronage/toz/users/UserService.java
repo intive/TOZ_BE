@@ -52,7 +52,7 @@ public class UserService {
         return userRepository.findAll();
     }
 
-    User createWithPassword(final User user, final String password) {
+    public User createWithPassword(final User user, final String password) {
         final String email = user.getEmail();
         if (userRepository.existsByEmail(email)) {
             throw new AlreadyExistsException(USER);
@@ -62,7 +62,7 @@ public class UserService {
         return userRepository.save(user);
     }
 
-    void delete(final UUID id) {
+    public void delete(final UUID id) {
         throwNotFoundExceptionIfIdNotExists(id);
         userRepository.delete(id);
     }

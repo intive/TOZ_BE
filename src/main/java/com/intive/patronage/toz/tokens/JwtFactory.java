@@ -31,7 +31,7 @@ class JwtFactory {
         return Jwts.builder()
                 .setSubject(user.getId().toString())
                 .claim(EMAIL_CLAIM_NAME, user.getEmail())
-                .claim(SCOPES_CLAIM_NAME, Collections.singleton(user.getRole()))
+                .claim(SCOPES_CLAIM_NAME, Collections.singleton(user.getRoles())) // TODO: is correct?
                 .setIssuedAt(new Date(Instant.now().toEpochMilli()))
                 .setExpiration(new Date(Instant.now().plus(expirationTime, ChronoUnit.MINUTES).toEpochMilli()))
                 .signWith(SignatureAlgorithm.HS512, TextCodec.BASE64.decode(secret))

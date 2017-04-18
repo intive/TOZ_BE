@@ -104,6 +104,7 @@ public class UserServiceTest {
         assertEquals(EXPECTED_SURNAME, createdUser.getSurname());
         assertTrue(createdUser.hasRole(EXPECTED_ROLE));
         verify(userRepository, times(1)).save(any(User.class));
+        verify(userRepository, times(1)).existsByEmail(any(String.class));
         verifyNoMoreInteractions(userRepository);
     }
 

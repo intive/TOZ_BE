@@ -1,33 +1,20 @@
 package com.intive.patronage.toz.config;
 
-import com.intive.patronage.toz.users.UserService;
-import com.intive.patronage.toz.users.model.db.User;
+import com.intive.patronage.toz.tokens.auth.SuperAdminAuthenticationProvider;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Configuration;
-import org.springframework.security.authentication.AuthenticationProvider;
-import org.springframework.security.authentication.BadCredentialsException;
-import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
+import org.springframework.core.annotation.Order;
 import org.springframework.security.config.annotation.authentication.builders.AuthenticationManagerBuilder;
 import org.springframework.security.config.annotation.method.configuration.EnableGlobalMethodSecurity;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
 import org.springframework.security.config.annotation.web.configuration.WebSecurityConfigurerAdapter;
-import org.springframework.security.core.Authentication;
-import org.springframework.security.core.AuthenticationException;
-import org.springframework.security.core.GrantedAuthority;
-import org.springframework.security.core.authority.SimpleGrantedAuthority;
-import org.springframework.security.crypto.password.PasswordEncoder;
-import org.springframework.stereotype.Component;
-
-import java.util.Collection;
-import java.util.Collections;
 
 @Configuration
 @EnableWebSecurity
 @EnableGlobalMethodSecurity(prePostEnabled = true)
+@Order(1)
 public class SecurityConfig extends WebSecurityConfigurerAdapter {
-
-    private static final String BAD_CREDENTIALS_MESSAGE = "Wrong name or password!";
 
     @Autowired
     private SuperAdminAuthenticationProvider superAdminAuthenticationProvider;
@@ -44,44 +31,5 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
     @Override
     protected void configure(AuthenticationManagerBuilder auth) throws Exception {
         auth.authenticationProvider(superAdminAuthenticationProvider);
-    }
-
-    @Component
-    private static class SuperAdminAuthenticationProvider implements AuthenticationProvider {
-        private final UserService userService;
-        private final PasswordEncoder passwordEncoder;
-
-        @Autowired
-        public SuperAdminAuthenticationProvider(UserService userService, PasswordEncoder passwordEncoder) {
-            this.userService = userService;
-            this.passwordEncoder = passwordEncoder;
-        }
-
-        @Override
-        public Authentication authenticate(Authentication authentication) throws AuthenticationException {
-            final String name = authentication.getName();
-            final User user = userService.findOneByName(name);
-            if (user.isSuperAdmin()) {
-                checkPasswordMatching(authentication, user);
-                final String superAdminRole = User.Role.SA.toString();
-                Collection<? extends GrantedAuthority> authorities =
-                        Collections.singleton(new SimpleGrantedAuthority(superAdminRole));
-                return new UsernamePasswordAuthenticationToken(name, authentication.getCredentials(), authorities);
-            }
-            throw new BadCredentialsException(BAD_CREDENTIALS_MESSAGE);
-        }
-
-        private void checkPasswordMatching(Authentication authentication, User user) {
-            String password = (String) authentication.getCredentials();
-            boolean isPasswordMatch = passwordEncoder.matches(password, user.getPasswordHash());
-            if (!isPasswordMatch) {
-                throw new BadCredentialsException(BAD_CREDENTIALS_MESSAGE);
-            }
-        }
-
-        @Override
-        public boolean supports(Class<?> authentication) {
-            return UsernamePasswordAuthenticationToken.class.isAssignableFrom(authentication);
-        }
     }
 }
