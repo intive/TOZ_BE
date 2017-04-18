@@ -233,6 +233,8 @@ databaseChangeLog:
                 - column:
                     name: email
                     type: varchar(255)
+                    constraints:
+                      - unique: true
   - changeSet:
         id : 4
         author: marek.macko

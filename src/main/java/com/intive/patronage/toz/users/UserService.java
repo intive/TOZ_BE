@@ -1,5 +1,6 @@
 package com.intive.patronage.toz.users;
 
+import com.intive.patronage.toz.error.exception.AlreadyExistsException;
 import com.intive.patronage.toz.error.exception.NotFoundException;
 import com.intive.patronage.toz.users.model.db.User;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -52,6 +53,10 @@ public class UserService {
     }
 
     User createWithPassword(final User user, final String password) {
+        final String email = user.getEmail();
+        if (userRepository.existsByEmail(email)) {
+            throw new AlreadyExistsException(USER);
+        }
         final String passwordHash = passwordEncoder.encode(password);
         user.setPasswordHash(passwordHash);
         return userRepository.save(user);
