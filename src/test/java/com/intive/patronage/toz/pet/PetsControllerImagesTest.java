@@ -31,7 +31,10 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 
 @RunWith(SpringRunner.class)
 @AutoConfigureMockMvc
-@SpringBootTest
+@SpringBootTest(
+        webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT,
+        properties = "jwt.secret-base64=c2VjcmV0"
+)
 public class PetsControllerImagesTest {
 
     private final static String IMAGES_REQUEST_PATH_FORMAT = ApiUrl.PETS_PATH + "/%s/images";

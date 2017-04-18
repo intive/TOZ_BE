@@ -25,6 +25,10 @@ public class TokensServiceTest {
     private TokensService tokensService;
     @Mock
     private UserService userService;
+    @Mock
+    private JwtFactory jwtFactory;
+
+    private PasswordEncoder passwordEncoder;
     private User user;
 
     @Before
@@ -35,7 +39,7 @@ public class TokensServiceTest {
         random.nextBytes(new byte[20]);
         PasswordEncoder passwordEncoder = new BCryptPasswordEncoder(10, random);
 
-        tokensService = new TokensService(userService, passwordEncoder);
+        tokensService = new TokensService(userService, passwordEncoder, jwtFactory);
 
         user = new User();
         user.setEmail(EXPECTED_EMAIL);

@@ -11,15 +11,23 @@ class TokensService {
 
     private final UserService userService;
     private final PasswordEncoder passwordEncoder;
+    private final JwtFactory jwtFactory;
 
     @Autowired
-    TokensService(UserService userService, PasswordEncoder passwordEncoder) {
+    TokensService(UserService userService, PasswordEncoder passwordEncoder, JwtFactory jwtFactory) {
         this.userService = userService;
         this.passwordEncoder = passwordEncoder;
+        this.jwtFactory = jwtFactory;
     }
 
     boolean isUserAuthenticated(String userEmail, String plainPassword) {
         User userFromDatabase = userService.findOneByEmail(userEmail);
-        return passwordEncoder.matches(plainPassword, userFromDatabase.getPasswordHash());
+        // TODO remove this line and uncomment line below when hashes of pass are stored in db
+        return plainPassword.matches(userFromDatabase.getPassword());
+        //return passwordEncoder.matches(plainPassword, userFromDatabase.getPassword());
+    }
+
+    String getToken(String userEmail) {
+        return jwtFactory.generateToken(userService.findOneByEmail(userEmail));
     }
 }

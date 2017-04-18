@@ -9,10 +9,13 @@ import com.intive.patronage.toz.schedule.model.db.ScheduleReservationChangelog;
 import com.intive.patronage.toz.schedule.model.view.ReservationRequestView;
 import com.intive.patronage.toz.schedule.model.view.ReservationResponseView;
 import com.intive.patronage.toz.schedule.util.ScheduleParser;
+import com.intive.patronage.toz.tokens.model.UserContext;
 import com.intive.patronage.toz.users.UserRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.PropertySource;
+import org.springframework.security.core.Authentication;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
 
 import java.time.LocalDate;
@@ -122,11 +125,16 @@ class ScheduleService {
         }
     }
 
-    private void saveReservationChangelog(ScheduleReservation scheduleReservation, String modificationMessage, OperationType operationType) {
+    private void saveReservationChangelog(ScheduleReservation scheduleReservation, String modificationMessage,
+                                          OperationType operationType) {
         ScheduleReservationChangelog newLog = new ScheduleReservationChangelog();
-//        TODO: waits for security users implementation, to get info from Principal
-//        newLog.setModificationAuthorUuid(...);
-//        ifEntityDoesntExistInRepoThrowException(newReservation.getModificationAuthorUuid(), userRepository, USER);
+
+        final Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+        if (authentication != null && authentication.getPrincipal() != null) {
+            final UserContext userContext = (UserContext) authentication.getPrincipal();
+            newLog.setModificationAuthorUuid(userContext.getUserId());
+            ifEntityDoesntExistInRepoThrowException(newLog.getModificationAuthorUuid(), userRepository, USER);
+        }
         newLog.setModificationMessage(modificationMessage);
         newLog.setOperationType(operationType);
         newLog.setReservationId(scheduleReservation.getId());
