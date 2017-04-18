@@ -6,10 +6,7 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 
-import javax.persistence.CascadeType;
-import javax.persistence.Entity;
-import javax.persistence.FetchType;
-import javax.persistence.OneToMany;
+import javax.persistence.*;
 import java.util.HashSet;
 import java.util.Set;
 
@@ -23,6 +20,7 @@ public class User extends Identifiable {
     private String passwordHash;
     private String surname;
     private String phoneNumber;
+    @Column(unique = true)
     private String email;
 
     @OneToMany(cascade = CascadeType.MERGE, fetch = FetchType.EAGER)

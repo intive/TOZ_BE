@@ -166,8 +166,8 @@ class ScheduleService {
                 .getModificationDate()
                 .getTime());
         reservationResponseView.setId(scheduleReservation.getId());
-        reservationResponseView.setOwnerForename(
-                userRepository.findOne(scheduleReservation.getOwnerUuid()).getForename());
+        reservationResponseView.setOwnerName(
+                userRepository.findOne(scheduleReservation.getOwnerUuid()).getName());
         reservationResponseView.setOwnerSurname(
                 userRepository.findOne(scheduleReservation.getOwnerUuid()).getSurname());
         return reservationResponseView;
