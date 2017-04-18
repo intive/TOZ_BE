@@ -21,13 +21,16 @@ TODO [short description](https://en.support.wordpress.com/markdown-quick-referen
 
 ## REST API documentation
 
-    [Production](http://patronage2017.blstream.com/swagger-ui.html)
-    [Testbed](http://testbed.patronage2017.blstream.com/swagger-ui.html)
-    [Bleeding edge](http://dev.patronage2017.blstream.com/swagger-ui.html)
+[Production](http://patronage2017.blstream.com/swagger-ui.html)
+
+[Testbed](http://testbed.patronage2017.blstream.com/swagger-ui.html)
+
+[Bleeding edge](http://dev.patronage2017.blstream.com/swagger-ui.html)
 
 ## Slack (private)
 
-[Contact us](https://patronage-2017.slack.com/messages/backend)
+[Contact us](https://patronage-2017.slack.com/messages/backend-public)
+
 [Developer news](https://patronage-2017.slack.com/messages/backend-ci/)
 
 ## Docker
@@ -37,6 +40,31 @@ It should be self explanatory. You can:
 - build the docker image with: `gradle buildImage`
 - create container: `gradle createContainer`
 - run functional test on docker by: `gradle functionalTest` (TODO)
+
+## Authorization
+
+To acquire token `POST` credentials to `/tokens/acquire`
+
+Example curl:
+```
+curl -X POST --header 'Content-Type: application/json' --header 'Accept: application/json' -d '{ 
+    "email": "user@mail.com",
+    "password": "P4ssw0rd" 
+}' 'http://localhost:8080/tokens/acquire'
+```
+
+To authorize send JWT token in `Authorization` header with `Bearer ` prefix in request.
+
+Example curl:
+```
+curl http://localhost:8080/users \
+  -H 'Accept: application/json' \
+  -H 'Authorization: Bearer eyJhbGciOiJIUzI1NiJ9.eyJzdWIiOiI0YjVlZmE0MC1lNjQ5LTQ3ZmQtOThkNy1jZTk3NzBlYTZlY2QiLCJlbWFpbCI6InVzZXJAbWFpbC5jb20iLCJzY29wZXMiOlsiVE9aIl0sImlhdCI6MTQ5MjE3MTY4MSwiZXhwIjoxNDkyMjU4MDgxfQ.Z3iZ3zlgV0_iZAk-iCTPr68hLBL5CvyoSHUbn3Htprc'
+```
+
+## JWT 
+
+To configure secret for JWT add `TOZ_BE_JWT_SECRET` environmental variable with base64 encoded secret.
 
 # Temporary server
 
