@@ -2,7 +2,6 @@ package com.intive.patronage.toz.tokens;
 
 import com.intive.patronage.toz.tokens.model.view.UserCredentialsView;
 import com.intive.patronage.toz.users.UserService;
-import com.intive.patronage.toz.users.model.db.RoleEntity;
 import com.intive.patronage.toz.users.model.db.User;
 import com.intive.patronage.toz.util.ModelMapper;
 import io.jsonwebtoken.Claims;
@@ -24,7 +23,6 @@ import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.MvcResult;
 
 import java.util.List;
-import java.util.Set;
 
 import static com.intive.patronage.toz.config.ApiUrl.ACQUIRE_TOKEN_PATH;
 import static com.intive.patronage.toz.config.ApiUrl.TOKENS_PATH;
@@ -51,6 +49,7 @@ public class TokenControllerTest {
     private static final String SCOPES_CLAIM_NAME = "scopes";
     private static final String AUTHORIZATION_HEADER = "Authorization";
     private static final String TOKEN_PREFIX = "Bearer ";
+    private static final User.Role ROLE = User.Role.TOZ;
 
     @Value("${jwt.secret-base64}")
     private String secret;
@@ -73,7 +72,7 @@ public class TokenControllerTest {
     @Before
     public void setUp() throws Exception {
         user = new User();
-        user.addRole(User.Role.TOZ);
+        user.addRole(ROLE);
         user.setEmail(EMAIL);
         user.setPasswordHash(PASSWORD); // TODO
         userService.createWithPassword(user, PASSWORD);
@@ -134,8 +133,8 @@ public class TokenControllerTest {
 
         assertEquals(claims.getBody().getSubject(), user.getId().toString());
         assertEquals(claims.getBody().get(EMAIL_CLAIM_NAME, String.class), user.getEmail());
-        final List<Set<User.Role>> scopes = claims.getBody().get(SCOPES_CLAIM_NAME, List.class);
-        assertTrue(scopes.contains(getRoleStringFromUser(user)));
+        final List<String> scopes = claims.getBody().get(SCOPES_CLAIM_NAME, List.class);
+        assertTrue(scopes.contains(ROLE.toString()));
     }
 
     @Profile("dev")
@@ -147,13 +146,7 @@ public class TokenControllerTest {
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("userId", is(user.getId().toString())))
                 .andExpect(jsonPath("email", is(user.getEmail())))
-                .andExpect(jsonPath("authorities[0].authority", is(getRoleStringFromUser(user))));
-    }
-
-    private String getRoleStringFromUser(final User user) {
-        final RoleEntity roleEntity = (RoleEntity) user.getRoles().toArray()[0];
-        final User.Role role = roleEntity.getRole();
-        return role.toString();
+                .andExpect(jsonPath("authorities[0].authority", is(ROLE.toString())));
     }
 
     @Profile("dev")
