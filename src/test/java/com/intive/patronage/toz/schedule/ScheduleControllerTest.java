@@ -11,10 +11,10 @@ import com.tngtech.java.junit.dataprovider.DataProviderRunner;
 import com.tngtech.java.junit.dataprovider.UseDataProvider;
 import org.junit.Before;
 import org.junit.Test;
-import org.springframework.boot.test.context.SpringBootTest;
 import org.junit.runner.RunWith;
 import org.mockito.Mock;
 import org.mockito.MockitoAnnotations;
+import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.http.MediaType;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.setup.MockMvcBuilders;
@@ -44,6 +44,7 @@ public class ScheduleControllerTest {
     private static final String SCHEDULE_PATH = "/schedule";
     private static final MediaType CONTENT_TYPE = MediaType.APPLICATION_JSON_UTF8;
     private static final String VALID_LOCAL_DATE_TO = "2017-12-01";
+    private static final LocalDate PAST_LOCAL_DATE = LocalDate.now().minusDays(3);
 
     private MockMvc mvc;
     @Mock
@@ -58,7 +59,7 @@ public class ScheduleControllerTest {
     public void setUp() throws Exception {
         MockitoAnnotations.initMocks(this);
         mvc = MockMvcBuilders.standaloneSetup(new ScheduleController(scheduleService, scheduleParser)).build();
-        JavaTimeModule javaTimeModule=new JavaTimeModule();
+        JavaTimeModule javaTimeModule = new JavaTimeModule();
         javaTimeModule.addDeserializer(LocalDateTime.class, new LocalDateTimeDeserializer(DateTimeFormatter.ISO_DATE_TIME));
         objectMapper = new ObjectMapper().registerModule(javaTimeModule);
     }
@@ -201,6 +202,18 @@ public class ScheduleControllerTest {
     public void shouldReturnBadRequestWhenBodyIsMissingInPutRequest() throws Exception {
         mvc.perform(put(String.format("%s/%s", SCHEDULE_PATH, UUID.randomUUID()))
                 .contentType(CONTENT_TYPE))
+                .andExpect(status().isBadRequest());
+    }
+
+    @Test
+    @UseDataProvider(value = "getReservationRequestView",
+            location = ScheduleDataProvider.class)
+    public void shouldReturnBadRequestWhenDateInPast(ReservationRequestView reservationRequestView) throws Exception {
+        reservationRequestView.setDate(PAST_LOCAL_DATE);
+        mvc.perform(post(String.format("%s", SCHEDULE_PATH))
+                .param("id", UUID.randomUUID().toString())
+                .contentType(CONTENT_TYPE)
+                .content(objectMapper.writeValueAsString(reservationRequestView)))
                 .andExpect(status().isBadRequest());
     }
 }
