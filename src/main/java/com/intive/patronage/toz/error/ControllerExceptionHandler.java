@@ -18,6 +18,7 @@ import org.springframework.context.MessageSource;
 import org.springframework.context.i18n.LocaleContextHolder;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.converter.HttpMessageNotReadableException;
+import org.springframework.security.access.AccessDeniedException;
 import org.springframework.security.authentication.BadCredentialsException;
 import org.springframework.validation.FieldError;
 import org.springframework.web.bind.MethodArgumentNotValidException;
@@ -178,5 +179,14 @@ public class ControllerExceptionHandler {
     @ResponseBody
     public ErrorResponse handleBadCredentialsException(BadCredentialsException e) {
         return new ErrorResponse(HttpStatus.UNAUTHORIZED, e.getMessage());
+    }
+
+    @ExceptionHandler(AccessDeniedException.class)
+    @ResponseStatus(HttpStatus.FORBIDDEN)
+    @ResponseBody
+    public ErrorResponse handleAccessDeniedException(AccessDeniedException e) {
+        final String message = messageSource.getMessage(
+                "accessDenied", null, LocaleContextHolder.getLocale());
+        return new ErrorResponse(HttpStatus.FORBIDDEN, message);
     }
 }
