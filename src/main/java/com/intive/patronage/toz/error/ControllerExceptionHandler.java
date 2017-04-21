@@ -29,6 +29,8 @@ import org.springframework.web.method.annotation.MethodArgumentTypeMismatchExcep
 import org.springframework.web.servlet.config.annotation.EnableWebMvc;
 
 import javax.mail.MessagingException;
+import java.io.PrintWriter;
+import java.io.StringWriter;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
@@ -52,7 +54,13 @@ public class ControllerExceptionHandler {
     @ResponseStatus(value = HttpStatus.INTERNAL_SERVER_ERROR)
     @ResponseBody
     public String handleRuntimeException(RuntimeException e) {
-        String errorLog = String.format("%s, ID: %s", e.getMessage(), UUID.randomUUID().toString());
+        StringWriter sw = new StringWriter();
+        e.printStackTrace(new PrintWriter(sw));
+        String errorLog =
+                String.format("%s, ID: %s, %s",
+                        e.getMessage(),
+                        UUID.randomUUID().toString(),
+                        sw.toString());
         logger.error(errorLog);
         return errorLog;
     }
