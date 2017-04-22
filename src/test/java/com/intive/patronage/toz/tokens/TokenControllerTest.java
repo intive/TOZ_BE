@@ -18,6 +18,7 @@ import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMock
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.context.annotation.Profile;
 import org.springframework.http.MediaType;
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.test.context.ActiveProfiles;
 import org.springframework.test.context.junit4.SpringRunner;
 import org.springframework.test.web.servlet.MockMvc;
@@ -68,6 +69,9 @@ public class TokenControllerTest {
     @Autowired
     private JwtFactory jwtFactory;
 
+    @Autowired
+    private PasswordEncoder passwordEncoder;
+
     private UserCredentialsView credentialsView;
     private User user;
 
@@ -76,7 +80,7 @@ public class TokenControllerTest {
         user = new User();
         user.addRole(ROLE);
         user.setEmail(EMAIL);
-        user.setPasswordHash(PASSWORD); // TODO
+        user.setPasswordHash(passwordEncoder.encode(PASSWORD));
         userService.createWithPassword(user, PASSWORD);
 
         credentialsView = new UserCredentialsView(EMAIL, PASSWORD);

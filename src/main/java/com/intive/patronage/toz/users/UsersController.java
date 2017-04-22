@@ -14,6 +14,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
 import org.springframework.web.util.UriComponentsBuilder;
+import springfox.documentation.annotations.ApiIgnore;
 
 import javax.validation.Valid;
 import java.net.URI;
@@ -21,7 +22,8 @@ import java.util.List;
 import java.util.UUID;
 
 
-@Api(description = "Operations for users resource", hidden = true)
+@ApiIgnore
+@Api(description = "Operations for users resource")
 @RestController
 @RequestMapping(value = ApiUrl.ADMIN_USERS_PATH, produces = MediaType.APPLICATION_JSON_VALUE)
 public class UsersController {
