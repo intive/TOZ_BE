@@ -6,7 +6,7 @@ import java.util.Date;
 import java.util.UUID;
 
 @Entity
-public class UploadedFile {
+public class UploadedFile { // TODO lombok
     @Id
     private UUID id;
     private Date createDate;
