@@ -97,7 +97,6 @@ public class PetsControllerImagesTest {
 
     private UploadedFile initializeUploadedFile() {
         UploadedFile uploadedFile = new UploadedFile();
-        uploadedFile.setId(UUID.randomUUID());
         uploadedFile.setPath(uploadedFile.getId().toString());
         return uploadedFile;
     }

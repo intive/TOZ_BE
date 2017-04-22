@@ -1,41 +1,16 @@
 package com.intive.patronage.toz.storage.model.db;
 
-import javax.persistence.Entity;
-import javax.persistence.Id;
-import java.util.Date;
-import java.util.UUID;
+import com.intive.patronage.toz.base.model.Identifiable;
+import lombok.Getter;
+import lombok.Setter;
 
+import javax.persistence.Entity;
+import java.util.Date;
+
+@Getter
+@Setter
 @Entity
-public class UploadedFile { // TODO lombok
-    @Id
-    private UUID id;
+public class UploadedFile extends Identifiable {
     private Date createDate;
     private String path;
-
-    public UploadedFile(){
-    }
-
-    public UUID getId() {
-        return id;
-    }
-
-    public void setId(UUID id) {
-        this.id = id;
-    }
-
-    public Date getCreateDate() {
-        return createDate;
-    }
-
-    public void setCreateDate(Date createDate) {
-        this.createDate = createDate;
-    }
-
-    public String getPath() {
-        return path;
-    }
-
-    public void setPath(String path) {
-        this.path = path;
-    }
 }
