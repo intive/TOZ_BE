@@ -17,6 +17,7 @@ import com.github.jknack.handlebars.io.TemplateSource;
 import com.google.common.cache.Cache;
 import com.google.common.cache.CacheBuilder;
 import com.intive.patronage.toz.mail.model.Registration;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 
 import java.io.IOException;
@@ -26,6 +27,18 @@ import static com.intive.patronage.toz.config.ApiUrl.ACTIVATION_PATH;
 
 @Service
 public class MailTemplatesService {
+
+    private static Cache<TemplateSource, Template> templateCache;
+
+    private String mailTemplatesPath;
+
+    public MailTemplatesService(@Value("${cache.durationInMinutes}") Integer cacheDurationInMinutes,
+                                @Value("${cache.maxSize}") Integer cacheMaxSize,
+                                @Value("${mail.templatesPath}") String mailTemplatesPath) {
+
+        this.mailTemplatesPath = mailTemplatesPath;
+        templateCache = CacheBuilder.newBuilder().expireAfterWrite(cacheDurationInMinutes, TimeUnit.MINUTES).maximumSize(cacheMaxSize).build();
+    }
 
     public String getRegistrationTemplate(String baseUrl, String token) throws IOException {
         Registration model = new Registration();
@@ -37,8 +50,7 @@ public class MailTemplatesService {
     }
 
     private Handlebars getHandlebarsTemplates() {
-        TemplateLoader loader = new ClassPathTemplateLoader("/templates", ".hbs");
-        final Cache<TemplateSource, Template> templateCache = CacheBuilder.newBuilder().expireAfterWrite(10, TimeUnit.MINUTES).maximumSize(1000).build();
+        TemplateLoader loader = new ClassPathTemplateLoader(mailTemplatesPath, ".hbs");
         return new Handlebars(loader).with((new GuavaTemplateCache(templateCache)));
     }
 

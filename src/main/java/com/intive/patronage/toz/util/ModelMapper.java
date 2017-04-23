@@ -1,5 +1,6 @@
 package com.intive.patronage.toz.util;
 
+import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.MapperFeature;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.intive.patronage.toz.base.model.Identifiable;
@@ -30,4 +31,13 @@ public class ModelMapper {
     public static <T extends Identifiable> T convertToModel(Object view, Class<T> modelClass) {
         return OBJECT_MAPPER_ENABLED_ANNOTATIONS.convertValue(view, modelClass);
     }
+
+    public static String convertToJsonString(Object value) {
+        try {
+            return OBJECT_MAPPER_DISABLED_ANNOTATIONS.writeValueAsString(value);
+        } catch (JsonProcessingException e) {
+            throw new RuntimeException(e);
+        }
+    }
+
 }
