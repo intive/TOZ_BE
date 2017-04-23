@@ -5,6 +5,7 @@ import com.intive.patronage.toz.config.ApiUrl;
 import com.intive.patronage.toz.error.ControllerExceptionHandler;
 import com.intive.patronage.toz.organization.model.view.BankAccountView;
 import com.intive.patronage.toz.organization.model.view.OrganizationInfoView;
+import com.intive.patronage.toz.schedule.util.ScheduleParser;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -33,7 +34,10 @@ import static org.springframework.test.web.servlet.request.MockMvcRequestBuilder
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
 
 @RunWith(SpringRunner.class)
-@SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT)
+@SpringBootTest(
+        webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT,
+        properties = "jwt.secret-base64=c2VjcmV0"
+)
 public class OrganizationInfoControllerTest {
 
     private final static String ORG_NAME = "Org";
@@ -46,6 +50,8 @@ public class OrganizationInfoControllerTest {
 
     @Mock
     private OrganizationInfoService organizationInfoService;
+    @Mock
+    private ScheduleParser scheduleParser;
     @SuppressWarnings("SpringJavaAutowiredMembersInspection")
     @Autowired
     private ObjectMapper objectMapper;
@@ -65,7 +71,7 @@ public class OrganizationInfoControllerTest {
                 Method method = new ExceptionHandlerMethodResolver(
                         ControllerExceptionHandler.class).resolveMethod(exception);
                 return new ServletInvocableHandlerMethod(
-                        new ControllerExceptionHandler(messageSource), method);
+                        new ControllerExceptionHandler(messageSource, scheduleParser), method);
             }
         };
         exceptionResolver.getMessageConverters().add(new MappingJackson2HttpMessageConverter());

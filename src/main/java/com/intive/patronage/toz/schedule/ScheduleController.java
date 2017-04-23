@@ -3,14 +3,18 @@ package com.intive.patronage.toz.schedule;
 import com.intive.patronage.toz.error.model.ArgumentErrorResponse;
 import com.intive.patronage.toz.error.model.ErrorResponse;
 import com.intive.patronage.toz.error.model.ValidationErrorResponse;
+import com.intive.patronage.toz.schedule.model.view.DayConfigView;
 import com.intive.patronage.toz.schedule.model.view.ReservationRequestView;
 import com.intive.patronage.toz.schedule.model.view.ReservationResponseView;
 import com.intive.patronage.toz.schedule.model.view.ScheduleView;
+import com.intive.patronage.toz.schedule.util.ScheduleParser;
 import io.swagger.annotations.ApiOperation;
 import io.swagger.annotations.ApiParam;
 import io.swagger.annotations.ApiResponse;
 import io.swagger.annotations.ApiResponses;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
+import org.springframework.context.annotation.PropertySource;
 import org.springframework.format.annotation.DateTimeFormat;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
@@ -22,19 +26,18 @@ import org.springframework.web.util.UriComponentsBuilder;
 import javax.validation.Valid;
 import java.net.URI;
 import java.time.LocalDate;
-import java.time.LocalDateTime;
-import java.time.LocalTime;
-import java.util.Collections;
+import java.util.List;
 import java.util.UUID;
 
+@PropertySource("classpath:application.properties")
 @RestController
 @RequestMapping(value = "/schedule", produces = MediaType.APPLICATION_JSON_VALUE)
 class ScheduleController {
 
-    @Autowired
-    public ScheduleController() {
-        // TODO initialize service
-    }
+    private final ScheduleParser scheduleParser;
+    private final ScheduleService scheduleService;
+    @Value("${timezoneOffset}")
+    private String zoneOffset = "Z";
 
     @ApiOperation("Get schedule")
     @ApiResponses(value = {
@@ -49,7 +52,16 @@ class ScheduleController {
                                     @DateTimeFormat(iso = DateTimeFormat.ISO.DATE)
                                     @RequestParam("to") LocalDate to) {
 
-        return new ScheduleView(Collections.emptyList(), Collections.emptyList());
+        List<ReservationResponseView> reservationViews = scheduleService.findScheduleReservations(from, to);
+        List<DayConfigView> dayConfigs = scheduleParser.getDaysConfig();
+        return new ScheduleView(reservationViews, dayConfigs);
+
+    }
+
+    @Autowired
+    ScheduleController(ScheduleService scheduleService, ScheduleParser scheduleParser) {
+        this.scheduleService = scheduleService;
+        this.scheduleParser = scheduleParser;
     }
 
     @ApiOperation("Get single reservation by id")
@@ -58,37 +70,25 @@ class ScheduleController {
             @ApiResponse(code = 404, message = "Not found", response = ErrorResponse.class)
     })
     @GetMapping(value = "/{id}")
+    @ResponseStatus(HttpStatus.OK)
     public ReservationResponseView getReservation(@PathVariable UUID id) {
-        return new ReservationResponseView();
+        return scheduleService.findReservation(id);
     }
 
     @ApiOperation("Make reservation")
     @ApiResponses(value = {
             @ApiResponse(code = 400, message = "Bad request", response = ValidationErrorResponse.class),
-            @ApiResponse(code = 409, message = "Already exists", response = ErrorResponse.class)
+            @ApiResponse(code = 409, message = "Already exists", response = ErrorResponse.class),
+            @ApiResponse(code = 422, message = "Unprocessable Entity", response = ErrorResponse.class)
     })
     @PostMapping(consumes = MediaType.APPLICATION_JSON_VALUE)
     @ResponseStatus(HttpStatus.CREATED)
-    public ResponseEntity<ReservationResponseView> makeReservation(
-            @Valid @RequestBody ReservationRequestView reservation) {
-
-        // TODO remove once service is done
-        ReservationResponseView createdReservation = new ReservationResponseView();
-        createdReservation.setId(UUID.randomUUID());
-        createdReservation.setCreated(LocalDateTime.now());
-        createdReservation.setDate(LocalDate.now());
-        createdReservation.setStartTime(LocalTime.now());
-
-        final URI baseLocation = ServletUriComponentsBuilder.fromCurrentRequest()
-                .build()
-                .toUri();
-        final String reservationLocation = String.format("%s/%s", baseLocation, createdReservation.getId());
-        final URI location = UriComponentsBuilder.fromUriString(reservationLocation)
-                .build()
-                .toUri();
-
+    public ResponseEntity<ReservationResponseView> makeReservation(@Valid @RequestBody ReservationRequestView reservationRequestView) {
+        ReservationResponseView createdReservationResponseView =
+                scheduleService.makeReservation(reservationRequestView);
+        URI location = createLocationPath(createdReservationResponseView.getId());
         return ResponseEntity.created(location)
-                .body(createdReservation);
+                .body(createdReservationResponseView);
     }
 
     @ApiOperation("Update reservation")
@@ -98,9 +98,13 @@ class ScheduleController {
     })
     @PutMapping(value = "/{id}", consumes = MediaType.APPLICATION_JSON_VALUE)
     @ResponseStatus(HttpStatus.CREATED)
-    public ReservationResponseView updateReservation(@PathVariable UUID id,
-                                                     @Valid @RequestBody ReservationRequestView reservation) {
-        return new ReservationResponseView();
+    public ResponseEntity<ReservationResponseView> updateReservation(@PathVariable UUID id,
+                                                                     @Valid @RequestBody ReservationRequestView reservationRequestView) {
+        ReservationResponseView updatedReservationResponseView =
+                scheduleService.updateReservation(id, reservationRequestView);
+        URI location = createLocationPath(id);
+        return ResponseEntity.created(location)
+                .body(updatedReservationResponseView);
     }
 
     @ApiOperation("Delete reservation")
@@ -111,6 +115,15 @@ class ScheduleController {
     @DeleteMapping(value = "/{id}")
     @ResponseStatus(HttpStatus.OK)
     public ReservationResponseView removeReservation(@PathVariable UUID id) {
-        return new ReservationResponseView();
+        return scheduleService.removeReservation(id);
+    }
+
+
+    private URI createLocationPath(UUID id) {
+        final URI baseLocation = ServletUriComponentsBuilder.fromCurrentRequest()
+                .build().toUri();
+        final String location = String.format("%s/%s", baseLocation, id);
+        return UriComponentsBuilder.fromUriString(location)
+                .build().toUri();
     }
 }

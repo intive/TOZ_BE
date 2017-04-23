@@ -1,16 +1,16 @@
 buildscript {
-	ext {
-		springBootVersion = '1.5.2.RELEASE'
-	}
-	repositories {
-    	mavenCentral()
-    	jcenter()
-	}
-	dependencies {
-		classpath("org.springframework.boot:spring-boot-gradle-plugin:${springBootVersion}")
-    	classpath 'com.bmuschko:gradle-docker-plugin:3.0.6'
-		classpath 'org.hidetake:gradle-ssh-plugin:2.8.0'
-	}
+    ext {
+        springBootVersion = '1.5.2.RELEASE'
+    }
+    repositories {
+        mavenCentral()
+        jcenter()
+    }
+    dependencies {
+        classpath "org.springframework.boot:spring-boot-gradle-plugin:${springBootVersion}"
+        classpath 'com.bmuschko:gradle-docker-plugin:3.0.6'
+        classpath 'org.hidetake:gradle-ssh-plugin:2.8.0'
+    }
 }
 
 apply plugin: 'java'
@@ -19,19 +19,21 @@ apply plugin: 'org.springframework.boot'
 apply plugin: 'com.bmuschko.docker-remote-api'
 apply plugin: 'org.hidetake.ssh'
 
-import com.bmuschko.gradle.docker.tasks.container.*
-import com.bmuschko.gradle.docker.tasks.image.*
+import com.bmuschko.gradle.docker.tasks.container.DockerCreateContainer
+import com.bmuschko.gradle.docker.tasks.container.DockerStartContainer
+import com.bmuschko.gradle.docker.tasks.container.DockerStopContainer
+import com.bmuschko.gradle.docker.tasks.image.DockerBuildImage
 
 jar {
-	baseName = 'toz-core'
-	version = '0.1-SNAPSHOT'
+    baseName = 'toz-core'
+    version = '0.1-SNAPSHOT'
 }
 
 sourceCompatibility = 1.8
 targetCompatibility = 1.8
 
 springBoot {
-	executable = true
+    executable = true
 }
 
 task buildImage(type: DockerBuildImage) {
@@ -61,30 +63,31 @@ task functionalTest(type: Test) {
 }
 
 remotes {
-	openstack {
-		host = 'patronage'
-		user = 'debian'
-		identity = file('/home/mlo/.ssh/id_rsa')
-	}
+    openstack {
+        host = 'patronage'
+        user = 'debian'
+        identity = file('/home/mlo/.ssh/id_rsa')
+    }
 }
 
 task deploy {
-	doLast {
-		ssh.run {
-			session(remotes.openstack) {
-				execute 'sudo service toz-dev stop'
-				put from: 'build/libs/toz-core-0.1-SNAPSHOT.jar', into: 'dev/toz-core-0.1-SNAPSHOT.jar'
-				execute 'sudo service toz-dev start'
-			}
-		}
-	}
+    doLast {
+        ssh.run {
+            session(remotes.openstack) {
+                execute 'sudo service toz-dev stop'
+                put from: 'build/libs/toz-core-0.1-SNAPSHOT.jar', into: 'dev/toz-core-0.1-SNAPSHOT.jar'
+                execute 'sudo service toz-dev start'
+            }
+        }
+    }
 }
 
 dependencies {
     compile("org.springframework.boot:spring-boot-starter-web") {
         exclude module: "spring-boot-starter-tomcat"
     }
-    compile("org.springframework.boot:spring-boot-starter-jetty")
+
+  compile("org.springframework.boot:spring-boot-starter-jetty")
 	compile('org.springframework.boot:spring-boot-starter-actuator')
 	compile('org.springframework.boot:spring-boot-starter-data-jpa')
 	compile('org.springframework.boot:spring-boot-starter-mail')
@@ -117,4 +120,40 @@ dependencies {
 			}
 		}
 	}
+    compile 'org.springframework.boot:spring-boot-starter-jetty'
+    compile 'org.springframework.boot:spring-boot-starter-actuator'
+    compile 'org.springframework.boot:spring-boot-starter-data-jpa'
+    compile 'org.springframework.boot:spring-boot-starter-mail'
+    compile 'org.springframework.boot:spring-boot-starter-security'
+    compile 'org.liquibase:liquibase-core'
+    compile 'org.projectlombok:lombok'
+    compile 'com.fasterxml.jackson.datatype:jackson-datatype-jsr310'
+    compile 'io.jsonwebtoken:jjwt:0.7.0'
+    compile 'org.apache.commons:commons-lang3:3.5'
+    compile 'org.assertj:assertj-core:3.6.2'
+    compile 'org.assertj:assertj-joda-time:2.0.0'
+
+    compile 'io.springfox:springfox-swagger2:2.6.1'
+    compile 'io.springfox:springfox-swagger-ui:2.6.1'
+    
+    compile('com.github.jknack:handlebars:4.0.6')
+	  compile('com.github.jknack:handlebars-guava-cache:4.0.6')
+	  compile group: 'com.github.jknack', name: 'handlebars-jackson2', version: '4.0.6'
+
+    compile project(':iban-validator')
+
+    testCompile 'org.springframework.boot:spring-boot-starter-test'
+    testCompile 'com.tngtech.java:junit-dataprovider:1.12.0'
+
+    runtime 'org.springframework.boot:spring-boot-devtools'
+    runtime 'com.h2database:h2'
+    runtime 'org.postgresql:postgresql'
+
+    configurations.all {
+        resolutionStrategy.eachDependency { DependencyResolveDetails details ->
+            if (details.requested.group == 'org.springframework.boot' && details.requested.name == 'spring-boot-starter-logging') {
+                details.useTarget group: details.requested.group, name: 'spring-boot-starter-log4j2', version: details.requested.version
+            }
+        }
+    }
 }

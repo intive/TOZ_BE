@@ -16,7 +16,6 @@ import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
 
 import javax.validation.Valid;
 import java.net.URI;
-import java.util.ArrayList;
 import java.util.List;
 import java.util.UUID;
 
@@ -41,11 +40,8 @@ class NewsController {
             @RequestParam(value = "type", required = false) String type,
             @RequestParam(value = "shortened", required = false, defaultValue = "false")
                     Boolean shortened) {
-        List<NewsView> newsViewList = new ArrayList<>();
-        for (News news : newsService.findAllNews(type, shortened)) {
-            newsViewList.add(ModelMapper.convertToView(news, NewsView.class));
-        }
-        return ResponseEntity.ok().body(newsViewList);
+        final List<News> newsList = newsService.findAllNews(type, shortened);
+        return ResponseEntity.ok().body(ModelMapper.convertToView(newsList, NewsView.class));
     }
 
     @ApiOperation(value = "Get news by id.")
@@ -68,7 +64,7 @@ class NewsController {
         final URI baseLocation = ServletUriComponentsBuilder.fromCurrentRequest()
                 .build().toUri();
         return ResponseEntity.created(baseLocation)
-                .body(ModelMapper.convertToView(newsService.createNews(newsView), NewsView.class));
+                .body(ModelMapper.convertToView(newsService.createNews(convertFromView(newsView)), NewsView.class));
     }
 
     @ApiOperation("Delete news.")
@@ -92,6 +88,10 @@ class NewsController {
         final URI baseLocation = ServletUriComponentsBuilder.fromCurrentRequest()
                 .build().toUri();
         return ResponseEntity.created(baseLocation)
-                .body(ModelMapper.convertToView(newsService.updateNews(id, newsView), NewsView.class));
+                .body(ModelMapper.convertToView(newsService.updateNews(id, convertFromView(newsView)), NewsView.class));
+    }
+
+    private static News convertFromView(final NewsView newsView) {
+        return ModelMapper.convertToModel(newsView, News.class);
     }
 }

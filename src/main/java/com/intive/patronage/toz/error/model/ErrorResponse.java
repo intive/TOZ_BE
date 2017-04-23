@@ -2,6 +2,8 @@ package com.intive.patronage.toz.error.model;
 
 import org.springframework.http.HttpStatus;
 
+import java.util.Date;
+
 public class ErrorResponse {
 
     private final HttpStatus status;
@@ -22,5 +24,9 @@ public class ErrorResponse {
 
     public String getMessage() {
         return message;
+    }
+
+    public Date getTimestamp() {
+        return new Date();
     }
 }

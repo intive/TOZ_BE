@@ -1,9 +1,9 @@
 package com.intive.patronage.toz.users;
 
-import com.fasterxml.jackson.core.JsonProcessingException;
-import com.fasterxml.jackson.databind.ObjectMapper;
+import com.intive.patronage.toz.config.ApiUrl;
 import com.intive.patronage.toz.users.model.db.User;
-import com.intive.patronage.toz.users.model.enumerations.Role;
+import com.intive.patronage.toz.users.model.view.UserView;
+import com.intive.patronage.toz.util.ModelMapper;
 import com.tngtech.java.junit.dataprovider.DataProvider;
 import com.tngtech.java.junit.dataprovider.DataProviderRunner;
 import com.tngtech.java.junit.dataprovider.UseDataProvider;
@@ -12,6 +12,7 @@ import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.mockito.Mock;
 import org.mockito.MockitoAnnotations;
+import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.http.MediaType;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.setup.MockMvcBuilders;
@@ -22,32 +23,26 @@ import java.util.UUID;
 
 import static org.hamcrest.Matchers.hasSize;
 import static org.hamcrest.Matchers.is;
-import static org.mockito.Mockito.any;
-import static org.mockito.Mockito.doNothing;
-import static org.mockito.Mockito.eq;
-import static org.mockito.Mockito.times;
-import static org.mockito.Mockito.verify;
-import static org.mockito.Mockito.verifyNoMoreInteractions;
-import static org.mockito.Mockito.when;
-import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.delete;
-import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
-import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
-import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.put;
-import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.content;
-import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
-import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
+import static org.mockito.Mockito.*;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
+import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
 
 @RunWith(DataProviderRunner.class)
+@SpringBootTest(
+        webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT,
+        properties = "jwt.secret-base64=c2VjcmV0"
+)
 public class UsersControllerTest {
 
-    private static final String URL_PATH = "/users";
-    private static final int PETS_LIST_SIZE = 5;
+    private static final int USERS_LIST_SIZE = 5;
     private static final UUID EXPECTED_ID = UUID.randomUUID();
-    private static final String EXPECTED_USERNAME = "johny";
-    private static final String EXPECTED_PASSWORD = "";
-    private static final String EXPECTED_SURNAME = "Johny";
-    private static final String EXPECTED_FORENAME = "Cage";
-    private static final Role EXPECTED_ROLE = Role.TOZ;
+    private static final String EXPECTED_NAME = "Johny";
+    private static final String EXPECTED_PASSWORD = "johnyPassword";
+    private static final String EXPECTED_PASSWORD_HASH = "7sdf7sd6f7sd76f";
+    private static final String EXPECTED_SURNAME = "Bravo";
+    private static final String EXPECTED_PHONE_NUMBER = "111222333";
+    private static final String EXPECTED_EMAIL = "johny.bravo@gmail.com";
+    private static final User.Role EXPECTED_ROLE = User.Role.TOZ;
     private static final MediaType CONTENT_TYPE = MediaType.APPLICATION_JSON_UTF8;
 
     @Mock
@@ -58,80 +53,81 @@ public class UsersControllerTest {
     @Before
     public void setUp() throws Exception {
         MockitoAnnotations.initMocks(this);
-        mvc = MockMvcBuilders.standaloneSetup(new UsersController(userService)).build();
+        final UsersController usersController = new UsersController(userService);
+        mvc = MockMvcBuilders.standaloneSetup(usersController).build();
+    }
 
-    }
     @DataProvider
-    public static Object[] getProperUser() {
-        User user = new User();
+    public static Object[][] getUserWithView() {
+        final User user = new User();
         user.setId(EXPECTED_ID);
-        user.setEmail(EXPECTED_USERNAME);
-        user.setPassword(EXPECTED_PASSWORD);
-        user.setForename(EXPECTED_FORENAME);
+        user.setName(EXPECTED_NAME);
+        user.setPasswordHash(EXPECTED_PASSWORD_HASH);
         user.setSurname(EXPECTED_SURNAME);
-        user.setRole(EXPECTED_ROLE);
-        return new User[]{user};
+        user.setPhoneNumber(EXPECTED_PHONE_NUMBER);
+        user.setEmail(EXPECTED_EMAIL);
+        user.addRole(EXPECTED_ROLE);
+
+        final UserView userView = ModelMapper.convertToView(user, UserView.class);
+        userView.setPassword(EXPECTED_PASSWORD);
+        return new Object[][]{{user, userView}};
     }
+
     private List<User> getUsers() {
         final List<User> users = new ArrayList<>();
-        for (int i = 0; i < PETS_LIST_SIZE; i++) {
-            User user = new User();
+        for (int i = 0; i < USERS_LIST_SIZE; i++) {
+            final User user = new User();
             user.setId(UUID.randomUUID());
-            user.setEmail(String.format("%s_%d","user", i));
-            user.setPassword(String.format("%s_%d","password", i));
-            user.setForename(String.format("%s_%d","Forename", i));
-            user.setSurname(String.format("%s_%d","Surname", i));
-            user.setRole(Role.values()[i % 2]);
+            user.setName(String.format("%s_%d", "name", i));
+            user.setPasswordHash(String.format("%s_%d", "password_hash", i));
+            user.setSurname(String.format("%s_%d", "surname", i));
+            user.setPhoneNumber(String.format("%s_%d", "phone number", i));
+            user.setEmail(String.format("%s_%d", "email", i));
+            user.addRole(User.Role.values()[i % 2]);
             users.add(user);
         }
         return users;
     }
-    private static String convertToJsonString(Object value) {
-        try {
-            return new ObjectMapper().writeValueAsString(value);
-        } catch (JsonProcessingException e) {
-            throw new RuntimeException(e);
-        }
-    }
+
     @Test
     public void getAllUsersOk() throws Exception {
         final List<User> users = getUsers();
         when(userService.findAll()).thenReturn(users);
 
-        mvc.perform(get(URL_PATH))
+        mvc.perform(get(ApiUrl.ADMIN_USERS_PATH))
                 .andExpect(status().isOk())
                 .andExpect(content().contentType(CONTENT_TYPE))
-                .andExpect(jsonPath("$", hasSize(PETS_LIST_SIZE)));
+                .andExpect(jsonPath("$", hasSize(USERS_LIST_SIZE)));
 
         verify(userService, times(1)).findAll();
         verifyNoMoreInteractions(userService);
     }
 
     @Test
-    @UseDataProvider("getProperUser")
-    public void createUserOk(final User user) throws Exception {
-        String userJsonString = convertToJsonString(user);
+    @UseDataProvider("getUserWithView")
+    public void createUserOk(final User user, final UserView userView) throws Exception {
+        final String userViewJsonString = ModelMapper.convertToJsonString(userView);
 
-        when(userService.create(any(User.class))).thenReturn(user);
-        mvc.perform(post(URL_PATH)
+        when(userService.createWithPassword(any(User.class), eq(EXPECTED_PASSWORD))).thenReturn(user);
+        mvc.perform(post(ApiUrl.ADMIN_USERS_PATH)
                 .contentType(CONTENT_TYPE)
-                .content(userJsonString))
+                .content(userViewJsonString))
                 .andExpect(status().isCreated())
-                .andExpect(jsonPath("$.email", is(EXPECTED_USERNAME)))
-                .andExpect(jsonPath("$.password", is(EXPECTED_PASSWORD)))
-                .andExpect(jsonPath("$.forename", is(EXPECTED_FORENAME)))
+                .andExpect(jsonPath("$.name", is(EXPECTED_NAME)))
                 .andExpect(jsonPath("$.surname", is(EXPECTED_SURNAME)))
-                .andExpect(jsonPath("$.role", is(EXPECTED_ROLE.toString())));
+                .andExpect(jsonPath("$.phoneNumber", is(EXPECTED_PHONE_NUMBER)))
+                .andExpect(jsonPath("$.email", is(EXPECTED_EMAIL)))
+                .andExpect(jsonPath("$.roles[0]", is(EXPECTED_ROLE.toString())));
 
-        verify(userService, times(1)).create(any(User.class));
+        verify(userService, times(1)).createWithPassword(any(User.class), eq(EXPECTED_PASSWORD));
         verifyNoMoreInteractions(userService);
     }
 
     @Test
     public void deleteUserById() throws Exception {
-        UUID id = UUID.randomUUID();
+        final UUID id = UUID.randomUUID();
         doNothing().when(userService).delete(id);
-        mvc.perform(delete(String.format("%s/%s",URL_PATH,id)))
+        mvc.perform(delete(String.format("%s/%s", ApiUrl.ADMIN_USERS_PATH, id)))
                 .andExpect(status().isOk());
 
         verify(userService, times(1)).delete(id);
@@ -139,12 +135,12 @@ public class UsersControllerTest {
     }
 
     @Test
-    @UseDataProvider("getProperUser")
-    public void updateUser(final User user) throws Exception {
-        String userJsonString = convertToJsonString(user);
+    @UseDataProvider("getUserWithView")
+    public void updateUser(final User user, final UserView userView) throws Exception {
+        final String userJsonString = ModelMapper.convertToJsonString(userView);
 
         when(userService.update(eq(EXPECTED_ID), any(User.class))).thenReturn(user);
-        mvc.perform(put(String.format("%s/%s",URL_PATH,EXPECTED_ID))
+        mvc.perform(put(String.format("%s/%s", ApiUrl.ADMIN_USERS_PATH, EXPECTED_ID))
                 .contentType(CONTENT_TYPE)
                 .content(userJsonString))
                 .andExpect(status().isOk());
