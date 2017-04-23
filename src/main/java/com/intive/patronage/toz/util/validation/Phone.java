@@ -1,18 +1,16 @@
-package com.intive.patronage.toz.util;
+package com.intive.patronage.toz.util.validation;
 
 import javax.validation.Constraint;
 import javax.validation.Payload;
 import java.lang.annotation.*;
 
 @Documented
-@Constraint(validatedBy = EnumValidator.class)
+@Constraint(validatedBy = PhoneValidator.class)
 @Retention(RetentionPolicy.RUNTIME)
 @Target(ElementType.FIELD)
-public @interface EnumValidate {
+public @interface Phone {
 
-    Class<? extends Enum> enumClass();
-
-    String message() default "value not valid";
+    String message() default "phone number should consist of 9 or 11 digits";
 
     Class<?>[] groups() default {};
 

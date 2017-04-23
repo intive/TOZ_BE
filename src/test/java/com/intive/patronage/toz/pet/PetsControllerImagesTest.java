@@ -13,6 +13,7 @@ import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.http.MediaType;
 import org.springframework.mock.web.MockMultipartFile;
+import org.springframework.test.context.ActiveProfiles;
 import org.springframework.test.context.junit4.SpringRunner;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.web.multipart.MultipartFile;
@@ -35,10 +36,11 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
         webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT,
         properties = "jwt.secret-base64=c2VjcmV0"
 )
+@ActiveProfiles("test")
 public class PetsControllerImagesTest {
 
-    private final static String IMAGES_REQUEST_PATH_FORMAT = ApiUrl.PET_PATH + "/%s/images";
-    private final static String imageFileName = "/test.jpg";
+    private final static String IMAGES_REQUEST_PATH_FORMAT = ApiUrl.PETS_PATH + "/%s/images";
+    private final static String IMAGE_FILE_NAME = "/test.jpg";
     private final Pet pet = new Pet();
 
     @Autowired
@@ -52,7 +54,6 @@ public class PetsControllerImagesTest {
 
     @Before
     public void setUp() {
-        pet.setId(UUID.randomUUID());
         UploadedFile uploadedFile = initializeUploadedFile();
 
         when(storageService.store(any(MultipartFile.class))).thenReturn(uploadedFile);
@@ -70,7 +71,7 @@ public class PetsControllerImagesTest {
 
     @Test
     public void shouldSaveUploadedFile() throws Exception {
-        try (InputStream inputStream = getClass().getResourceAsStream(imageFileName)) {
+        try (InputStream inputStream = getClass().getResourceAsStream(IMAGE_FILE_NAME)) {
             MockMultipartFile multipartFile =
                     new MockMultipartFile("file", "filename.jpg", MediaType.IMAGE_JPEG_VALUE, inputStream);
 
@@ -96,7 +97,6 @@ public class PetsControllerImagesTest {
 
     private UploadedFile initializeUploadedFile() {
         UploadedFile uploadedFile = new UploadedFile();
-        uploadedFile.setId(UUID.randomUUID());
         uploadedFile.setPath(uploadedFile.getId().toString());
         return uploadedFile;
     }

@@ -41,7 +41,7 @@ class TokensController {
     @PostMapping(value = "/acquire", consumes = MediaType.APPLICATION_JSON_VALUE)
     public JwtView login(@Valid @RequestBody UserCredentialsView credentials) {
         final Boolean isAuthenticated =
-                tokensService.isUserAuthenticated(credentials.getPassword(), credentials.getEmail());
+                tokensService.isUserAuthenticated(credentials.getEmail(), credentials.getPassword());
 
         if (!isAuthenticated) {
             throw new BadCredentialsException("Incorrect email or password");

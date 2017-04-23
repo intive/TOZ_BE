@@ -4,7 +4,6 @@ import com.intive.patronage.toz.schedule.model.db.ScheduleReservation;
 import com.intive.patronage.toz.schedule.model.view.ReservationRequestView;
 import com.intive.patronage.toz.schedule.model.view.ReservationResponseView;
 import com.intive.patronage.toz.users.model.db.User;
-import com.intive.patronage.toz.users.model.enumerations.Role;
 import com.tngtech.java.junit.dataprovider.DataProvider;
 
 import java.time.LocalDate;
@@ -24,7 +23,7 @@ public class ScheduleDataProvider {
     private static final UUID OWNER_UUID = UUID.randomUUID();
     private static final Long EXAMPLE_TIMESTAMP = 1490134074968L;
     private static final String EXAMPLE_NAME = "name";
-    static final User EXAMPLE_USER = new User(null, null,EXAMPLE_NAME, EXAMPLE_NAME, Role.VOLUNTEER);
+    static final User EXAMPLE_USER = new User(EXAMPLE_NAME, null, null, null, null, null);
 
     @DataProvider
     public static Object[] getReservationRequestView() {
@@ -45,7 +44,7 @@ public class ScheduleDataProvider {
         view.setEndTime(VALID_LOCAL_TIME);
         view.setOwnerId(UUID.randomUUID());
         view.setOwnerSurname("string");
-        view.setOwnerForename("string");
+        view.setOwnerName("string");
         view.setCreated(EXAMPLE_TIMESTAMP);
         view.setLastModified(EXAMPLE_TIMESTAMP);
         return new ReservationResponseView[]{view};

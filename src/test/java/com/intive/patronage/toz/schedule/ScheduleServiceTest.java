@@ -82,7 +82,7 @@ public class ScheduleServiceTest {
                 .thenReturn(returnReservation);
         ReservationResponseView foundScheduleReservationResponseView =
                 scheduleService.findReservation(UUID.randomUUID());
-        assertThat(foundScheduleReservationResponseView.getOwnerForename()).isEqualTo(EXAMPLE_USER.getForename());
+        assertThat(foundScheduleReservationResponseView.getOwnerName()).isEqualTo(EXAMPLE_USER.getName());
         assertThat(foundScheduleReservationResponseView.getOwnerSurname()).isEqualTo(EXAMPLE_USER.getSurname());
         assertThat(foundScheduleReservationResponseView.getDate()).isEqualTo(reservationRequestView.getDate());
         assertThat(foundScheduleReservationResponseView.getStartTime()).isEqualTo(reservationRequestView.getStartTime());
@@ -108,7 +108,7 @@ public class ScheduleServiceTest {
         when(userRepository.exists(any(UUID.class))).thenReturn(true);
         ReservationResponseView updatedReservationResponseView =
                 scheduleService.updateReservation(UUID.randomUUID(), reservationRequestView);
-        assertThat(updatedReservationResponseView.getOwnerForename()).isEqualTo(EXAMPLE_USER.getForename());
+        assertThat(updatedReservationResponseView.getOwnerName()).isEqualTo(EXAMPLE_USER.getName());
         assertThat(updatedReservationResponseView.getOwnerSurname()).isEqualTo(EXAMPLE_USER.getSurname());
         assertThat(updatedReservationResponseView.getDate()).isEqualTo(reservationRequestView.getDate());
         assertThat(updatedReservationResponseView.getStartTime()).isEqualTo(reservationRequestView.getStartTime());
@@ -136,7 +136,7 @@ public class ScheduleServiceTest {
         when(userRepository.exists(any(UUID.class))).thenReturn(true);
         ReservationResponseView createdScheduleReservation =
                 scheduleService.makeReservation(reservationRequestView);
-        assertThat(createdScheduleReservation.getOwnerForename()).isEqualTo(EXAMPLE_USER.getForename());
+        assertThat(createdScheduleReservation.getOwnerName()).isEqualTo(EXAMPLE_USER.getName());
         assertThat(createdScheduleReservation.getOwnerSurname()).isEqualTo(EXAMPLE_USER.getSurname());
         assertThat(createdScheduleReservation.getDate()).isEqualTo(reservationRequestView.getDate());
         assertThat(createdScheduleReservation.getStartTime()).isEqualTo(reservationRequestView.getStartTime());
@@ -162,7 +162,7 @@ public class ScheduleServiceTest {
         when(reservationRepository.findOne(any(UUID.class))).thenReturn(returnReservation);
         doNothing().when(reservationRepository).delete(any(UUID.class));
         ReservationResponseView deletedReservationResponseView = scheduleService.removeReservation(UUID.randomUUID());
-        assertThat(deletedReservationResponseView.getOwnerForename()).isEqualTo(EXAMPLE_USER.getForename());
+        assertThat(deletedReservationResponseView.getOwnerName()).isEqualTo(EXAMPLE_USER.getName());
         assertThat(deletedReservationResponseView.getOwnerSurname()).isEqualTo(EXAMPLE_USER.getSurname());
         assertThat(deletedReservationResponseView.getDate()).isEqualTo(reservationRequestView.getDate());
         assertThat(deletedReservationResponseView.getStartTime()).isEqualTo(reservationRequestView.getStartTime());
