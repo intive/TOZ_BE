@@ -27,21 +27,19 @@ public class UserActivationServiceTest {
     private static final String USER_EMAIL = "email@email.com";
     private static final String USER_FORENAME = "firstname";
     private static final String USER_SURNAME = "lastname";
-    private static final String USER_PASSWORD = "password";
-
+    private static final long EXPIRATION_TIME = 100000;
     @Rule
     public final ExpectedException exception = ExpectedException.none();
     @Before
     public void setUp() throws Exception {
         MockitoAnnotations.initMocks(this);
-        userActivationService = new UserActivationService(userRepository, 100000, SECRET );
+        userActivationService = new UserActivationService(userRepository, EXPIRATION_TIME, SECRET );
     }
 
     @DataProvider
     public static Object[] getProperUser() {
         User user = new User();
         user.setEmail(USER_EMAIL);
-        user.setPassword(USER_PASSWORD);
         user.setForename(USER_FORENAME);
         user.setSurname(USER_SURNAME);
         return new User[]{user};
@@ -61,7 +59,6 @@ public class UserActivationServiceTest {
         User userToCompare = userActivationService.checkActivationToken(token);
 
         assertTrue(userToCompare.getEmail().equals(USER_EMAIL));
-        assertTrue(userToCompare.getPassword().equals(USER_PASSWORD));
         assertTrue(userToCompare.getSurname().equals(USER_SURNAME));
         assertTrue(userToCompare.getForename().equals(USER_FORENAME));
     }

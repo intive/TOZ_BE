@@ -29,6 +29,21 @@ public class UserActivationService {
     private UserRepository userRepository;
 
 
+    private Jws<Claims> parseToken(String token){
+        Jws<Claims> claims;
+        try {
+            claims = Jwts.parser()
+                    .setSigningKey(TextCodec.BASE64.decode(secret))
+                    .parseClaimsJws(token);
+        } catch (UnsupportedJwtException | MalformedJwtException | IllegalArgumentException e) {
+            throw new JwtAuthenticationException("Invalid token");
+        } catch (SignatureException e) {
+            throw new JwtAuthenticationException("Invalid signature");
+        } catch (ExpiredJwtException e) {
+            throw new JwtAuthenticationException("Token expired");
+        }
+        return claims;
+    }
     @Autowired
     public UserActivationService(
             UserRepository userRepository,
@@ -45,7 +60,6 @@ public class UserActivationService {
                 .claim(EMAIL_CLAIM_NAME, user.getEmail())
                 .claim(FORENAME_CLAIM_NAME, user.getForename())
                 .claim(SURNAME_CLAIM_NAME, user.getSurname())
-                .claim(PASSWORD_CLAIM_NAME, user.getPassword())
                 .setIssuedAt(new Date(Instant.now().toEpochMilli()))
                 .setExpiration(new Date(Instant.now().plus(expirationTime, ChronoUnit.MINUTES).toEpochMilli()))
                 .signWith(SignatureAlgorithm.HS512, TextCodec.BASE64.decode(secret))
@@ -53,27 +67,17 @@ public class UserActivationService {
     }
     public User checkActivationToken(String token) {
 
-        Jws<Claims> claims;
-        try {
-            claims = Jwts.parser()
-                    .setSigningKey(TextCodec.BASE64.decode(secret))
-                    .parseClaimsJws(token);
-        } catch (UnsupportedJwtException | MalformedJwtException | IllegalArgumentException e) {
-            throw new JwtAuthenticationException("Invalid token");
-        } catch (SignatureException e) {
-            throw new JwtAuthenticationException("Invalid signature");
-        } catch (ExpiredJwtException e) {
-            throw new JwtAuthenticationException("Token expired");
-        }
+        Jws<Claims> claims = parseToken(token);
+
         if (userRepository.findByEmail(claims.getBody().get(EMAIL_CLAIM_NAME, String.class)) != null){
             throw new JwtAuthenticationException("User alread exists");
         }
         User user = new User();
         user.setEmail(claims.getBody().get(EMAIL_CLAIM_NAME, String.class));
-        user.setPassword(claims.getBody().get(PASSWORD_CLAIM_NAME, String.class));
         user.setForename(claims.getBody().get(FORENAME_CLAIM_NAME, String.class));
         user.setSurname(claims.getBody().get(SURNAME_CLAIM_NAME, String.class));
 
         return user;
     }
+
 }
