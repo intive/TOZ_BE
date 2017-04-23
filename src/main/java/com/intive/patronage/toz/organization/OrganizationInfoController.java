@@ -11,6 +11,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
 
@@ -28,20 +29,23 @@ class OrganizationInfoController {
         this.organizationInfoService = organizationInfoService;
     }
 
-    @ApiOperation("Get organization information")
+    @ApiOperation(value = "Get organization information", notes =
+            "Required roles: SA, TOZ, VOLUNTEER, ANONYMOUS.")
     @ApiResponses(value = {
             @ApiResponse(code = 404, message = "Organization not found",
                     response = ErrorResponse.class)
     })
     @GetMapping
     @ResponseStatus(HttpStatus.OK)
+    @PreAuthorize("hasAnyAuthority('SA', 'TOZ', 'VOLUNTEER', 'ANONYMOUS')")
     public ResponseEntity<OrganizationInfoView> readOrganizationInfo() {
         final OrganizationInfoView info = organizationInfoService.findOrganizationInfo();
         return ResponseEntity.ok()
                 .body(info);
     }
 
-    @ApiOperation("Create organization information")
+    @ApiOperation(value = "Create organization information", notes =
+            "Required roles: SA, TOZ.")
     @ApiResponses(value = {
             @ApiResponse(code = 400, message = "Bad Request",
                     response = ValidationErrorResponse.class),
@@ -50,6 +54,7 @@ class OrganizationInfoController {
     })
     @PostMapping(consumes = MediaType.APPLICATION_JSON_VALUE)
     @ResponseStatus(HttpStatus.CREATED)
+    @PreAuthorize("hasAnyAuthority('SA', 'TOZ')")
     public ResponseEntity<OrganizationInfoView> createOrganizationInfo(@Valid @RequestBody OrganizationInfoView info) {
         final OrganizationInfoView createdInfo = organizationInfoService.createOrganizationInfo(info);
         final URI location = ServletUriComponentsBuilder.fromCurrentRequest()
@@ -59,7 +64,8 @@ class OrganizationInfoController {
                 .body(createdInfo);
     }
 
-    @ApiOperation("Update organization information")
+    @ApiOperation(value = "Update organization information", notes =
+            "Required roles: SA, TOZ.")
     @ApiResponses(value = {
             @ApiResponse(code = 400, message = "Bad Request",
                     response = ValidationErrorResponse.class),
@@ -68,6 +74,7 @@ class OrganizationInfoController {
     })
     @PutMapping(consumes = MediaType.APPLICATION_JSON_VALUE)
     @ResponseStatus(HttpStatus.CREATED)
+    @PreAuthorize("hasAnyAuthority('SA', 'TOZ')")
     public ResponseEntity<OrganizationInfoView> updateOrganizationInfo(@Valid @RequestBody OrganizationInfoView info) {
         final OrganizationInfoView updatedInfo = organizationInfoService.updateOrganizationInfo(info);
         final URI location = ServletUriComponentsBuilder.fromCurrentRequest()
