@@ -11,6 +11,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
 import org.springframework.web.util.UriComponentsBuilder;
@@ -35,18 +36,22 @@ public class UsersController {
         this.userService = userService;
     }
 
-    @ApiOperation(value = "Get all users", responseContainer = "List")
+    @ApiOperation(value = "Get all users", responseContainer = "List", notes =
+            "Required roles: SA, TOZ.")
     @GetMapping
+    @PreAuthorize("hasAnyAuthority('SA', 'TOZ')")
     public List<UserView> getAllUsers() {
         final List<User> users = userService.findAll();
         return ModelMapper.convertToView(users, UserView.class);
     }
 
-    @ApiOperation(value = "Get user by id")
+    @ApiOperation(value = "Get user by id", notes =
+            "Required roles: SA, TOZ.")
     @ApiResponses(value = {
             @ApiResponse(code = 404, message = "User not found", response = ErrorResponse.class),
     })
     @GetMapping(value = "/{id}")
+    @PreAuthorize("hasAnyAuthority('SA', 'TOZ')")
     public UserView getUserById(@ApiParam(required = true) @PathVariable UUID id) {
         final User user = userService.findOneById(id);
         return convertToView(user);
@@ -57,11 +62,13 @@ public class UsersController {
     }
 
     @ResponseStatus(HttpStatus.CREATED)
-    @ApiOperation(value = "Create new user", response = UserView.class)
+    @ApiOperation(value = "Create new user", response = UserView.class, notes =
+            "Required roles: SA, TOZ.")
     @ApiResponses(value = {
             @ApiResponse(code = 400, message = "Bad request", response = ValidationErrorResponse.class)
     })
     @PostMapping(consumes = MediaType.APPLICATION_JSON_VALUE)
+    @PreAuthorize("hasAnyAuthority('SA', 'TOZ')")
     public ResponseEntity<UserView> createUser(@Valid @RequestBody UserView userView) {
         final User createdUser = userService.createWithPassword(convertToModel(userView), userView.getPassword());
         final UserView createdUserView = convertToView(createdUser);
@@ -76,22 +83,26 @@ public class UsersController {
         return ModelMapper.convertToModel(userView, User.class);
     }
 
-    @ApiOperation("Delete user")
+    @ApiOperation(value = "Delete user", notes =
+            "Required roles: SA, TOZ.")
     @ApiResponses(value = {
             @ApiResponse(code = 404, message = "User not found", response = ErrorResponse.class)
     })
     @DeleteMapping(value = "/{id}")
+    @PreAuthorize("hasAnyAuthority('SA', 'TOZ')")
     public ResponseEntity<?> deleteUser(@PathVariable UUID id) {
         userService.delete(id);
         return ResponseEntity.ok().build();
     }
 
-    @ApiOperation(value = "Update user information", response = UserView.class)
+    @ApiOperation(value = "Update user information", response = UserView.class, notes =
+            "Required roles: SA, TOZ.")
     @ApiResponses(value = {
             @ApiResponse(code = 404, message = "User not found", response = ErrorResponse.class),
             @ApiResponse(code = 400, message = "Bad request", response = ValidationErrorResponse.class)
     })
     @PutMapping(value = "/{id}", consumes = MediaType.APPLICATION_JSON_VALUE)
+    @PreAuthorize("hasAnyAuthority('SA', 'TOZ')")
     public UserView updateUser(@PathVariable UUID id, @Valid @RequestBody UserView userView) {
         final User user = convertToModel(userView);
         return convertToView(userService.update(id, user));
