@@ -45,6 +45,7 @@ public class ScheduleControllerTest {
     private static final MediaType CONTENT_TYPE = MediaType.APPLICATION_JSON_UTF8;
     private static final String VALID_LOCAL_DATE_TO = "2017-12-01";
     private static final LocalDate PAST_LOCAL_DATE = LocalDate.now().minusDays(3);
+    private static final String ID_PARAM = "id";
 
     private MockMvc mvc;
     @Mock
@@ -93,7 +94,7 @@ public class ScheduleControllerTest {
         when(userRepository.findOne(any(UUID.class)))
                 .thenReturn(EXAMPLE_USER);
         mvc.perform(get(String.format("%s/%s", SCHEDULE_PATH, UUID.randomUUID().toString()))
-                .param("id", VALID_LOCAL_DATE_TO))
+                .param(ID_PARAM, VALID_LOCAL_DATE_TO))
                 .andExpect(status().isOk());
 
         verify(scheduleService, times(1)).findReservation(any(UUID.class));
@@ -115,7 +116,7 @@ public class ScheduleControllerTest {
         view.setOwnerId(UUID.randomUUID());
         view.setEndTime(VALID_LOCAL_TIME);
         mvc.perform(post(String.format("%s", SCHEDULE_PATH))
-                .param("id", UUID.randomUUID().toString())
+                .param(ID_PARAM, UUID.randomUUID().toString())
                 .contentType(CONTENT_TYPE)
                 .content(objectMapper.writeValueAsString(view)))
                 .andExpect(status().isCreated());
@@ -140,7 +141,7 @@ public class ScheduleControllerTest {
         view.setOwnerId(UUID.randomUUID());
         view.setEndTime(VALID_LOCAL_TIME);
         mvc.perform(put(String.format("%s/%s", SCHEDULE_PATH, UUID.randomUUID().toString()))
-                .param("id", UUID.randomUUID().toString())
+                .param(ID_PARAM, UUID.randomUUID().toString())
                 .contentType(CONTENT_TYPE)
                 .content(objectMapper.writeValueAsString(view)))
                 .andExpect(status().isCreated());
@@ -159,7 +160,7 @@ public class ScheduleControllerTest {
         when(userRepository.findOne(any(UUID.class)))
                 .thenReturn(EXAMPLE_USER);
         mvc.perform(delete(String.format("%s/%s", SCHEDULE_PATH, UUID.randomUUID().toString()))
-                .param("id", UUID.randomUUID().toString())
+                .param(ID_PARAM, UUID.randomUUID().toString())
                 .contentType(CONTENT_TYPE))
                 .andExpect(status().isOk());
 
@@ -211,7 +212,7 @@ public class ScheduleControllerTest {
     public void shouldReturnBadRequestWhenDateInPast(ReservationRequestView reservationRequestView) throws Exception {
         reservationRequestView.setDate(PAST_LOCAL_DATE);
         mvc.perform(post(String.format("%s", SCHEDULE_PATH))
-                .param("id", UUID.randomUUID().toString())
+                .param(ID_PARAM, UUID.randomUUID().toString())
                 .contentType(CONTENT_TYPE)
                 .content(objectMapper.writeValueAsString(reservationRequestView)))
                 .andExpect(status().isBadRequest());
