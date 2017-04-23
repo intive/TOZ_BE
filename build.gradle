@@ -87,39 +87,6 @@ dependencies {
         exclude module: "spring-boot-starter-tomcat"
     }
 
-  compile("org.springframework.boot:spring-boot-starter-jetty")
-	compile('org.springframework.boot:spring-boot-starter-actuator')
-	compile('org.springframework.boot:spring-boot-starter-data-jpa')
-	compile('org.springframework.boot:spring-boot-starter-mail')
-	compile('org.springframework.boot:spring-boot-starter-security')
-	compile('org.liquibase:liquibase-core')
-	compile('org.projectlombok:lombok')
-	compile('com.fasterxml.jackson.datatype:jackson-datatype-jsr310')
-	compile group: 'org.apache.commons', name: 'commons-lang3', version: '3.5'
-
-	compile group: 'io.springfox', name: 'springfox-swagger2', version: '2.6.1'
-	compile group: 'io.springfox', name: 'springfox-swagger-ui', version: '2.6.1'
-
-	compile('com.github.jknack:handlebars:4.0.6')
-	compile('com.github.jknack:handlebars-guava-cache:4.0.6')
-	compile group: 'com.github.jknack', name: 'handlebars-jackson2', version: '4.0.6'
-
-	compile project(':iban-validator')
-
-	testCompile('org.springframework.boot:spring-boot-starter-test')
-	testCompile group: 'com.tngtech.java', name: 'junit-dataprovider', version: '1.12.0'
-
-	runtime('org.springframework.boot:spring-boot-devtools')
-	runtime('com.h2database:h2')
-	runtime('org.postgresql:postgresql')
-
-	configurations.all {
-		resolutionStrategy.eachDependency { DependencyResolveDetails details ->
-			if (details.requested.group == 'org.springframework.boot' && details.requested.name == 'spring-boot-starter-logging') {
-				details.useTarget group: details.requested.group, name: 'spring-boot-starter-log4j2', version: details.requested.version
-			}
-		}
-	}
     compile 'org.springframework.boot:spring-boot-starter-jetty'
     compile 'org.springframework.boot:spring-boot-starter-actuator'
     compile 'org.springframework.boot:spring-boot-starter-data-jpa'
