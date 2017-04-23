@@ -54,13 +54,13 @@ public class ControllerExceptionHandler {
     @ResponseStatus(value = HttpStatus.INTERNAL_SERVER_ERROR)
     @ResponseBody
     public String handleRuntimeException(RuntimeException e) {
-        StringWriter stringWriterStackTrace = new StringWriter();
-        e.printStackTrace(new PrintWriter(stringWriterStackTrace));
+        StringWriter stackTraceWriter = new StringWriter();
+        e.printStackTrace(new PrintWriter(stackTraceWriter));
         String errorLog =
                 String.format("%s, ID: %s, %s",
                         e.getMessage(),
                         UUID.randomUUID().toString(),
-                        stringWriterStackTrace.toString());
+                        stackTraceWriter.toString());
         logger.error(errorLog);
         return errorLog;
     }
