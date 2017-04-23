@@ -42,10 +42,14 @@ public class UserService {
     }
 
     public User findOneByName(String name) {
-        if (!userRepository.existsByName(name)) {
+        if (!existsByName(name)) {
             throw new NotFoundException(USER);
         }
         return userRepository.findByName(name);
+    }
+
+    public boolean existsByName(String name) {
+        return userRepository.existsByName(name);
     }
 
     List<User> findAll() {

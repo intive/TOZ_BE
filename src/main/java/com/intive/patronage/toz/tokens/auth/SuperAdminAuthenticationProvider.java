@@ -32,6 +32,9 @@ public class SuperAdminAuthenticationProvider implements AuthenticationProvider 
     @Override
     public Authentication authenticate(Authentication authentication) throws AuthenticationException {
         final String name = authentication.getName();
+        if (!userService.existsByName(name)) {
+            throw new BadCredentialsException(BAD_CREDENTIALS_MESSAGE);
+        }
         final User user = userService.findOneByName(name);
         if (user.isSuperAdmin()) {
             checkPasswordMatching(authentication, user);
