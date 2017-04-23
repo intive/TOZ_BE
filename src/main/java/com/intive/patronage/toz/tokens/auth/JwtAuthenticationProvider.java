@@ -37,7 +37,7 @@ public class JwtAuthenticationProvider implements AuthenticationProvider {
 
         if (token == null) {
             List<GrantedAuthority> authorities =
-                    Collections.singletonList(new SimpleGrantedAuthority(User.Role.ANONYMOUS.toString())); // TODO
+                    Collections.singletonList(new SimpleGrantedAuthority(User.Role.ANONYMOUS.toString()));
             return new JwtAuthenticationToken(null, authorities);
         }
 

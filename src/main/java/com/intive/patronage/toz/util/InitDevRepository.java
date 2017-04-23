@@ -10,6 +10,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.CommandLineRunner;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Profile;
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Component;
 
 import java.util.Random;
@@ -30,6 +31,9 @@ class InitDevRepository {
 
     @Autowired
     private UserRepository userRepository;
+
+    @Autowired
+    private PasswordEncoder passwordEncoder;
 
     @Bean
     public CommandLineRunner initDevDatabase() {
@@ -81,12 +85,13 @@ class InitDevRepository {
         return news;
     }
 
-    private static User createUserWithRole(User.Role role, int value) {
+    private User createUserWithRole(User.Role role, int value) {
         final String roleString = role.toString();
         final User user = new User();
-        user.setName(String.format("%s_name_%d", roleString, value));
+        final String name = String.format("%s_name_%d", roleString, value);
+        user.setName(name);
         user.setSurname(String.format("%s_surname_%d", roleString, value));
-        user.setPasswordHash(String.format("%s_passwordHash_%d", roleString, value));
+        user.setPasswordHash(passwordEncoder.encode(name));
         user.setEmail(String.format("%s_user%d.email@gmail.com", roleString, value));
         user.setPhoneNumber(getRandomPhoneNumber());
         user.addRole(role);

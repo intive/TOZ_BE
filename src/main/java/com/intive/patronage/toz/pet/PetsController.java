@@ -49,7 +49,7 @@ class PetsController {
     @ApiOperation(value = "Get all pets", responseContainer = "List")
     @GetMapping
     public List<PetView> getAllPets(@RequestParam(value = "admin", required = false) boolean isAdmin) {
-        if (isAdmin) { // TODO
+        if (isAdmin) { // TODO: implement with task 230
             final List<Pet> pets = petsService.findAllPets();
             return ModelMapper.convertToView(pets, PetView.class);
         }
