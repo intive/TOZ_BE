@@ -11,6 +11,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
 
@@ -30,11 +31,15 @@ class NewsController {
         this.newsService = newsService;
     }
 
-    @ApiOperation(value = "Get all news.", responseContainer = "List")
+    @ApiOperation(value = "Get all news.", responseContainer = "List", notes =
+            "Required roles: SA, TOZ, VOLUNTEER, ANONYMOUS for RELEASED type, or " +
+                    "SA, TOZ for other types.")
     @ApiResponses(value = {
             @ApiResponse(code = 422, message = "Unprocessable entity.", response = ErrorResponse.class)
     })
     @GetMapping
+    @PreAuthorize("hasAnyAuthority('SA', 'TOZ') or " +
+            "(hasAnyAuthority('SA', 'TOZ', 'VOLUNTEER', 'ANONYMOUS') and #type == 'RELEASED')")
     public ResponseEntity<List<NewsView>> getAllNews(
             @ApiParam(allowableValues = "ARCHIVED, RELEASED, UNRELEASED")
             @RequestParam(value = "type", required = false) String type,
@@ -44,22 +49,26 @@ class NewsController {
         return ResponseEntity.ok().body(ModelMapper.convertToView(newsList, NewsView.class));
     }
 
-    @ApiOperation(value = "Get news by id.")
+    @ApiOperation(value = "Get news by id.", notes =
+            "Required roles: SA, TOZ.")
     @ApiResponses(value = {
             @ApiResponse(code = 404, message = "News not found.", response = ErrorResponse.class),
     })
     @GetMapping(value = "/{id}")
+    @PreAuthorize("hasAnyAuthority('SA', 'TOZ')")
     public ResponseEntity<NewsView> getNewsById(@PathVariable UUID id) {
         return ResponseEntity.ok().
                 body(ModelMapper.convertToView(newsService.findById(id), NewsView.class));
     }
 
-    @ApiOperation(value = "Create news.", response = NewsView.class)
+    @ApiOperation(value = "Create news.", response = NewsView.class, notes =
+            "Required roles: SA, TOZ.")
     @ApiResponses(value = {
             @ApiResponse(code = 400, message = "Bad request.", response = ValidationErrorResponse.class)
     })
     @ResponseStatus(HttpStatus.CREATED)
     @PostMapping(consumes = MediaType.APPLICATION_JSON_VALUE)
+    @PreAuthorize("hasAnyAuthority('SA', 'TOZ')")
     public ResponseEntity<NewsView> createNews(@Valid @RequestBody NewsView newsView) {
         final URI baseLocation = ServletUriComponentsBuilder.fromCurrentRequest()
                 .build().toUri();
@@ -67,23 +76,27 @@ class NewsController {
                 .body(ModelMapper.convertToView(newsService.createNews(convertFromView(newsView)), NewsView.class));
     }
 
-    @ApiOperation("Delete news.")
+    @ApiOperation(value = "Delete news.", notes =
+            "Required roles: SA, TOZ.")
     @ApiResponses(value = {
             @ApiResponse(code = 404, message = "News not found.", response = ErrorResponse.class)
     })
     @DeleteMapping(value = "/{id}")
+    @PreAuthorize("hasAnyAuthority('SA', 'TOZ')")
     public ResponseEntity<?> deleteNewsById(@PathVariable UUID id) {
         newsService.deleteNews(id);
         return ResponseEntity.ok().build();
     }
 
-    @ApiOperation(value = "Update news.", response = NewsView.class)
+    @ApiOperation(value = "Update news.", response = NewsView.class, notes =
+            "Required roles: SA, TOZ.")
     @ApiResponses(value = {
             @ApiResponse(code = 404, message = "News not found.", response = ErrorResponse.class),
             @ApiResponse(code = 400, message = "Bad request.", response = ValidationErrorResponse.class)
     })
     @ResponseStatus(HttpStatus.CREATED)
     @PutMapping(value = "/{id}", consumes = MediaType.APPLICATION_JSON_VALUE)
+    @PreAuthorize("hasAnyAuthority('SA', 'TOZ')")
     public ResponseEntity<NewsView> updateNews(@PathVariable UUID id, @Valid @RequestBody NewsView newsView) {
         final URI baseLocation = ServletUriComponentsBuilder.fromCurrentRequest()
                 .build().toUri();
