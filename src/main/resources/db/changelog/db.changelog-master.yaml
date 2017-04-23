@@ -207,7 +207,7 @@ databaseChangeLog:
                   type: varchar(255)
   - changeSet:
         id : 3
-        author: ppiotr191
+        author: marek.macko
         changes:
           - createTable:
               tableName: user
@@ -219,17 +219,45 @@ databaseChangeLog:
                       - primaryKey: true
                       - nullable: false
                 - column:
-                    name: email
+                    name: name
                     type: varchar(255)
                 - column:
-                    name: password
-                    type: varchar(255)
-                - column:
-                    name: forename
+                    name: password_hash
                     type: varchar(255)
                 - column:
                     name: surname
                     type: varchar(255)
                 - column:
+                    name: phone_number
+                    type: varchar(255)
+                - column:
+                    name: email
+                    type: varchar(255)
+                    constraints:
+                      - unique: true
+  - changeSet:
+        id : 4
+        author: marek.macko
+        changes:
+          - createTable:
+              tableName: role_entity
+              columns:
+                - column:
                     name: role
-                    type: varchar(16)
+                    type: varchar(255)
+                    constraints:
+                      - primaryKey: true
+                      - nullable: false
+          - createTable:
+              tableName: user_roles
+              columns:
+                - column:
+                    name: user_id
+                    type: uuid
+                    constraints:
+                      - nullable: false
+                - column:
+                    name: roles_role
+                    type: varchar(255)
+                    constraints:
+                      - nullable: false

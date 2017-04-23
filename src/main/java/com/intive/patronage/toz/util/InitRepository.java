@@ -1,66 +1,36 @@
 package com.intive.patronage.toz.util;
 
-import com.intive.patronage.toz.news.NewsRepository;
-import com.intive.patronage.toz.news.model.db.News;
-import com.intive.patronage.toz.pet.PetsRepository;
-import com.intive.patronage.toz.pet.model.db.Pet;
+import com.intive.patronage.toz.users.UserRepository;
+import com.intive.patronage.toz.users.model.db.RoleEntity;
+import com.intive.patronage.toz.users.model.db.User;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.boot.CommandLineRunner;
 import org.springframework.context.annotation.Bean;
-import org.springframework.context.annotation.Profile;
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Component;
 
+import java.util.Collections;
 
 @Component
-@Profile("dev")
 class InitRepository {
 
+    private static final String SUPER_ADMIN = "SA";
+
     @Autowired
-    private PetsRepository petsRepository;
+    private UserRepository userRepository;
+
     @Autowired
-    private NewsRepository newsRepository;
+    private PasswordEncoder passwordEncoder;
 
     @Bean
-    public CommandLineRunner initDatabase() {
+    public CommandLineRunner initDatabase(@Value("${super-admin.password}") String superAdminPassword) {
         return args -> {
-            for (int i = 0; i < 5; i++) {
-                Pet pet = createPetWithValue(i);
-                Pet emptyPet = createPetWithEmptyFields(i);
-                petsRepository.save(pet);
-                petsRepository.save(emptyPet);
-
-                News news = createNewsWithValue(i);
-                newsRepository.save(news);
-            }
+            final User superAdmin = new User();
+            superAdmin.setName(SUPER_ADMIN);
+            superAdmin.setRoles(Collections.singleton(new RoleEntity(User.Role.SA.toString())));
+            superAdmin.setPasswordHash(passwordEncoder.encode(superAdminPassword));
+            userRepository.save(superAdmin);
         };
-    }
-
-    private static Pet createPetWithValue(int value) {
-        Pet pet = new Pet();
-        pet.setName("Name:" + value);
-        Pet.Type[] types = Pet.Type.values();
-        Pet.Sex[] sexes = Pet.Sex.values();
-        pet.setType(types[value % types.length]);
-        pet.setSex(sexes[value % sexes.length]);
-        pet.setDescription("description:" + value);
-        pet.setAddress("address:" + value);
-        return pet;
-    }
-
-    private static Pet createPetWithEmptyFields(int value) {
-        Pet pet = new Pet();
-        Pet.Type[] types = Pet.Type.values();
-        pet.setType(types[value % types.length]);
-        return pet;
-    }
-
-    private static News createNewsWithValue(int value) {
-        News news = new News();
-        news.setTitle("Title:" + value);
-        News.Type[] newsTypes = News.Type.values();
-        news.setType(newsTypes[value % newsTypes.length]);
-        news.setContents("contents:" + value);
-        news.setPhotoUrl("photo:" + value);
-        return news;
     }
 }

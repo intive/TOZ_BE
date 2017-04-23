@@ -20,11 +20,9 @@ class TokensService {
         this.jwtFactory = jwtFactory;
     }
 
-    boolean isUserAuthenticated(String plainPassword, String userEmail) {
+    boolean isUserAuthenticated(String userEmail, String plainPassword) {
         User userFromDatabase = userService.findOneByEmail(userEmail);
-        // TODO remove this line and uncomment line below when hashes of pass are stored in db
-        return plainPassword.matches(userFromDatabase.getPassword());
-        //return passwordEncoder.matches(plainPassword, userFromDatabase.getPassword());
+        return passwordEncoder.matches(plainPassword, userFromDatabase.getPasswordHash());
     }
 
     String getToken(String userEmail) {
