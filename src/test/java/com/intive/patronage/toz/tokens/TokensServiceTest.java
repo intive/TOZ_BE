@@ -1,6 +1,6 @@
 package com.intive.patronage.toz.tokens;
 
-import com.intive.patronage.toz.users.UserService;
+import com.intive.patronage.toz.users.UsersService;
 import com.intive.patronage.toz.users.model.db.User;
 import org.junit.Before;
 import org.junit.Test;
@@ -24,7 +24,7 @@ public class TokensServiceTest {
 
     private TokensService tokensService;
     @Mock
-    private UserService userService;
+    private UsersService usersService;
     @Mock
     private JwtFactory jwtFactory;
 
@@ -39,7 +39,7 @@ public class TokensServiceTest {
         random.nextBytes(new byte[20]);
         PasswordEncoder passwordEncoder = new BCryptPasswordEncoder(10, random);
 
-        tokensService = new TokensService(userService, passwordEncoder, jwtFactory);
+        tokensService = new TokensService(usersService, passwordEncoder, jwtFactory);
 
         user = new User();
         user.setEmail(EXPECTED_EMAIL);
@@ -48,7 +48,7 @@ public class TokensServiceTest {
 
     @Test
     public void login() throws Exception {
-        when(userService.findOneByEmail(EXPECTED_EMAIL)).thenReturn(user);
+        when(usersService.findOneByEmail(EXPECTED_EMAIL)).thenReturn(user);
         assertTrue(tokensService.isUserAuthenticated(EXPECTED_EMAIL, EXPECTED_PASSWORD_HASH));
     }
 

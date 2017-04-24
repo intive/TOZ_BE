@@ -2,7 +2,7 @@ package com.intive.patronage.toz.tokens;
 
 import com.intive.patronage.toz.environment.ApiProperties;
 import com.intive.patronage.toz.tokens.model.view.UserCredentialsView;
-import com.intive.patronage.toz.users.UserService;
+import com.intive.patronage.toz.users.UsersService;
 import com.intive.patronage.toz.users.model.db.User;
 import com.intive.patronage.toz.util.ModelMapper;
 import io.jsonwebtoken.Claims;
@@ -62,7 +62,7 @@ public class TokenControllerTest {
     private long expirationTime;
 
     @Autowired
-    private UserService userService;
+    private UsersService usersService;
 
     @Autowired
     private MockMvc mockMvc;
@@ -82,14 +82,14 @@ public class TokenControllerTest {
         user.addRole(ROLE);
         user.setEmail(EMAIL);
         user.setPasswordHash(passwordEncoder.encode(PASSWORD));
-        userService.createWithPassword(user, PASSWORD);
+        usersService.createWithPassword(user, PASSWORD);
 
         credentialsView = new UserCredentialsView(EMAIL, PASSWORD);
     }
 
     @After
     public void tearDown() throws Exception {
-        userService.delete(user.getId());
+        usersService.delete(user.getId());
     }
 
     @Test

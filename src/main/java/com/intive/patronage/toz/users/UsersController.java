@@ -28,17 +28,17 @@ import java.util.UUID;
 @RequestMapping(value = ApiUrl.ADMIN_USERS_PATH, produces = MediaType.APPLICATION_JSON_VALUE)
 public class UsersController {
 
-    private final UserService userService;
+    private final UsersService usersService;
 
     @Autowired
-    UsersController(UserService userService) {
-        this.userService = userService;
+    UsersController(UsersService usersService) {
+        this.usersService = usersService;
     }
 
     @ApiOperation(value = "Get all users", responseContainer = "List")
     @GetMapping
     public List<UserView> getAllUsers() {
-        final List<User> users = userService.findAll();
+        final List<User> users = usersService.findAll();
         return ModelMapper.convertToView(users, UserView.class);
     }
 
@@ -48,7 +48,7 @@ public class UsersController {
     })
     @GetMapping(value = "/{id}")
     public UserView getUserById(@ApiParam(required = true) @PathVariable UUID id) {
-        final User user = userService.findOneById(id);
+        final User user = usersService.findOneById(id);
         return convertToView(user);
     }
 
@@ -63,7 +63,7 @@ public class UsersController {
     })
     @PostMapping(consumes = MediaType.APPLICATION_JSON_VALUE)
     public ResponseEntity<UserView> createUser(@Valid @RequestBody UserView userView) {
-        final User createdUser = userService.createWithPassword(convertToModel(userView), userView.getPassword());
+        final User createdUser = usersService.createWithPassword(convertToModel(userView), userView.getPassword());
         final UserView createdUserView = convertToView(createdUser);
         final URI baseLocation = ServletUriComponentsBuilder.fromCurrentRequest()
                 .build().toUri();
@@ -82,7 +82,7 @@ public class UsersController {
     })
     @DeleteMapping(value = "/{id}")
     public ResponseEntity<?> deleteUser(@PathVariable UUID id) {
-        userService.delete(id);
+        usersService.delete(id);
         return ResponseEntity.ok().build();
     }
 
@@ -94,7 +94,7 @@ public class UsersController {
     @PutMapping(value = "/{id}", consumes = MediaType.APPLICATION_JSON_VALUE)
     public UserView updateUser(@PathVariable UUID id, @Valid @RequestBody UserView userView) {
         final User user = convertToModel(userView);
-        return convertToView(userService.update(id, user));
+        return convertToView(usersService.update(id, user));
     }
 
 }

@@ -11,14 +11,14 @@ import java.util.List;
 import java.util.UUID;
 
 @Service
-public class UserService {
+public class UsersService {
 
     private static final String USER = "User";
     private final UsersRepository usersRepository;
     private final PasswordEncoder passwordEncoder;
 
     @Autowired
-    UserService(UsersRepository usersRepository, PasswordEncoder passwordEncoder) {
+    UsersService(UsersRepository usersRepository, PasswordEncoder passwordEncoder) {
         this.usersRepository = usersRepository;
         this.passwordEncoder = passwordEncoder;
     }

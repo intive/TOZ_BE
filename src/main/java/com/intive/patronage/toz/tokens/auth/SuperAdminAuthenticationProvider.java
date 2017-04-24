@@ -1,6 +1,6 @@
 package com.intive.patronage.toz.tokens.auth;
 
-import com.intive.patronage.toz.users.UserService;
+import com.intive.patronage.toz.users.UsersService;
 import com.intive.patronage.toz.users.model.db.User;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.authentication.AuthenticationProvider;
@@ -20,22 +20,22 @@ import java.util.Collections;
 public class SuperAdminAuthenticationProvider implements AuthenticationProvider {
 
     private static final String BAD_CREDENTIALS_MESSAGE = "Wrong name or password!";
-    private final UserService userService;
+    private final UsersService usersService;
     private final PasswordEncoder passwordEncoder;
 
     @Autowired
-    public SuperAdminAuthenticationProvider(UserService userService, PasswordEncoder passwordEncoder) {
-        this.userService = userService;
+    public SuperAdminAuthenticationProvider(UsersService usersService, PasswordEncoder passwordEncoder) {
+        this.usersService = usersService;
         this.passwordEncoder = passwordEncoder;
     }
 
     @Override
     public Authentication authenticate(Authentication authentication) throws AuthenticationException {
         final String name = authentication.getName();
-        if (!userService.existsByName(name)) {
+        if (!usersService.existsByName(name)) {
             throw new BadCredentialsException(BAD_CREDENTIALS_MESSAGE);
         }
-        final User user = userService.findOneByName(name);
+        final User user = usersService.findOneByName(name);
         if (user.isSuperAdmin()) {
             checkPasswordMatching(authentication, user);
             final String superAdminRole = User.Role.SA.toString();
