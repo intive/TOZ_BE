@@ -4,73 +4,72 @@ import com.intive.patronage.toz.error.exception.AlreadyExistsException;
 import com.intive.patronage.toz.error.exception.NotFoundException;
 import com.intive.patronage.toz.users.model.db.User;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
 import java.util.UUID;
 
 @Service
-public class UsersService {
+public class UserService {
 
     private static final String USER = "User";
-    private final UsersRepository usersRepository;
+    private final UserRepository userRepository;
 
     @Autowired
-    UsersService(UsersRepository usersRepository) {
-        this.usersRepository = usersRepository;
+    UserService(UserRepository userRepository) {
+        this.userRepository = userRepository;
     }
 
     User findOneById(final UUID id) {
         throwNotFoundExceptionIfIdNotExists(id);
-        return usersRepository.findOne(id);
+        return userRepository.findOne(id);
     }
 
     private void throwNotFoundExceptionIfIdNotExists(final UUID id) {
-        if (!usersRepository.exists(id)) {
+        if (!userRepository.exists(id)) {
             throw new NotFoundException(USER);
         }
     }
 
     public User findOneByEmail(String email) {
-        if (!usersRepository.existsByEmail(email)) {
+        if (!userRepository.existsByEmail(email)) {
             throw new NotFoundException(USER);
         }
-        return usersRepository.findByEmail(email);
+        return userRepository.findByEmail(email);
     }
 
     public User findOneByName(String name) {
         if (!existsByName(name)) {
             throw new NotFoundException(USER);
         }
-        return usersRepository.findByName(name);
+        return userRepository.findByName(name);
     }
 
     public boolean existsByName(String name) {
-        return usersRepository.existsByName(name);
+        return userRepository.existsByName(name);
     }
 
     List<User> findAll() {
-        return usersRepository.findAll();
+        return userRepository.findAll();
     }
 
     public User createWithPasswordHash(final User user, final String passwordHash) {
         final String email = user.getEmail();
-        if (usersRepository.existsByEmail(email)) {
+        if (userRepository.existsByEmail(email)) {
             throw new AlreadyExistsException(USER);
         }
         user.setPasswordHash(passwordHash);
-        return usersRepository.save(user);
+        return userRepository.save(user);
     }
 
     public void delete(final UUID id) {
         throwNotFoundExceptionIfIdNotExists(id);
-        usersRepository.delete(id);
+        userRepository.delete(id);
     }
 
     User update(final UUID id, final User user) {
         throwNotFoundExceptionIfIdNotExists(id);
         user.setId(id);
-        return usersRepository.save(user);
+        return userRepository.save(user);
     }
 }

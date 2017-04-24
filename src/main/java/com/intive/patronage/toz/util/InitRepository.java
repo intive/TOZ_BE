@@ -1,6 +1,6 @@
 package com.intive.patronage.toz.util;
 
-import com.intive.patronage.toz.users.UsersRepository;
+import com.intive.patronage.toz.users.UserRepository;
 import com.intive.patronage.toz.users.model.db.RoleEntity;
 import com.intive.patronage.toz.users.model.db.User;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -18,7 +18,7 @@ class InitRepository {
     private static final String SUPER_ADMIN = "SA";
 
     @Autowired
-    private UsersRepository usersRepository;
+    private UserRepository userRepository;
 
     @Autowired
     private PasswordEncoder passwordEncoder;
@@ -30,7 +30,7 @@ class InitRepository {
             superAdmin.setName(SUPER_ADMIN);
             superAdmin.setRoles(Collections.singleton(new RoleEntity(User.Role.SA.toString())));
             superAdmin.setPasswordHash(passwordEncoder.encode(superAdminPassword));
-            usersRepository.save(superAdmin);
+            userRepository.save(superAdmin);
         };
     }
 }

@@ -33,7 +33,7 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
         webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT,
         properties = "jwt.secret-base64=c2VjcmV0"
 )
-public class UsersControllerTest {
+public class UserControllerTest {
 
     private static final int USERS_LIST_SIZE = 5;
     private static final UUID EXPECTED_ID = UUID.randomUUID();
@@ -47,7 +47,7 @@ public class UsersControllerTest {
     private static final MediaType CONTENT_TYPE = MediaType.APPLICATION_JSON_UTF8;
 
     @Mock
-    private UsersService usersService;
+    private UserService userService;
 
     @Mock
     private PasswordEncoder passwordEncoder;
@@ -57,8 +57,8 @@ public class UsersControllerTest {
     @Before
     public void setUp() throws Exception {
         MockitoAnnotations.initMocks(this);
-        final UsersController usersController = new UsersController(usersService, passwordEncoder);
-        mvc = MockMvcBuilders.standaloneSetup(usersController).build();
+        final UserController userController = new UserController(userService, passwordEncoder);
+        mvc = MockMvcBuilders.standaloneSetup(userController).build();
     }
 
     @DataProvider
@@ -96,15 +96,15 @@ public class UsersControllerTest {
     @Test
     public void getAllUsersOk() throws Exception {
         final List<User> users = getUsers();
-        when(usersService.findAll()).thenReturn(users);
+        when(userService.findAll()).thenReturn(users);
 
         mvc.perform(get(ApiUrl.ADMIN_USERS_PATH))
                 .andExpect(status().isOk())
                 .andExpect(content().contentType(CONTENT_TYPE))
                 .andExpect(jsonPath("$", hasSize(USERS_LIST_SIZE)));
 
-        verify(usersService, times(1)).findAll();
-        verifyNoMoreInteractions(usersService);
+        verify(userService, times(1)).findAll();
+        verifyNoMoreInteractions(userService);
     }
 
     @Test
@@ -112,7 +112,7 @@ public class UsersControllerTest {
     public void createUserOk(final User user, final UserView userView) throws Exception {
         final String userViewJsonString = ModelMapper.convertToJsonString(userView);
 
-        when(usersService.createWithPasswordHash(any(User.class), any(String.class))).thenReturn(user);
+        when(userService.createWithPasswordHash(any(User.class), any(String.class))).thenReturn(user);
         mvc.perform(post(ApiUrl.ADMIN_USERS_PATH)
                 .contentType(CONTENT_TYPE)
                 .content(userViewJsonString))
@@ -123,20 +123,20 @@ public class UsersControllerTest {
                 .andExpect(jsonPath("$.email", is(EXPECTED_EMAIL)))
                 .andExpect(jsonPath("$.roles[0]", is(EXPECTED_ROLE.toString())));
 
-        verify(usersService, times(1))
+        verify(userService, times(1))
                 .createWithPasswordHash(any(User.class), any(String.class));
-        verifyNoMoreInteractions(usersService);
+        verifyNoMoreInteractions(userService);
     }
 
     @Test
     public void deleteUserById() throws Exception {
         final UUID id = UUID.randomUUID();
-        doNothing().when(usersService).delete(id);
+        doNothing().when(userService).delete(id);
         mvc.perform(delete(String.format("%s/%s", ApiUrl.ADMIN_USERS_PATH, id)))
                 .andExpect(status().isOk());
 
-        verify(usersService, times(1)).delete(id);
-        verifyNoMoreInteractions(usersService);
+        verify(userService, times(1)).delete(id);
+        verifyNoMoreInteractions(userService);
     }
 
     @Test
@@ -144,13 +144,13 @@ public class UsersControllerTest {
     public void updateUser(final User user, final UserView userView) throws Exception {
         final String userJsonString = ModelMapper.convertToJsonString(userView);
 
-        when(usersService.update(eq(EXPECTED_ID), any(User.class))).thenReturn(user);
+        when(userService.update(eq(EXPECTED_ID), any(User.class))).thenReturn(user);
         mvc.perform(put(String.format("%s/%s", ApiUrl.ADMIN_USERS_PATH, EXPECTED_ID))
                 .contentType(CONTENT_TYPE)
                 .content(userJsonString))
                 .andExpect(status().isOk());
 
-        verify(usersService, times(1)).update(eq(EXPECTED_ID), any(User.class));
-        verifyNoMoreInteractions(usersService);
+        verify(userService, times(1)).update(eq(EXPECTED_ID), any(User.class));
+        verifyNoMoreInteractions(userService);
     }
 }

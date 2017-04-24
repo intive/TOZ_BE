@@ -4,7 +4,7 @@ import com.intive.patronage.toz.news.NewsRepository;
 import com.intive.patronage.toz.news.model.db.News;
 import com.intive.patronage.toz.pet.PetsRepository;
 import com.intive.patronage.toz.pet.model.db.Pet;
-import com.intive.patronage.toz.users.UsersRepository;
+import com.intive.patronage.toz.users.UserRepository;
 import com.intive.patronage.toz.users.model.db.User;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.CommandLineRunner;
@@ -30,7 +30,7 @@ class InitDevRepository {
     private NewsRepository newsRepository;
 
     @Autowired
-    private UsersRepository usersRepository;
+    private UserRepository userRepository;
 
     @Autowired
     private PasswordEncoder passwordEncoder;
@@ -48,10 +48,10 @@ class InitDevRepository {
                 newsRepository.save(news);
 
                 final User volunteer = createUserWithRole(User.Role.VOLUNTEER, i);
-                usersRepository.save(volunteer);
+                userRepository.save(volunteer);
 
                 final User toz = createUserWithRole(User.Role.TOZ, i);
-                usersRepository.save(toz);
+                userRepository.save(toz);
             }
         };
     }

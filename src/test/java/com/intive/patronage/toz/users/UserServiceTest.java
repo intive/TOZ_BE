@@ -25,7 +25,7 @@ import static org.mockito.Mockito.*;
 
 
 @RunWith(DataProviderRunner.class)
-public class UsersServiceTest {
+public class UserServiceTest {
     private static final UUID EXPECTED_ID = UUID.randomUUID();
     private static final String EXPECTED_NAME = "Johny";
     private static final String EXPECTED_PASSWORD_HASH = "a7sd6a7sd67asd";
@@ -33,18 +33,18 @@ public class UsersServiceTest {
     private static final User.Role EXPECTED_ROLE = User.Role.TOZ;
 
     @Mock
-    private UsersRepository usersRepository;
+    private UserRepository userRepository;
 
     @Mock
     private PasswordEncoder passwordEncoder;
 
     @Mock
-    private UsersService usersService;
+    private UserService userService;
 
     @Before
     public void setUp() throws Exception {
         MockitoAnnotations.initMocks(this);
-        usersService = new UsersService(usersRepository);
+        userService = new UserService(userRepository);
     }
 
     @DataProvider
@@ -60,78 +60,78 @@ public class UsersServiceTest {
 
     @Test
     public void findAllUsers() throws Exception {
-        when(usersRepository.findAll()).thenReturn(Collections.emptyList());
+        when(userRepository.findAll()).thenReturn(Collections.emptyList());
 
-        final List<User> users = usersService.findAll();
+        final List<User> users = userService.findAll();
         assertTrue(users.isEmpty());
     }
 
     @Test
     @UseDataProvider("getProperUser")
     public void findById(final User user) throws Exception {
-        when(usersRepository.exists(EXPECTED_ID)).thenReturn(true);
-        when(usersRepository.findOne(EXPECTED_ID)).thenReturn(user);
+        when(userRepository.exists(EXPECTED_ID)).thenReturn(true);
+        when(userRepository.findOne(EXPECTED_ID)).thenReturn(user);
 
-        final User dbUser = usersService.findOneById(EXPECTED_ID);
+        final User dbUser = userService.findOneById(EXPECTED_ID);
         assertEquals(EXPECTED_NAME, dbUser.getName());
         assertEquals(EXPECTED_PASSWORD_HASH, dbUser.getPasswordHash());
         assertEquals(EXPECTED_SURNAME, dbUser.getSurname());
         assertTrue(dbUser.hasRole(EXPECTED_ROLE));
 
-        verify(usersRepository, times(1)).exists(eq(EXPECTED_ID));
-        verify(usersRepository, times(1)).findOne(eq(EXPECTED_ID));
-        verifyNoMoreInteractions(usersRepository);
+        verify(userRepository, times(1)).exists(eq(EXPECTED_ID));
+        verify(userRepository, times(1)).findOne(eq(EXPECTED_ID));
+        verifyNoMoreInteractions(userRepository);
     }
 
     @Test(expected = NotFoundException.class)
     public void findByIdNotFoundException() throws Exception {
-        when(usersRepository.exists(EXPECTED_ID)).thenReturn(false);
-        usersService.findOneById(EXPECTED_ID);
+        when(userRepository.exists(EXPECTED_ID)).thenReturn(false);
+        userService.findOneById(EXPECTED_ID);
 
-        verify(usersRepository, times(1)).exists(eq(EXPECTED_ID));
-        verifyNoMoreInteractions(usersRepository);
+        verify(userRepository, times(1)).exists(eq(EXPECTED_ID));
+        verifyNoMoreInteractions(userRepository);
     }
 
     @Test
     @UseDataProvider("getProperUser")
     public void createUser(final User user) throws Exception {
-        when(usersRepository.save(any(User.class))).thenReturn(user);
+        when(userRepository.save(any(User.class))).thenReturn(user);
 
-        final User createdUser = usersService.createWithPasswordHash(user, EXPECTED_PASSWORD_HASH);
+        final User createdUser = userService.createWithPasswordHash(user, EXPECTED_PASSWORD_HASH);
         assertEquals(EXPECTED_NAME, createdUser.getName());
         assertEquals(EXPECTED_PASSWORD_HASH, createdUser.getPasswordHash());
         assertEquals(EXPECTED_SURNAME, createdUser.getSurname());
         assertTrue(createdUser.hasRole(EXPECTED_ROLE));
-        verify(usersRepository, times(1)).save(any(User.class));
-        verify(usersRepository, times(1)).existsByEmail(any(String.class));
-        verifyNoMoreInteractions(usersRepository);
+        verify(userRepository, times(1)).save(any(User.class));
+        verify(userRepository, times(1)).existsByEmail(any(String.class));
+        verifyNoMoreInteractions(userRepository);
     }
 
     @Test
     public void deleteUser() throws Exception {
-        when(usersRepository.exists(EXPECTED_ID)).thenReturn(true);
-        usersService.delete(EXPECTED_ID);
+        when(userRepository.exists(EXPECTED_ID)).thenReturn(true);
+        userService.delete(EXPECTED_ID);
 
-        verify(usersRepository, times(1)).exists(eq(EXPECTED_ID));
-        verify(usersRepository, times(1)).delete(eq(EXPECTED_ID));
-        verifyNoMoreInteractions(usersRepository);
+        verify(userRepository, times(1)).exists(eq(EXPECTED_ID));
+        verify(userRepository, times(1)).delete(eq(EXPECTED_ID));
+        verifyNoMoreInteractions(userRepository);
     }
 
     @Test(expected = NotFoundException.class)
     public void deleteUserNotFoundException() throws Exception {
-        when(usersRepository.exists(EXPECTED_ID)).thenReturn(false);
-        usersService.delete(EXPECTED_ID);
+        when(userRepository.exists(EXPECTED_ID)).thenReturn(false);
+        userService.delete(EXPECTED_ID);
 
-        verify(usersRepository, times(1)).exists(eq(EXPECTED_ID));
-        verifyNoMoreInteractions(usersRepository);
+        verify(userRepository, times(1)).exists(eq(EXPECTED_ID));
+        verifyNoMoreInteractions(userRepository);
     }
 
     @Test
     @UseDataProvider("getProperUser")
     public void updateUser(final User user) throws Exception {
-        when(usersRepository.exists(EXPECTED_ID)).thenReturn(true);
-        when(usersRepository.save(any(User.class))).thenReturn(user);
-        final User savedUser = usersService.update(EXPECTED_ID, user);
+        when(userRepository.exists(EXPECTED_ID)).thenReturn(true);
+        when(userRepository.save(any(User.class))).thenReturn(user);
+        final User savedUser = userService.update(EXPECTED_ID, user);
 
         assertEquals(EXPECTED_NAME, savedUser.getName());
         assertEquals(EXPECTED_PASSWORD_HASH, savedUser.getPasswordHash());
@@ -142,11 +142,11 @@ public class UsersServiceTest {
     @Test(expected = NotFoundException.class)
     @UseDataProvider("getProperUser")
     public void updateUserNotFoundException(final User user) throws Exception {
-        when(usersRepository.exists(EXPECTED_ID)).thenReturn(false);
-        usersService.update(EXPECTED_ID, user);
+        when(userRepository.exists(EXPECTED_ID)).thenReturn(false);
+        userService.update(EXPECTED_ID, user);
 
-        verify(usersRepository, times(1)).exists(eq(EXPECTED_ID));
-        verifyNoMoreInteractions(usersRepository);
+        verify(userRepository, times(1)).exists(eq(EXPECTED_ID));
+        verifyNoMoreInteractions(userRepository);
     }
 
 }

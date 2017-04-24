@@ -27,21 +27,21 @@ import java.util.UUID;
 @Api(description = "Operations for users resource")
 @RestController
 @RequestMapping(value = ApiUrl.ADMIN_USERS_PATH, produces = MediaType.APPLICATION_JSON_VALUE)
-public class UsersController {
+public class UserController {
 
-    private final UsersService usersService;
+    private final UserService userService;
     private final PasswordEncoder passwordEncoder;
 
     @Autowired
-    UsersController(UsersService usersService, PasswordEncoder passwordEncoder) {
-        this.usersService = usersService;
+    UserController(UserService userService, PasswordEncoder passwordEncoder) {
+        this.userService = userService;
         this.passwordEncoder = passwordEncoder;
     }
 
     @ApiOperation(value = "Get all users", responseContainer = "List")
     @GetMapping
     public List<UserView> getAllUsers() {
-        final List<User> users = usersService.findAll();
+        final List<User> users = userService.findAll();
         return ModelMapper.convertToView(users, UserView.class);
     }
 
@@ -51,7 +51,7 @@ public class UsersController {
     })
     @GetMapping(value = "/{id}")
     public UserView getUserById(@ApiParam(required = true) @PathVariable UUID id) {
-        final User user = usersService.findOneById(id);
+        final User user = userService.findOneById(id);
         return convertToView(user);
     }
 
@@ -67,7 +67,7 @@ public class UsersController {
     @PostMapping(consumes = MediaType.APPLICATION_JSON_VALUE)
     public ResponseEntity<UserView> createUser(@Valid @RequestBody UserView userView) {
         final String passwordHash = passwordEncoder.encode(userView.getPassword());
-        final User createdUser = usersService.createWithPasswordHash(convertToModel(userView), passwordHash);
+        final User createdUser = userService.createWithPasswordHash(convertToModel(userView), passwordHash);
         final UserView createdUserView = convertToView(createdUser);
         final URI baseLocation = ServletUriComponentsBuilder.fromCurrentRequest()
                 .build().toUri();
@@ -86,7 +86,7 @@ public class UsersController {
     })
     @DeleteMapping(value = "/{id}")
     public ResponseEntity<?> deleteUser(@PathVariable UUID id) {
-        usersService.delete(id);
+        userService.delete(id);
         return ResponseEntity.ok().build();
     }
 
@@ -98,7 +98,7 @@ public class UsersController {
     @PutMapping(value = "/{id}", consumes = MediaType.APPLICATION_JSON_VALUE)
     public UserView updateUser(@PathVariable UUID id, @Valid @RequestBody UserView userView) {
         final User user = convertToModel(userView);
-        return convertToView(usersService.update(id, user));
+        return convertToView(userService.update(id, user));
     }
 
 }
