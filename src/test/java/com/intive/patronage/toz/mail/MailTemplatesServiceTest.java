@@ -9,7 +9,8 @@ import org.springframework.test.context.junit4.SpringRunner;
 
 import java.io.IOException;
 
-import static org.junit.Assert.assertTrue;
+import static org.hamcrest.Matchers.containsString;
+import static org.junit.Assert.assertThat;
 
 @RunWith(SpringRunner.class)
 @SpringBootTest
@@ -23,6 +24,6 @@ public class MailTemplatesServiceTest {
     public void shouldReturnMailBody() throws IOException {
         String token = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiIxMjM0NTY3ODkwIiwibmFtZSI6IkpvaG4gRG9lIiwiYWRtaW4iOnRydWV9.TJVA95OrM7E2cBab30RMHrHDcEfxjoYZgeFONFh7HgQ";
         String mailBody = mailTemplatesService.getRegistrationTemplate("localhost", token);
-        assertTrue(mailBody.contains(String.format("?token=%s", token)));
+        assertThat(mailBody, containsString(String.format("?token=%s", token)));
     }
 }

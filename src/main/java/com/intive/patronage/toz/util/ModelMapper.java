@@ -1,6 +1,5 @@
 package com.intive.patronage.toz.util;
 
-import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.core.JsonGenerator;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.DeserializationFeature;
@@ -56,7 +55,7 @@ public class ModelMapper {
             throw new RuntimeException(e);
         }
     }
-  
+
     private static class RolesSerializer extends StdSerializer<RoleEntity> {
 
         RolesSerializer(Class<RoleEntity> t) {

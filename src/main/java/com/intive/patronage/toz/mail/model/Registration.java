@@ -7,7 +7,7 @@ import lombok.Setter;
 @Setter
 @Getter
 @JsonInclude(JsonInclude.Include.NON_EMPTY)
-public class Registration extends JsonConvertible {
+public class Registration {
     private String url;
     private String token;
 }

@@ -103,9 +103,9 @@ dependencies {
     compile 'io.springfox:springfox-swagger2:2.6.1'
     compile 'io.springfox:springfox-swagger-ui:2.6.1'
     
-    compile('com.github.jknack:handlebars:4.0.6')
-	  compile('com.github.jknack:handlebars-guava-cache:4.0.6')
-	  compile group: 'com.github.jknack', name: 'handlebars-jackson2', version: '4.0.6'
+    compile 'com.github.jknack:handlebars:4.0.6'
+    compile 'com.github.jknack:handlebars-guava-cache:4.0.6'
+    compile group: 'com.github.jknack', name: 'handlebars-jackson2', version: '4.0.6'
 
     compile project(':iban-validator')
 

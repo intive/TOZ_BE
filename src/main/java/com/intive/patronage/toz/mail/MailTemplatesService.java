@@ -24,19 +24,23 @@ import java.io.IOException;
 import java.util.concurrent.TimeUnit;
 
 import static com.intive.patronage.toz.config.ApiUrl.ACTIVATION_PATH;
+import static com.intive.patronage.toz.util.ModelMapper.convertToJsonString;
 
 @Service
 public class MailTemplatesService {
 
     private static Cache<TemplateSource, Template> templateCache;
-
     private String mailTemplatesPath;
+    private static final String registrationTemplateName = "Registration";
+    private String templatesExtension;
 
     public MailTemplatesService(@Value("${cache.durationInMinutes}") Integer cacheDurationInMinutes,
                                 @Value("${cache.maxSize}") Integer cacheMaxSize,
-                                @Value("${mail.templatesPath}") String mailTemplatesPath) {
+                                @Value("${mail.templates.path}") String mailTemplatesPath,
+                                @Value("${mail.templates.extension}") String templatesExtension) {
 
         this.mailTemplatesPath = mailTemplatesPath;
+        this.templatesExtension = templatesExtension;
         templateCache = CacheBuilder.newBuilder().expireAfterWrite(cacheDurationInMinutes, TimeUnit.MINUTES).maximumSize(cacheMaxSize).build();
     }
 
@@ -44,13 +48,13 @@ public class MailTemplatesService {
         Registration model = new Registration();
         model.setToken(token);
         model.setUrl(String.format("%s%s", baseUrl, ACTIVATION_PATH));
-        JsonNode jsonNode = new ObjectMapper().readValue(model.toJson(), JsonNode.class);
-        Template template = getTemplate("Registration");
+        JsonNode jsonNode = new ObjectMapper().readValue(convertToJsonString(model), JsonNode.class);
+        Template template = getTemplate(registrationTemplateName);
         return template.apply(getContext(jsonNode));
     }
 
     private Handlebars getHandlebarsTemplates() {
-        TemplateLoader loader = new ClassPathTemplateLoader(mailTemplatesPath, ".hbs");
+        TemplateLoader loader = new ClassPathTemplateLoader(mailTemplatesPath, templatesExtension);
         return new Handlebars(loader).with((new GuavaTemplateCache(templateCache)));
     }
 
