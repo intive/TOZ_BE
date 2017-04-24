@@ -1,4 +1,4 @@
 package com.intive.patronage.toz.schedule.excception;
 
-public class ScheduleException extends RuntimeException {
+class ScheduleException extends RuntimeException {
 }

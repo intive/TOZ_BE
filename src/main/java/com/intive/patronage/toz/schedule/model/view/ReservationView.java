@@ -2,6 +2,7 @@ package com.intive.patronage.toz.schedule.model.view;
 
 import com.fasterxml.jackson.annotation.JsonFormat;
 import com.fasterxml.jackson.annotation.JsonInclude;
+import com.intive.patronage.toz.util.NotPast;
 import io.swagger.annotations.ApiModel;
 import io.swagger.annotations.ApiModelProperty;
 import lombok.Getter;
@@ -26,6 +27,7 @@ abstract class ReservationView {
     @NotNull
     @DateTimeFormat(iso = DateTimeFormat.ISO.DATE)
     @JsonFormat(pattern = "yyyy-MM-dd")
+    @NotPast
     private LocalDate date;
 
     @ApiModelProperty(value = "Start time in UTC", required = true, example = "08:00", position = 2)
