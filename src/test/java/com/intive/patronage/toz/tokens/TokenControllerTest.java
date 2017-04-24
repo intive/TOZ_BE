@@ -78,11 +78,12 @@ public class TokenControllerTest {
 
     @Before
     public void setUp() throws Exception {
+        final String passwordHash = passwordEncoder.encode(PASSWORD);
         user = new User();
         user.addRole(ROLE);
         user.setEmail(EMAIL);
-        user.setPasswordHash(passwordEncoder.encode(PASSWORD));
-        usersService.createWithPassword(user, PASSWORD);
+        user.setPasswordHash(passwordHash);
+        usersService.createWithPasswordHash(user, passwordHash);
 
         credentialsView = new UserCredentialsView(EMAIL, PASSWORD);
     }

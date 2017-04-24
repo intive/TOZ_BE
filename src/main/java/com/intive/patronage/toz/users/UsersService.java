@@ -15,12 +15,10 @@ public class UsersService {
 
     private static final String USER = "User";
     private final UsersRepository usersRepository;
-    private final PasswordEncoder passwordEncoder;
 
     @Autowired
-    UsersService(UsersRepository usersRepository, PasswordEncoder passwordEncoder) {
+    UsersService(UsersRepository usersRepository) {
         this.usersRepository = usersRepository;
-        this.passwordEncoder = passwordEncoder;
     }
 
     User findOneById(final UUID id) {
@@ -56,12 +54,11 @@ public class UsersService {
         return usersRepository.findAll();
     }
 
-    public User createWithPassword(final User user, final String password) {
+    public User createWithPasswordHash(final User user, final String passwordHash) {
         final String email = user.getEmail();
         if (usersRepository.existsByEmail(email)) {
             throw new AlreadyExistsException(USER);
         }
-        final String passwordHash = passwordEncoder.encode(password);
         user.setPasswordHash(passwordHash);
         return usersRepository.save(user);
     }

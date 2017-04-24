@@ -44,7 +44,7 @@ public class UsersServiceTest {
     @Before
     public void setUp() throws Exception {
         MockitoAnnotations.initMocks(this);
-        usersService = new UsersService(usersRepository, passwordEncoder);
+        usersService = new UsersService(usersRepository);
     }
 
     @DataProvider
@@ -98,7 +98,7 @@ public class UsersServiceTest {
         when(usersRepository.save(any(User.class))).thenReturn(user);
         when(passwordEncoder.encode(any(String.class))).thenReturn(EXPECTED_PASSWORD_HASH);
 
-        final User createdUser = usersService.createWithPassword(user, any(String.class));
+        final User createdUser = usersService.createWithPasswordHash(user, any(String.class));
         assertEquals(EXPECTED_NAME, createdUser.getName());
         assertEquals(EXPECTED_PASSWORD_HASH, createdUser.getPasswordHash());
         assertEquals(EXPECTED_SURNAME, createdUser.getSurname());

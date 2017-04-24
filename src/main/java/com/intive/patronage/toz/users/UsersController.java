@@ -11,6 +11,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
 import org.springframework.web.util.UriComponentsBuilder;
@@ -29,10 +30,12 @@ import java.util.UUID;
 public class UsersController {
 
     private final UsersService usersService;
+    private final PasswordEncoder passwordEncoder;
 
     @Autowired
-    UsersController(UsersService usersService) {
+    UsersController(UsersService usersService, PasswordEncoder passwordEncoder) {
         this.usersService = usersService;
+        this.passwordEncoder = passwordEncoder;
     }
 
     @ApiOperation(value = "Get all users", responseContainer = "List")
@@ -63,7 +66,8 @@ public class UsersController {
     })
     @PostMapping(consumes = MediaType.APPLICATION_JSON_VALUE)
     public ResponseEntity<UserView> createUser(@Valid @RequestBody UserView userView) {
-        final User createdUser = usersService.createWithPassword(convertToModel(userView), userView.getPassword());
+        final String passwordHash = passwordEncoder.encode(userView.getPassword());
+        final User createdUser = usersService.createWithPasswordHash(convertToModel(userView), passwordHash);
         final UserView createdUserView = convertToView(createdUser);
         final URI baseLocation = ServletUriComponentsBuilder.fromCurrentRequest()
                 .build().toUri();

@@ -14,6 +14,7 @@ import org.mockito.Mock;
 import org.mockito.MockitoAnnotations;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.http.MediaType;
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.setup.MockMvcBuilders;
 
@@ -46,14 +47,17 @@ public class UsersControllerTest {
     private static final MediaType CONTENT_TYPE = MediaType.APPLICATION_JSON_UTF8;
 
     @Mock
-    private UserService userService;
+    private UsersService usersService;
+
+    @Mock
+    private PasswordEncoder passwordEncoder;
 
     private MockMvc mvc;
 
     @Before
     public void setUp() throws Exception {
         MockitoAnnotations.initMocks(this);
-        final UsersController usersController = new UsersController(userService);
+        final UsersController usersController = new UsersController(usersService, passwordEncoder);
         mvc = MockMvcBuilders.standaloneSetup(usersController).build();
     }
 
@@ -92,15 +96,15 @@ public class UsersControllerTest {
     @Test
     public void getAllUsersOk() throws Exception {
         final List<User> users = getUsers();
-        when(userService.findAll()).thenReturn(users);
+        when(usersService.findAll()).thenReturn(users);
 
         mvc.perform(get(ApiUrl.ADMIN_USERS_PATH))
                 .andExpect(status().isOk())
                 .andExpect(content().contentType(CONTENT_TYPE))
                 .andExpect(jsonPath("$", hasSize(USERS_LIST_SIZE)));
 
-        verify(userService, times(1)).findAll();
-        verifyNoMoreInteractions(userService);
+        verify(usersService, times(1)).findAll();
+        verifyNoMoreInteractions(usersService);
     }
 
     @Test
@@ -108,7 +112,7 @@ public class UsersControllerTest {
     public void createUserOk(final User user, final UserView userView) throws Exception {
         final String userViewJsonString = ModelMapper.convertToJsonString(userView);
 
-        when(userService.createWithPassword(any(User.class), eq(EXPECTED_PASSWORD))).thenReturn(user);
+        when(usersService.createWithPasswordHash(any(User.class), eq(EXPECTED_PASSWORD_HASH))).thenReturn(user);
         mvc.perform(post(ApiUrl.ADMIN_USERS_PATH)
                 .contentType(CONTENT_TYPE)
                 .content(userViewJsonString))
@@ -119,19 +123,20 @@ public class UsersControllerTest {
                 .andExpect(jsonPath("$.email", is(EXPECTED_EMAIL)))
                 .andExpect(jsonPath("$.roles[0]", is(EXPECTED_ROLE.toString())));
 
-        verify(userService, times(1)).createWithPassword(any(User.class), eq(EXPECTED_PASSWORD));
-        verifyNoMoreInteractions(userService);
+        verify(usersService, times(1))
+                .createWithPasswordHash(any(User.class), eq(EXPECTED_PASSWORD_HASH));
+        verifyNoMoreInteractions(usersService);
     }
 
     @Test
     public void deleteUserById() throws Exception {
         final UUID id = UUID.randomUUID();
-        doNothing().when(userService).delete(id);
+        doNothing().when(usersService).delete(id);
         mvc.perform(delete(String.format("%s/%s", ApiUrl.ADMIN_USERS_PATH, id)))
                 .andExpect(status().isOk());
 
-        verify(userService, times(1)).delete(id);
-        verifyNoMoreInteractions(userService);
+        verify(usersService, times(1)).delete(id);
+        verifyNoMoreInteractions(usersService);
     }
 
     @Test
@@ -139,13 +144,13 @@ public class UsersControllerTest {
     public void updateUser(final User user, final UserView userView) throws Exception {
         final String userJsonString = ModelMapper.convertToJsonString(userView);
 
-        when(userService.update(eq(EXPECTED_ID), any(User.class))).thenReturn(user);
+        when(usersService.update(eq(EXPECTED_ID), any(User.class))).thenReturn(user);
         mvc.perform(put(String.format("%s/%s", ApiUrl.ADMIN_USERS_PATH, EXPECTED_ID))
                 .contentType(CONTENT_TYPE)
                 .content(userJsonString))
                 .andExpect(status().isOk());
 
-        verify(userService, times(1)).update(eq(EXPECTED_ID), any(User.class));
-        verifyNoMoreInteractions(userService);
+        verify(usersService, times(1)).update(eq(EXPECTED_ID), any(User.class));
+        verifyNoMoreInteractions(usersService);
     }
 }
