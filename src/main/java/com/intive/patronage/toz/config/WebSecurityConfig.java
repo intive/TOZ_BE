@@ -27,9 +27,6 @@ class WebSecurityConfig extends WebSecurityConfigurerAdapter {
     private static final String REST_ENTRY_POINT = "/**";
     private static final String ADMIN_ENTRY_POINT = "/admin/**";
 
-    @Value("${bcrypt.security.level}")
-    private int securityLevel;
-
     @Value("${jwt.secret-base64}")
     private String secret;
 
@@ -43,13 +40,6 @@ class WebSecurityConfig extends WebSecurityConfigurerAdapter {
                 new TokenAuthenticationFilter(new TokenAuthenticationFailureHandler(), matcher);
         filter.setAuthenticationManager(authenticationManager());
         return filter;
-    }
-
-    @Bean
-    public PasswordEncoder passwordEncoder() {
-        final SecureRandom secureRandom = new SecureRandom();
-        secureRandom.nextBytes(new byte[20]);
-        return new BCryptPasswordEncoder(securityLevel, secureRandom);
     }
 
     @Override
