@@ -4,7 +4,6 @@ import com.intive.patronage.toz.error.exception.AlreadyExistsException;
 import com.intive.patronage.toz.error.exception.NotFoundException;
 import com.intive.patronage.toz.users.model.db.User;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
@@ -15,12 +14,10 @@ public class UserService {
 
     private static final String USER = "User";
     private final UserRepository userRepository;
-    private final PasswordEncoder passwordEncoder;
 
     @Autowired
-    UserService(UserRepository userRepository, PasswordEncoder passwordEncoder) {
+    UserService(UserRepository userRepository) {
         this.userRepository = userRepository;
-        this.passwordEncoder = passwordEncoder;
     }
 
     User findOneById(final UUID id) {
@@ -56,12 +53,11 @@ public class UserService {
         return userRepository.findAll();
     }
 
-    public User createWithPassword(final User user, final String password) {
+    public User createWithPasswordHash(final User user, final String passwordHash) {
         final String email = user.getEmail();
         if (userRepository.existsByEmail(email)) {
             throw new AlreadyExistsException(USER);
         }
-        final String passwordHash = passwordEncoder.encode(password);
         user.setPasswordHash(passwordHash);
         return userRepository.save(user);
     }

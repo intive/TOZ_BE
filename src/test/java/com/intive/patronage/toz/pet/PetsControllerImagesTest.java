@@ -1,6 +1,7 @@
 package com.intive.patronage.toz.pet;
 
 import com.intive.patronage.toz.config.ApiUrl;
+import com.intive.patronage.toz.environment.ApiProperties;
 import com.intive.patronage.toz.pet.model.db.Pet;
 import com.intive.patronage.toz.storage.StorageService;
 import com.intive.patronage.toz.storage.model.db.UploadedFile;
@@ -34,7 +35,7 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 @AutoConfigureMockMvc
 @SpringBootTest(
         webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT,
-        properties = "jwt.secret-base64=c2VjcmV0"
+        properties = {ApiProperties.JWT_SECRET_BASE64, ApiProperties.SUPER_ADMIN_PASSWORD}
 )
 @ActiveProfiles("test")
 public class PetsControllerImagesTest {
