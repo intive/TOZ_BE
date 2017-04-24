@@ -112,7 +112,7 @@ public class UsersControllerTest {
     public void createUserOk(final User user, final UserView userView) throws Exception {
         final String userViewJsonString = ModelMapper.convertToJsonString(userView);
 
-        when(usersService.createWithPasswordHash(any(User.class), eq(EXPECTED_PASSWORD_HASH))).thenReturn(user);
+        when(usersService.createWithPasswordHash(any(User.class), any(String.class))).thenReturn(user);
         mvc.perform(post(ApiUrl.ADMIN_USERS_PATH)
                 .contentType(CONTENT_TYPE)
                 .content(userViewJsonString))
@@ -124,7 +124,7 @@ public class UsersControllerTest {
                 .andExpect(jsonPath("$.roles[0]", is(EXPECTED_ROLE.toString())));
 
         verify(usersService, times(1))
-                .createWithPasswordHash(any(User.class), eq(EXPECTED_PASSWORD_HASH));
+                .createWithPasswordHash(any(User.class), any(String.class));
         verifyNoMoreInteractions(usersService);
     }
 

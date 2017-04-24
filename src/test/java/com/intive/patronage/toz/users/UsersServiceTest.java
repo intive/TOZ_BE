@@ -96,9 +96,8 @@ public class UsersServiceTest {
     @UseDataProvider("getProperUser")
     public void createUser(final User user) throws Exception {
         when(usersRepository.save(any(User.class))).thenReturn(user);
-        when(passwordEncoder.encode(any(String.class))).thenReturn(EXPECTED_PASSWORD_HASH);
 
-        final User createdUser = usersService.createWithPasswordHash(user, any(String.class));
+        final User createdUser = usersService.createWithPasswordHash(user, EXPECTED_PASSWORD_HASH);
         assertEquals(EXPECTED_NAME, createdUser.getName());
         assertEquals(EXPECTED_PASSWORD_HASH, createdUser.getPasswordHash());
         assertEquals(EXPECTED_SURNAME, createdUser.getSurname());
