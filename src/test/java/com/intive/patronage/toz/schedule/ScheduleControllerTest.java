@@ -6,7 +6,7 @@ import com.fasterxml.jackson.datatype.jsr310.deser.LocalDateTimeDeserializer;
 import com.intive.patronage.toz.schedule.model.view.ReservationRequestView;
 import com.intive.patronage.toz.schedule.model.view.ReservationResponseView;
 import com.intive.patronage.toz.schedule.util.ScheduleParser;
-import com.intive.patronage.toz.users.UserRepository;
+import com.intive.patronage.toz.users.UsersRepository;
 import com.tngtech.java.junit.dataprovider.DataProviderRunner;
 import com.tngtech.java.junit.dataprovider.UseDataProvider;
 import org.junit.Before;
@@ -53,7 +53,7 @@ public class ScheduleControllerTest {
     @Mock
     private ScheduleParser scheduleParser;
     @Mock
-    private UserRepository userRepository;
+    private UsersRepository usersRepository;
     private ObjectMapper objectMapper;
 
     @Before
@@ -73,7 +73,7 @@ public class ScheduleControllerTest {
         scheduleReservationViews.add(reservationResponseView);
         when(scheduleService.findScheduleReservations(any(LocalDate.class), any(LocalDate.class)))
                 .thenReturn(scheduleReservationViews);
-        when(userRepository.findOne(any(UUID.class)))
+        when(usersRepository.findOne(any(UUID.class)))
                 .thenReturn(EXAMPLE_USER);
         mvc.perform(get(SCHEDULE_PATH)
                 .param("from", VALID_LOCAL_DATE_FROM.toString())
@@ -91,7 +91,7 @@ public class ScheduleControllerTest {
     public void shouldReturnOKWhenGetReservationById(ReservationResponseView reservationResponseView) throws Exception {
         when(scheduleService.findReservation(any(UUID.class)))
                 .thenReturn(reservationResponseView);
-        when(userRepository.findOne(any(UUID.class)))
+        when(usersRepository.findOne(any(UUID.class)))
                 .thenReturn(EXAMPLE_USER);
         mvc.perform(get(String.format("%s/%s", SCHEDULE_PATH, UUID.randomUUID().toString()))
                 .param(ID_PARAM, VALID_LOCAL_DATE_TO))
@@ -107,7 +107,7 @@ public class ScheduleControllerTest {
     public void shouldReturnCreatedWhenCreateReservation(ReservationResponseView reservationResponseView) throws Exception {
         when(scheduleService.makeReservation(any(ReservationRequestView.class)))
                 .thenReturn(reservationResponseView);
-        when(userRepository.findOne(any(UUID.class)))
+        when(usersRepository.findOne(any(UUID.class)))
                 .thenReturn(EXAMPLE_USER);
         ReservationRequestView view = new ReservationRequestView();
         view.setDate(VALID_LOCAL_DATE_FROM);
@@ -132,7 +132,7 @@ public class ScheduleControllerTest {
     public void shouldReturnCreatedWhenUpdateReservation(ReservationResponseView reservationResponseView) throws Exception {
         when(scheduleService.updateReservation(any(UUID.class), any(ReservationRequestView.class)))
                 .thenReturn(reservationResponseView);
-        when(userRepository.findOne(any(UUID.class)))
+        when(usersRepository.findOne(any(UUID.class)))
                 .thenReturn(EXAMPLE_USER);
         ReservationRequestView view = new ReservationRequestView();
         view.setDate(VALID_LOCAL_DATE_FROM);
@@ -157,7 +157,7 @@ public class ScheduleControllerTest {
     public void shouldReturnOKWhenDeleteReservation(ReservationResponseView reservationResponseView) throws Exception {
         when(scheduleService.removeReservation(any(UUID.class)))
                 .thenReturn(reservationResponseView);
-        when(userRepository.findOne(any(UUID.class)))
+        when(usersRepository.findOne(any(UUID.class)))
                 .thenReturn(EXAMPLE_USER);
         mvc.perform(delete(String.format("%s/%s", SCHEDULE_PATH, UUID.randomUUID().toString()))
                 .param(ID_PARAM, UUID.randomUUID().toString())

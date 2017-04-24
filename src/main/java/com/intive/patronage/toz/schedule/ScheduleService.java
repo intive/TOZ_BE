@@ -10,7 +10,7 @@ import com.intive.patronage.toz.schedule.model.view.ReservationRequestView;
 import com.intive.patronage.toz.schedule.model.view.ReservationResponseView;
 import com.intive.patronage.toz.schedule.util.ScheduleParser;
 import com.intive.patronage.toz.tokens.model.UserContext;
-import com.intive.patronage.toz.users.UserRepository;
+import com.intive.patronage.toz.users.UsersRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.PropertySource;
@@ -36,7 +36,7 @@ class ScheduleService {
     private final String USER = "User";
     private final ReservationRepository reservationRepository;
     private final ReservationChangelogRepository reservationChangelogRepository;
-    private final UserRepository userRepository;
+    private final UsersRepository usersRepository;
     private ScheduleParser scheduleParser;
     @Value("${timezoneOffset}")
     private String zoneOffset = "Z";
@@ -44,11 +44,11 @@ class ScheduleService {
     @Autowired
     ScheduleService(ReservationRepository reservationRepository,
                     ScheduleParser scheduleParser,
-                    UserRepository userRepository,
+                    UsersRepository usersRepository,
                     ReservationChangelogRepository reservationChangelogRepository) {
         this.reservationRepository = reservationRepository;
         this.scheduleParser = scheduleParser;
-        this.userRepository = userRepository;
+        this.usersRepository = usersRepository;
         this.reservationChangelogRepository = reservationChangelogRepository;
     }
 
@@ -75,7 +75,7 @@ class ScheduleService {
 
     ReservationResponseView makeReservation(ReservationRequestView reservationRequestView) {
         ScheduleReservation scheduleReservation = convertToReservation(reservationRequestView);
-        ifEntityDoesntExistInRepoThrowException(scheduleReservation.getOwnerUuid(), userRepository, USER);
+        ifEntityDoesntExistInRepoThrowException(scheduleReservation.getOwnerUuid(), usersRepository, USER);
         ifReservationExistsThrowException(scheduleReservation.getStartDate());
         scheduleParser.validateHours(scheduleReservation.getStartDate(), scheduleReservation.getEndDate());
         ScheduleReservation newScheduleReservation = reservationRepository.save(scheduleReservation);
@@ -85,7 +85,7 @@ class ScheduleService {
 
     ReservationResponseView updateReservation(UUID id, ReservationRequestView reservationRequestView) {
         ScheduleReservation newScheduleReservation = convertToReservation(reservationRequestView);
-        ifEntityDoesntExistInRepoThrowException(newScheduleReservation.getOwnerUuid(), userRepository, USER);
+        ifEntityDoesntExistInRepoThrowException(newScheduleReservation.getOwnerUuid(), usersRepository, USER);
         ifEntityDoesntExistInRepoThrowException(id, reservationRepository, RESERVATION);
         scheduleParser.validateHours(newScheduleReservation.getStartDate(), newScheduleReservation.getEndDate());
         ScheduleReservation scheduleReservation = reservationRepository.findOne(id);
@@ -133,7 +133,7 @@ class ScheduleService {
         if (authentication != null && authentication.getPrincipal() != null) {
             final UserContext userContext = (UserContext) authentication.getPrincipal();
             newLog.setModificationAuthorUuid(userContext.getUserId());
-            ifEntityDoesntExistInRepoThrowException(newLog.getModificationAuthorUuid(), userRepository, USER);
+            ifEntityDoesntExistInRepoThrowException(newLog.getModificationAuthorUuid(), usersRepository, USER);
         }
         newLog.setModificationMessage(modificationMessage);
         newLog.setOperationType(operationType);
@@ -175,9 +175,9 @@ class ScheduleService {
                 .getTime());
         reservationResponseView.setId(scheduleReservation.getId());
         reservationResponseView.setOwnerName(
-                userRepository.findOne(scheduleReservation.getOwnerUuid()).getName());
+                usersRepository.findOne(scheduleReservation.getOwnerUuid()).getName());
         reservationResponseView.setOwnerSurname(
-                userRepository.findOne(scheduleReservation.getOwnerUuid()).getSurname());
+                usersRepository.findOne(scheduleReservation.getOwnerUuid()).getSurname());
         return reservationResponseView;
     }
 

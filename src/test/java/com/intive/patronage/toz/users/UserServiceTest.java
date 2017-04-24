@@ -33,7 +33,7 @@ public class UserServiceTest {
     private static final User.Role EXPECTED_ROLE = User.Role.TOZ;
 
     @Mock
-    private UserRepository userRepository;
+    private UsersRepository usersRepository;
 
     @Mock
     private PasswordEncoder passwordEncoder;
@@ -44,7 +44,7 @@ public class UserServiceTest {
     @Before
     public void setUp() throws Exception {
         MockitoAnnotations.initMocks(this);
-        userService = new UserService(userRepository, passwordEncoder);
+        userService = new UserService(usersRepository, passwordEncoder);
     }
 
     @DataProvider
@@ -60,7 +60,7 @@ public class UserServiceTest {
 
     @Test
     public void findAllUsers() throws Exception {
-        when(userRepository.findAll()).thenReturn(Collections.emptyList());
+        when(usersRepository.findAll()).thenReturn(Collections.emptyList());
 
         final List<User> users = userService.findAll();
         assertTrue(users.isEmpty());
@@ -69,8 +69,8 @@ public class UserServiceTest {
     @Test
     @UseDataProvider("getProperUser")
     public void findById(final User user) throws Exception {
-        when(userRepository.exists(EXPECTED_ID)).thenReturn(true);
-        when(userRepository.findOne(EXPECTED_ID)).thenReturn(user);
+        when(usersRepository.exists(EXPECTED_ID)).thenReturn(true);
+        when(usersRepository.findOne(EXPECTED_ID)).thenReturn(user);
 
         final User dbUser = userService.findOneById(EXPECTED_ID);
         assertEquals(EXPECTED_NAME, dbUser.getName());
@@ -78,24 +78,24 @@ public class UserServiceTest {
         assertEquals(EXPECTED_SURNAME, dbUser.getSurname());
         assertTrue(dbUser.hasRole(EXPECTED_ROLE));
 
-        verify(userRepository, times(1)).exists(eq(EXPECTED_ID));
-        verify(userRepository, times(1)).findOne(eq(EXPECTED_ID));
-        verifyNoMoreInteractions(userRepository);
+        verify(usersRepository, times(1)).exists(eq(EXPECTED_ID));
+        verify(usersRepository, times(1)).findOne(eq(EXPECTED_ID));
+        verifyNoMoreInteractions(usersRepository);
     }
 
     @Test(expected = NotFoundException.class)
     public void findByIdNotFoundException() throws Exception {
-        when(userRepository.exists(EXPECTED_ID)).thenReturn(false);
+        when(usersRepository.exists(EXPECTED_ID)).thenReturn(false);
         userService.findOneById(EXPECTED_ID);
 
-        verify(userRepository, times(1)).exists(eq(EXPECTED_ID));
-        verifyNoMoreInteractions(userRepository);
+        verify(usersRepository, times(1)).exists(eq(EXPECTED_ID));
+        verifyNoMoreInteractions(usersRepository);
     }
 
     @Test
     @UseDataProvider("getProperUser")
     public void createUser(final User user) throws Exception {
-        when(userRepository.save(any(User.class))).thenReturn(user);
+        when(usersRepository.save(any(User.class))).thenReturn(user);
         when(passwordEncoder.encode(any(String.class))).thenReturn(EXPECTED_PASSWORD_HASH);
 
         final User createdUser = userService.createWithPassword(user, any(String.class));
@@ -103,35 +103,35 @@ public class UserServiceTest {
         assertEquals(EXPECTED_PASSWORD_HASH, createdUser.getPasswordHash());
         assertEquals(EXPECTED_SURNAME, createdUser.getSurname());
         assertTrue(createdUser.hasRole(EXPECTED_ROLE));
-        verify(userRepository, times(1)).save(any(User.class));
-        verify(userRepository, times(1)).existsByEmail(any(String.class));
-        verifyNoMoreInteractions(userRepository);
+        verify(usersRepository, times(1)).save(any(User.class));
+        verify(usersRepository, times(1)).existsByEmail(any(String.class));
+        verifyNoMoreInteractions(usersRepository);
     }
 
     @Test
     public void deleteUser() throws Exception {
-        when(userRepository.exists(EXPECTED_ID)).thenReturn(true);
+        when(usersRepository.exists(EXPECTED_ID)).thenReturn(true);
         userService.delete(EXPECTED_ID);
 
-        verify(userRepository, times(1)).exists(eq(EXPECTED_ID));
-        verify(userRepository, times(1)).delete(eq(EXPECTED_ID));
-        verifyNoMoreInteractions(userRepository);
+        verify(usersRepository, times(1)).exists(eq(EXPECTED_ID));
+        verify(usersRepository, times(1)).delete(eq(EXPECTED_ID));
+        verifyNoMoreInteractions(usersRepository);
     }
 
     @Test(expected = NotFoundException.class)
     public void deleteUserNotFoundException() throws Exception {
-        when(userRepository.exists(EXPECTED_ID)).thenReturn(false);
+        when(usersRepository.exists(EXPECTED_ID)).thenReturn(false);
         userService.delete(EXPECTED_ID);
 
-        verify(userRepository, times(1)).exists(eq(EXPECTED_ID));
-        verifyNoMoreInteractions(userRepository);
+        verify(usersRepository, times(1)).exists(eq(EXPECTED_ID));
+        verifyNoMoreInteractions(usersRepository);
     }
 
     @Test
     @UseDataProvider("getProperUser")
     public void updateUser(final User user) throws Exception {
-        when(userRepository.exists(EXPECTED_ID)).thenReturn(true);
-        when(userRepository.save(any(User.class))).thenReturn(user);
+        when(usersRepository.exists(EXPECTED_ID)).thenReturn(true);
+        when(usersRepository.save(any(User.class))).thenReturn(user);
         final User savedUser = userService.update(EXPECTED_ID, user);
 
         assertEquals(EXPECTED_NAME, savedUser.getName());
@@ -143,11 +143,11 @@ public class UserServiceTest {
     @Test(expected = NotFoundException.class)
     @UseDataProvider("getProperUser")
     public void updateUserNotFoundException(final User user) throws Exception {
-        when(userRepository.exists(EXPECTED_ID)).thenReturn(false);
+        when(usersRepository.exists(EXPECTED_ID)).thenReturn(false);
         userService.update(EXPECTED_ID, user);
 
-        verify(userRepository, times(1)).exists(eq(EXPECTED_ID));
-        verifyNoMoreInteractions(userRepository);
+        verify(usersRepository, times(1)).exists(eq(EXPECTED_ID));
+        verifyNoMoreInteractions(usersRepository);
     }
 
 }

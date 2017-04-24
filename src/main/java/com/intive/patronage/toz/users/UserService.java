@@ -14,66 +14,66 @@ import java.util.UUID;
 public class UserService {
 
     private static final String USER = "User";
-    private final UserRepository userRepository;
+    private final UsersRepository usersRepository;
     private final PasswordEncoder passwordEncoder;
 
     @Autowired
-    UserService(UserRepository userRepository, PasswordEncoder passwordEncoder) {
-        this.userRepository = userRepository;
+    UserService(UsersRepository usersRepository, PasswordEncoder passwordEncoder) {
+        this.usersRepository = usersRepository;
         this.passwordEncoder = passwordEncoder;
     }
 
     User findOneById(final UUID id) {
         throwNotFoundExceptionIfIdNotExists(id);
-        return userRepository.findOne(id);
+        return usersRepository.findOne(id);
     }
 
     private void throwNotFoundExceptionIfIdNotExists(final UUID id) {
-        if (!userRepository.exists(id)) {
+        if (!usersRepository.exists(id)) {
             throw new NotFoundException(USER);
         }
     }
 
     public User findOneByEmail(String email) {
-        if (!userRepository.existsByEmail(email)) {
+        if (!usersRepository.existsByEmail(email)) {
             throw new NotFoundException(USER);
         }
-        return userRepository.findByEmail(email);
+        return usersRepository.findByEmail(email);
     }
 
     public User findOneByName(String name) {
         if (!existsByName(name)) {
             throw new NotFoundException(USER);
         }
-        return userRepository.findByName(name);
+        return usersRepository.findByName(name);
     }
 
     public boolean existsByName(String name) {
-        return userRepository.existsByName(name);
+        return usersRepository.existsByName(name);
     }
 
     List<User> findAll() {
-        return userRepository.findAll();
+        return usersRepository.findAll();
     }
 
     public User createWithPassword(final User user, final String password) {
         final String email = user.getEmail();
-        if (userRepository.existsByEmail(email)) {
+        if (usersRepository.existsByEmail(email)) {
             throw new AlreadyExistsException(USER);
         }
         final String passwordHash = passwordEncoder.encode(password);
         user.setPasswordHash(passwordHash);
-        return userRepository.save(user);
+        return usersRepository.save(user);
     }
 
     public void delete(final UUID id) {
         throwNotFoundExceptionIfIdNotExists(id);
-        userRepository.delete(id);
+        usersRepository.delete(id);
     }
 
     User update(final UUID id, final User user) {
         throwNotFoundExceptionIfIdNotExists(id);
         user.setId(id);
-        return userRepository.save(user);
+        return usersRepository.save(user);
     }
 }

@@ -6,7 +6,7 @@ import com.intive.patronage.toz.schedule.model.db.ScheduleReservationChangelog;
 import com.intive.patronage.toz.schedule.model.view.ReservationRequestView;
 import com.intive.patronage.toz.schedule.model.view.ReservationResponseView;
 import com.intive.patronage.toz.schedule.util.ScheduleParser;
-import com.intive.patronage.toz.users.UserRepository;
+import com.intive.patronage.toz.users.UsersRepository;
 import com.tngtech.java.junit.dataprovider.DataProviderRunner;
 import com.tngtech.java.junit.dataprovider.UseDataProvider;
 import org.junit.Before;
@@ -30,7 +30,7 @@ public class ScheduleServiceTest {
     @Mock
     private ReservationChangelogRepository reservationChangelogRepository;
     @Mock
-    private UserRepository userRepository;
+    private UsersRepository usersRepository;
     @Mock
     private ScheduleParser scheduleParser;
     private ScheduleService scheduleService;
@@ -38,7 +38,7 @@ public class ScheduleServiceTest {
     @Before
     public void setUp() {
         MockitoAnnotations.initMocks(this);
-        scheduleService = new ScheduleService(reservationRepository, scheduleParser, userRepository, reservationChangelogRepository);
+        scheduleService = new ScheduleService(reservationRepository, scheduleParser, usersRepository, reservationChangelogRepository);
     }
 
 
@@ -60,7 +60,7 @@ public class ScheduleServiceTest {
         scheduleReservations.add(scheduleReservation);
         when(reservationRepository.findByStartDateBetween(any(Date.class), any(Date.class)))
                 .thenReturn(scheduleReservations);
-        when(userRepository.findOne(any(UUID.class)))
+        when(usersRepository.findOne(any(UUID.class)))
                 .thenReturn(EXAMPLE_USER);
         List<ReservationResponseView> foundScheduleReservations =
                 scheduleService.findScheduleReservations(VALID_LOCAL_DATE_FROM, VALID_LOCAL_DATE_TO);
@@ -74,7 +74,7 @@ public class ScheduleServiceTest {
         ScheduleReservation returnReservation = scheduleService.convertToReservation(reservationRequestView);
         returnReservation.setCreationDate(VALID_DATE_FROM);
         returnReservation.setModificationDate(VALID_DATE_FROM);
-        when(userRepository.findOne(any(UUID.class)))
+        when(usersRepository.findOne(any(UUID.class)))
                 .thenReturn(EXAMPLE_USER);
         when(reservationRepository.exists(any(UUID.class)))
                 .thenReturn(true);
@@ -103,9 +103,9 @@ public class ScheduleServiceTest {
         when(reservationRepository.findOne(any(UUID.class)))
                 .thenReturn(returnReservation);
         when(reservationRepository.exists(any(UUID.class))).thenReturn(true);
-        when(userRepository.findOne(any(UUID.class)))
+        when(usersRepository.findOne(any(UUID.class)))
                 .thenReturn(EXAMPLE_USER);
-        when(userRepository.exists(any(UUID.class))).thenReturn(true);
+        when(usersRepository.exists(any(UUID.class))).thenReturn(true);
         ReservationResponseView updatedReservationResponseView =
                 scheduleService.updateReservation(UUID.randomUUID(), reservationRequestView);
         assertThat(updatedReservationResponseView.getOwnerName()).isEqualTo(EXAMPLE_USER.getName());
@@ -114,12 +114,12 @@ public class ScheduleServiceTest {
         assertThat(updatedReservationResponseView.getStartTime()).isEqualTo(reservationRequestView.getStartTime());
         verify(reservationChangelogRepository, times(1)).save(any(ScheduleReservationChangelog.class));
         verify(reservationRepository, times(1)).exists(any(UUID.class));
-        verify(userRepository, times(1)).exists(any(UUID.class));
-        verify(userRepository, times(2)).findOne(any(UUID.class));
+        verify(usersRepository, times(1)).exists(any(UUID.class));
+        verify(usersRepository, times(2)).findOne(any(UUID.class));
         verify(reservationRepository, times(1)).findOne(any(UUID.class));
         verify(reservationRepository, times(1)).save(any(ScheduleReservation.class));
         verifyNoMoreInteractions(reservationRepository);
-        verifyNoMoreInteractions(userRepository);
+        verifyNoMoreInteractions(usersRepository);
     }
 
     @Test
@@ -131,9 +131,9 @@ public class ScheduleServiceTest {
         returnReservation.setModificationDate(VALID_DATE_FROM);
         when(reservationRepository.save(any(ScheduleReservation.class)))
                 .thenReturn(returnReservation);
-        when(userRepository.findOne(any(UUID.class)))
+        when(usersRepository.findOne(any(UUID.class)))
                 .thenReturn(EXAMPLE_USER);
-        when(userRepository.exists(any(UUID.class))).thenReturn(true);
+        when(usersRepository.exists(any(UUID.class))).thenReturn(true);
         ReservationResponseView createdScheduleReservation =
                 scheduleService.makeReservation(reservationRequestView);
         assertThat(createdScheduleReservation.getOwnerName()).isEqualTo(EXAMPLE_USER.getName());
@@ -141,12 +141,12 @@ public class ScheduleServiceTest {
         assertThat(createdScheduleReservation.getDate()).isEqualTo(reservationRequestView.getDate());
         assertThat(createdScheduleReservation.getStartTime()).isEqualTo(reservationRequestView.getStartTime());
         verify(reservationChangelogRepository, times(1)).save(any(ScheduleReservationChangelog.class));
-        verify(userRepository, times(1)).exists(any(UUID.class));
-        verify(userRepository, times(2)).findOne(any(UUID.class));
+        verify(usersRepository, times(1)).exists(any(UUID.class));
+        verify(usersRepository, times(2)).findOne(any(UUID.class));
         verify(reservationRepository, times(1)).save(any(ScheduleReservation.class));
         verify(reservationRepository, times(1)).findByStartDate(any(Date.class));
         verifyNoMoreInteractions(reservationRepository);
-        verifyNoMoreInteractions(userRepository);
+        verifyNoMoreInteractions(usersRepository);
     }
 
     @Test
@@ -156,7 +156,7 @@ public class ScheduleServiceTest {
         ScheduleReservation returnReservation = scheduleService.convertToReservation(reservationRequestView);
         returnReservation.setCreationDate(VALID_DATE_FROM);
         returnReservation.setModificationDate(VALID_DATE_FROM);
-        when(userRepository.findOne(any(UUID.class)))
+        when(usersRepository.findOne(any(UUID.class)))
                 .thenReturn(EXAMPLE_USER);
         when(reservationRepository.exists(any(UUID.class))).thenReturn(true);
         when(reservationRepository.findOne(any(UUID.class))).thenReturn(returnReservation);
@@ -167,12 +167,12 @@ public class ScheduleServiceTest {
         assertThat(deletedReservationResponseView.getDate()).isEqualTo(reservationRequestView.getDate());
         assertThat(deletedReservationResponseView.getStartTime()).isEqualTo(reservationRequestView.getStartTime());
         verify(reservationChangelogRepository, times(1)).save(any(ScheduleReservationChangelog.class));
-        verify(userRepository, times(2)).findOne(any(UUID.class));
+        verify(usersRepository, times(2)).findOne(any(UUID.class));
         verify(reservationRepository, times(1)).exists(any(UUID.class));
         verify(reservationRepository, times(1)).findOne(any(UUID.class));
         verify(reservationRepository, times(1)).delete(any(UUID.class));
         verifyNoMoreInteractions(reservationRepository);
-        verifyNoMoreInteractions(userRepository);
+        verifyNoMoreInteractions(usersRepository);
     }
 
     @Test(expected = NotFoundException.class)
@@ -196,7 +196,7 @@ public class ScheduleServiceTest {
             location = ScheduleDataProvider.class)
     public void shouldReturnErrorWhenUserOwnerNotFound(ReservationRequestView reservationRequestView) {
         when(reservationRepository.exists(any(UUID.class))).thenReturn(true);
-        when(userRepository.exists(any(UUID.class))).thenReturn(false);
+        when(usersRepository.exists(any(UUID.class))).thenReturn(false);
         scheduleService.updateReservation(UUID.randomUUID(), reservationRequestView);
         verify(reservationChangelogRepository, times(0)).save(any(ScheduleReservationChangelog.class));
     }
