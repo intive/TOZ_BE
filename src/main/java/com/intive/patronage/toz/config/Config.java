@@ -1,15 +1,23 @@
 package com.intive.patronage.toz.config;
 
+import com.intive.patronage.toz.error.ControllerExceptionHandler;
+import com.intive.patronage.toz.schedule.util.ScheduleParser;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.context.MessageSource;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.data.jpa.repository.config.EnableJpaAuditing;
 import org.springframework.http.ResponseEntity;
+import org.springframework.http.converter.json.MappingJackson2HttpMessageConverter;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.method.HandlerMethod;
+import org.springframework.web.method.annotation.ExceptionHandlerMethodResolver;
 import org.springframework.web.servlet.config.annotation.*;
+import org.springframework.web.servlet.mvc.method.annotation.ExceptionHandlerExceptionResolver;
+import org.springframework.web.servlet.mvc.method.annotation.ServletInvocableHandlerMethod;
 import springfox.documentation.builders.ApiInfoBuilder;
 import springfox.documentation.builders.PathSelectors;
 import springfox.documentation.builders.RequestHandlerSelectors;
@@ -21,6 +29,7 @@ import springfox.documentation.spring.web.plugins.Docket;
 import springfox.documentation.swagger2.annotations.EnableSwagger2;
 
 import javax.servlet.ServletContext;
+import java.lang.reflect.Method;
 import java.security.SecureRandom;
 import java.time.LocalTime;
 import java.util.Collections;
@@ -111,5 +120,22 @@ class Config extends WebMvcConfigurerAdapter {
 
     private ApiKey apiKey() {
         return new ApiKey("Authorization", "jwt", "header");
+    }
+
+    @Bean @Autowired
+    public ExceptionHandlerExceptionResolver createExceptionResolver(MessageSource messageSource, ScheduleParser scheduleParser) {
+        ExceptionHandlerExceptionResolver exceptionResolver = new ExceptionHandlerExceptionResolver() {
+            @Override
+            protected ServletInvocableHandlerMethod getExceptionHandlerMethod(
+                    HandlerMethod handlerMethod, Exception exception) {
+                Method method = new ExceptionHandlerMethodResolver(
+                        ControllerExceptionHandler.class).resolveMethod(exception);
+                return new ServletInvocableHandlerMethod(
+                        new ControllerExceptionHandler(messageSource, scheduleParser), method);
+            }
+        };
+        exceptionResolver.getMessageConverters().add(new MappingJackson2HttpMessageConverter());
+        exceptionResolver.afterPropertiesSet();
+        return exceptionResolver;
     }
 }
