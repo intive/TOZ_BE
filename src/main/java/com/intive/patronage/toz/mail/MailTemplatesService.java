@@ -29,8 +29,8 @@ import static com.intive.patronage.toz.util.ModelMapper.convertToJsonString;
 @Service
 public class MailTemplatesService {
 
-    private static final String registrationTemplateName = "Registration";
-    private static ObjectMapper objectMapper;
+    private static final String REGISTRATION_TEMPLATE_NAME = "Registration";
+    private static final ObjectMapper OBJECT_MAPPER = new ObjectMapper();
     private static Cache<TemplateSource, Template> templateCache;
     private String mailTemplatesPath;
     private String templatesExtension;
@@ -39,7 +39,6 @@ public class MailTemplatesService {
                                 @Value("${cache.maxSize}") Integer cacheMaxSize,
                                 @Value("${mail.templates.path}") String mailTemplatesPath,
                                 @Value("${mail.templates.extension}") String templatesExtension) {
-        this.objectMapper = new ObjectMapper();
         this.mailTemplatesPath = mailTemplatesPath;
         this.templatesExtension = templatesExtension;
         templateCache = CacheBuilder.newBuilder().expireAfterWrite(cacheDurationInMinutes, TimeUnit.MINUTES).maximumSize(cacheMaxSize).build();
@@ -49,8 +48,8 @@ public class MailTemplatesService {
         Registration model = new Registration();
         model.setToken(token);
         model.setUrl(String.format("%s%s", baseUrl, ACTIVATION_PATH));
-        JsonNode jsonNode = objectMapper.readValue(convertToJsonString(model), JsonNode.class);
-        Template template = getTemplate(registrationTemplateName);
+        JsonNode jsonNode = OBJECT_MAPPER.readValue(convertToJsonString(model), JsonNode.class);
+        Template template = getTemplate(REGISTRATION_TEMPLATE_NAME);
         return template.apply(getContext(jsonNode));
     }
 
