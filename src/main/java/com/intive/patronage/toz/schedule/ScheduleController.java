@@ -19,6 +19,7 @@ import org.springframework.format.annotation.DateTimeFormat;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
 import org.springframework.web.util.UriComponentsBuilder;
@@ -39,12 +40,20 @@ class ScheduleController {
     @Value("${timezoneOffset}")
     private String zoneOffset = "Z";
 
-    @ApiOperation("Get schedule")
+    @Autowired
+    ScheduleController(ScheduleService scheduleService, ScheduleParser scheduleParser) {
+        this.scheduleService = scheduleService;
+        this.scheduleParser = scheduleParser;
+    }
+
+    @ApiOperation(value = "Get schedule", notes =
+            "Required roles: SA, TOZ.")
     @ApiResponses(value = {
             @ApiResponse(code = 400, message = "Bad request", response = ArgumentErrorResponse.class)
     })
     @GetMapping
     @ResponseStatus(HttpStatus.OK)
+    @PreAuthorize("hasAnyAuthority('SA', 'TOZ', 'VOLUNTEER')")
     public ScheduleView getSchedule(@ApiParam(value = "Date in UTC, format: yyyy-MM-dd", required = true)
                                     @DateTimeFormat(iso = DateTimeFormat.ISO.DATE)
                                     @RequestParam("from") LocalDate from,
@@ -58,24 +67,21 @@ class ScheduleController {
 
     }
 
-    @Autowired
-    ScheduleController(ScheduleService scheduleService, ScheduleParser scheduleParser) {
-        this.scheduleService = scheduleService;
-        this.scheduleParser = scheduleParser;
-    }
-
-    @ApiOperation("Get single reservation by id")
+    @ApiOperation(value = "Get single reservation by id", notes =
+            "Required roles: SA, TOZ.")
     @ApiResponses(value = {
             @ApiResponse(code = 400, message = "Bad request", response = ArgumentErrorResponse.class),
             @ApiResponse(code = 404, message = "Not found", response = ErrorResponse.class)
     })
     @GetMapping(value = "/{id}")
     @ResponseStatus(HttpStatus.OK)
+    @PreAuthorize("hasAnyAuthority('SA', 'TOZ', 'VOLUNTEER')")
     public ReservationResponseView getReservation(@PathVariable UUID id) {
         return scheduleService.findReservation(id);
     }
 
-    @ApiOperation("Make reservation")
+    @ApiOperation(value = "Make reservation", notes =
+            "Required roles: SA, TOZ.")
     @ApiResponses(value = {
             @ApiResponse(code = 400, message = "Bad request", response = ValidationErrorResponse.class),
             @ApiResponse(code = 409, message = "Already exists", response = ErrorResponse.class),
@@ -83,6 +89,7 @@ class ScheduleController {
     })
     @PostMapping(consumes = MediaType.APPLICATION_JSON_VALUE)
     @ResponseStatus(HttpStatus.CREATED)
+    @PreAuthorize("hasAnyAuthority('SA', 'TOZ', 'VOLUNTEER')")
     public ResponseEntity<ReservationResponseView> makeReservation(@Valid @RequestBody ReservationRequestView reservationRequestView) {
         ReservationResponseView createdReservationResponseView =
                 scheduleService.makeReservation(reservationRequestView);
@@ -91,13 +98,15 @@ class ScheduleController {
                 .body(createdReservationResponseView);
     }
 
-    @ApiOperation("Update reservation")
+    @ApiOperation(value = "Update reservation", notes =
+            "Required roles: SA, TOZ.")
     @ApiResponses(value = {
             @ApiResponse(code = 400, message = "Bad request", response = ValidationErrorResponse.class),
             @ApiResponse(code = 404, message = "Not found", response = ErrorResponse.class)
     })
     @PutMapping(value = "/{id}", consumes = MediaType.APPLICATION_JSON_VALUE)
     @ResponseStatus(HttpStatus.CREATED)
+    @PreAuthorize("hasAnyAuthority('SA', 'TOZ', 'VOLUNTEER')")
     public ResponseEntity<ReservationResponseView> updateReservation(@PathVariable UUID id,
                                                                      @Valid @RequestBody ReservationRequestView reservationRequestView) {
         ReservationResponseView updatedReservationResponseView =
@@ -107,17 +116,18 @@ class ScheduleController {
                 .body(updatedReservationResponseView);
     }
 
-    @ApiOperation("Delete reservation")
+    @ApiOperation(value = "Delete reservation", notes =
+            "Required roles: SA, TOZ.")
     @ApiResponses(value = {
             @ApiResponse(code = 400, message = "Bad request", response = ArgumentErrorResponse.class),
             @ApiResponse(code = 404, message = "Not found", response = ErrorResponse.class)
     })
     @DeleteMapping(value = "/{id}")
     @ResponseStatus(HttpStatus.OK)
+    @PreAuthorize("hasAnyAuthority('SA', 'TOZ', 'VOLUNTEER')")
     public ReservationResponseView removeReservation(@PathVariable UUID id) {
         return scheduleService.removeReservation(id);
     }
-
 
     private URI createLocationPath(UUID id) {
         final URI baseLocation = ServletUriComponentsBuilder.fromCurrentRequest()
