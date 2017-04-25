@@ -1,6 +1,7 @@
 package com.intive.patronage.toz.organization;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.intive.patronage.toz.environment.ApiProperties;
 import com.intive.patronage.toz.config.ApiUrl;
 import com.intive.patronage.toz.organization.model.view.BankAccountView;
 import com.intive.patronage.toz.organization.model.view.OrganizationInfoView;
@@ -30,7 +31,7 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 @RunWith(SpringRunner.class)
 @SpringBootTest(
         webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT,
-        properties = "jwt.secret-base64=c2VjcmV0"
+        properties = {ApiProperties.JWT_SECRET_BASE64, ApiProperties.SUPER_ADMIN_PASSWORD}
 )
 public class OrganizationInfoControllerTest {
 

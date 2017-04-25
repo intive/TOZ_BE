@@ -1,6 +1,7 @@
 package com.intive.patronage.toz.schedule;
 
 import com.intive.patronage.toz.Application;
+import com.intive.patronage.toz.environment.ApiProperties;
 import com.intive.patronage.toz.schedule.excception.InvalidReservationHoursException;
 import com.intive.patronage.toz.schedule.model.view.DayConfigView;
 import com.intive.patronage.toz.schedule.model.view.PeriodView;
@@ -29,7 +30,7 @@ import static org.assertj.core.api.Assertions.assertThat;
 @RunWith(SpringJUnit4ClassRunner.class)
 @ContextConfiguration(classes = Application.class)
 @WebAppConfiguration
-@TestPropertySource(properties = "jwt.secret-base64=c2VjcmV0")
+@TestPropertySource(properties = {ApiProperties.JWT_SECRET_BASE64, ApiProperties.SUPER_ADMIN_PASSWORD})
 public class ScheduleParserTest extends AbstractJUnit4SpringContextTests {
 
     private static final String DASH = "-";

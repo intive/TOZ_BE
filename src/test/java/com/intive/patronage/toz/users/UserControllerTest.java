@@ -14,6 +14,7 @@ import org.mockito.Mock;
 import org.mockito.MockitoAnnotations;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.http.MediaType;
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.setup.MockMvcBuilders;
 
@@ -32,7 +33,7 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
         webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT,
         properties = "jwt.secret-base64=c2VjcmV0"
 )
-public class UsersControllerTest {
+public class UserControllerTest {
 
     private static final int USERS_LIST_SIZE = 5;
     private static final UUID EXPECTED_ID = UUID.randomUUID();
@@ -48,13 +49,16 @@ public class UsersControllerTest {
     @Mock
     private UserService userService;
 
+    @Mock
+    private PasswordEncoder passwordEncoder;
+
     private MockMvc mvc;
 
     @Before
     public void setUp() throws Exception {
         MockitoAnnotations.initMocks(this);
-        final UsersController usersController = new UsersController(userService);
-        mvc = MockMvcBuilders.standaloneSetup(usersController).build();
+        final UserController userController = new UserController(userService, passwordEncoder);
+        mvc = MockMvcBuilders.standaloneSetup(userController).build();
     }
 
     @DataProvider
@@ -108,7 +112,7 @@ public class UsersControllerTest {
     public void createUserOk(final User user, final UserView userView) throws Exception {
         final String userViewJsonString = ModelMapper.convertToJsonString(userView);
 
-        when(userService.createWithPassword(any(User.class), eq(EXPECTED_PASSWORD))).thenReturn(user);
+        when(userService.createWithPasswordHash(any(User.class), any(String.class))).thenReturn(user);
         mvc.perform(post(ApiUrl.ADMIN_USERS_PATH)
                 .contentType(CONTENT_TYPE)
                 .content(userViewJsonString))
@@ -119,7 +123,8 @@ public class UsersControllerTest {
                 .andExpect(jsonPath("$.email", is(EXPECTED_EMAIL)))
                 .andExpect(jsonPath("$.roles[0]", is(EXPECTED_ROLE.toString())));
 
-        verify(userService, times(1)).createWithPassword(any(User.class), eq(EXPECTED_PASSWORD));
+        verify(userService, times(1))
+                .createWithPasswordHash(any(User.class), any(String.class));
         verifyNoMoreInteractions(userService);
     }
 

@@ -12,6 +12,7 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
 import org.springframework.web.util.UriComponentsBuilder;
@@ -27,13 +28,15 @@ import java.util.UUID;
 @Api(description = "Operations for users resource")
 @RestController
 @RequestMapping(value = ApiUrl.ADMIN_USERS_PATH, produces = MediaType.APPLICATION_JSON_VALUE)
-public class UsersController {
+public class UserController {
 
     private final UserService userService;
+    private final PasswordEncoder passwordEncoder;
 
     @Autowired
-    UsersController(UserService userService) {
+    UserController(UserService userService, PasswordEncoder passwordEncoder) {
         this.userService = userService;
+        this.passwordEncoder = passwordEncoder;
     }
 
     @ApiOperation(value = "Get all users", responseContainer = "List", notes =
@@ -70,7 +73,8 @@ public class UsersController {
     @PostMapping(consumes = MediaType.APPLICATION_JSON_VALUE)
     @PreAuthorize("hasAnyAuthority('SA', 'TOZ')")
     public ResponseEntity<UserView> createUser(@Valid @RequestBody UserView userView) {
-        final User createdUser = userService.createWithPassword(convertToModel(userView), userView.getPassword());
+        final String passwordHash = passwordEncoder.encode(userView.getPassword());
+        final User createdUser = userService.createWithPasswordHash(convertToModel(userView), passwordHash);
         final UserView createdUserView = convertToView(createdUser);
         final URI baseLocation = ServletUriComponentsBuilder.fromCurrentRequest()
                 .build().toUri();
