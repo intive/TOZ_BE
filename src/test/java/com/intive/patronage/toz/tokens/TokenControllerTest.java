@@ -47,13 +47,13 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 public class TokenControllerTest {
 
     private static final MediaType CONTENT_TYPE = MediaType.APPLICATION_JSON_UTF8;
-    private static final String EMAIL = "user@mail.com";
-    private static final String PASSWORD = "Password";
+    static final String EMAIL = "user@mail.com";
+    static final String PASSWORD = "Password";
     private static final String EMAIL_CLAIM_NAME = "email";
     private static final String SCOPES_CLAIM_NAME = "scopes";
-    private static final String AUTHORIZATION_HEADER = "Authorization";
-    private static final String TOKEN_PREFIX = "Bearer ";
-    private static final User.Role ROLE = User.Role.TOZ;
+    static final String AUTHORIZATION_HEADER = "Authorization";
+    static final String TOKEN_PREFIX = "Bearer ";
+    static final User.Role ROLE_ADMIN = User.Role.TOZ;
 
     @Value("${jwt.secret-base64}")
     private String secret;
@@ -80,7 +80,7 @@ public class TokenControllerTest {
     public void setUp() throws Exception {
         final String passwordHash = passwordEncoder.encode(PASSWORD);
         user = new User();
-        user.addRole(ROLE);
+        user.addRole(ROLE_ADMIN);
         user.setEmail(EMAIL);
         user.setPasswordHash(passwordHash);
         userService.createWithPasswordHash(user, passwordHash);
@@ -142,7 +142,7 @@ public class TokenControllerTest {
         assertEquals(claims.getBody().getSubject(), user.getId().toString());
         assertEquals(claims.getBody().get(EMAIL_CLAIM_NAME, String.class), user.getEmail());
         final List<String> scopes = claims.getBody().get(SCOPES_CLAIM_NAME, List.class);
-        assertTrue(scopes.contains(ROLE.toString()));
+        assertTrue(scopes.contains(ROLE_ADMIN.toString()));
     }
 
     @Profile("dev")
@@ -154,7 +154,7 @@ public class TokenControllerTest {
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("userId", is(user.getId().toString())))
                 .andExpect(jsonPath("email", is(user.getEmail())))
-                .andExpect(jsonPath("authorities[0].authority", is(ROLE.toString())));
+                .andExpect(jsonPath("authorities[0].authority", is(ROLE_ADMIN.toString())));
     }
 
     @Profile("dev")
