@@ -29,11 +29,11 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 @ActiveProfiles("test")
 public class TokenRoleTest {
 
-    private final static String TYPE_PARAM = "type";
-    private final static String RELEASED = "RELEASED";
-    private final static String ACHIEVED = "ACHIEVED";
+    private static final String TYPE_PARAM = "type";
+    private static final String RELEASED = "RELEASED";
+    private static final String ACHIEVED = "ACHIEVED";
     private static final String EMAIL_VOLUNTEER = "volunteer@mail.com";
-    private final static User.Role ROLE_VOLUNTEER = User.Role.VOLUNTEER;
+    private static final User.Role ROLE_VOLUNTEER = User.Role.VOLUNTEER;
 
     @Autowired
     private MockMvc mockMvc;
