@@ -47,7 +47,7 @@ class ScheduleController {
     }
 
     @ApiOperation(value = "Get schedule", notes =
-            "Required roles: SA, TOZ.")
+            "Required roles: SA, TOZ, VOLUNTEER.")
     @ApiResponses(value = {
             @ApiResponse(code = 400, message = "Bad request", response = ArgumentErrorResponse.class)
     })
@@ -68,7 +68,7 @@ class ScheduleController {
     }
 
     @ApiOperation(value = "Get single reservation by id", notes =
-            "Required roles: SA, TOZ.")
+            "Required roles: SA, TOZ, VOLUNTEER.")
     @ApiResponses(value = {
             @ApiResponse(code = 400, message = "Bad request", response = ArgumentErrorResponse.class),
             @ApiResponse(code = 404, message = "Not found", response = ErrorResponse.class)
@@ -81,7 +81,7 @@ class ScheduleController {
     }
 
     @ApiOperation(value = "Make reservation", notes =
-            "Required roles: SA, TOZ.")
+            "Required roles: SA, TOZ, VOLUNTEER.")
     @ApiResponses(value = {
             @ApiResponse(code = 400, message = "Bad request", response = ValidationErrorResponse.class),
             @ApiResponse(code = 409, message = "Already exists", response = ErrorResponse.class),
@@ -99,7 +99,7 @@ class ScheduleController {
     }
 
     @ApiOperation(value = "Update reservation", notes =
-            "Required roles: SA, TOZ.")
+            "Required roles: SA, TOZ, VOLUNTEER.")
     @ApiResponses(value = {
             @ApiResponse(code = 400, message = "Bad request", response = ValidationErrorResponse.class),
             @ApiResponse(code = 404, message = "Not found", response = ErrorResponse.class)
@@ -117,7 +117,7 @@ class ScheduleController {
     }
 
     @ApiOperation(value = "Delete reservation", notes =
-            "Required roles: SA, TOZ.")
+            "Required roles: SA, TOZ, VOLUNTEER.")
     @ApiResponses(value = {
             @ApiResponse(code = 400, message = "Bad request", response = ArgumentErrorResponse.class),
             @ApiResponse(code = 404, message = "Not found", response = ErrorResponse.class)
