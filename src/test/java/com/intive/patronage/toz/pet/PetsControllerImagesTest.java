@@ -1,21 +1,24 @@
 package com.intive.patronage.toz.pet;
 
 import com.intive.patronage.toz.config.ApiUrl;
+import com.intive.patronage.toz.environment.ApiProperties;
 import com.intive.patronage.toz.pet.model.db.Pet;
+import com.intive.patronage.toz.storage.StorageProperties;
 import com.intive.patronage.toz.storage.StorageService;
 import com.intive.patronage.toz.storage.model.db.UploadedFile;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
+import org.mockito.Mock;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
 import org.springframework.boot.test.context.SpringBootTest;
-import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.http.MediaType;
 import org.springframework.mock.web.MockMultipartFile;
 import org.springframework.test.context.junit4.SpringRunner;
 import org.springframework.test.web.servlet.MockMvc;
+import org.springframework.test.web.servlet.setup.MockMvcBuilders;
 import org.springframework.web.multipart.MultipartFile;
+import org.springframework.web.servlet.mvc.method.annotation.ExceptionHandlerExceptionResolver;
 
 import java.io.InputStream;
 import java.util.UUID;
@@ -30,31 +33,35 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
 @RunWith(SpringRunner.class)
-@AutoConfigureMockMvc
 @SpringBootTest(
         webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT,
-        properties = "jwt.secret-base64=c2VjcmV0"
+        properties = {ApiProperties.JWT_SECRET_BASE64, ApiProperties.SUPER_ADMIN_PASSWORD}
 )
 public class PetsControllerImagesTest {
 
-    private final static String IMAGES_REQUEST_PATH_FORMAT = ApiUrl.PET_PATH + "/%s/images";
-    private final static String imageFileName = "/test.jpg";
+    private final static String IMAGES_REQUEST_PATH_FORMAT = ApiUrl.PETS_PATH + "/%s/images";
+    private final static String IMAGE_FILE_NAME = "/test.jpg";
     private final Pet pet = new Pet();
 
-    @Autowired
     private MockMvc mockMvc;
-
-    @MockBean
+    private MockMvc mvcWithCustomHandlers;
+    @Autowired
+    private ExceptionHandlerExceptionResolver exceptionHandlerExceptionResolver;
+    @Mock
     private StorageService storageService;
-    @MockBean
+    @Mock
     private PetsService petsService;
-
+    @Mock
+    private StorageProperties storageProperties;
 
     @Before
     public void setUp() {
-        pet.setId(UUID.randomUUID());
         UploadedFile uploadedFile = initializeUploadedFile();
-
+        mockMvc = MockMvcBuilders.standaloneSetup(
+                new PetsController(petsService, storageService, storageProperties)).build();
+        mvcWithCustomHandlers =
+                MockMvcBuilders.standaloneSetup(new PetsController(petsService, storageService, storageProperties))
+                        .setHandlerExceptionResolvers(exceptionHandlerExceptionResolver).build();
         when(storageService.store(any(MultipartFile.class))).thenReturn(uploadedFile);
         when(storageService.get(uploadedFile.getId())).thenReturn(uploadedFile);
         doNothing().when(petsService).updatePetImageUrl(any(UUID.class), any(String.class));
@@ -70,7 +77,7 @@ public class PetsControllerImagesTest {
 
     @Test
     public void shouldSaveUploadedFile() throws Exception {
-        try (InputStream inputStream = getClass().getResourceAsStream(imageFileName)) {
+        try (InputStream inputStream = getClass().getResourceAsStream(IMAGE_FILE_NAME)) {
             MockMultipartFile multipartFile =
                     new MockMultipartFile("file", "filename.jpg", MediaType.IMAGE_JPEG_VALUE, inputStream);
 
@@ -88,7 +95,7 @@ public class PetsControllerImagesTest {
     public void shouldReturnErrorWhenInvalidImage() throws Exception {
         MockMultipartFile multipartFile =
                 new MockMultipartFile("file", "test.txt", "text/plain", "Spring Framework".getBytes());
-        this.mockMvc.perform(fileUpload(String.format(IMAGES_REQUEST_PATH_FORMAT, pet.getId())).file(multipartFile))
+        mvcWithCustomHandlers.perform(fileUpload(String.format(IMAGES_REQUEST_PATH_FORMAT, pet.getId())).file(multipartFile))
                 .andExpect(status().isUnprocessableEntity());
 
         verifyZeroInteractions(storageService);
@@ -96,7 +103,6 @@ public class PetsControllerImagesTest {
 
     private UploadedFile initializeUploadedFile() {
         UploadedFile uploadedFile = new UploadedFile();
-        uploadedFile.setId(UUID.randomUUID());
         uploadedFile.setPath(uploadedFile.getId().toString());
         return uploadedFile;
     }

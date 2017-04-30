@@ -18,6 +18,7 @@ import org.springframework.context.MessageSource;
 import org.springframework.context.i18n.LocaleContextHolder;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.converter.HttpMessageNotReadableException;
+import org.springframework.security.access.AccessDeniedException;
 import org.springframework.security.authentication.BadCredentialsException;
 import org.springframework.validation.FieldError;
 import org.springframework.web.bind.MethodArgumentNotValidException;
@@ -29,6 +30,8 @@ import org.springframework.web.method.annotation.MethodArgumentTypeMismatchExcep
 import org.springframework.web.servlet.config.annotation.EnableWebMvc;
 
 import javax.mail.MessagingException;
+import java.io.PrintWriter;
+import java.io.StringWriter;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
@@ -52,7 +55,13 @@ public class ControllerExceptionHandler {
     @ResponseStatus(value = HttpStatus.INTERNAL_SERVER_ERROR)
     @ResponseBody
     public String handleRuntimeException(RuntimeException e) {
-        String errorLog = String.format("%s, ID: %s", e.getMessage(), UUID.randomUUID().toString());
+        StringWriter stackTraceWriter = new StringWriter();
+        e.printStackTrace(new PrintWriter(stackTraceWriter));
+        String errorLog =
+                String.format("%s, ID: %s, %s",
+                        e.getMessage(),
+                        UUID.randomUUID().toString(),
+                        stackTraceWriter.toString());
         logger.error(errorLog);
         return errorLog;
     }
@@ -170,5 +179,14 @@ public class ControllerExceptionHandler {
     @ResponseBody
     public ErrorResponse handleBadCredentialsException(BadCredentialsException e) {
         return new ErrorResponse(HttpStatus.UNAUTHORIZED, e.getMessage());
+    }
+
+    @ExceptionHandler(AccessDeniedException.class)
+    @ResponseStatus(HttpStatus.FORBIDDEN)
+    @ResponseBody
+    public ErrorResponse handleAccessDeniedException(AccessDeniedException e) {
+        final String message = messageSource.getMessage(
+                "accessDenied", null, LocaleContextHolder.getLocale());
+        return new ErrorResponse(HttpStatus.FORBIDDEN, message);
     }
 }

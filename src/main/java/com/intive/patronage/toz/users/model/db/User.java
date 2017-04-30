@@ -1,62 +1,43 @@
 package com.intive.patronage.toz.users.model.db;
 
 import com.intive.patronage.toz.base.model.Identifiable;
-import com.intive.patronage.toz.users.model.enumerations.Role;
-import lombok.AllArgsConstructor;
-import lombok.NoArgsConstructor;
+import lombok.*;
 
-import javax.persistence.Entity;
-import javax.persistence.EnumType;
-import javax.persistence.Enumerated;
+import javax.persistence.*;
+import java.util.HashSet;
+import java.util.Set;
 
+@Getter
+@Setter
+@Entity
 @NoArgsConstructor
 @AllArgsConstructor
-@Entity
 public class User extends Identifiable {
-    private String email;
-    private String password;
-    private String forename;
+    private String name;
+    private String passwordHash;
     private String surname;
-    @Enumerated(EnumType.STRING)
-    private Role role;
+    private String phoneNumber;
+    @Column(unique = true)
+    private String email;
 
-    public String getEmail() {
-        return email;
+    @OneToMany(cascade = CascadeType.MERGE, fetch = FetchType.EAGER)
+    private Set<RoleEntity> roles = new HashSet<>();
+
+    public void addRole(final Role role) {
+        final RoleEntity roleEntity = new RoleEntity(role);
+        roles.add(roleEntity);
     }
 
-    public void setEmail(String email) {
-        this.email = email;
+    public boolean hasRole(final Role role) {
+        return roles.stream().anyMatch(
+                roleEntity -> roleEntity.getRole().equals(role));
     }
 
-    public String getPassword() {
-        return password;
+    public boolean isSuperAdmin() {
+        return hasRole(Role.SA);
     }
 
-    public void setPassword(String password) {
-        this.password = password;
-    }
-
-    public String getForename() {
-        return forename;
-    }
-
-    public void setForename(String forename) {
-        this.forename = forename;
-    }
-
-    public String getSurname() {
-        return surname;
-    }
-
-    public void setSurname(String surname) {
-        this.surname = surname;
-    }
-
-    public Role getRole() {
-        return role;
-    }
-
-    public void setRole(Role role) {
-        this.role = role;
+    public enum Role {
+        SA, TOZ, VOLUNTEER, ANONYMOUS
     }
 }

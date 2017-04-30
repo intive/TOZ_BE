@@ -21,7 +21,7 @@ public class ReservationResponseView extends ReservationView {
     private UUID id;
 
     @ApiModelProperty(example = "John", position = 5)
-    private String ownerForename;
+    private String ownerName;
 
     @ApiModelProperty(example = "Doe", position = 6)
     private String ownerSurname;
