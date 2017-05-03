@@ -288,7 +288,7 @@ databaseChangeLog:
                     type: uuid
                 - column:
                     name: state
-                    type: varchar(255)
+                    type: varchar(100)
                 - column:
                     name: created
                     type: datetime
