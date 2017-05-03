@@ -14,17 +14,14 @@ import org.springframework.stereotype.Service;
 @Service
 public class UserActivationService {
 
-    private final long expirationTime;
     private final String secret;
     private UserRepository userRepository;
 
     @Autowired
     public UserActivationService(
             UserRepository userRepository,
-            @Value("${jwt.email.activation.expiration-time-minutes}") Long expirationTime,
             @Value("${jwt.secret-base64}") String secret) {
         this.userRepository = userRepository;
-        this.expirationTime = expirationTime;
         this.secret = secret;
     }
 
@@ -36,6 +33,7 @@ public class UserActivationService {
             throw new JwtAuthenticationException("User already exists");
         }
         User user = new User();
+        user.setName(claims.getBody().get(JwtFactory.NAME_CLAIM_NAME, String.class));
         user.setEmail(claims.getBody().get(JwtFactory.EMAIL_CLAIM_NAME, String.class));
         user.setSurname(claims.getBody().get(JwtFactory.SURNAME_CLAIM_NAME, String.class));
         user.setPhoneNumber(claims.getBody().get(JwtFactory.PHONENUMBER_CLAIM_NAME, String.class));
