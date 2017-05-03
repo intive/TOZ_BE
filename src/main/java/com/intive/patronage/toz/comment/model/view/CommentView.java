@@ -5,15 +5,27 @@ import com.fasterxml.jackson.annotation.JsonProperty;
 import com.intive.patronage.toz.base.model.IdentifiableView;
 import lombok.Getter;
 import lombok.Setter;
+import org.hibernate.validator.constraints.NotEmpty;
 
+import javax.validation.Valid;
+import javax.validation.constraints.NotNull;
 import java.util.UUID;
 
 @Getter
 @Setter
 @JsonInclude(JsonInclude.Include.NON_EMPTY)
 public class CommentView extends IdentifiableView {
+    @NotNull
+    @NotEmpty
     private String contents;
+
+    @Valid
+    @NotNull
     private UUID userUuid;
+
+    @Valid
+    @NotNull
+    private UUID petUuid;
 
     @JsonProperty(access = JsonProperty.Access.READ_ONLY)
     private Long created;

@@ -281,6 +281,9 @@ databaseChangeLog:
                     name: user_uuid
                     type: uuid
                 - column:
+                    name: pet_uuid
+                    type: uuid
+                - column:
                     name: created
                     type: datetime
                 - column:
