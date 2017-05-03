@@ -18,6 +18,7 @@ import java.util.UUID;
 public class Comment extends Identifiable {
     private String contents;
     private UUID userUuid;
+    private UUID petUuid;
 
     @CreatedDate
     @Column(updatable = false)
