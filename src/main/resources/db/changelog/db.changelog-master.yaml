@@ -261,3 +261,28 @@ databaseChangeLog:
                     type: varchar(255)
                     constraints:
                       - nullable: false
+  - changeSet:
+        id : 5
+        author: mateuszsz93
+        changes:
+          - createTable:
+              tableName: comment
+              columns:
+                - column:
+                    name: id
+                    type: uuid
+                    constraints:
+                      - primaryKey: true
+                      - nullable: false
+                - column:
+                    name: contents
+                    type: text
+                - column:
+                    name: user_uuid
+                    type: uuid
+                - column:
+                    name: created
+                    type: datetime
+                - column:
+                    name: last_modified
+                    type: datetime
