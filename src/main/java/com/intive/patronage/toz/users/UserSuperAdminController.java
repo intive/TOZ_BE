@@ -17,10 +17,10 @@ import java.util.UUID;
 @ApiIgnore
 @RestController
 @RequestMapping(value = ApiUrl.ADMIN_USERS_PATH, produces = MediaType.APPLICATION_JSON_VALUE)
-public class UserAdminController extends UserBasicController {
+public class UserSuperAdminController extends UserBasicController {
 
     @Autowired
-    UserAdminController(UserService userService, PasswordEncoder passwordEncoder) {
+    UserSuperAdminController(UserService userService, PasswordEncoder passwordEncoder) {
         super(userService, passwordEncoder);
     }
 
