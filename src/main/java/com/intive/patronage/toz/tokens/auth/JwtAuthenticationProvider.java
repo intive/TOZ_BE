@@ -41,18 +41,7 @@ public class JwtAuthenticationProvider implements AuthenticationProvider {
             return new JwtAuthenticationToken(null, authorities);
         }
 
-        Jws<Claims> claims;
-        try {
-            claims = Jwts.parser()
-                    .setSigningKey(TextCodec.BASE64.decode(secret))
-                    .parseClaimsJws(token);
-        } catch (UnsupportedJwtException | MalformedJwtException | IllegalArgumentException e) {
-            throw new JwtAuthenticationException("Invalid token");
-        } catch (SignatureException e) {
-            throw new JwtAuthenticationException("Invalid signature");
-        } catch (ExpiredJwtException e) {
-            throw new JwtAuthenticationException("Token expired");
-        }
+        Jws<Claims> claims = parseToken(token);
 
         final UUID userID = UUID.fromString(claims.getBody().getSubject());
         final String email = claims.getBody().get("email", String.class);
@@ -69,5 +58,21 @@ public class JwtAuthenticationProvider implements AuthenticationProvider {
     @Override
     public boolean supports(Class<?> authentication) {
         return JwtAuthenticationToken.class.isAssignableFrom(authentication);
+    }
+
+    public Jws<Claims> parseToken(String token){
+        Jws<Claims> claims;
+        try {
+            claims = Jwts.parser()
+                    .setSigningKey(TextCodec.BASE64.decode(secret))
+                    .parseClaimsJws(token);
+        } catch (UnsupportedJwtException | MalformedJwtException | IllegalArgumentException e) {
+            throw new JwtAuthenticationException("Invalid token");
+        } catch (SignatureException e) {
+            throw new JwtAuthenticationException("Invalid signature");
+        } catch (ExpiredJwtException e) {
+            throw new JwtAuthenticationException("Token expired");
+        }
+        return claims;
     }
 }

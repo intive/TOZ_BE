@@ -15,10 +15,13 @@ import java.util.Date;
 import java.util.List;
 
 @Component
-class JwtFactory {
+public class JwtFactory {
 
-    private static final String EMAIL_CLAIM_NAME = "email";
-    private static final String SCOPES_CLAIM_NAME = "scopes";
+    public static final String EMAIL_CLAIM_NAME = "email";
+    public static final String NAME_CLAIM_NAME = "name";
+    public static final String SURNAME_CLAIM_NAME = "surname";
+    public static final String PHONENUMBER_CLAIM_NAME = "phonenumber";
+    public static final String SCOPES_CLAIM_NAME = "scopes";
 
     private final long expirationTime;
     private final String secret;
@@ -29,16 +32,6 @@ class JwtFactory {
         this.secret = secret;
     }
 
-    String generateToken(User user) {
-        return Jwts.builder()
-                .setSubject(user.getId().toString())
-                .claim(EMAIL_CLAIM_NAME, user.getEmail())
-                .claim(SCOPES_CLAIM_NAME, getRolesFromUser(user))
-                .setIssuedAt(new Date(Instant.now().toEpochMilli()))
-                .setExpiration(new Date(Instant.now().plus(expirationTime, ChronoUnit.MINUTES).toEpochMilli()))
-                .signWith(SignatureAlgorithm.HS512, TextCodec.BASE64.decode(secret))
-                .compact();
-    }
 
     private static List<User.Role> getRolesFromUser(User user) {
         List<User.Role> roles = new ArrayList<>();
@@ -46,5 +39,18 @@ class JwtFactory {
             roles.add(entity.getRole());
         }
         return roles;
+    }
+    public String generateToken(User user) {
+        return Jwts.builder()
+                .setSubject(user.getId().toString())
+                .claim(NAME_CLAIM_NAME, user.getName())
+                .claim(EMAIL_CLAIM_NAME, user.getEmail())
+                .claim(SCOPES_CLAIM_NAME, getRolesFromUser(user))
+                .claim(SURNAME_CLAIM_NAME , user.getSurname())
+                .claim(PHONENUMBER_CLAIM_NAME, user.getPhoneNumber())
+                .setIssuedAt(new Date(Instant.now().toEpochMilli()))
+                .setExpiration(new Date(Instant.now().plus(expirationTime, ChronoUnit.MINUTES).toEpochMilli()))
+                .signWith(SignatureAlgorithm.HS512, TextCodec.BASE64.decode(secret))
+                .compact();
     }
 }
