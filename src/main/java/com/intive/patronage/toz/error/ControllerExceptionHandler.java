@@ -1,9 +1,6 @@
 package com.intive.patronage.toz.error;
 
-import com.intive.patronage.toz.error.exception.AlreadyExistsException;
-import com.intive.patronage.toz.error.exception.InvalidImageFileException;
-import com.intive.patronage.toz.error.exception.NotFoundException;
-import com.intive.patronage.toz.error.exception.WrongEnumValueException;
+import com.intive.patronage.toz.error.exception.*;
 import com.intive.patronage.toz.error.model.ArgumentErrorResponse;
 import com.intive.patronage.toz.error.model.ErrorResponse;
 import com.intive.patronage.toz.error.model.ValidationErrorResponse;
@@ -188,5 +185,26 @@ public class ControllerExceptionHandler {
         final String message = messageSource.getMessage(
                 "accessDenied", null, LocaleContextHolder.getLocale());
         return new ErrorResponse(HttpStatus.FORBIDDEN, message);
+    }
+
+    @ExceptionHandler(BadRoleForNewUserException.class)
+    @ResponseStatus(HttpStatus.BAD_REQUEST)
+    @ResponseBody
+    public ErrorResponse handleBadRoleForNewUserException(BadRoleForNewUserException e) {
+        final String newUserRoleValue = e.getNewUserRole().toString();
+        final String message = messageSource.getMessage(
+                "badRoleForNewUser", new String[]{newUserRoleValue}, LocaleContextHolder.getLocale());
+        return new ErrorResponse(HttpStatus.BAD_REQUEST, message);
+    }
+
+
+    @ExceptionHandler(BadRoleForExistingUserException.class)
+    @ResponseStatus(HttpStatus.BAD_REQUEST)
+    @ResponseBody
+    public ErrorResponse handleBadRoleForExistingUserException(BadRoleForExistingUserException e) {
+        final String userRoleValue = e.getUserRole().toString();
+        final String message = messageSource.getMessage(
+                "badRoleForExistingUser", new String[]{userRoleValue}, LocaleContextHolder.getLocale());
+        return new ErrorResponse(HttpStatus.BAD_REQUEST, message);
     }
 }

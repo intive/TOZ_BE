@@ -1,8 +1,11 @@
 package com.intive.patronage.toz.users;
 
 import com.intive.patronage.toz.config.ApiUrl;
+import com.intive.patronage.toz.error.exception.BadRoleForExistingUserException;
+import com.intive.patronage.toz.error.exception.BadRoleForNewUserException;
 import com.intive.patronage.toz.error.model.ErrorResponse;
 import com.intive.patronage.toz.error.model.ValidationErrorResponse;
+import com.intive.patronage.toz.users.model.db.User;
 import com.intive.patronage.toz.users.model.view.UserView;
 import io.swagger.annotations.*;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -15,6 +18,7 @@ import org.springframework.web.bind.annotation.*;
 
 import javax.validation.Valid;
 import java.util.List;
+import java.util.Set;
 import java.util.UUID;
 
 
@@ -56,6 +60,10 @@ class UserTozAdminController extends UserBasicController {
     @PostMapping(consumes = MediaType.APPLICATION_JSON_VALUE)
     @Override
     public ResponseEntity<UserView> createUser(@Valid @RequestBody UserView userView) {
+        Set<User.Role> userRoles = userView.getRoles();
+        if (userRoles.contains(User.Role.SA)) {
+            throw new BadRoleForNewUserException(User.Role.SA);
+        }
         return super.createUser(userView);
     }
 
@@ -77,6 +85,10 @@ class UserTozAdminController extends UserBasicController {
     @PutMapping(value = "/{id}", consumes = MediaType.APPLICATION_JSON_VALUE)
     @Override
     public UserView updateUser(@PathVariable UUID id, @Valid @RequestBody UserView userView) {
+        Set<User.Role> userRoles = userView.getRoles();
+        if (userRoles.contains(User.Role.SA)) {
+            throw new BadRoleForExistingUserException(User.Role.SA);
+        }
         return super.updateUser(id, userView);
     }
 }

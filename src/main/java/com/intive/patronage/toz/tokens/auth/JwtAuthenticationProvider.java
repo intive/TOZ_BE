@@ -2,6 +2,7 @@ package com.intive.patronage.toz.tokens.auth;
 
 import com.intive.patronage.toz.error.exception.JwtAuthenticationException;
 import com.intive.patronage.toz.tokens.model.UserContext;
+import com.intive.patronage.toz.users.model.db.RoleEntity;
 import com.intive.patronage.toz.users.model.db.User;
 import io.jsonwebtoken.*;
 import io.jsonwebtoken.impl.TextCodec;
@@ -9,7 +10,6 @@ import org.springframework.security.authentication.AuthenticationProvider;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.AuthenticationException;
 import org.springframework.security.core.GrantedAuthority;
-import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.stereotype.Component;
 
 import java.util.Collections;
@@ -37,7 +37,7 @@ public class JwtAuthenticationProvider implements AuthenticationProvider {
 
         if (token == null) {
             List<GrantedAuthority> authorities =
-                    Collections.singletonList(new SimpleGrantedAuthority(User.Role.ANONYMOUS.toString()));
+                    Collections.singletonList(RoleEntity.buildWithRole(User.Role.ANONYMOUS));
             return new JwtAuthenticationToken(null, authorities);
         }
 
@@ -59,7 +59,7 @@ public class JwtAuthenticationProvider implements AuthenticationProvider {
         final List<String> scopes = claims.getBody().get("scopes", List.class);
 
         Set<GrantedAuthority> authorities = scopes.stream()
-                .map(SimpleGrantedAuthority::new)
+                .map(RoleEntity::new) // TODO
                 .collect(Collectors.toSet());
 
         final UserContext userContext = new UserContext(userID, email, authorities);

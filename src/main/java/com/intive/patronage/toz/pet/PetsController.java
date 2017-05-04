@@ -11,6 +11,8 @@ import com.intive.patronage.toz.storage.StorageProperties;
 import com.intive.patronage.toz.storage.StorageService;
 import com.intive.patronage.toz.storage.model.db.UploadedFile;
 import com.intive.patronage.toz.storage.model.view.UrlView;
+import com.intive.patronage.toz.users.model.db.RoleEntity;
+import com.intive.patronage.toz.users.model.db.User;
 import com.intive.patronage.toz.util.ModelMapper;
 import io.swagger.annotations.*;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -18,6 +20,9 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
+import org.springframework.security.core.Authentication;
+import org.springframework.security.core.GrantedAuthority;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
@@ -28,6 +33,7 @@ import javax.validation.Valid;
 import java.io.IOException;
 import java.io.InputStream;
 import java.net.URI;
+import java.util.Collection;
 import java.util.List;
 import java.util.UUID;
 
@@ -36,6 +42,8 @@ import java.util.UUID;
 @RequestMapping(value = ApiUrl.PETS_PATH, produces = MediaType.APPLICATION_JSON_VALUE)
 class PetsController {
 
+    private static final String REQUIRED_ROLES_SA_TOZ = "Required roles: SA, TOZ.";
+    private static final String HAS_ANY_AUTHORITY_SA_TOZ = "hasAnyAuthority('SA', 'TOZ')";
     private final PetsService petsService;
     private final StorageService storageService;
     private final StorageProperties storageProperties;
@@ -47,14 +55,10 @@ class PetsController {
         this.storageProperties = storageProperties;
     }
 
-    @ApiOperation(value = "Get all pets", responseContainer = "List", notes =
-            "Required roles: SA, TOZ, VOLUNTEER, ANONYMOUS when isAdmin == false, " +
-                    "SA, TOZ for the rest.")
+    @ApiOperation(value = "Get all pets", responseContainer = "List")
     @GetMapping
-    @PreAuthorize("hasAnyAuthority('SA', 'TOZ') or " + //TODO: correct after task 230
-            "(hasAnyAuthority('SA', 'TOZ', 'VOLUNTEER', 'ANONYMOUS') and #isAdmin != true)")
-    public List<PetView> getAllPets(@RequestParam(value = "admin", required = false) boolean isAdmin) {
-        if (isAdmin) { // TODO: implement with task 230
+    public List<PetView> getAllPets() {
+        if (hasAdminAuthorities()) {
             final List<Pet> pets = petsService.findAllPets();
             return ModelMapper.convertToView(pets, PetView.class);
         }
@@ -62,13 +66,25 @@ class PetsController {
         return ModelMapper.convertToView(pets, PetView.class);
     }
 
-    @ApiOperation(value = "Get single pet by id", notes =
-            "Required roles: SA, TOZ.")
+    private boolean hasAdminAuthorities() {
+        return hasAuthorities(User.Role.SA) || hasAuthorities(User.Role.TOZ);
+    }
+
+    private boolean hasAuthorities(User.Role role) {
+        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+        if (authentication == null) {
+            return false;
+        }
+        Collection<? extends GrantedAuthority> grantedAuthorities = authentication.getAuthorities();
+        return grantedAuthorities.contains(RoleEntity.buildWithRole(role));
+    }
+
+    @ApiOperation(value = "Get single pet by id", notes = REQUIRED_ROLES_SA_TOZ)
     @ApiResponses(value = {
             @ApiResponse(code = 404, message = "Pet not found", response = ErrorResponse.class),
     })
     @GetMapping(value = "/{id}")
-    @PreAuthorize("hasAnyAuthority('SA', 'TOZ')")
+    @PreAuthorize(HAS_ANY_AUTHORITY_SA_TOZ)
     public PetView getPetById(@ApiParam(required = true) @PathVariable UUID id) {
         return convertToView(petsService.findById(id));
     }
@@ -77,14 +93,13 @@ class PetsController {
         return ModelMapper.convertToView(pet, PetView.class);
     }
 
-    @ApiOperation(value = "Create new pet", response = PetView.class, notes =
-            "Required roles: SA, TOZ.")
+    @ApiOperation(value = "Create new pet", response = PetView.class, notes = REQUIRED_ROLES_SA_TOZ)
     @ApiResponses(value = {
             @ApiResponse(code = 400, message = "Bad request", response = ValidationErrorResponse.class)
     })
     @ResponseStatus(HttpStatus.CREATED)
     @PostMapping(consumes = MediaType.APPLICATION_JSON_VALUE)
-    @PreAuthorize("hasAnyAuthority('SA', 'TOZ')")
+    @PreAuthorize(HAS_ANY_AUTHORITY_SA_TOZ)
     public ResponseEntity<PetView> createPet(@Valid @RequestBody PetRequestBody petView) {
         final Pet createdPet = petsService.createPet(convertToModel(petView));
         final PetView createdPetView = convertToView(createdPet);
@@ -100,41 +115,38 @@ class PetsController {
         return ModelMapper.convertToModel(petView, Pet.class);
     }
 
-    @ApiOperation(value = "Delete pet", notes =
-            "Required roles: SA, TOZ.")
+    @ApiOperation(value = "Delete pet", notes = REQUIRED_ROLES_SA_TOZ)
     @ApiResponses(value = {
             @ApiResponse(code = 404, message = "Pet not found", response = ErrorResponse.class)
     })
     @DeleteMapping(value = "/{id}")
-    @PreAuthorize("hasAnyAuthority('SA', 'TOZ')")
+    @PreAuthorize(HAS_ANY_AUTHORITY_SA_TOZ)
     public ResponseEntity<?> deletePetById(@PathVariable UUID id) {
         petsService.deletePet(id);
         return ResponseEntity.ok().build();
     }
 
-    @ApiOperation(value = "Update pet information", response = PetView.class, notes =
-            "Required roles: SA, TOZ.")
+    @ApiOperation(value = "Update pet information", response = PetView.class, notes = REQUIRED_ROLES_SA_TOZ)
     @ApiResponses(value = {
             @ApiResponse(code = 404, message = "Pet not found", response = ErrorResponse.class),
             @ApiResponse(code = 400, message = "Bad request", response = ValidationErrorResponse.class)
     })
     @PutMapping(value = "/{id}", consumes = MediaType.APPLICATION_JSON_VALUE)
-    @PreAuthorize("hasAnyAuthority('SA', 'TOZ')")
+    @PreAuthorize(HAS_ANY_AUTHORITY_SA_TOZ)
     public PetView updatePet(@PathVariable UUID id, @Valid @RequestBody PetRequestBody petView) {
         final Pet pet = convertToModel(petView);
         final Pet updatedPet = petsService.updatePet(id, pet);
         return convertToView(updatedPet);
     }
 
-    @ApiOperation(value = "Upload image", notes =
-            "Required roles: SA, TOZ.")
+    @ApiOperation(value = "Upload image", notes = REQUIRED_ROLES_SA_TOZ)
     @ApiResponses(value = {
             @ApiResponse(code = 400, message = "Bad Request"),
             @ApiResponse(code = 422, message = "Invalid image file")
     })
     @ResponseStatus(HttpStatus.CREATED)
     @PostMapping(value = "/{id}/images", consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
-    @PreAuthorize("hasAnyAuthority('SA', 'TOZ')")
+    @PreAuthorize(HAS_ANY_AUTHORITY_SA_TOZ)
     public ResponseEntity<UrlView> uploadFile(@PathVariable UUID id, @RequestParam("file") MultipartFile file) {
         validateImageArgument(file);
         final UploadedFile uploadedFile = storageService.store(file);
