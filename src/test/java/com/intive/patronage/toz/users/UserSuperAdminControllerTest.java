@@ -33,7 +33,7 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
         webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT,
         properties = "jwt.secret-base64=c2VjcmV0"
 )
-public class UserControllerTest {
+public class UserSuperAdminControllerTest {
 
     private static final int USERS_LIST_SIZE = 5;
     private static final UUID EXPECTED_ID = UUID.randomUUID();
@@ -57,8 +57,8 @@ public class UserControllerTest {
     @Before
     public void setUp() throws Exception {
         MockitoAnnotations.initMocks(this);
-        final UserController userController = new UserController(userService, passwordEncoder);
-        mvc = MockMvcBuilders.standaloneSetup(userController).build();
+        UserSuperAdminController userSuperAdminController = new UserSuperAdminController(userService, passwordEncoder);
+        mvc = MockMvcBuilders.standaloneSetup(userSuperAdminController).build();
     }
 
     @DataProvider
