@@ -48,8 +48,8 @@ class PetsController {
     }
 
     @ApiOperation(value = "Get all pets", responseContainer = "List", notes =
-    "Required roles: SA, TOZ, VOLUNTEER, ANONYMOIS when isAdmin == false, " +
-            "SA, TOZ for the rest.")
+            "Required roles: SA, TOZ, VOLUNTEER, ANONYMOUS when isAdmin == false, " +
+                    "SA, TOZ for the rest.")
     @GetMapping
     @PreAuthorize("hasAnyAuthority('SA', 'TOZ') or " + //TODO: correct after task 230
             "(hasAnyAuthority('SA', 'TOZ', 'VOLUNTEER', 'ANONYMOUS') and #isAdmin != true)")
