@@ -16,8 +16,8 @@ import java.util.UUID;
 
 @ApiIgnore
 @RestController
-@RequestMapping(value = ApiUrl.ADMIN_USERS_PATH, produces = MediaType.APPLICATION_JSON_VALUE)
-public class UserSuperAdminController extends UserBasicController {
+@RequestMapping(value = ApiUrl.SUPER_ADMIN_USERS_PATH, produces = MediaType.APPLICATION_JSON_VALUE)
+class UserSuperAdminController extends UserBasicController {
 
     @Autowired
     UserSuperAdminController(UserService userService, PasswordEncoder passwordEncoder) {

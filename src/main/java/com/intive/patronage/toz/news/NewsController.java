@@ -20,7 +20,7 @@ import java.net.URI;
 import java.util.List;
 import java.util.UUID;
 
-@Api(description = "News operations.")
+@Api(tags = "News", description = "News operations.")
 @RestController
 @RequestMapping(value = ApiUrl.NEWS_PATH, produces = MediaType.APPLICATION_JSON_VALUE)
 class NewsController {
