@@ -27,13 +27,13 @@ import java.util.UUID;
 @ApiIgnore
 @Api(description = "Operations for users resource")
 //@RequestMapping(value = ApiUrl.ADMIN_USERS_PATH, produces = MediaType.APPLICATION_JSON_VALUE)
-public class UserController {
+public class UserTozAdminController {
 
     private final UserService userService;
     private final PasswordEncoder passwordEncoder;
 
     @Autowired
-    UserController(UserService userService, PasswordEncoder passwordEncoder) {
+    UserTozAdminController(UserService userService, PasswordEncoder passwordEncoder) {
         this.userService = userService;
         this.passwordEncoder = passwordEncoder;
     }
