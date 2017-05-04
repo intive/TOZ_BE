@@ -8,6 +8,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
 
@@ -27,6 +28,7 @@ public class CommentController {
     }
 
     @GetMapping
+    @PreAuthorize("hasAnyAuthority('SA', 'TOZ', 'VOLUNTEER', 'ANONYMOUS')")
     public ResponseEntity<List<CommentView>> getAllComments(
             @RequestParam(value = "petUuid", required = false) UUID petUuid,
             @RequestParam(value = "shortened", required = false, defaultValue = "false")
@@ -36,6 +38,7 @@ public class CommentController {
     }
 
     @GetMapping(value = "/{id}")
+    @PreAuthorize("hasAnyAuthority('SA', 'TOZ', 'VOLUNTEER', 'ANONYMOUS')")
     public ResponseEntity<CommentView> getCommentById(@PathVariable UUID id) {
         return ResponseEntity.ok().
                 body(ModelMapper.convertToView(commentService.findById(id), CommentView.class));
@@ -43,6 +46,7 @@ public class CommentController {
 
     @ResponseStatus(HttpStatus.CREATED)
     @PostMapping(consumes = MediaType.APPLICATION_JSON_VALUE)
+    @PreAuthorize("hasAnyAuthority('SA', 'TOZ', 'VOLUNTEER')")
     public ResponseEntity<CommentView> createComment(@Valid @RequestBody CommentView commentView) {
         final URI baseLocation = ServletUriComponentsBuilder.fromCurrentRequest()
                 .build().toUri();
@@ -52,6 +56,7 @@ public class CommentController {
     }
 
     @DeleteMapping(value = "/{id}")
+    @PreAuthorize("hasAnyAuthority('SA', 'TOZ', 'VOLUNTEER')")
     public ResponseEntity<?> deleteCommentById(@PathVariable UUID id) {
         commentService.deleteComment(id);
         return ResponseEntity.ok().build();
@@ -59,6 +64,7 @@ public class CommentController {
 
     @ResponseStatus(HttpStatus.CREATED)
     @PutMapping(value = "/{id}", consumes = MediaType.APPLICATION_JSON_VALUE)
+    @PreAuthorize("hasAnyAuthority('SA', 'TOZ', 'VOLUNTEER')")
     public ResponseEntity<CommentView> updateComment(@PathVariable UUID id,
                                                      @Valid @RequestBody CommentView commentView) {
         final URI baseLocation = ServletUriComponentsBuilder.fromCurrentRequest()
