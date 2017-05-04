@@ -18,9 +18,6 @@ public class CommentView extends IdentifiableView {
     @NotNull
     @NotEmpty
     private String contents;
-
-    @Valid
-    @NotNull
     private UUID userUuid;
 
     @Valid
