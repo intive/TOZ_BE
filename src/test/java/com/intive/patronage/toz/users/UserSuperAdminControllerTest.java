@@ -63,6 +63,14 @@ public class UserSuperAdminControllerTest {
 
     @DataProvider
     public static Object[][] getUserWithView() {
+        final User user = (User) getUser()[0];
+        final UserView userView = ModelMapper.convertToView(user, UserView.class);
+        userView.setPassword(EXPECTED_PASSWORD);
+        return new Object[][]{{user, userView}};
+    }
+
+    @DataProvider
+    public static Object[] getUser() {
         final User user = new User();
         user.setId(EXPECTED_ID);
         user.setName(EXPECTED_NAME);
@@ -71,10 +79,7 @@ public class UserSuperAdminControllerTest {
         user.setPhoneNumber(EXPECTED_PHONE_NUMBER);
         user.setEmail(EXPECTED_EMAIL);
         user.addRole(EXPECTED_ROLE);
-
-        final UserView userView = ModelMapper.convertToView(user, UserView.class);
-        userView.setPassword(EXPECTED_PASSWORD);
-        return new Object[][]{{user, userView}};
+        return new Object[]{user};
     }
 
     private List<User> getUsers() {
@@ -104,6 +109,25 @@ public class UserSuperAdminControllerTest {
                 .andExpect(jsonPath("$", hasSize(USERS_LIST_SIZE)));
 
         verify(userService, times(1)).findAll();
+        verifyNoMoreInteractions(userService);
+    }
+
+    @Test
+    @UseDataProvider("getUser")
+    public void getUserByIdOk(final User user) throws Exception {
+        when(userService.findOneById(EXPECTED_ID)).thenReturn(user);
+        String requestUrl = String.format("%s/%s", ApiUrl.SUPER_ADMIN_USERS_PATH, EXPECTED_ID.toString());
+        mvc.perform(get(requestUrl))
+                .andExpect(status().isOk())
+                .andExpect(content().contentType(CONTENT_TYPE))
+                .andExpect(jsonPath("$.id", is(EXPECTED_ID.toString())))
+                .andExpect(jsonPath("$.name", is(EXPECTED_NAME)))
+                .andExpect(jsonPath("$.surname", is(EXPECTED_SURNAME)))
+                .andExpect(jsonPath("$.phoneNumber", is(EXPECTED_PHONE_NUMBER)))
+                .andExpect(jsonPath("$.email", is(EXPECTED_EMAIL)))
+                .andExpect(jsonPath("$.roles[0]", is(EXPECTED_ROLE.toString())));
+
+        verify(userService, times(1)).findOneById(EXPECTED_ID);
         verifyNoMoreInteractions(userService);
     }
 

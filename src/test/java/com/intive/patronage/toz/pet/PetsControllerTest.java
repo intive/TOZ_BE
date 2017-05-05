@@ -14,7 +14,6 @@ import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.mockito.Mock;
-import org.mockito.Mockito;
 import org.mockito.MockitoAnnotations;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.http.MediaType;
@@ -92,8 +91,8 @@ public class PetsControllerTest {
     @Test
     public void getPetsForAdminsOk() throws Exception {
         final List<Pet> pets = getPets();
-        Authentication authentication = Mockito.mock(Authentication.class);
-        SecurityContext securityContext = Mockito.mock(SecurityContext.class);
+        Authentication authentication = mock(Authentication.class);
+        SecurityContext securityContext = mock(SecurityContext.class);
         Collection<? extends GrantedAuthority> authorities =
                 Collections.singleton(RoleEntity.buildWithRole(User.Role.TOZ));
         doReturn(authorities).when(authentication).getAuthorities();
