@@ -4,6 +4,8 @@ import com.intive.patronage.toz.config.ApiUrl;
 import com.intive.patronage.toz.pet.model.db.Pet;
 import com.intive.patronage.toz.storage.StorageProperties;
 import com.intive.patronage.toz.storage.StorageService;
+import com.intive.patronage.toz.users.model.db.RoleEntity;
+import com.intive.patronage.toz.users.model.db.User;
 import com.intive.patronage.toz.util.ModelMapper;
 import com.tngtech.java.junit.dataprovider.DataProvider;
 import com.tngtech.java.junit.dataprovider.DataProviderRunner;
@@ -12,15 +14,18 @@ import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.mockito.Mock;
+import org.mockito.Mockito;
 import org.mockito.MockitoAnnotations;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.http.MediaType;
+import org.springframework.security.core.Authentication;
+import org.springframework.security.core.GrantedAuthority;
+import org.springframework.security.core.context.SecurityContext;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.setup.MockMvcBuilders;
 
-import java.util.ArrayList;
-import java.util.List;
-import java.util.UUID;
+import java.util.*;
 
 import static org.hamcrest.Matchers.hasSize;
 import static org.hamcrest.Matchers.is;
@@ -35,7 +40,6 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 )
 public class PetsControllerTest {
 
-    private static final String ADMIN = "admin";
     private static final int PETS_LIST_SIZE = 5;
     private static final UUID EXPECTED_ID = UUID.randomUUID();
     private static final String EXPECTED_NAME = "Johny";
@@ -72,11 +76,33 @@ public class PetsControllerTest {
     }
 
     @Test
-    public void getAllPetsOk() throws Exception {
+    public void getAllPetsForVolunteerOrAnonymousUserOk() throws Exception {
         final List<Pet> pets = getPets();
+        when(petsService.findPetsWithFilledFields()).thenReturn(pets);
+
+        mvc.perform(get(ApiUrl.PETS_PATH))
+                .andExpect(status().isOk())
+                .andExpect(content().contentType(CONTENT_TYPE))
+                .andExpect(jsonPath("$", hasSize(PETS_LIST_SIZE)));
+
+        verify(petsService, times(1)).findPetsWithFilledFields();
+        verifyNoMoreInteractions(petsService);
+    }
+
+    @Test
+    public void getPetsForAdminsOk() throws Exception {
+        final List<Pet> pets = getPets();
+        Authentication authentication = Mockito.mock(Authentication.class);
+        SecurityContext securityContext = Mockito.mock(SecurityContext.class);
+        Collection<? extends GrantedAuthority> authorities =
+                Collections.singleton(RoleEntity.buildWithRole(User.Role.TOZ));
+        doReturn(authorities).when(authentication).getAuthorities();
+        when(securityContext.getAuthentication()).thenReturn(authentication);
+        SecurityContextHolder.setContext(securityContext);
+
         when(petsService.findAllPets()).thenReturn(pets);
 
-        mvc.perform(get(ApiUrl.PETS_PATH).param(ADMIN, Boolean.TRUE.toString()))
+        mvc.perform(get(ApiUrl.PETS_PATH))
                 .andExpect(status().isOk())
                 .andExpect(content().contentType(CONTENT_TYPE))
                 .andExpect(jsonPath("$", hasSize(PETS_LIST_SIZE)));
