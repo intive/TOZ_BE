@@ -137,6 +137,7 @@ public class CommentServiceTest {
         when(userRepository.exists(any(UUID.class))).thenReturn(true);
 
         commentService.deleteComment(EXPECTED_ID);
+        SecurityContextHolder.clearContext();
 
         verify(commentRepository, times(1)).
                 exists(eq(EXPECTED_ID));
@@ -172,6 +173,7 @@ public class CommentServiceTest {
         Comment comment = commentService.updateComment(EXPECTED_ID, this.comment);
         assertEquals(EXPECTED_CONTENTS, comment.getContents());
         assertEquals(EXPECTED_PET_UUID, comment.getPetUuid());
+        SecurityContextHolder.clearContext();
 
         verify(commentRepository, times(1)).
                 exists(eq(EXPECTED_ID));
