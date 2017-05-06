@@ -197,7 +197,6 @@ public class ControllerExceptionHandler {
         return new ErrorResponse(HttpStatus.BAD_REQUEST, message);
     }
 
-
     @ExceptionHandler(BadRoleForExistingUserException.class)
     @ResponseStatus(HttpStatus.BAD_REQUEST)
     @ResponseBody

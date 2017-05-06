@@ -44,10 +44,6 @@ class UserSuperAdminController extends UserBasicController {
     @PostMapping(consumes = MediaType.APPLICATION_JSON_VALUE)
     @Override
     protected ResponseEntity<UserView> createUser(@Valid @RequestBody UserView userView) {
-        Set<User.Role> userRoles = userView.getRoles();
-        if (userRoles.contains(User.Role.SA)) {
-            throw new BadRoleForNewUserException(User.Role.SA);
-        }
         return super.createUser(userView);
     }
 
@@ -60,10 +56,6 @@ class UserSuperAdminController extends UserBasicController {
     @PutMapping(value = "/{id}", consumes = MediaType.APPLICATION_JSON_VALUE)
     @Override
     protected UserView updateUser(@PathVariable UUID id, @Valid @RequestBody UserView userView) {
-        Set<User.Role> userRoles = userView.getRoles();
-        if (userRoles.contains(User.Role.SA)) {
-            throw new BadRoleForExistingUserException(User.Role.SA);
-        }
         return super.updateUser(id, userView);
     }
 }

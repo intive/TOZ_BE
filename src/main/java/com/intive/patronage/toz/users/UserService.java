@@ -1,12 +1,16 @@
 package com.intive.patronage.toz.users;
 
 import com.intive.patronage.toz.error.exception.AlreadyExistsException;
+import com.intive.patronage.toz.error.exception.BadRoleForExistingUserException;
+import com.intive.patronage.toz.error.exception.BadRoleForNewUserException;
 import com.intive.patronage.toz.error.exception.NotFoundException;
+import com.intive.patronage.toz.users.model.db.RoleEntity;
 import com.intive.patronage.toz.users.model.db.User;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
+import java.util.Set;
 import java.util.UUID;
 
 @Service
@@ -54,6 +58,9 @@ public class UserService {
     }
 
     public User createWithPasswordHash(final User user, final String passwordHash) {
+        if (isUserHasSuperAdminRole(user)) {
+            throw new BadRoleForNewUserException(User.Role.SA);
+        }
         final String email = user.getEmail();
         if (userRepository.existsByEmail(email)) {
             throw new AlreadyExistsException(USER);
@@ -68,8 +75,22 @@ public class UserService {
     }
 
     User update(final UUID id, final User user) {
+        if (isUserHasSuperAdminRole(user)) {
+            throw new BadRoleForExistingUserException(User.Role.SA);
+        }
         throwNotFoundExceptionIfIdNotExists(id);
         user.setId(id);
         return userRepository.save(user);
+    }
+
+    private boolean isUserHasSuperAdminRole(final User user) { // TODO
+        Set<RoleEntity> userRoles = user.getRoles();
+        for (RoleEntity roleEntity : userRoles) {
+            User.Role userRole = roleEntity.getRole();
+            if (userRole.equals(User.Role.SA)) {
+                return true;
+            }
+        }
+        return false;
     }
 }

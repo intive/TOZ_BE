@@ -114,4 +114,6 @@ public class UserTozAdminControllerTest {
         verifyNoMoreInteractions(userService);
     }
 
+
+    // TODO operations without admin role, should throw exception
 }
