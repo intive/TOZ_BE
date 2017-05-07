@@ -1,5 +1,7 @@
 package com.intive.patronage.toz.util;
 
+import com.intive.patronage.toz.comment.CommentRepository;
+import com.intive.patronage.toz.comment.model.db.Comment;
 import com.intive.patronage.toz.news.NewsRepository;
 import com.intive.patronage.toz.news.model.db.News;
 import com.intive.patronage.toz.pet.PetsRepository;
@@ -14,6 +16,7 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Component;
 
 import java.util.Random;
+import java.util.UUID;
 
 
 @Component
@@ -28,6 +31,9 @@ class InitDevRepository {
 
     @Autowired
     private NewsRepository newsRepository;
+
+    @Autowired
+    private CommentRepository commentRepository;
 
     @Autowired
     private UserRepository userRepository;
@@ -46,6 +52,9 @@ class InitDevRepository {
 
                 final News news = createNewsWithValue(i);
                 newsRepository.save(news);
+
+                final Comment comment = createCommentWithValue(i);
+                commentRepository.save(comment);
 
                 final User volunteer = createUserWithRole(User.Role.VOLUNTEER, i);
                 userRepository.save(volunteer);
@@ -83,6 +92,14 @@ class InitDevRepository {
         news.setContents(String.format("contents_%s", value));
         news.setPhotoUrl(String.format("photo_%s", value));
         return news;
+    }
+
+    private static Comment createCommentWithValue(int value) {
+        Comment comment = new Comment();
+        comment.setContents(String.format("contents_%s", value));
+        comment.setUserUuid(UUID.randomUUID());
+        comment.setPetUuid(UUID.randomUUID());
+        return comment;
     }
 
     private User createUserWithRole(User.Role role, int value) {
