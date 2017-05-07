@@ -2,6 +2,7 @@ package com.intive.patronage.toz.users.model.db;
 
 import com.intive.patronage.toz.base.model.Identifiable;
 import lombok.*;
+import org.springframework.security.core.GrantedAuthority;
 
 import javax.persistence.*;
 import java.util.HashSet;
@@ -21,7 +22,7 @@ public class User extends Identifiable {
     private String email;
 
     @OneToMany(cascade = CascadeType.MERGE, fetch = FetchType.EAGER)
-    private Set<RoleEntity> roles = new HashSet<>();
+    private Set<RoleEntity> roles = new HashSet<>(); // TODO hide setter
 
     public void addRole(final Role role) {
         final RoleEntity roleEntity = RoleEntity.buildWithRole(role);
@@ -37,7 +38,42 @@ public class User extends Identifiable {
         return hasRole(Role.SA);
     }
 
-    public enum Role {
-        SA, TOZ, VOLUNTEER, ANONYMOUS
+    public Set<User.Role> getRoles() {
+        Set<User.Role> userRoles = new HashSet<>();
+        for (RoleEntity roleEntity : roles) {
+            userRoles.add(roleEntity.getRole());
+        }
+        return userRoles;
+    }
+
+    public enum Role implements GrantedAuthority { // TODO by constructor
+        SA {
+            @Override
+            public String getAuthority() {
+                return SA.toString();
+            }
+        },
+
+        TOZ {
+            @Override
+            public String getAuthority() {
+                return TOZ.toString();
+            }
+        },
+
+        VOLUNTEER {
+            @Override
+            public String getAuthority() {
+                return VOLUNTEER.toString();
+            }
+        },
+
+        ANONYMOUS {
+            @Override
+            public String getAuthority() {
+                return ANONYMOUS.toString();
+            }
+        }
+
     }
 }

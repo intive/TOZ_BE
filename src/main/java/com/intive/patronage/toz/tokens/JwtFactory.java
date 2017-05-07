@@ -1,6 +1,5 @@
 package com.intive.patronage.toz.tokens;
 
-import com.intive.patronage.toz.users.model.db.RoleEntity;
 import com.intive.patronage.toz.users.model.db.User;
 import io.jsonwebtoken.Jwts;
 import io.jsonwebtoken.SignatureAlgorithm;
@@ -10,9 +9,7 @@ import org.springframework.stereotype.Component;
 
 import java.time.Instant;
 import java.time.temporal.ChronoUnit;
-import java.util.ArrayList;
 import java.util.Date;
-import java.util.List;
 
 @Component
 class JwtFactory {
@@ -33,18 +30,11 @@ class JwtFactory {
         return Jwts.builder()
                 .setSubject(user.getId().toString())
                 .claim(EMAIL_CLAIM_NAME, user.getEmail())
-                .claim(SCOPES_CLAIM_NAME, getRolesFromUser(user))
+                .claim(SCOPES_CLAIM_NAME, user.getRoles())
                 .setIssuedAt(new Date(Instant.now().toEpochMilli()))
                 .setExpiration(new Date(Instant.now().plus(expirationTime, ChronoUnit.MINUTES).toEpochMilli()))
                 .signWith(SignatureAlgorithm.HS512, TextCodec.BASE64.decode(secret))
                 .compact();
     }
 
-    private static List<User.Role> getRolesFromUser(User user) {
-        List<User.Role> roles = new ArrayList<>();
-        for (RoleEntity entity : user.getRoles()) {
-            roles.add(entity.getRole());
-        }
-        return roles;
-    }
 }

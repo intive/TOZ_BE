@@ -11,7 +11,6 @@ import com.intive.patronage.toz.storage.StorageProperties;
 import com.intive.patronage.toz.storage.StorageService;
 import com.intive.patronage.toz.storage.model.db.UploadedFile;
 import com.intive.patronage.toz.storage.model.view.UrlView;
-import com.intive.patronage.toz.users.model.db.RoleEntity;
 import com.intive.patronage.toz.users.model.db.User;
 import com.intive.patronage.toz.util.ModelMapper;
 import io.swagger.annotations.*;
@@ -76,7 +75,7 @@ class PetsController {
             return false;
         }
         Collection<? extends GrantedAuthority> grantedAuthorities = authentication.getAuthorities();
-        return grantedAuthorities.contains(RoleEntity.buildWithRole(role));
+        return grantedAuthorities.contains(role);
     }
 
     @ApiOperation(value = "Get single pet by id", notes = REQUIRED_ROLES_SA_TOZ)

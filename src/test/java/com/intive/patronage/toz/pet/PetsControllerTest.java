@@ -4,7 +4,6 @@ import com.intive.patronage.toz.config.ApiUrl;
 import com.intive.patronage.toz.pet.model.db.Pet;
 import com.intive.patronage.toz.storage.StorageProperties;
 import com.intive.patronage.toz.storage.StorageService;
-import com.intive.patronage.toz.users.model.db.RoleEntity;
 import com.intive.patronage.toz.users.model.db.User;
 import com.intive.patronage.toz.util.ModelMapper;
 import com.tngtech.java.junit.dataprovider.DataProvider;
@@ -93,8 +92,7 @@ public class PetsControllerTest {
         final List<Pet> pets = getPets();
         Authentication authentication = mock(Authentication.class);
         SecurityContext securityContext = mock(SecurityContext.class);
-        Collection<? extends GrantedAuthority> authorities =
-                Collections.singleton(RoleEntity.buildWithRole(User.Role.TOZ));
+        Collection<? extends GrantedAuthority> authorities = Collections.singleton(User.Role.TOZ);
         doReturn(authorities).when(authentication).getAuthorities();
         when(securityContext.getAuthentication()).thenReturn(authentication);
         SecurityContextHolder.setContext(securityContext);

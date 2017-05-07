@@ -20,20 +20,14 @@ public class RoleEntity implements GrantedAuthority, Serializable { // TODO chan
     private RoleEntity() {
     }
 
-    public static RoleEntity buildWithRole(User.Role role) {
-        return new RoleEntity(role);
-    }
-
-    private RoleEntity(User.Role role) {
-        this.role = role;
-    }
-
-    public RoleEntity(String role) {
-        this.role = User.Role.valueOf(role);
+    static RoleEntity buildWithRole(User.Role role) {
+        RoleEntity roleEntity = new RoleEntity();
+        roleEntity.role = role;
+        return roleEntity;
     }
 
     @Override
-    public String getAuthority() {
+    public String getAuthority() { // TODO delete
         return role.toString();
     }
 

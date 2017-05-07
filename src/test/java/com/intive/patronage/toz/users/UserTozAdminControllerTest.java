@@ -1,7 +1,6 @@
 package com.intive.patronage.toz.users;
 
 import com.intive.patronage.toz.config.ApiUrl;
-import com.intive.patronage.toz.users.model.db.RoleEntity;
 import com.intive.patronage.toz.users.model.db.User;
 import com.intive.patronage.toz.users.model.view.UserView;
 import com.intive.patronage.toz.util.ModelMapper;
@@ -41,8 +40,7 @@ public class UserTozAdminControllerTest {
     public void setUp() {
         Authentication authentication = mock(Authentication.class);
         SecurityContext securityContext = mock(SecurityContext.class);
-        Collection<? extends GrantedAuthority> authorities =
-                Collections.singleton(RoleEntity.buildWithRole(User.Role.TOZ));
+        Collection<? extends GrantedAuthority> authorities = Collections.singleton(User.Role.TOZ);
         doReturn(authorities).when(authentication).getAuthorities();
         when(securityContext.getAuthentication()).thenReturn(authentication);
         SecurityContextHolder.setContext(securityContext);

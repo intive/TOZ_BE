@@ -36,8 +36,7 @@ public class JwtAuthenticationProvider implements AuthenticationProvider {
         final String token = (String) authentication.getCredentials();
 
         if (token == null) {
-            List<GrantedAuthority> authorities =
-                    Collections.singletonList(RoleEntity.buildWithRole(User.Role.ANONYMOUS));
+            List<GrantedAuthority> authorities = Collections.singletonList(User.Role.ANONYMOUS);
             return new JwtAuthenticationToken(null, authorities);
         }
 
@@ -59,7 +58,7 @@ public class JwtAuthenticationProvider implements AuthenticationProvider {
         final List<String> scopes = claims.getBody().get("scopes", List.class);
 
         Set<GrantedAuthority> authorities = scopes.stream()
-                .map(RoleEntity::new) // TODO
+                .map(User.Role::valueOf)
                 .collect(Collectors.toSet());
 
         final UserContext userContext = new UserContext(userID, email, authorities);
