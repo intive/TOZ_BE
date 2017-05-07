@@ -287,6 +287,9 @@ databaseChangeLog:
                     name: pet_uuid
                     type: uuid
                 - column:
+                    name: state
+                    type: varchar(255)
+                - column:
                     name: created
                     type: datetime
                 - column:
