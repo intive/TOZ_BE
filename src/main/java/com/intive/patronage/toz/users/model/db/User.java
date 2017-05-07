@@ -7,6 +7,7 @@ import lombok.NoArgsConstructor;
 import lombok.Setter;
 
 import javax.persistence.*;
+import java.util.Date;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
@@ -24,6 +25,8 @@ public class User extends Identifiable {
     private String phoneNumber;
     @Column(unique = true)
     private String email;
+    @Temporal(TemporalType.TIMESTAMP)
+    private Date passwordChangeDate;
 
     @OneToMany(cascade = CascadeType.MERGE, fetch = FetchType.EAGER)
     private Set<RoleEntity> roles = new HashSet<>();
@@ -50,5 +53,10 @@ public class User extends Identifiable {
 
     public enum Role {
         SA, TOZ, VOLUNTEER, ANONYMOUS
+    }
+
+    public void setPasswordHash(String passwordHash) {
+        this.passwordHash = passwordHash;
+        passwordChangeDate = new Date();
     }
 }
