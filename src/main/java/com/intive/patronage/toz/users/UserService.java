@@ -67,7 +67,7 @@ public class UserService {
         userRepository.delete(id);
     }
 
-    User update(final UUID id, final User user) {
+    public User update(final UUID id, final User user) {
         throwNotFoundExceptionIfIdNotExists(id);
         user.setId(id);
         return userRepository.save(user);
