@@ -41,15 +41,20 @@ public class CommentController {
     public ResponseEntity<List<CommentView>> getAllComments(
             @RequestParam(value = "petUuid", required = false) UUID petUuid,
             @RequestParam(value = "shortened", required = false, defaultValue = "false")
-                    Boolean shortened) {
-        final List<Comment> commentList = commentService.findAllComments(petUuid, shortened);
-        return ResponseEntity.ok().body(ModelMapper.convertToView(commentList, CommentView.class));
+                    Boolean shortened,
+            @RequestParam(value = "ordered", required = false, defaultValue = "false")
+                    Boolean ordered) {
+        final List<Comment> commentList = commentService.findAllComments(petUuid,
+                shortened, ordered);
+        return ResponseEntity.ok().body(ModelMapper.convertToView(commentList,
+                CommentView.class));
     }
 
     @ApiOperation(value = "Get comment by id.", notes =
             "Required roles: SA, TOZ, VOLUNTEER, ANONYMOUS.")
     @ApiResponses(value = {
-            @ApiResponse(code = 404, message = "Comment not found.", response = ErrorResponse.class)
+            @ApiResponse(code = 404, message = "Comment not found.",
+                    response = ErrorResponse.class)
     })
     @GetMapping(value = "/{id}")
     @PreAuthorize("hasAnyAuthority('SA', 'TOZ', 'VOLUNTEER', 'ANONYMOUS')")
@@ -61,7 +66,8 @@ public class CommentController {
     @ApiOperation(value = "Create comment.", response = CommentView.class, notes =
             "Required roles: SA, TOZ, VOLUNTEER.")
     @ApiResponses(value = {
-            @ApiResponse(code = 400, message = "Bad request.", response = ValidationErrorResponse.class),
+            @ApiResponse(code = 400, message = "Bad request.",
+                    response = ValidationErrorResponse.class),
             @ApiResponse(code = 404, message = "User not found.", response = ErrorResponse.class)
     })
     @ResponseStatus(HttpStatus.CREATED)
@@ -71,15 +77,17 @@ public class CommentController {
         final URI baseLocation = ServletUriComponentsBuilder.fromCurrentRequest()
                 .build().toUri();
         return ResponseEntity.created(baseLocation)
-                .body(ModelMapper.convertToView(commentService.createComment(convertFromView(commentView)),
-                        CommentView.class));
+                .body(ModelMapper.convertToView(commentService.
+                        createComment(convertFromView(commentView)), CommentView.class));
     }
 
     @ApiOperation(value = "Delete comment.", notes =
             "Required roles: SA, TOZ, VOLUNTEER.")
     @ApiResponses(value = {
-            @ApiResponse(code = 404, message = "Comment/User not found.", response = ErrorResponse.class),
-            @ApiResponse(code = 403, message = "Permission denied.", response = ErrorResponse.class)
+            @ApiResponse(code = 404, message = "Comment/User not found.",
+                    response = ErrorResponse.class),
+            @ApiResponse(code = 403, message = "Permission denied.",
+                    response = ErrorResponse.class)
     })
     @DeleteMapping(value = "/{id}")
     @PreAuthorize("hasAnyAuthority('SA', 'TOZ', 'VOLUNTEER')")
@@ -91,9 +99,12 @@ public class CommentController {
     @ApiOperation(value = "Update comment.", response = CommentView.class, notes =
             "Required roles: SA, TOZ, VOLUNTEER.")
     @ApiResponses(value = {
-            @ApiResponse(code = 404, message = "Comment/User not found.", response = ErrorResponse.class),
-            @ApiResponse(code = 403, message = "Permission denied.", response = ErrorResponse.class),
-            @ApiResponse(code = 400, message = "Bad request.", response = ValidationErrorResponse.class)
+            @ApiResponse(code = 404, message = "Comment/User not found.",
+                    response = ErrorResponse.class),
+            @ApiResponse(code = 403, message = "Permission denied.",
+                    response = ErrorResponse.class),
+            @ApiResponse(code = 400, message = "Bad request.",
+                    response = ValidationErrorResponse.class)
     })
     @ResponseStatus(HttpStatus.CREATED)
     @PutMapping(value = "/{id}", consumes = MediaType.APPLICATION_JSON_VALUE)

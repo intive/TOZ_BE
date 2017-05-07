@@ -33,6 +33,7 @@ public class CommentServiceTest {
     private static final String EXPECTED_CONTENTS = "Very nice dog!";
     private static final UUID EXPECTED_USER_UUID = UUID.randomUUID();
     private static final Boolean DEFAULT_SHORTENED = false;
+    private static final Boolean DEFAULT_ORDERED = false;
     private static final UserContext USER_CONTEXT = new UserContext(EXPECTED_USER_UUID,
             null, null);
     private Comment comment;
@@ -72,7 +73,7 @@ public class CommentServiceTest {
         when(commentRepository.findAll()).thenReturn(Collections.emptyList());
 
         List<Comment> commentList = commentService.findAllComments(DEFAULT_PET_UUID,
-                DEFAULT_SHORTENED);
+                DEFAULT_SHORTENED, DEFAULT_ORDERED);
         assertTrue(commentList.isEmpty());
     }
 
@@ -82,7 +83,7 @@ public class CommentServiceTest {
                 emptyList());
 
         List<Comment> commentList = commentService.
-                findAllComments(EXPECTED_PET_UUID, DEFAULT_SHORTENED);
+                findAllComments(EXPECTED_PET_UUID, DEFAULT_SHORTENED, DEFAULT_ORDERED);
         assertTrue(commentList.isEmpty());
     }
 

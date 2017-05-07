@@ -19,7 +19,7 @@ import java.util.UUID;
 public class CommentService {
     private final CommentRepository commentRepository;
     private final UserRepository userRepository;
-    private static final Integer COMMENT_CONTENTS_LENGTH = 100;
+    private static final Integer SHORTENED_COMMENT_CONTENTS_LENGTH = 220;
     private static final String COMMENT = "Comment";
     private static final String USER = "User";
 
@@ -30,12 +30,18 @@ public class CommentService {
         this.userRepository = userRepository;
     }
 
-    List<Comment> findAllComments(UUID petUuid, Boolean shortened) {
+    List<Comment> findAllComments(UUID petUuid, Boolean shortened,
+                                  Boolean ordered) {
         List<Comment> commentList;
-        if (petUuid == null) {
-            commentList = commentRepository.findAll();
-        } else {
+        if (petUuid != null && ordered) {
+            commentList = commentRepository.
+                    findByPetUuidOrderByCreatedDesc(petUuid);
+        } else if (petUuid != null && !ordered) {
             commentList = commentRepository.findByPetUuid(petUuid);
+        } else if (petUuid == null && ordered) {
+            commentList = commentRepository.findAllByOrderByCreatedDesc();
+        } else {
+            commentList = commentRepository.findAll();
         }
         return createShortenedCommentContents(shortened, commentList);
     }
@@ -75,8 +81,8 @@ public class CommentService {
     }
 
     private UUID getUserUuid() {
-        final Authentication authentication = SecurityContextHolder.getContext().
-                getAuthentication();
+        final Authentication authentication = SecurityContextHolder.
+                getContext().getAuthentication();
         UUID userUuid = null;
         if (authentication != null && authentication.getPrincipal() != null) {
             final UserContext userContext = (UserContext) authentication.
@@ -94,7 +100,7 @@ public class CommentService {
             for (Comment comment : commentList) {
                 comment.setContents(StringFormatter.
                         trimToLengthPreserveWord(comment.getContents(),
-                                COMMENT_CONTENTS_LENGTH));
+                                SHORTENED_COMMENT_CONTENTS_LENGTH));
             }
         }
         return commentList;
