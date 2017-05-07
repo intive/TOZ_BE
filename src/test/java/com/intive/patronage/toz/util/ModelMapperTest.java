@@ -23,7 +23,7 @@ public class ModelMapperTest {
     private static final User.Role SA_ROLE = User.Role.SA;
 
     @DataProvider
-    public static Object[] getUser() {
+    public static Object[] getUserModel() { // TODO location data provider
         User user = new User();
         user.setId(EXPECTED_ID);
         user.setName(EXPECTED_NAME);
@@ -34,8 +34,20 @@ public class ModelMapperTest {
         return new Object[]{user};
     }
 
+    @DataProvider
+    public static Object[] getUserView() {
+        UserView userView = new UserView();
+        userView.setId(EXPECTED_ID);
+        userView.setName(EXPECTED_NAME);
+        userView.setSurname(EXPECTED_SURNAME);
+        userView.setPhoneNumber(EXPECTED_PHONE_NUMBER);
+        userView.addRole(TOZ_ROLE);
+        userView.addRole(SA_ROLE);
+        return new Object[]{userView};
+    }
+
     @Test
-    @UseDataProvider("getUser")
+    @UseDataProvider("getUserModel")
     public void convertToView(final User user) throws Exception {
         UserView userView = ModelMapper.convertToView(user, UserView.class);
         assertThat(userView.getId()).isEqualTo(EXPECTED_ID);
@@ -44,6 +56,18 @@ public class ModelMapperTest {
         assertThat(userView.getSurname()).isEqualTo(EXPECTED_SURNAME);
         assertThat(userView.getPhoneNumber()).isEqualTo(EXPECTED_PHONE_NUMBER);
         assertThat(userView.getRoles()).containsOnly(TOZ_ROLE, SA_ROLE);
+    }
+
+    @Test
+    @UseDataProvider("getUserView")
+    public void convertToModel(final UserView userView) throws Exception {
+        User user = ModelMapper.convertToModel(userView, User.class);
+        assertThat(user.getId()).isEqualTo(EXPECTED_ID);
+        assertThat(user.getName()).isEqualTo(EXPECTED_NAME);
+        assertThat(user.getPasswordHash()).isNull();
+        assertThat(user.getSurname()).isEqualTo(EXPECTED_SURNAME);
+        assertThat(user.getPhoneNumber()).isEqualTo(EXPECTED_PHONE_NUMBER);
+        assertThat(user.getRoles()).containsOnly(TOZ_ROLE, SA_ROLE);
     }
 
 }

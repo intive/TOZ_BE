@@ -1,7 +1,6 @@
 package com.intive.patronage.toz.users.model.db;
 
 import lombok.Getter;
-import org.springframework.security.core.GrantedAuthority;
 
 import javax.persistence.Entity;
 import javax.persistence.EnumType;
@@ -11,7 +10,7 @@ import java.io.Serializable;
 
 @Getter
 @Entity
-public class RoleEntity implements GrantedAuthority, Serializable { // TODO change name
+class RoleEntity implements Serializable {
 
     @Id
     @Enumerated(EnumType.STRING)
@@ -20,23 +19,13 @@ public class RoleEntity implements GrantedAuthority, Serializable { // TODO chan
     private RoleEntity() {
     }
 
+    public RoleEntity(String role) {
+        this.role = User.Role.valueOf(role);
+    }
+
     static RoleEntity buildWithRole(User.Role role) {
         RoleEntity roleEntity = new RoleEntity();
         roleEntity.role = role;
         return roleEntity;
-    }
-
-    @Override
-    public String getAuthority() { // TODO delete
-        return role.toString();
-    }
-
-    @Override
-    public boolean equals(Object obj) {
-        if (this == obj) {
-            return true;
-        }
-        RoleEntity roleEntity = (RoleEntity) obj;
-        return roleEntity.getRole().equals(role);
     }
 }

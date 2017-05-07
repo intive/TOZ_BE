@@ -2,7 +2,6 @@ package com.intive.patronage.toz.tokens.auth;
 
 import com.intive.patronage.toz.error.exception.JwtAuthenticationException;
 import com.intive.patronage.toz.tokens.model.UserContext;
-import com.intive.patronage.toz.users.model.db.RoleEntity;
 import com.intive.patronage.toz.users.model.db.User;
 import io.jsonwebtoken.*;
 import io.jsonwebtoken.impl.TextCodec;

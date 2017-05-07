@@ -154,7 +154,7 @@ public class TokenControllerTest {
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("userId", is(user.getId().toString())))
                 .andExpect(jsonPath("email", is(user.getEmail())))
-                .andExpect(jsonPath("authorities[0].authority", is(ROLE_ADMIN.toString())));
+                .andExpect(jsonPath("authorities[0]", is(ROLE_ADMIN.toString())));
     }
 
     @Profile("dev")
