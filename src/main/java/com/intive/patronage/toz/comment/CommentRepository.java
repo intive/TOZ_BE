@@ -8,4 +8,6 @@ import java.util.UUID;
 
 public interface CommentRepository extends IdentifiableRepository<Comment> {
     List<Comment> findByPetUuid(UUID petUuid);
+    List<Comment> findByPetUuidOrderByCreatedDesc(UUID petUuid);
+    List<Comment> findAllByOrderByCreatedDesc();
 }
