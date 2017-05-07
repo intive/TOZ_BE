@@ -10,13 +10,13 @@ import io.swagger.annotations.ApiOperation;
 import io.swagger.annotations.ApiResponse;
 import io.swagger.annotations.ApiResponses;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.context.annotation.Profile;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.security.authentication.BadCredentialsException;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.*;
+import springfox.documentation.annotations.ApiIgnore;
 
 import javax.validation.Valid;
 
@@ -50,12 +50,11 @@ class TokensController {
         return new JwtView(tokensService.getToken(credentials.getEmail()));
     }
 
-    @Profile("dev")
-    @ApiOperation(value = "Show current user", hidden = true)
-    @PreAuthorize("hasAuthority('TOZ')")
+    @ApiOperation(value = "Show current user", notes = "Required roles: TOZ, VOLUNTEER")
+    @PreAuthorize("hasAnyAuthority('TOZ', 'VOLUNTEER')")
     @ResponseStatus(HttpStatus.OK)
     @GetMapping(value = "/whoami")
-    public UserContext whoAmI(@AuthenticationPrincipal UserContext userContext) {
+    public UserContext whoAmI(@ApiIgnore @AuthenticationPrincipal UserContext userContext) {
         return userContext;
     }
 }
