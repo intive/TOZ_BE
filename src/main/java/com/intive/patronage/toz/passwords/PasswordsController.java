@@ -45,7 +45,7 @@ public class PasswordsController {
     public PasswordResponseView changePassword(@Valid @RequestBody PasswordChangeRequestView passwordChangeRequest,
                                                @ApiIgnore @AuthenticationPrincipal UserContext userContext) {
 
-        passwordsService.changePassword(userContext.getEmail(),
+        passwordsService.changePasswordForExistingUser(userContext.getEmail(),
                 passwordChangeRequest.getOldPassword(),
                 passwordChangeRequest.getNewPassword());
 

@@ -23,7 +23,7 @@ class PasswordsService {
         this.messageSource = messageSource;
     }
 
-    void changePassword(String email, String oldPassword, String newPassword) {
+    void changePasswordForExistingUser(String email, String oldPassword, String newPassword) {
         final User user = userService.findOneByEmail(email);
         if (!passwordEncoder.matches(oldPassword, user.getPasswordHash())) {
             final String message =

@@ -49,19 +49,19 @@ public class PasswordsServiceTest {
     @Test(expected = WrongPasswordException.class)
     public void shouldThrowExceptionWhenPasswordsDoNotMatch() throws Exception {
         when(userService.findOneByEmail(EMAIL)).thenReturn(user);
-        passwordsService.changePassword(EMAIL, NEW_PASSWORD, NEW_PASSWORD);
+        passwordsService.changePasswordForExistingUser(EMAIL, NEW_PASSWORD, NEW_PASSWORD);
     }
 
     @Test(expected = WrongPasswordException.class)
     public void shouldThrowExceptionWhenNewAndOldPasswordsAreTheSame() throws Exception {
         when(userService.findOneByEmail(EMAIL)).thenReturn(user);
-        passwordsService.changePassword(EMAIL, OLD_PASSWORD, OLD_PASSWORD);
+        passwordsService.changePasswordForExistingUser(EMAIL, OLD_PASSWORD, OLD_PASSWORD);
     }
 
     @Test
     public void shouldChangePassword() throws Exception {
         when(userService.findOneByEmail(EMAIL)).thenReturn(user);
-        passwordsService.changePassword(EMAIL, OLD_PASSWORD, NEW_PASSWORD);
+        passwordsService.changePasswordForExistingUser(EMAIL, OLD_PASSWORD, NEW_PASSWORD);
         verify(userService).update(user.getId(), user);
     }
 }
