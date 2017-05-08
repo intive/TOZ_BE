@@ -47,40 +47,18 @@ public class User extends Identifiable {
         return userRoles;
     }
 
-    public void setRoles(Set<User.Role> roles) { // hide
+    public void setRoles(Set<User.Role> roles) { // TODO hide
         this.roles = roles.stream()
                 .map(RoleEntity::buildWithRole)
                 .collect(Collectors.toSet());
     }
 
-    public enum Role implements GrantedAuthority { // TODO by constructor
-        SA {
-            @Override
-            public String getAuthority() {
-                return SA.toString();
-            }
-        },
+    public enum Role implements GrantedAuthority {
+        SA, TOZ, VOLUNTEER, ANONYMOUS;
 
-        TOZ {
-            @Override
-            public String getAuthority() {
-                return TOZ.toString();
-            }
-        },
-
-        VOLUNTEER {
-            @Override
-            public String getAuthority() {
-                return VOLUNTEER.toString();
-            }
-        },
-
-        ANONYMOUS {
-            @Override
-            public String getAuthority() {
-                return ANONYMOUS.toString();
-            }
+        @Override
+        public String getAuthority() {
+            return this.toString();
         }
-
     }
 }
