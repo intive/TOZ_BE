@@ -19,7 +19,7 @@ class RoleEntity implements Serializable {
     private RoleEntity() {
     }
 
-    public RoleEntity(String role) {
+    private RoleEntity(String role) {
         this.role = User.Role.valueOf(role);
     }
 

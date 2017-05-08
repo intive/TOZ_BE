@@ -7,7 +7,6 @@ import org.springframework.security.core.GrantedAuthority;
 import javax.persistence.*;
 import java.util.HashSet;
 import java.util.Set;
-import java.util.stream.Collectors;
 
 @Getter
 @Setter
@@ -45,12 +44,6 @@ public class User extends Identifiable {
             userRoles.add(roleEntity.getRole());
         }
         return userRoles;
-    }
-
-    public void setRoles(Set<User.Role> roles) { // TODO hide
-        this.roles = roles.stream()
-                .map(RoleEntity::buildWithRole)
-                .collect(Collectors.toSet());
     }
 
     public enum Role implements GrantedAuthority {
