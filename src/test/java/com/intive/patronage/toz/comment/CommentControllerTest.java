@@ -60,8 +60,8 @@ public class CommentControllerTest {
     @Before
     public void setUp() throws Exception {
         MockitoAnnotations.initMocks(this);
-        mockMvc = MockMvcBuilders.standaloneSetup(new CommentController(commentService)).
-                build();
+        mockMvc = MockMvcBuilders.standaloneSetup(new CommentController(commentService))
+                .build();
     }
 
     @DataProvider
@@ -87,8 +87,8 @@ public class CommentControllerTest {
                 .andExpect(jsonPath("$[0].contents", is(EXPECTED_CONTENTS)))
                 .andExpect(jsonPath("$", hasSize(COMMENTS_LIST_SIZE)));
 
-        verify(commentService, times(1)).
-                findAllComments(DEFAULT_PET_UUID, DEFAULT_SHORTENED, DEFAULT_ORDERED);
+        verify(commentService, times(1))
+                .findAllComments(DEFAULT_PET_UUID, DEFAULT_SHORTENED, DEFAULT_ORDERED);
         verifyNoMoreInteractions(commentService);
     }
 
@@ -99,18 +99,18 @@ public class CommentControllerTest {
         when(commentService.findAllComments(EXPECTED_PET_UUID, DEFAULT_SHORTENED,
                 DEFAULT_ORDERED)).thenReturn(commentList);
 
-        mockMvc.perform(get(ApiUrl.COMMENTS_PATH).param("petUuid", EXPECTED_PET_UUID.
-                toString()))
+        mockMvc.perform(get(ApiUrl.COMMENTS_PATH).param("petUuid", EXPECTED_PET_UUID
+                .toString()))
                 .andExpect(status().isOk())
                 .andExpect(content().contentType(CONTENT_TYPE))
-                .andExpect(jsonPath("$[0].petUuid", is(EXPECTED_PET_UUID.
-                        toString())))
-                .andExpect(jsonPath("$[1].petUuid", is(EXPECTED_PET_UUID.
-                        toString())))
+                .andExpect(jsonPath("$[0].petUuid", is(EXPECTED_PET_UUID
+                        .toString())))
+                .andExpect(jsonPath("$[1].petUuid", is(EXPECTED_PET_UUID
+                        .toString())))
                 .andExpect(jsonPath("$", hasSize(COMMENTS_LIST_SIZE)));
 
-        verify(commentService, times(1)).
-                findAllComments(EXPECTED_PET_UUID, DEFAULT_SHORTENED, DEFAULT_ORDERED);
+        verify(commentService, times(1))
+                .findAllComments(EXPECTED_PET_UUID, DEFAULT_SHORTENED, DEFAULT_ORDERED);
         verifyNoMoreInteractions(commentService);
     }
 
@@ -131,8 +131,8 @@ public class CommentControllerTest {
                         is(EXPECTED_SHORTENED_CONTENTS)))
                 .andExpect(jsonPath("$", hasSize(COMMENTS_LIST_SIZE)));
 
-        verify(commentService, times(1)).
-                findAllComments(DEFAULT_PET_UUID, SHORTENED_FOR_TEST, DEFAULT_ORDERED);
+        verify(commentService, times(1))
+                .findAllComments(DEFAULT_PET_UUID, SHORTENED_FOR_TEST, DEFAULT_ORDERED);
         verifyNoMoreInteractions(commentService);
     }
 
@@ -146,8 +146,8 @@ public class CommentControllerTest {
             } else {
                 comment.setContents(EXPECTED_SHORTENED_CONTENTS);
             }
-            if (petUuid != null && petUuid.toString().equals(EXPECTED_PET_UUID.
-                    toString())) {
+            if (petUuid != null && petUuid.toString().equals(EXPECTED_PET_UUID
+                    .toString())) {
                 comment.setPetUuid(EXPECTED_PET_UUID);
             } else {
                 comment.setPetUuid(UUID.randomUUID());
@@ -165,11 +165,11 @@ public class CommentControllerTest {
                 .andExpect(status().isOk())
                 .andExpect(content().contentType(CONTENT_TYPE))
                 .andExpect(jsonPath("$.id", is(EXPECTED_ID.toString())))
-                .andExpect(jsonPath("$.petUuid", is(EXPECTED_PET_UUID.
-                        toString())))
+                .andExpect(jsonPath("$.petUuid", is(EXPECTED_PET_UUID
+                        .toString())))
                 .andExpect(jsonPath("$.contents", is(EXPECTED_CONTENTS)))
-                .andExpect(jsonPath("$.userUuid", is(EXPECTED_USER_UUID.
-                        toString())));
+                .andExpect(jsonPath("$.userUuid", is(EXPECTED_USER_UUID
+                        .toString())));
 
         verify(commentService, times(1)).findById(EXPECTED_ID);
         verifyNoMoreInteractions(commentService);
@@ -184,11 +184,11 @@ public class CommentControllerTest {
                 .content(new ObjectMapper().writeValueAsString(comment)))
                 .andExpect(status().isCreated())
                 .andExpect(jsonPath("$.id", is(EXPECTED_ID.toString())))
-                .andExpect(jsonPath("$.petUuid", is(EXPECTED_PET_UUID.
-                        toString())))
+                .andExpect(jsonPath("$.petUuid", is(EXPECTED_PET_UUID
+                        .toString())))
                 .andExpect(jsonPath("$.contents", is(EXPECTED_CONTENTS)))
-                .andExpect(jsonPath("$.userUuid", is(EXPECTED_USER_UUID.
-                        toString())));
+                .andExpect(jsonPath("$.userUuid", is(EXPECTED_USER_UUID
+                        .toString())));
 
         verify(commentService, times(1)).
                 createComment(any(Comment.class));
@@ -198,21 +198,21 @@ public class CommentControllerTest {
     @Test
     @UseDataProvider("getProperComment")
     public void updateComment(final Comment comment) throws Exception {
-        when(commentService.updateComment(eq(EXPECTED_ID), any(Comment.class))).
-                thenReturn(comment);
+        when(commentService.updateComment(eq(EXPECTED_ID), any(Comment.class)))
+                .thenReturn(comment);
         mockMvc.perform(put(String.format("%s/%s", ApiUrl.COMMENTS_PATH, EXPECTED_ID))
                 .contentType(CONTENT_TYPE)
                 .content(new ObjectMapper().writeValueAsString(comment)))
                 .andExpect(status().isCreated())
                 .andExpect(jsonPath("$.id", is(EXPECTED_ID.toString())))
-                .andExpect(jsonPath("$.petUuid", is(EXPECTED_PET_UUID.
-                        toString())))
+                .andExpect(jsonPath("$.petUuid", is(EXPECTED_PET_UUID
+                        .toString())))
                 .andExpect(jsonPath("$.contents", is(EXPECTED_CONTENTS)))
-                .andExpect(jsonPath("$.userUuid", is(EXPECTED_USER_UUID.
-                        toString())));
+                .andExpect(jsonPath("$.userUuid", is(EXPECTED_USER_UUID
+                        .toString())));
 
-        verify(commentService, times(1)).
-                updateComment(eq(EXPECTED_ID), any(Comment.class));
+        verify(commentService, times(1))
+                .updateComment(eq(EXPECTED_ID), any(Comment.class));
         verifyNoMoreInteractions(commentService);
     }
 
