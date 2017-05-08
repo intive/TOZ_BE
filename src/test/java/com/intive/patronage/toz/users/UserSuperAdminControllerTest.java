@@ -81,7 +81,7 @@ public class UserSuperAdminControllerTest {
     }
 
     @Test
-    @UseDataProvider(value = "getTozAdminUser", location = UserDataProvider.class)
+    @UseDataProvider(value = "getTozAdminUserModel", location = UserDataProvider.class)
     public void getUserByIdOk(final User user) throws Exception {
         when(userService.findOneById(EXPECTED_ID)).thenReturn(user);
         String requestUrl = String.format("%s/%s", ApiUrl.SUPER_ADMIN_USERS_PATH, EXPECTED_ID.toString());

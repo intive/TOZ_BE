@@ -48,7 +48,7 @@ public class UserServiceTest {
     }
 
     @Test
-    @UseDataProvider(value = "getTozAdminUser", location = UserDataProvider.class)
+    @UseDataProvider(value = "getTozAdminUserModel", location = UserDataProvider.class)
     public void findById(final User user) throws Exception {
         when(userRepository.exists(EXPECTED_ID)).thenReturn(true);
         when(userRepository.findOne(EXPECTED_ID)).thenReturn(user);
@@ -74,7 +74,7 @@ public class UserServiceTest {
     }
 
     @Test
-    @UseDataProvider(value = "getTozAdminUser", location = UserDataProvider.class)
+    @UseDataProvider(value = "getTozAdminUserModel", location = UserDataProvider.class)
     public void createUser(final User user) throws Exception {
         when(userRepository.save(any(User.class))).thenReturn(user);
 
@@ -89,7 +89,7 @@ public class UserServiceTest {
     }
 
     @Test(expected = BadRoleForNewUserException.class)
-    @UseDataProvider(value = "getSuperAdminUser", location = UserDataProvider.class)
+    @UseDataProvider(value = "getSuperAdminUserModel", location = UserDataProvider.class)
     public void createUserWithSuperAdminRoleThrowBadRoleException(final User user) {
         userService.createWithPasswordHash(user, EXPECTED_PASSWORD_HASH);
         verifyNoMoreInteractions(userRepository);
@@ -115,7 +115,7 @@ public class UserServiceTest {
     }
 
     @Test
-    @UseDataProvider(value = "getTozAdminUser", location = UserDataProvider.class)
+    @UseDataProvider(value = "getTozAdminUserModel", location = UserDataProvider.class)
     public void updateUser(final User user) throws Exception {
         when(userRepository.exists(EXPECTED_ID)).thenReturn(true);
         when(userRepository.save(any(User.class))).thenReturn(user);
@@ -128,7 +128,7 @@ public class UserServiceTest {
     }
 
     @Test(expected = NotFoundException.class)
-    @UseDataProvider(value = "getTozAdminUser", location = UserDataProvider.class)
+    @UseDataProvider(value = "getTozAdminUserModel", location = UserDataProvider.class)
     public void updateUserNotFoundException(final User user) throws Exception {
         when(userRepository.exists(EXPECTED_ID)).thenReturn(false);
         userService.update(EXPECTED_ID, user);
@@ -138,7 +138,7 @@ public class UserServiceTest {
     }
 
     @Test(expected = BadRoleForExistingUserException.class)
-    @UseDataProvider(value = "getSuperAdminUser", location = UserDataProvider.class)
+    @UseDataProvider(value = "getSuperAdminUserModel", location = UserDataProvider.class)
     public void updateUserToSuperAdminRoleTrowBadBadRoleException(final User user) throws Exception {
         when(userRepository.exists(EXPECTED_ID)).thenReturn(true);
         userService.update(EXPECTED_ID, user);

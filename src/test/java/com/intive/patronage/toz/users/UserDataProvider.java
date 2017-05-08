@@ -2,7 +2,6 @@ package com.intive.patronage.toz.users;
 
 import com.intive.patronage.toz.users.model.db.User;
 import com.intive.patronage.toz.users.model.view.UserView;
-import com.intive.patronage.toz.util.ModelMapper;
 import com.tngtech.java.junit.dataprovider.DataProvider;
 import org.springframework.http.MediaType;
 
@@ -10,21 +9,19 @@ import java.util.UUID;
 
 public class UserDataProvider {
 
+    public static final UUID EXPECTED_ID = UUID.randomUUID();
+    public static final String EXPECTED_NAME = "Johny";
+    public static final String EXPECTED_SURNAME = "Bravo";
+    public static final String EXPECTED_PHONE_NUMBER = "111222333";
+    public static final String EXPECTED_EMAIL = "johny.bravo@gmail.com";
+    public static final User.Role TOZ_ROLE = User.Role.TOZ;
     static final int USERS_LIST_SIZE = 5;
-    static final UUID EXPECTED_ID = UUID.randomUUID();
-    static final String EXPECTED_NAME = "Johny";
-    private static final String EXPECTED_PASSWORD = "johnyPassword";
     static final String EXPECTED_PASSWORD_HASH = "a7sd6a7sd67asd";
-    static final String EXPECTED_SURNAME = "Bravo";
-    static final String EXPECTED_PHONE_NUMBER = "111222333";
-    static final String EXPECTED_EMAIL = "johny.bravo@gmail.com";
-    static final User.Role TOZ_ROLE = User.Role.TOZ;
-    static final User.Role SA_ROLE = User.Role.SA;
+    static final String EXPECTED_PASSWORD = "johnyPassword";
     static final MediaType JSON_CONTENT_TYPE = MediaType.APPLICATION_JSON_UTF8;
 
-
     @DataProvider
-    public static Object[] getTozAdminUser() {
+    public static Object[] getTozAdminUserModel() {
         final User user = new User();
         user.setId(EXPECTED_ID);
         user.setName(EXPECTED_NAME);
@@ -37,17 +34,29 @@ public class UserDataProvider {
     }
 
     @DataProvider
-    public static Object[][] getUserWithView() {
-        final User user = (User) getTozAdminUser()[0];
-        final UserView userView = ModelMapper.convertToView(user, UserView.class);
+    public static Object[] getTozAdminUserView() {
+        final UserView userView = new UserView();
+        userView.setId(EXPECTED_ID);
+        userView.setName(EXPECTED_NAME);
         userView.setPassword(EXPECTED_PASSWORD);
+        userView.setSurname(EXPECTED_SURNAME);
+        userView.setPhoneNumber(EXPECTED_PHONE_NUMBER);
+        userView.setEmail(EXPECTED_EMAIL);
+        userView.addRole(TOZ_ROLE);
+        return new Object[]{userView};
+    }
+
+    @DataProvider
+    public static Object[][] getUserWithView() {
+        final User user = (User) getTozAdminUserModel()[0];
+        final UserView userView = (UserView) getTozAdminUserView()[0];
         return new Object[][]{{user, userView}};
     }
 
     @DataProvider
-    public static Object[] getSuperAdminUser() {
-        final User user = (User) getTozAdminUser()[0];
-        user.addRole(SA_ROLE);
+    public static Object[] getSuperAdminUserModel() {
+        final User user = (User) getTozAdminUserModel()[0];
+        user.addRole(User.Role.SA);
         return new Object[]{user};
     }
 
