@@ -21,8 +21,8 @@ class TokensService {
     }
 
     boolean isUserAuthenticated(String userEmail, String plainPassword) {
-        User userFromDatabase = userService.findOneByEmail(userEmail);
-        return passwordEncoder.matches(plainPassword, userFromDatabase.getPasswordHash());
+        User user = userService.findOneByEmail(userEmail);
+        return passwordEncoder.matches(plainPassword, user.getPasswordHash());
     }
 
     String getToken(String userEmail) {

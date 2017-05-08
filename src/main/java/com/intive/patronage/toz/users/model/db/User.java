@@ -1,11 +1,16 @@
 package com.intive.patronage.toz.users.model.db;
 
 import com.intive.patronage.toz.base.model.Identifiable;
-import lombok.*;
+import lombok.AllArgsConstructor;
+import lombok.Getter;
+import lombok.NoArgsConstructor;
+import lombok.Setter;
 
 import javax.persistence.*;
 import java.util.HashSet;
+import java.util.List;
 import java.util.Set;
+import java.util.stream.Collectors;
 
 @Getter
 @Setter
@@ -35,6 +40,12 @@ public class User extends Identifiable {
 
     public boolean isSuperAdmin() {
         return hasRole(Role.SA);
+    }
+
+    public List<Role> getRolesList() {
+        return roles.stream()
+                .map(RoleEntity::getRole)
+                .collect(Collectors.toList());
     }
 
     public enum Role {
