@@ -1,5 +1,6 @@
 package com.intive.patronage.toz.users.model.db;
 
+import com.intive.patronage.toz.base.model.PersonalData;
 import lombok.Getter;
 
 import javax.persistence.Entity;
@@ -14,16 +15,16 @@ public class RoleEntity implements Serializable {
 
     @Id
     @Enumerated(EnumType.STRING)
-    private User.Role role;
+    private PersonalData.Role role;
 
     private RoleEntity() {
     }
 
-    public RoleEntity(User.Role role) {
+    public RoleEntity(PersonalData.Role role) {
         this.role = role;
     }
 
     public RoleEntity(String role) {
-        this.role = User.Role.valueOf(role);
+        this.role = PersonalData.Role.valueOf(role);
     }
 }
