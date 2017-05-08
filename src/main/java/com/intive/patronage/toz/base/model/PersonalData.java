@@ -16,14 +16,14 @@ import java.util.Set;
 @Setter
 @MappedSuperclass
 public class PersonalData extends Identifiable {
-    private String name;
-    private String surname;
-    private String phoneNumber;
+    protected String name;
+    protected String surname;
+    protected String phoneNumber;
     @Column(unique = true)
-    private String email;
+    protected String email;
 
     @OneToMany(cascade = CascadeType.MERGE, fetch = FetchType.EAGER)
-    private Set<RoleEntity> roles = new HashSet<>();
+    protected Set<RoleEntity> roles = new HashSet<>();
 
     public void addRole(final Role role) {
         final RoleEntity roleEntity = new RoleEntity(role);

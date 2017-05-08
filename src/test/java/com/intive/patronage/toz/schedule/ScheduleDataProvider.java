@@ -23,7 +23,7 @@ public class ScheduleDataProvider {
     private static final UUID OWNER_UUID = UUID.randomUUID();
     private static final Long EXAMPLE_TIMESTAMP = 1490134074968L;
     private static final String EXAMPLE_NAME = "name";
-    static final User EXAMPLE_USER = new User(EXAMPLE_NAME, null, null, null, null, null);
+    static final User EXAMPLE_USER = new User(EXAMPLE_NAME);
 
     @DataProvider
     public static Object[] getReservationRequestView() {
