@@ -28,4 +28,8 @@ class TokensService {
     String getToken(String userEmail) {
         return jwtFactory.generateToken(userService.findOneByEmail(userEmail));
     }
+
+    User getUser(String userEmail) {
+        return userService.findOneByEmail(userEmail);
+    }
 }

@@ -46,15 +46,14 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 @ActiveProfiles("test")
 public class TokenControllerTest {
 
-    private static final MediaType CONTENT_TYPE = MediaType.APPLICATION_JSON_UTF8;
     static final String EMAIL = "user@mail.com";
-    static final String PASSWORD = "Password";
-    private static final String EMAIL_CLAIM_NAME = "email";
-    private static final String SCOPES_CLAIM_NAME = "scopes";
     static final String AUTHORIZATION_HEADER = "Authorization";
     static final String TOKEN_PREFIX = "Bearer ";
     static final User.Role ROLE_ADMIN = User.Role.TOZ;
-
+    private static final String PASSWORD = "Password";
+    private static final MediaType CONTENT_TYPE = MediaType.APPLICATION_JSON_UTF8;
+    private static final String EMAIL_CLAIM_NAME = "email";
+    private static final String SCOPES_CLAIM_NAME = "scopes";
     @Value("${jwt.secret-base64}")
     private String secret;
 
@@ -129,11 +128,13 @@ public class TokenControllerTest {
                 .content(ModelMapper.convertToJsonString(credentialsView)))
                 .andExpect(content().contentType(CONTENT_TYPE))
                 .andExpect(status().isCreated())
+                .andExpect(jsonPath("userId", is(user.getId().toString())))
+                .andExpect(jsonPath("email", is(user.getEmail())))
                 .andExpect(jsonPath("jwt", notNullValue()))
                 .andReturn();
 
         String response = result.getResponse().getContentAsString();
-        String token = response.substring("{\"jwt\":\"".length(), response.length() - 2);
+        String token = response.substring(response.lastIndexOf("jwt") + 6, response.length() - 2);
 
         Jws<Claims> claims = Jwts.parser()
                 .setSigningKey(TextCodec.BASE64.decode(secret))

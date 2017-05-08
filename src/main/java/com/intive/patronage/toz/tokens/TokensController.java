@@ -6,6 +6,7 @@ import com.intive.patronage.toz.error.model.ValidationErrorResponse;
 import com.intive.patronage.toz.tokens.model.UserContext;
 import com.intive.patronage.toz.tokens.model.view.JwtView;
 import com.intive.patronage.toz.tokens.model.view.UserCredentialsView;
+import com.intive.patronage.toz.users.model.db.User;
 import io.swagger.annotations.ApiOperation;
 import io.swagger.annotations.ApiResponse;
 import io.swagger.annotations.ApiResponses;
@@ -33,7 +34,7 @@ class TokensController {
 
     @ApiOperation("Login to api")
     @ApiResponses(value = {
-            @ApiResponse(code = 201, message = "JWT Token"),
+            @ApiResponse(code = 201, message = "User info and JWT token"),
             @ApiResponse(code = 400, message = "Validation error", response = ValidationErrorResponse.class),
             @ApiResponse(code = 401, message = "Incorrect user or password", response = ErrorResponse.class)
     })
@@ -47,7 +48,14 @@ class TokensController {
             throw new BadCredentialsException("Incorrect email or password");
         }
 
-        return new JwtView(tokensService.getToken(credentials.getEmail()));
+        final User user = tokensService.getUser(credentials.getEmail());
+        return JwtView.builder()
+                .userId(user.getId())
+                .email(user.getEmail())
+                .name(user.getName())
+                .surname(user.getSurname())
+                .jwt(tokensService.getToken(credentials.getEmail()))
+                .build();
     }
 
     @Profile("dev")
