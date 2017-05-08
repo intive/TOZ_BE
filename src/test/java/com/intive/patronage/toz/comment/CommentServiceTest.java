@@ -79,11 +79,11 @@ public class CommentServiceTest {
 
     @Test
     public void findAllCommentsByPetUuid() throws Exception {
-        when(commentRepository.findByPetUuid(EXPECTED_PET_UUID)).thenReturn(Collections.
-                emptyList());
+        when(commentRepository.findByPetUuid(EXPECTED_PET_UUID)).thenReturn(Collections
+                .emptyList());
 
-        List<Comment> commentList = commentService.
-                findAllComments(EXPECTED_PET_UUID, DEFAULT_SHORTENED, DEFAULT_ORDERED);
+        List<Comment> commentList = commentService
+                .findAllComments(EXPECTED_PET_UUID, DEFAULT_SHORTENED, DEFAULT_ORDERED);
         assertTrue(commentList.isEmpty());
     }
 
@@ -97,10 +97,10 @@ public class CommentServiceTest {
         assertEquals(EXPECTED_CONTENTS, comment.getContents());
         assertEquals(EXPECTED_PET_UUID, comment.getPetUuid());
 
-        verify(commentRepository, times(1)).
-                exists(eq(EXPECTED_ID));
-        verify(commentRepository, times(1)).
-                findOne(eq(EXPECTED_ID));
+        verify(commentRepository, times(1))
+                .exists(eq(EXPECTED_ID));
+        verify(commentRepository, times(1))
+                .findOne(eq(EXPECTED_ID));
         verifyNoMoreInteractions(commentRepository);
     }
 
@@ -109,8 +109,8 @@ public class CommentServiceTest {
         when(commentRepository.exists(EXPECTED_ID)).thenReturn(false);
         commentService.findById(EXPECTED_ID);
 
-        verify(commentRepository, times(1)).
-                exists(eq(EXPECTED_ID));
+        verify(commentRepository, times(1))
+                .exists(eq(EXPECTED_ID));
         verifyNoMoreInteractions(commentRepository);
     }
 
@@ -123,8 +123,8 @@ public class CommentServiceTest {
         assertEquals(EXPECTED_CONTENTS, comment.getContents());
         assertEquals(EXPECTED_PET_UUID, comment.getPetUuid());
 
-        verify(commentRepository, times(1)).
-                save(any(Comment.class));
+        verify(commentRepository, times(1))
+                .save(any(Comment.class));
         verifyNoMoreInteractions(commentRepository);
     }
 
@@ -140,12 +140,12 @@ public class CommentServiceTest {
         commentService.deleteComment(EXPECTED_ID);
         SecurityContextHolder.clearContext();
 
-        verify(commentRepository, times(1)).
-                exists(eq(EXPECTED_ID));
-        verify(commentRepository, times(1)).
-                delete(eq(EXPECTED_ID));
-        verify(commentRepository, times(1)).
-                findOne(eq(EXPECTED_ID));
+        verify(commentRepository, times(1))
+                .exists(eq(EXPECTED_ID));
+        verify(commentRepository, times(1))
+                .delete(eq(EXPECTED_ID));
+        verify(commentRepository, times(1))
+                .findOne(eq(EXPECTED_ID));
         verifyNoMoreInteractions(commentRepository);
     }
 
@@ -155,8 +155,8 @@ public class CommentServiceTest {
 
         commentService.deleteComment(EXPECTED_ID);
 
-        verify(commentRepository, times(1)).
-                exists(eq(EXPECTED_ID));
+        verify(commentRepository, times(1))
+                .exists(eq(EXPECTED_ID));
         verifyNoMoreInteractions(commentRepository);
     }
 
@@ -176,12 +176,12 @@ public class CommentServiceTest {
         assertEquals(EXPECTED_PET_UUID, comment.getPetUuid());
         SecurityContextHolder.clearContext();
 
-        verify(commentRepository, times(1)).
-                exists(eq(EXPECTED_ID));
-        verify(commentRepository, times(1)).
-                save(any(Comment.class));
-        verify(commentRepository, times(1)).
-                findOne(eq(EXPECTED_ID));
+        verify(commentRepository, times(1))
+                .exists(eq(EXPECTED_ID));
+        verify(commentRepository, times(1))
+                .save(any(Comment.class));
+        verify(commentRepository, times(1))
+                .findOne(eq(EXPECTED_ID));
         verifyNoMoreInteractions(commentRepository);
     }
 
@@ -191,8 +191,8 @@ public class CommentServiceTest {
 
         commentService.updateComment(EXPECTED_ID, comment);
 
-        verify(commentRepository, times(1)).
-                exists(eq(EXPECTED_ID));
+        verify(commentRepository, times(1))
+                .exists(eq(EXPECTED_ID));
         verifyNoMoreInteractions(commentRepository);
     }
 }

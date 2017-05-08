@@ -34,8 +34,8 @@ public class CommentService {
                                   Boolean ordered) {
         List<Comment> commentList;
         if (petUuid != null && ordered) {
-            commentList = commentRepository.
-                    findByPetUuidOrderByCreatedDesc(petUuid);
+            commentList = commentRepository
+                    .findByPetUuidOrderByCreatedDesc(petUuid);
         } else if (petUuid != null && !ordered) {
             commentList = commentRepository.findByPetUuid(petUuid);
         } else if (petUuid == null && ordered) {
@@ -74,19 +74,19 @@ public class CommentService {
     }
 
     private void checkPermissionToManageComment(UUID id, UUID userUuid) {
-        if (!commentRepository.findOne(id).getUserUuid().toString().
-                equals(userUuid.toString())) {
+        if (!commentRepository.findOne(id).getUserUuid().toString()
+                .equals(userUuid.toString())) {
             throw new NoPermissionException();
         }
     }
 
     private UUID getUserUuid() {
-        final Authentication authentication = SecurityContextHolder.
-                getContext().getAuthentication();
+        final Authentication authentication = SecurityContextHolder
+                .getContext().getAuthentication();
         UUID userUuid = null;
         if (authentication != null && authentication.getPrincipal() != null) {
-            final UserContext userContext = (UserContext) authentication.
-                    getPrincipal();
+            final UserContext userContext = (UserContext) authentication
+                    .getPrincipal();
             userUuid = userContext.getUserId();
             ifEntityDoesNotExistInRepoThrowException(userUuid,
                     userRepository, USER);
@@ -98,8 +98,8 @@ public class CommentService {
             Boolean shortened, List<Comment> commentList) {
         if (shortened) {
             for (Comment comment : commentList) {
-                comment.setContents(StringFormatter.
-                        trimToLengthPreserveWord(comment.getContents(),
+                comment.setContents(StringFormatter
+                        .trimToLengthPreserveWord(comment.getContents(),
                                 SHORTENED_COMMENT_CONTENTS_LENGTH));
             }
         }

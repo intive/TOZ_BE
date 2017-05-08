@@ -59,8 +59,8 @@ public class CommentController {
     @GetMapping(value = "/{id}")
     @PreAuthorize("hasAnyAuthority('SA', 'TOZ', 'VOLUNTEER', 'ANONYMOUS')")
     public ResponseEntity<CommentView> getCommentById(@PathVariable UUID id) {
-        return ResponseEntity.ok().
-                body(ModelMapper.convertToView(commentService.findById(id), CommentView.class));
+        return ResponseEntity.ok()
+                .body(ModelMapper.convertToView(commentService.findById(id), CommentView.class));
     }
 
     @ApiOperation(value = "Create comment.", response = CommentView.class, notes =
@@ -77,8 +77,8 @@ public class CommentController {
         final URI baseLocation = ServletUriComponentsBuilder.fromCurrentRequest()
                 .build().toUri();
         return ResponseEntity.created(baseLocation)
-                .body(ModelMapper.convertToView(commentService.
-                        createComment(convertFromView(commentView)), CommentView.class));
+                .body(ModelMapper.convertToView(commentService
+                        .createComment(convertFromView(commentView)), CommentView.class));
     }
 
     @ApiOperation(value = "Delete comment.", notes =
@@ -114,8 +114,8 @@ public class CommentController {
         final URI baseLocation = ServletUriComponentsBuilder.fromCurrentRequest()
                 .build().toUri();
         return ResponseEntity.created(baseLocation)
-                .body(ModelMapper.convertToView(commentService.
-                        updateComment(id, convertFromView(commentView)), CommentView.class));
+                .body(ModelMapper.convertToView(commentService
+                        .updateComment(id, convertFromView(commentView)), CommentView.class));
     }
 
     private static Comment convertFromView(final CommentView commentView) {
