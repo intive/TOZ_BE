@@ -6,6 +6,7 @@ import com.intive.patronage.toz.error.model.ValidationErrorResponse;
 import com.intive.patronage.toz.tokens.model.UserContext;
 import com.intive.patronage.toz.tokens.model.view.JwtView;
 import com.intive.patronage.toz.tokens.model.view.UserCredentialsView;
+import com.intive.patronage.toz.users.UserService;
 import com.intive.patronage.toz.users.model.db.User;
 import io.swagger.annotations.ApiOperation;
 import io.swagger.annotations.ApiResponse;
@@ -26,10 +27,12 @@ import javax.validation.Valid;
 class TokensController {
 
     private final TokensService tokensService;
+    private final UserService userService;
 
     @Autowired
-    TokensController(TokensService tokensService) {
+    TokensController(TokensService tokensService, UserService userService) {
         this.tokensService = tokensService;
+        this.userService = userService;
     }
 
     @ApiOperation("Login to api")
@@ -41,20 +44,19 @@ class TokensController {
     @ResponseStatus(HttpStatus.CREATED)
     @PostMapping(value = "/acquire", consumes = MediaType.APPLICATION_JSON_VALUE)
     public JwtView login(@Valid @RequestBody UserCredentialsView credentials) {
-        final Boolean isAuthenticated =
-                tokensService.isUserAuthenticated(credentials.getEmail(), credentials.getPassword());
+        final User user = userService.findOneByEmail(credentials.getEmail());
 
+        final Boolean isAuthenticated = tokensService.isUserAuthenticated(user, credentials.getPassword());
         if (!isAuthenticated) {
             throw new BadCredentialsException("Incorrect email or password");
         }
 
-        final User user = tokensService.getUser(credentials.getEmail());
         return JwtView.builder()
                 .userId(user.getId())
                 .email(user.getEmail())
                 .name(user.getName())
                 .surname(user.getSurname())
-                .jwt(tokensService.getToken(credentials.getEmail()))
+                .jwt(tokensService.getToken(user))
                 .build();
     }
 
