@@ -9,7 +9,9 @@ import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.context.MessageSource;
 import org.springframework.test.context.junit4.SpringRunner;
 
+import java.util.List;
 import java.util.Locale;
+import java.util.stream.Collectors;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertTrue;
@@ -21,7 +23,7 @@ import static org.mockito.Mockito.when;
 public class JwtParserTest {
 
     private static final String EMAIL = "user@mail.com";
-    private static final User.Role ROLE = User.Role.VOLUNTEER;
+    private static final User.Role VOLUNTEER_ROLE = User.Role.VOLUNTEER;
     private static final String SECRET = "c2VjcmV0";
     private static final long EXPIRATION_TIME = 5;
     private static final String EXPIRED_TOKEN_MESSAGE = "Token expired";
@@ -40,7 +42,7 @@ public class JwtParserTest {
 
         user = new User();
         user.setEmail(EMAIL);
-        user.addRole(ROLE);
+        user.addRole(VOLUNTEER_ROLE);
     }
 
     @Test
@@ -96,6 +98,9 @@ public class JwtParserTest {
 
         assertEquals(jwtParser.getUserId(), user.getId());
         assertEquals(jwtParser.getEmail(), user.getEmail());
-        assertTrue(jwtParser.getScopes().contains(user.getRolesList().get(0).toString()));
+        final List<String> userRoles = user.getRolesList().stream()
+                .map(User.Role::toString)
+                .collect(Collectors.toList());
+        assertTrue(jwtParser.getScopes().containsAll(userRoles));
     }
 }
