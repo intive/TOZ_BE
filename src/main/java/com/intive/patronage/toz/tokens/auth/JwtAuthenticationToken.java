@@ -18,17 +18,20 @@ class JwtAuthenticationToken extends AbstractAuthenticationToken {
      *                    represented by this authentication object.
      */
     JwtAuthenticationToken(UserContext userContext, Collection<? extends GrantedAuthority> authorities) {
-        super(authorities);
+        this(authorities, userContext, null, true);
         eraseCredentials();
-        this.userContext = userContext;
-        super.setAuthenticated(true);
     }
 
     JwtAuthenticationToken(String token) {
-        super(null);
+        this(null, null, token, false);
+    }
+
+    private JwtAuthenticationToken(Collection<? extends GrantedAuthority> authorities,
+                                   UserContext userContext, String token, boolean isAuthenticated) {
+        super(authorities);
+        this.userContext = userContext;
         this.token = token;
-        userContext = null;
-        super.setAuthenticated(false);
+        super.setAuthenticated(isAuthenticated);
     }
 
     @Override
