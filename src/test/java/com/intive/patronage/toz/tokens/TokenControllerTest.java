@@ -134,7 +134,9 @@ public class TokenControllerTest {
                 .andReturn();
 
         String response = result.getResponse().getContentAsString();
-        String token = response.substring(response.lastIndexOf("jwt") + "jwt\":\"".length(), response.length() - 2);
+        final int tokenBeginIndex = response.lastIndexOf("jwt") + "jwt\":\"".length();
+        final int tokenEndIndex = response.length() - 2;
+        String token = response.substring(tokenBeginIndex, tokenEndIndex);
 
         Jws<Claims> claims = Jwts.parser()
                 .setSigningKey(TextCodec.BASE64.decode(secret))
