@@ -59,12 +59,12 @@ public class User extends Identifiable {
                 .collect(Collectors.toList());
     }
 
-    public enum Role {
-        SA, TOZ, VOLUNTEER, ANONYMOUS
-    }
-
     public void setPasswordHash(String passwordHash) {
         this.passwordHash = passwordHash;
         passwordChangeDate = new Date();
+    }
+
+    public enum Role {
+        SA, TOZ, VOLUNTEER, ANONYMOUS
     }
 }
