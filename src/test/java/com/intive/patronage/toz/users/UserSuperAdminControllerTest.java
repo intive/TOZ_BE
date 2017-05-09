@@ -100,7 +100,7 @@ public class UserSuperAdminControllerTest {
     }
 
     @Test
-    @UseDataProvider(value = "getUserWithView", location = UserDataProvider.class)
+    @UseDataProvider(value = "getTozUserWithView", location = UserDataProvider.class)
     public void createUserOk(final User user, final UserView userView) throws Exception {
         final String userViewJsonString = ModelMapper.convertToJsonString(userView);
 
@@ -132,7 +132,7 @@ public class UserSuperAdminControllerTest {
     }
 
     @Test
-    @UseDataProvider(value = "getUserWithView", location = UserDataProvider.class)
+    @UseDataProvider(value = "getTozUserWithView", location = UserDataProvider.class)
     public void updateUser(final User user, final UserView userView) throws Exception {
         final String userJsonString = ModelMapper.convertToJsonString(userView);
 

@@ -12,7 +12,7 @@ import java.time.temporal.ChronoUnit;
 import java.util.Date;
 
 @Component
-class JwtFactory {
+public class JwtFactory {
 
     private static final String EMAIL_CLAIM_NAME = "email";
     private static final String SCOPES_CLAIM_NAME = "scopes";
@@ -26,7 +26,7 @@ class JwtFactory {
         this.secret = secret;
     }
 
-    String generateToken(User user) {
+    public String generateToken(User user) {
         return Jwts.builder()
                 .setSubject(user.getId().toString())
                 .claim(EMAIL_CLAIM_NAME, user.getEmail())

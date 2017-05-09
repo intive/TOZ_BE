@@ -47,7 +47,7 @@ public class UserDataProvider {
     }
 
     @DataProvider
-    public static Object[][] getUserWithView() {
+    public static Object[][] getTozUserWithView() {
         final User user = (User) getTozAdminUserModel()[0];
         final UserView userView = (UserView) getTozAdminUserView()[0];
         return new Object[][]{{user, userView}};
