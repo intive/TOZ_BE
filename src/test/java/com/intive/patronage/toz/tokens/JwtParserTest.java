@@ -98,8 +98,8 @@ public class JwtParserTest {
 
         assertEquals(jwtParser.getUserId(), user.getId());
         assertEquals(jwtParser.getEmail(), user.getEmail());
-        final List<String> userRoles = user.getRolesList().stream()
-                .map(User.Role::toString)
+        final List<String> userRoles = user.getRoles().stream()
+                .map(User.Role::name)
                 .collect(Collectors.toList());
         assertTrue(jwtParser.getScopes().containsAll(userRoles));
     }
