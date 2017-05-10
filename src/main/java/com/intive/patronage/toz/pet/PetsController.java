@@ -11,17 +11,14 @@ import com.intive.patronage.toz.storage.StorageProperties;
 import com.intive.patronage.toz.storage.StorageService;
 import com.intive.patronage.toz.storage.model.db.UploadedFile;
 import com.intive.patronage.toz.storage.model.view.UrlView;
-import com.intive.patronage.toz.users.model.db.User;
 import com.intive.patronage.toz.util.ModelMapper;
+import com.intive.patronage.toz.util.RolesChecker;
 import io.swagger.annotations.*;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
-import org.springframework.security.core.Authentication;
-import org.springframework.security.core.GrantedAuthority;
-import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
@@ -32,7 +29,6 @@ import javax.validation.Valid;
 import java.io.IOException;
 import java.io.InputStream;
 import java.net.URI;
-import java.util.Collection;
 import java.util.List;
 import java.util.UUID;
 
@@ -57,25 +53,12 @@ class PetsController {
     @ApiOperation(value = "Get all pets", responseContainer = "List")
     @GetMapping
     public List<PetView> getAllPets() {
-        if (hasAdminAuthorities()) {
+        if (RolesChecker.isCurrentUserHasAdminRole()) {
             final List<Pet> pets = petsService.findAllPets();
             return ModelMapper.convertToView(pets, PetView.class);
         }
         final List<Pet> pets = petsService.findPetsWithFilledFields();
         return ModelMapper.convertToView(pets, PetView.class);
-    }
-
-    private boolean hasAdminAuthorities() {
-        return hasAuthorities(User.Role.SA) || hasAuthorities(User.Role.TOZ);
-    }
-
-    private boolean hasAuthorities(User.Role role) {
-        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
-        if (authentication == null) {
-            return false;
-        }
-        Collection<? extends GrantedAuthority> grantedAuthorities = authentication.getAuthorities();
-        return grantedAuthorities.contains(role);
     }
 
     @ApiOperation(value = "Get single pet by id", notes = REQUIRED_ROLES_SA_TOZ)
