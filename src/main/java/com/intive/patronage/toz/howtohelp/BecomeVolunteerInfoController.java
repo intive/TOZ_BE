@@ -4,6 +4,7 @@ import com.intive.patronage.toz.config.ApiUrl;
 import com.intive.patronage.toz.error.model.ErrorResponse;
 import com.intive.patronage.toz.error.model.ValidationErrorResponse;
 import com.intive.patronage.toz.howtohelp.model.View.HelpInfoView;
+import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 import io.swagger.annotations.ApiResponse;
 import io.swagger.annotations.ApiResponses;
@@ -17,6 +18,7 @@ import javax.validation.Valid;
 
 import static com.intive.patronage.toz.howtohelp.model.enumeration.HelpInfoType.HOW_TO_BECOME_VOLUNTEER;
 
+@Api("Information on how to become volunteer.")
 @RestController
 @RequestMapping(value = ApiUrl.HOW_TO_BECOME_VOLUNTEER_PATH, produces = MediaType.APPLICATION_JSON_VALUE)
 public class BecomeVolunteerInfoController extends HelpInfoController {
