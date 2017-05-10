@@ -3,6 +3,7 @@ package com.intive.patronage.toz.comment;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.intive.patronage.toz.comment.model.db.Comment;
 import com.intive.patronage.toz.config.ApiUrl;
+import com.intive.patronage.toz.environment.ApiProperties;
 import com.tngtech.java.junit.dataprovider.DataProvider;
 import com.tngtech.java.junit.dataprovider.DataProviderRunner;
 import com.tngtech.java.junit.dataprovider.UseDataProvider;
@@ -32,7 +33,7 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 @RunWith(DataProviderRunner.class)
 @SpringBootTest(
         webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT,
-        properties = "jwt.secret-base64=c2VjcmV0"
+        properties = ApiProperties.JWT_SECRET_BASE64
 )
 public class CommentControllerTest {
     private static final int COMMENTS_LIST_SIZE = 5;
