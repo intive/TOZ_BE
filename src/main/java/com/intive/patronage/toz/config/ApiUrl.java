@@ -8,6 +8,8 @@ public final class ApiUrl {
     public final static String TOKENS_PATH = "/tokens";
     public final static String ACTIVATION_PATH = "/activate";
     public final static String ACQUIRE_TOKEN_PATH = TOKENS_PATH + "/acquire";
+    public final static String HOW_TO_BECOME_VOLUNTEER_PATH = "/organization/howtobecomevolunteer";
+    public final static String HOW_TO_DONATE_PATH = "/organization/howtodonate";
 
     private ApiUrl() {
     }
