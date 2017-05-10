@@ -57,7 +57,7 @@ public class UserControllerTest {
     @Before
     public void setUp() throws Exception {
         MockitoAnnotations.initMocks(this);
-        final UserController userController = new UserController(userService, passwordEncoder);
+        final UserController userController = new UserController(userService, passwordEncoder, null);
         mvc = MockMvcBuilders.standaloneSetup(userController).build();
     }
 

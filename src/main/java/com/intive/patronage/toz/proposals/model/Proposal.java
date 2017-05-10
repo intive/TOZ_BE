@@ -1,6 +1,7 @@
 package com.intive.patronage.toz.proposals.model;
 
 import com.intive.patronage.toz.base.model.Identifiable;
+import com.intive.patronage.toz.base.model.PersonalData;
 import lombok.Getter;
 import lombok.Setter;
 import org.hibernate.annotations.CreationTimestamp;
@@ -14,7 +15,7 @@ import java.util.Date;
 @Getter
 @Setter
 @Entity
-public class Proposal extends Identifiable{
+public class Proposal extends PersonalData {
 
     @CreationTimestamp
     @Column(updatable = false)

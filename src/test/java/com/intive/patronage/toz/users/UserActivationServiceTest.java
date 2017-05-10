@@ -1,5 +1,9 @@
 package com.intive.patronage.toz.users;
 
+import com.intive.patronage.toz.mail.MailService;
+import com.intive.patronage.toz.mail.MailTemplatesService;
+import com.intive.patronage.toz.proposals.ProposalRepository;
+import com.intive.patronage.toz.proposals.model.Proposal;
 import com.intive.patronage.toz.tokens.JwtFactory;
 import com.intive.patronage.toz.users.model.db.User;
 import com.tngtech.java.junit.dataprovider.DataProvider;
@@ -12,19 +16,40 @@ import org.junit.rules.ExpectedException;
 import org.junit.runner.RunWith;
 import org.mockito.Mock;
 import org.mockito.MockitoAnnotations;
-import static org.junit.Assert.*;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
+import org.springframework.security.crypto.password.PasswordEncoder;
 
+import java.security.SecureRandom;
+
+import static org.junit.Assert.*;
+import static org.mockito.Mockito.when;
+import static org.mockito.Mockito.any;
 @RunWith(DataProviderRunner.class)
 public class UserActivationServiceTest {
 
+
+    @Mock
+    private JwtFactory jwtFactory;
+
     @Mock
     private UserRepository userRepository;
+
+    @Mock
+    private ProposalRepository proposalRepository;
+
+    @Autowired
+    private MailTemplatesService mailTemplatesService;
+
     private UserActivationService userActivationService;
     private static final String SECRET = "c2VjcmV0";
     private static final String USER_EMAIL = "email@email.com";
     private static final String USER_NAME = "username";
-    private static final String USER_SURNAME = "lastname";
-    private static final String USER_PHONENUMBER = "48123456789";
+    private static final String USER_SURNAME = "johny";
+    private static final String USER_PHONENUMBER = "123123123";
+    private static final String EXAMPLE_TOPIC = "User registration";
+    private static final String URL_ACTIVATION = "Localhost";
+    private static final String EXAMPLE_PASSWORD = "12345";
     private static final long EXPIRATION_TIME = 100000;
 
     @Rule
@@ -33,29 +58,57 @@ public class UserActivationServiceTest {
     @Before
     public void setUp() throws Exception {
         MockitoAnnotations.initMocks(this);
-        userActivationService = new UserActivationService(userRepository, SECRET );
+
+        SecureRandom random = new SecureRandom();
+        random.nextBytes(new byte[20]);
+        PasswordEncoder passwordEncoder = new BCryptPasswordEncoder(10, random);
+
+
+
+        userActivationService = new UserActivationService(
+                new JwtFactory(EXPIRATION_TIME,SECRET),
+                userRepository,
+                proposalRepository,
+                mailTemplatesService,
+                passwordEncoder,
+                SECRET,
+                EXAMPLE_TOPIC,
+                URL_ACTIVATION );
+
+
+
     }
 
     @DataProvider
-    public static Object[] getProperUser() {
+    public static Object[][] getProperProposalAndUser() {
+        Proposal proposal = new Proposal();
+        proposal.setName(USER_NAME);
+        proposal.setEmail(USER_EMAIL);
+        proposal.setSurname(USER_SURNAME);
+        proposal.setPhoneNumber(USER_PHONENUMBER );
+
         User user = new User();
         user.setName(USER_NAME);
         user.setEmail(USER_EMAIL);
-        user.setPhoneNumber(USER_PHONENUMBER);
         user.setSurname(USER_SURNAME);
-        return new User[]{user};
+        user.setPhoneNumber(USER_PHONENUMBER );
+        user.setPasswordHash(EXAMPLE_PASSWORD );
+
+        return new Object[][]{{user, proposal}};
     }
 
     @Test
-    @UseDataProvider("getProperUser")
-    public void checkCorrectUserActivation(final User user) throws Exception {
+    @UseDataProvider("getProperProposalAndUser")
+    public void checkCorrectUserActivation( final User user, final Proposal proposal) throws Exception {
+        when(userRepository.save(any(User.class))).thenReturn(user);
+        when(proposalRepository.findByEmail(USER_EMAIL)).thenReturn(proposal);
+
         JwtFactory jwtFactory = new JwtFactory(EXPIRATION_TIME, SECRET );
-        String token = jwtFactory.generateToken(user);
-        User userToCompare = userActivationService.checkActivationToken(token);
+        String token = jwtFactory.generateTokenWithSpecifiedExpirationTime(proposal, EXPIRATION_TIME);
+        User userToCompare = userActivationService.checkActivationToken(token, EXAMPLE_PASSWORD);
+
         assertTrue(userToCompare.getName().equals(USER_NAME));
         assertTrue(userToCompare.getEmail().equals(USER_EMAIL));
-        assertTrue(userToCompare.getSurname().equals(USER_SURNAME));
-        assertTrue(userToCompare.getPhoneNumber().equals(USER_PHONENUMBER));
     }
 
 }

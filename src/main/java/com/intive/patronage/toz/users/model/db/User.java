@@ -15,7 +15,7 @@ import javax.persistence.Entity;
 public class User extends PersonalData {
 
     private String passwordHash;
-
+    private Boolean isActive;
     public User(String name) {
         this.name = name;
     }

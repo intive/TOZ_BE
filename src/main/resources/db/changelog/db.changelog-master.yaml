@@ -235,6 +235,9 @@ databaseChangeLog:
                     type: varchar(255)
                     constraints:
                       - unique: true
+                - column:
+                    name: is_active
+                    type: boolean
   - changeSet:
         id : 4
         author: marek.macko

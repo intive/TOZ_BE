@@ -4,6 +4,8 @@ import com.intive.patronage.toz.config.ApiUrl;
 import com.intive.patronage.toz.error.model.ErrorResponse;
 import com.intive.patronage.toz.error.model.ValidationErrorResponse;
 import com.intive.patronage.toz.users.model.db.User;
+import com.intive.patronage.toz.users.model.db.UserActivation;
+import com.intive.patronage.toz.users.model.view.UserActivationView;
 import com.intive.patronage.toz.users.model.view.UserView;
 import com.intive.patronage.toz.util.ModelMapper;
 import io.swagger.annotations.*;
@@ -32,11 +34,13 @@ public class UserController {
 
     private final UserService userService;
     private final PasswordEncoder passwordEncoder;
+    private final UserActivationService userActivationService;
 
     @Autowired
-    UserController(UserService userService, PasswordEncoder passwordEncoder) {
+    UserController(UserService userService, PasswordEncoder passwordEncoder, UserActivationService userActivationService) {
         this.userService = userService;
         this.passwordEncoder = passwordEncoder;
+        this.userActivationService = userActivationService;
     }
 
     @ApiOperation(value = "Get all users", responseContainer = "List", notes =
@@ -112,4 +116,19 @@ public class UserController {
         return convertToView(userService.update(id, user));
     }
 
+    @ResponseStatus(HttpStatus.CREATED)
+    @ApiOperation(value = "Create new user using activation token", response = User.class)
+    @ApiResponses(value = {
+            @ApiResponse(code = 400, message = "Bad request", response = ValidationErrorResponse.class)
+    })
+    @PostMapping(value = "/activate_user", consumes = MediaType.APPLICATION_JSON_VALUE)
+    public ResponseEntity<User> activateUser(@Valid @RequestBody UserActivationView userActivationView) {
+
+        User user = userActivationService.checkActivationToken(userActivationView.getToken(),userActivationView.getPassword());
+        final URI baseLocation = ServletUriComponentsBuilder.fromCurrentRequest()
+                .build().toUri();
+        final String userLocationString = String.format("%s/%s", baseLocation, user.getId());
+        final URI location = UriComponentsBuilder.fromUriString(userLocationString).build().toUri();
+        return ResponseEntity.created(location).body(user);
+    }
 }
