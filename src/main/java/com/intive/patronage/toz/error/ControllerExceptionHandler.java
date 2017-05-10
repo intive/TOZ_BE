@@ -187,23 +187,13 @@ public class ControllerExceptionHandler {
         return new ErrorResponse(HttpStatus.FORBIDDEN, message);
     }
 
-    @ExceptionHandler(BadRoleForNewUserException.class)
+    @ExceptionHandler(BadRoleForSentUserBodyException.class)
     @ResponseStatus(HttpStatus.BAD_REQUEST)
     @ResponseBody
-    public ErrorResponse handleBadRoleForNewUserException(BadRoleForNewUserException e) {
-        final String newUserRoleValue = e.getNewUserRole().toString();
-        final String message = messageSource.getMessage(
-                "badRoleForNewUser", new String[]{newUserRoleValue}, LocaleContextHolder.getLocale());
-        return new ErrorResponse(HttpStatus.BAD_REQUEST, message);
-    }
-
-    @ExceptionHandler(BadRoleForExistingUserException.class)
-    @ResponseStatus(HttpStatus.BAD_REQUEST)
-    @ResponseBody
-    public ErrorResponse handleBadRoleForExistingUserException(BadRoleForExistingUserException e) {
+    public ErrorResponse handleBadRoleForSentUserBodyException(BadRoleForSentUserBodyException e) {
         final String userRoleValue = e.getUserRole().toString();
         final String message = messageSource.getMessage(
-                "badRoleForExistingUser", new String[]{userRoleValue}, LocaleContextHolder.getLocale());
+                "badRoleForSentUserBody", new String[]{userRoleValue}, LocaleContextHolder.getLocale());
         return new ErrorResponse(HttpStatus.BAD_REQUEST, message);
     }
 }

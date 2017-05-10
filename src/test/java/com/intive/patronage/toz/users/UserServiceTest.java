@@ -1,8 +1,7 @@
 package com.intive.patronage.toz.users;
 
 
-import com.intive.patronage.toz.error.exception.BadRoleForExistingUserException;
-import com.intive.patronage.toz.error.exception.BadRoleForNewUserException;
+import com.intive.patronage.toz.error.exception.BadRoleForSentUserBodyException;
 import com.intive.patronage.toz.error.exception.NotFoundException;
 import com.intive.patronage.toz.users.model.db.User;
 import com.tngtech.java.junit.dataprovider.DataProviderRunner;
@@ -88,7 +87,7 @@ public class UserServiceTest {
         verifyNoMoreInteractions(userRepository);
     }
 
-    @Test(expected = BadRoleForNewUserException.class)
+    @Test(expected = BadRoleForSentUserBodyException.class)
     @UseDataProvider(value = "getSuperAdminUserModel", location = UserDataProvider.class)
     public void createUserWithSuperAdminRoleThrowBadRoleException(final User user) {
         userService.createWithPasswordHash(user, EXPECTED_PASSWORD_HASH);
@@ -137,7 +136,7 @@ public class UserServiceTest {
         verifyNoMoreInteractions(userRepository);
     }
 
-    @Test(expected = BadRoleForExistingUserException.class)
+    @Test(expected = BadRoleForSentUserBodyException.class)
     @UseDataProvider(value = "getSuperAdminUserModel", location = UserDataProvider.class)
     public void updateUserToSuperAdminRoleTrowBadBadRoleException(final User user) throws Exception {
         when(userRepository.exists(EXPECTED_ID)).thenReturn(true);

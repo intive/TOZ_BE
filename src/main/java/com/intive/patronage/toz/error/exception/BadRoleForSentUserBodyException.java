@@ -2,11 +2,11 @@ package com.intive.patronage.toz.error.exception;
 
 import com.intive.patronage.toz.users.model.db.User;
 
-public class BadRoleForExistingUserException extends RuntimeException {
+public class BadRoleForSentUserBodyException extends RuntimeException {
 
     private final User.Role userRole;
 
-    public BadRoleForExistingUserException(User.Role userRole) {
+    public BadRoleForSentUserBodyException(User.Role userRole) {
         this.userRole = userRole;
     }
 

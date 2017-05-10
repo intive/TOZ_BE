@@ -1,8 +1,7 @@
 package com.intive.patronage.toz.users;
 
 import com.intive.patronage.toz.error.exception.AlreadyExistsException;
-import com.intive.patronage.toz.error.exception.BadRoleForExistingUserException;
-import com.intive.patronage.toz.error.exception.BadRoleForNewUserException;
+import com.intive.patronage.toz.error.exception.BadRoleForSentUserBodyException;
 import com.intive.patronage.toz.error.exception.NotFoundException;
 import com.intive.patronage.toz.users.model.db.User;
 import com.intive.patronage.toz.util.RolesChecker;
@@ -57,9 +56,7 @@ public class UserService {
     }
 
     public User createWithPasswordHash(final User user, final String passwordHash) {
-        if (RolesChecker.isUserHasSuperAdminRole(user)) {
-            throw new BadRoleForNewUserException(User.Role.SA);
-        }
+        throwBadRoleExceptionIfSentUserHasSuperAdminRole(user);
         final String email = user.getEmail();
         if (userRepository.existsByEmail(email)) {
             throw new AlreadyExistsException(USER);
@@ -68,15 +65,19 @@ public class UserService {
         return userRepository.save(user);
     }
 
+    private void throwBadRoleExceptionIfSentUserHasSuperAdminRole(final User user) {
+        if (RolesChecker.isUserHasSuperAdminRole(user)) {
+            throw new BadRoleForSentUserBodyException(User.Role.SA);
+        }
+    }
+
     public void delete(final UUID id) {
         throwNotFoundExceptionIfIdNotExists(id);
         userRepository.delete(id);
     }
 
     User update(final UUID id, final User user) {
-        if (RolesChecker.isUserHasSuperAdminRole(user)) {
-            throw new BadRoleForExistingUserException(User.Role.SA);
-        }
+        throwBadRoleExceptionIfSentUserHasSuperAdminRole(user);
         throwNotFoundExceptionIfIdNotExists(id);
         user.setId(id);
         return userRepository.save(user);
