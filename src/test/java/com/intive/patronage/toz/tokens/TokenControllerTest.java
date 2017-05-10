@@ -21,6 +21,9 @@ import org.springframework.test.context.junit4.SpringRunner;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.MvcResult;
 
+import java.util.List;
+import java.util.stream.Collectors;
+
 import static com.intive.patronage.toz.config.ApiUrl.ACQUIRE_TOKEN_PATH;
 import static com.intive.patronage.toz.config.ApiUrl.TOKENS_PATH;
 import static org.hamcrest.CoreMatchers.is;
@@ -119,6 +122,10 @@ public class TokenControllerTest {
 
     @Test
     public void shouldReturnValidToken() throws Exception {
+        final List<String> userRoles = user.getRolesList().stream()
+                .map(User.Role::toString)
+                .collect(Collectors.toList());
+
         MvcResult result = mockMvc.perform(post(ACQUIRE_TOKEN_PATH)
                 .contentType(CONTENT_TYPE)
                 .content(ModelMapper.convertToJsonString(credentialsView)))
@@ -126,6 +133,7 @@ public class TokenControllerTest {
                 .andExpect(status().isCreated())
                 .andExpect(jsonPath("userId", is(user.getId().toString())))
                 .andExpect(jsonPath("email", is(user.getEmail())))
+                .andExpect(jsonPath("roles", is(userRoles)))
                 .andExpect(jsonPath("jwt", notNullValue()))
                 .andReturn();
 

@@ -56,6 +56,7 @@ class TokensController {
                 .email(user.getEmail())
                 .name(user.getName())
                 .surname(user.getSurname())
+                .roles(user.getRolesList())
                 .jwt(tokensService.getToken(user))
                 .build();
     }
