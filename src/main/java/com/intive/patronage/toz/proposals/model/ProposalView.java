@@ -1,5 +1,6 @@
 package com.intive.patronage.toz.proposals.model;
 
+import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import com.intive.patronage.toz.base.model.IdentifiableView;
 import com.intive.patronage.toz.base.model.PersonalData;
@@ -19,6 +20,7 @@ import java.util.Set;
 @ApiModel(value = "Proposal")
 @Getter
 @Setter
+@JsonInclude(JsonInclude.Include.NON_EMPTY)
 public class ProposalView extends IdentifiableView {
     @ApiModelProperty(example = "Johny", required = true, position = 1)
     @Size(min = 1, max = 35)

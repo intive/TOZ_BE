@@ -36,7 +36,6 @@ public class ProposalService {
         if (userRepository.existsByEmail(email)) {
             throw new AlreadyExistsException(USER);
         }
-        UUID id = proposal.getId();
         return proposalRepository.save(proposal);
     }
 
@@ -51,7 +50,7 @@ public class ProposalService {
         proposalRepository.delete(id);
     }
 
-    void throwNotFoundExceptionIfIdNotExists(final UUID id) {
+    private void throwNotFoundExceptionIfIdNotExists(final UUID id) {
         if (!proposalRepository.exists(id)) {
             throw new NotFoundException(PROPOSAL);
         }

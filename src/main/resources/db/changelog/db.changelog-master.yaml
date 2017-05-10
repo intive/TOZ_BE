@@ -294,3 +294,16 @@ databaseChangeLog:
                 - column:
                     name: is_read
                     type: boolean
+          - createTable:
+              tableName: proposal_roles
+              columns:
+              - column:
+                  name: proposal_id
+                  type: uuid
+                  constraints:
+                    - nullable: false
+              - column:
+                  name: roles_role
+                  type: varchar(255)
+                  constraints:
+                    - nullable: false
