@@ -109,7 +109,7 @@ public class TokenRoleTest {
     @UseDataProvider("getAdmin")
     public void shouldReturnOkWhenAdminAndGetNewsReleased(User admin) throws Exception {
         mockMvc.perform(get(ApiUrl.NEWS_PATH).param(TYPE_PARAM, RELEASED)
-                .header(AUTHORIZATION_HEADER, TOKEN_PREFIX + jwtFactory.generateToken(admin)))
+                .header(AUTHORIZATION_HEADER, String.format("%s%s",TOKEN_PREFIX, jwtFactory.generateToken(admin))))
                 .andExpect(status().isOk());
     }
 
@@ -117,7 +117,7 @@ public class TokenRoleTest {
     @UseDataProvider("getVolunteer")
     public void shouldReturnForbiddenWhenVolunteerAndNewsAchieved(User volunteer) throws Exception {
         mockMvc.perform(get(ApiUrl.NEWS_PATH).param(TYPE_PARAM, ACHIEVED)
-                .header(AUTHORIZATION_HEADER, TOKEN_PREFIX + jwtFactory.generateToken(volunteer)))
+                .header(AUTHORIZATION_HEADER, String.format("%s%s",TOKEN_PREFIX, jwtFactory.generateToken(volunteer))))
                 .andExpect(status().isForbidden());
     }
 
@@ -125,7 +125,7 @@ public class TokenRoleTest {
     @UseDataProvider("getVolunteer")
     public void shouldReturnOkWhenVolunteerAndNewsReleased(User volunteer) throws Exception {
         mockMvc.perform(get(ApiUrl.NEWS_PATH).param(TYPE_PARAM, RELEASED)
-                .header(AUTHORIZATION_HEADER, TOKEN_PREFIX + jwtFactory.generateToken(volunteer)))
+                .header(AUTHORIZATION_HEADER, String.format("%s%s",TOKEN_PREFIX, jwtFactory.generateToken(volunteer))))
                 .andExpect(status().isOk());
     }
 
@@ -145,7 +145,7 @@ public class TokenRoleTest {
     @UseDataProvider("getNewsAchieved")
     public void shouldReturnForbiddenWhenAnonymousAndGetNewsAchievedById(News achievedNews) throws Exception {
         UUID id = newsRepository.save(achievedNews).getId();
-        mockMvc.perform(get(ApiUrl.NEWS_PATH + "/" + id))
+        mockMvc.perform(get(String.format("%s/%s", ApiUrl.NEWS_PATH, id)))
                 .andExpect(status().isForbidden());
     }
 
@@ -153,7 +153,7 @@ public class TokenRoleTest {
     @UseDataProvider("getNewsReleased")
     public void shouldReturnOkWhenAnonymousAndGetNewsReleasedById(News releasedNews) throws Exception {
         UUID id = newsRepository.save(releasedNews).getId();
-        mockMvc.perform(get(ApiUrl.NEWS_PATH + "/" + id))
+        mockMvc.perform(get(String.format("%s/%s", ApiUrl.NEWS_PATH, id)))
                 .andExpect(status().isOk());
     }
 
@@ -161,7 +161,7 @@ public class TokenRoleTest {
     @UseDataProvider("getCompletePet")
     public void shouldReturnOkWhenAnonymousAndGetPetWithCompleteFieldsById(Pet pet) throws Exception {
         UUID id = petsRepository.save(pet).getId();
-        mockMvc.perform(get(ApiUrl.PETS_PATH + "/" + id))
+        mockMvc.perform(get(String.format("%s/%s", ApiUrl.PETS_PATH, id)))
                 .andExpect(status().isOk());
     }
 
@@ -170,7 +170,7 @@ public class TokenRoleTest {
         Pet incompletePet = new Pet();
         incompletePet.setType(DOG);
         UUID id = petsRepository.save(incompletePet).getId();
-        mockMvc.perform(get(ApiUrl.PETS_PATH + "/" + id))
+        mockMvc.perform(get(String.format("%s/%s", ApiUrl.PETS_PATH, id)))
                 .andExpect(status().isForbidden());
     }
 
@@ -180,8 +180,8 @@ public class TokenRoleTest {
         Pet incompletePet = new Pet();
         incompletePet.setType(DOG);
         UUID id = petsRepository.save(incompletePet).getId();
-        mockMvc.perform(get(ApiUrl.PETS_PATH + "/" + id)
-                .header(AUTHORIZATION_HEADER, TOKEN_PREFIX + jwtFactory.generateToken(admin)))
+        mockMvc.perform(get(String.format("%s/%s", ApiUrl.PETS_PATH, id))
+                .header(AUTHORIZATION_HEADER, String.format("%s%s",TOKEN_PREFIX, jwtFactory.generateToken(admin))))
                 .andExpect(status().isOk());
     }
 }
