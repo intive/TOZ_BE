@@ -3,6 +3,8 @@ package com.intive.patronage.toz.tokens;
 import com.intive.patronage.toz.Application;
 import com.intive.patronage.toz.config.ApiUrl;
 import com.intive.patronage.toz.environment.ApiProperties;
+import com.intive.patronage.toz.news.NewsRepository;
+import com.intive.patronage.toz.news.model.db.News;
 import com.intive.patronage.toz.users.model.db.User;
 import com.tngtech.java.junit.dataprovider.DataProvider;
 import com.tngtech.java.junit.dataprovider.DataProviderRunner;
@@ -19,6 +21,8 @@ import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.junit4.rules.SpringClassRule;
 import org.springframework.test.context.junit4.rules.SpringMethodRule;
 import org.springframework.test.web.servlet.MockMvc;
+
+import java.util.UUID;
 
 import static com.intive.patronage.toz.tokens.TokenControllerTest.*;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
@@ -48,6 +52,8 @@ public class TokenRoleTest {
     @Autowired
     private MockMvc mockMvc;
     @Autowired
+    private NewsRepository newsRepository;
+    @Autowired
     private JwtFactory jwtFactory;
 
     @DataProvider
@@ -64,6 +70,24 @@ public class TokenRoleTest {
         volunteer.addRole(ROLE_VOLUNTEER);
         volunteer.setEmail(EMAIL_VOLUNTEER);
         return new User[]{volunteer};
+    }
+
+    @DataProvider
+    public static Object[] getNewsAchieved() {
+        News news = new News();
+        news.setContents("string");
+        news.setTitle("string");
+        news.setType(News.Type.ARCHIVED);
+        return new News[]{news};
+    }
+
+    @DataProvider
+    public static Object[] getNewsReleased() {
+        News news = new News();
+        news.setContents("string");
+        news.setTitle("string");
+        news.setType(News.Type.RELEASED);
+        return new News[]{news};
     }
 
     @Test
@@ -100,5 +124,21 @@ public class TokenRoleTest {
     public void shouldReturnForbiddenWhenAnonymousAndNewsAchieved() throws Exception {
         mockMvc.perform(get(ApiUrl.NEWS_PATH).param(TYPE_PARAM, ACHIEVED))
                 .andExpect(status().isForbidden());
+    }
+
+    @Test
+    @UseDataProvider("getNewsAchieved")
+    public void shouldReturnForbiddenWhenAnonymousAndGetNewsAchievedById(News achievedNews) throws Exception {
+        UUID id = newsRepository.save(achievedNews).getId();
+        mockMvc.perform(get(ApiUrl.NEWS_PATH + "/" + id))
+                .andExpect(status().isForbidden());
+    }
+
+    @Test
+    @UseDataProvider("getNewsReleased")
+    public void shouldReturnOkWhenAnonymousAndGetNewsReleasedById(News releasedNews) throws Exception {
+        UUID id = newsRepository.save(releasedNews).getId();
+        mockMvc.perform(get(ApiUrl.NEWS_PATH + "/" + id))
+                .andExpect(status().isOk());
     }
 }
