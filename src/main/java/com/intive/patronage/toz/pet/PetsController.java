@@ -17,6 +17,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PostAuthorize;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
@@ -48,7 +49,7 @@ class PetsController {
     }
 
     @ApiOperation(value = "Get all pets", responseContainer = "List", notes =
-    "Required roles: SA, TOZ, VOLUNTEER, ANONYMOIS when isAdmin == false, " +
+    "Required roles: SA, TOZ, VOLUNTEER, ANONYMOUS when isAdmin == false, " +
             "SA, TOZ for the rest.")
     @GetMapping
     @PreAuthorize("hasAnyAuthority('SA', 'TOZ') or " + //TODO: correct after task 230
@@ -63,12 +64,15 @@ class PetsController {
     }
 
     @ApiOperation(value = "Get single pet by id", notes =
-            "Required roles: SA, TOZ.")
+            "Required roles: SA, TOZ, VOLUNTEER, ANONYMOUS if all fields are present, or " +
+                    "Required roles: SA, TOZ if pet record is not complete.")
     @ApiResponses(value = {
             @ApiResponse(code = 404, message = "Pet not found", response = ErrorResponse.class),
     })
     @GetMapping(value = "/{id}")
-    @PreAuthorize("hasAnyAuthority('SA', 'TOZ')")
+    @PostAuthorize("hasAnyAuthority('SA', 'TOZ') or " +
+            "(hasAnyAuthority('SA', 'TOZ', 'VOLUNTEER', 'ANONYMOUS') and " +
+            "(returnObject.name != null and returnObject.type != null and returnObject.sex != null))")
     public PetView getPetById(@ApiParam(required = true) @PathVariable UUID id) {
         return convertToView(petsService.findById(id));
     }
