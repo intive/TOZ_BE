@@ -56,6 +56,7 @@ public class ModelMapper {
         }
     }
 
+
     private static class RolesSerializer extends StdSerializer<RoleEntity> {
 
         RolesSerializer(Class<RoleEntity> t) {

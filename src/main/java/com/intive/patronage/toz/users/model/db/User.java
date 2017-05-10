@@ -11,7 +11,6 @@ import javax.persistence.Entity;
 @Setter
 @Entity
 @NoArgsConstructor
-
 public class User extends PersonalData {
 
     private String passwordHash;

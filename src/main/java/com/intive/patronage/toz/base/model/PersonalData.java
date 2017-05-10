@@ -15,7 +15,7 @@ import java.util.Set;
 @Getter
 @Setter
 @MappedSuperclass
-public class PersonalData extends Identifiable {
+public abstract class PersonalData extends Identifiable {
     protected String name;
     protected String surname;
     protected String phoneNumber;
