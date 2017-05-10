@@ -61,8 +61,7 @@ public class NewsController {
     @PostAuthorize("hasAnyAuthority('SA', 'TOZ') or " +
             "(hasAnyAuthority('SA', 'TOZ', 'VOLUNTEER', 'ANONYMOUS') and returnObject.type == 'RELEASED')")
     public NewsView getNewsById(@PathVariable UUID id) {
-        NewsView newsView = ModelMapper.convertToView(newsService.findById(id), NewsView.class);
-        return newsView;
+        return ModelMapper.convertToView(newsService.findById(id), NewsView.class);
     }
 
     @ApiOperation(value = "Create news.", response = NewsView.class, notes =
