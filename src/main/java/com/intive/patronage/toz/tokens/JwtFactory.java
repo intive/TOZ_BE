@@ -36,5 +36,4 @@ public class JwtFactory {
                 .signWith(SignatureAlgorithm.HS512, TextCodec.BASE64.decode(secret))
                 .compact();
     }
-
 }
