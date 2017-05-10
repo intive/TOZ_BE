@@ -25,21 +25,28 @@ class PasswordsService {
 
     void changePasswordForExistingUser(String email, String oldPassword, String newPassword) {
         final User user = userService.findOneByEmail(email);
-        if (!passwordEncoder.matches(oldPassword, user.getPasswordHash())) {
+        authenticateUser(user, oldPassword);
+        validateNewPassword(user, newPassword);
+
+        user.setPasswordHash(passwordEncoder.encode(newPassword));
+        userService.update(user.getId(), user);
+    }
+
+    private void authenticateUser(User user, String password) {
+        if (!passwordEncoder.matches(password, user.getPasswordHash())) {
             final String message =
                     messageSource.getMessage("wrongPassword", null, LocaleContextHolder.getLocale());
 
             throw new WrongPasswordException(message);
         }
+    }
 
-        if (passwordEncoder.matches(newPassword, user.getPasswordHash())) {
+    private void validateNewPassword(User user, String password) {
+        if (passwordEncoder.matches(password, user.getPasswordHash())) {
             final String message =
                     messageSource.getMessage("samePasswords", null, LocaleContextHolder.getLocale());
 
             throw new WrongPasswordException(message);
         }
-
-        user.setPasswordHash(passwordEncoder.encode(newPassword));
-        userService.update(user.getId(), user);
     }
 }
