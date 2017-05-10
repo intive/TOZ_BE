@@ -11,6 +11,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PostAuthorize;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
@@ -23,7 +24,7 @@ import java.util.UUID;
 @Api(description = "News operations.")
 @RestController
 @RequestMapping(value = ApiUrl.NEWS_PATH, produces = MediaType.APPLICATION_JSON_VALUE)
-class NewsController {
+public class NewsController {
     private final NewsService newsService;
 
     @Autowired
@@ -50,15 +51,17 @@ class NewsController {
     }
 
     @ApiOperation(value = "Get news by id.", notes =
-            "Required roles: SA, TOZ.")
+            "Required roles: SA, TOZ, VOLUNTEER, ANONYMOUS for RELEASED type, or " +
+                    "SA, TOZ for other types.")
     @ApiResponses(value = {
             @ApiResponse(code = 404, message = "News not found.", response = ErrorResponse.class),
     })
     @GetMapping(value = "/{id}")
-    @PreAuthorize("hasAnyAuthority('SA', 'TOZ')")
-    public ResponseEntity<NewsView> getNewsById(@PathVariable UUID id) {
-        return ResponseEntity.ok().
-                body(ModelMapper.convertToView(newsService.findById(id), NewsView.class));
+    @ResponseStatus(HttpStatus.OK)
+    @PostAuthorize("hasAnyAuthority('SA', 'TOZ') or " +
+            "(hasAnyAuthority('SA', 'TOZ', 'VOLUNTEER', 'ANONYMOUS') and returnObject.type == 'RELEASED')")
+    public NewsView getNewsById(@PathVariable UUID id) {
+        return ModelMapper.convertToView(newsService.findById(id), NewsView.class);
     }
 
     @ApiOperation(value = "Create news.", response = NewsView.class, notes =
