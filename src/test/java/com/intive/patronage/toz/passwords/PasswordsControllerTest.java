@@ -45,6 +45,7 @@ public class PasswordsControllerTest {
     private static final String AUTHORIZATION_HEADER = "Authorization";
     private static final String TOKEN_PREFIX = "Bearer ";
     private static final User.Role USER_ROLE = User.Role.VOLUNTEER;
+    private static final String JWT_JSON_SIGN = "\"jwt\":\"";
 
     @Autowired
     private MockMvc mockMvc;
@@ -76,7 +77,9 @@ public class PasswordsControllerTest {
                 .andReturn();
 
         String response = result.getResponse().getContentAsString();
-        token = response.substring("{\"jwt\":\"".length(), response.length() - 2);
+        int jwtTokenBeginIndex = response.indexOf(JWT_JSON_SIGN) + JWT_JSON_SIGN.length();
+        int jwtTokenEndIndex = response.length() - 2;
+        token = response.substring(jwtTokenBeginIndex, jwtTokenEndIndex);
     }
 
     @After
@@ -86,7 +89,6 @@ public class PasswordsControllerTest {
 
     @Test
     public void shouldReturnBadRequestWhenPasswordAreTheSame() throws Exception {
-
         PasswordChangeRequestView samePasswords = new PasswordChangeRequestView(OLD_PASSWORD, OLD_PASSWORD);
 
         mockMvc.perform(post(ApiUrl.PASSWORDS_PATH)
@@ -98,7 +100,6 @@ public class PasswordsControllerTest {
 
     @Test
     public void shouldReturnBadRequestWhenPasswordsDoNotMatch() throws Exception {
-
         PasswordChangeRequestView notMatchingPasswords = new PasswordChangeRequestView(NEW_PASSWORD, NEW_PASSWORD);
 
         mockMvc.perform(post(ApiUrl.PASSWORDS_PATH)
@@ -110,7 +111,6 @@ public class PasswordsControllerTest {
 
     @Test
     public void shouldChangePassword() throws Exception {
-
         PasswordChangeRequestView passwords = new PasswordChangeRequestView(OLD_PASSWORD, NEW_PASSWORD);
         String responseMessage = messageSource.getMessage(
                 "passwordChangeSuccessful", null, LocaleContextHolder.getLocale());
