@@ -47,7 +47,7 @@ public class DonateInfoControllerTest {
 
     @Test
     public void shouldGetHowToDonateInfo() throws Exception {
-        when(donateInfoService.findHowToHelpInfo()).thenReturn(helpInfo);
+        when(donateInfoService.findHelpInfo()).thenReturn(helpInfo);
 
         mvc.perform(get(ApiUrl.HOW_TO_DONATE_PATH))
                 .andExpect(status().isOk())
@@ -57,7 +57,7 @@ public class DonateInfoControllerTest {
 
     @Test
     public void shouldCreateHowToDonateInfo() throws Exception {
-        when(donateInfoService.createHowToHelpInfo(any(HelpInfo.class))).thenReturn(helpInfo);
+        when(donateInfoService.createHelpInfo(any(HelpInfo.class))).thenReturn(helpInfo);
 
         mvc.perform(post(ApiUrl.HOW_TO_DONATE_PATH)
                 .contentType(CONTENT_TYPE)
@@ -69,7 +69,7 @@ public class DonateInfoControllerTest {
 
     @Test
     public void shouldUpdateHowToDonate() throws Exception {
-        when(donateInfoService.updateHowToHelpInfo(any(HelpInfo.class))).thenReturn(helpInfo);
+        when(donateInfoService.updateHelpInfo(any(HelpInfo.class))).thenReturn(helpInfo);
 
         mvc.perform(put(ApiUrl.HOW_TO_DONATE_PATH)
                 .contentType(CONTENT_TYPE)

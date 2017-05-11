@@ -40,7 +40,7 @@ public class HelpInfoServiceTest {
     public void shouldThrowErrorIfNotExists() throws Exception {
         when(helpInfoRepository.exists(INFO_TYPE)).thenReturn(false);
 
-        helpInfoService.findHowToHelpInfo();
+        helpInfoService.findHelpInfo();
     }
 
     @Test
@@ -48,7 +48,7 @@ public class HelpInfoServiceTest {
         when(helpInfoRepository.exists(any(HelpInfoType.class))).thenReturn(true);
         when(helpInfoRepository.findOne(any(HelpInfoType.class))).thenReturn(helpInfo);
 
-        helpInfoService.findHowToHelpInfo();
+        helpInfoService.findHelpInfo();
 
         verify(helpInfoRepository).findOne(any(HelpInfoType.class));
     }
@@ -57,7 +57,7 @@ public class HelpInfoServiceTest {
     public void createExistingInfoShouldThrowException() throws Exception {
         when(helpInfoRepository.exists(any(HelpInfoType.class))).thenReturn(true);
 
-        helpInfoService.createHowToHelpInfo(helpInfo);
+        helpInfoService.createHelpInfo(helpInfo);
     }
 
     @Test
@@ -65,7 +65,7 @@ public class HelpInfoServiceTest {
         when(helpInfoRepository.exists(any(HelpInfoType.class))).thenReturn(false);
         when(helpInfoRepository.save(any(HelpInfo.class))).thenReturn(helpInfo);
 
-        helpInfoService.createHowToHelpInfo(helpInfo);
+        helpInfoService.createHelpInfo(helpInfo);
 
         verify(helpInfoRepository).save(any(HelpInfo.class));
     }
@@ -74,7 +74,7 @@ public class HelpInfoServiceTest {
     public void updateNonExistingInfoShouldThrowException() throws Exception {
         when(helpInfoRepository.exists(INFO_TYPE)).thenReturn(false);
 
-        helpInfoService.updateHowToHelpInfo(helpInfo);
+        helpInfoService.updateHelpInfo(helpInfo);
     }
 
     @Test
@@ -82,7 +82,7 @@ public class HelpInfoServiceTest {
         when(helpInfoRepository.exists(any(HelpInfoType.class))).thenReturn(true);
         when(helpInfoRepository.findOne(any(HelpInfoType.class))).thenReturn(helpInfo);
         when(helpInfoRepository.save(any(HelpInfo.class))).thenReturn(helpInfo);
-        helpInfoService.updateHowToHelpInfo(helpInfo);
+        helpInfoService.updateHelpInfo(helpInfo);
 
         verify(helpInfoRepository).save(any(HelpInfo.class));
     }

@@ -14,15 +14,15 @@ class BecomeVolunteerInfoService extends HelpInfoService {
         super(helpInfoRepository, HOW_TO_BECOME_VOLUNTEER);
     }
 
-    HelpInfo findHowToHelpInfo() {
-        return super.findHowToHelpInfo();
+    HelpInfo findHelpInfo() {
+        return super.findHelpInfo();
     }
 
-    HelpInfo createHowToHelpInfo(final HelpInfo helpInfo) {
-        return super.createHowToHelpInfo(helpInfo);
+    HelpInfo createHelpInfo(final HelpInfo helpInfo) {
+        return super.createHelpInfo(helpInfo);
     }
 
-    HelpInfo updateHowToHelpInfo(final HelpInfo updatedHelpInfo) {
-        return super.updateHowToHelpInfo(updatedHelpInfo);
+    HelpInfo updateHelpInfo(final HelpInfo updatedHelpInfo) {
+        return super.updateHelpInfo(updatedHelpInfo);
     }
 }

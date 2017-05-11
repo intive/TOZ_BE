@@ -22,12 +22,12 @@ abstract class HelpInfoController {
     }
 
     public HelpInfoView getHowToHelpInfo() {
-        return convertToView(helpInfoService.findHowToHelpInfo());
+        return convertToView(helpInfoService.findHelpInfo());
     }
 
     public ResponseEntity<HelpInfoView> createHowToHelpInfo(@Valid @RequestBody HelpInfoView helpInfoView) {
         final HelpInfoView createdHelpInfoView =
-                convertToView(helpInfoService.createHowToHelpInfo(
+                convertToView(helpInfoService.createHelpInfo(
                         convertToModel(helpInfoView)));
         final URI location = ServletUriComponentsBuilder.fromCurrentRequest()
                 .build().toUri();
@@ -37,7 +37,7 @@ abstract class HelpInfoController {
 
     public ResponseEntity<HelpInfoView> updateHowToHelpInfo(@Valid @RequestBody HelpInfoView helpInfoView) {
         final HelpInfoView updatedHelpInfoView =
-                convertToView(helpInfoService.updateHowToHelpInfo(
+                convertToView(helpInfoService.updateHelpInfo(
                         convertToModel(helpInfoView)));
         final URI location = ServletUriComponentsBuilder.fromCurrentRequest()
                 .build().toUri();

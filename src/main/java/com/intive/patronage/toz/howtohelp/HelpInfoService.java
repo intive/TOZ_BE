@@ -16,14 +16,14 @@ abstract class HelpInfoService {
         this.helpInfoType = helpInfoType;
     }
 
-    HelpInfo findHowToHelpInfo() {
+    HelpInfo findHelpInfo() {
         if (!helpInfoRepository.exists(helpInfoType)) {
             throw new NotFoundException(HOW_TO_HELP_INFO);
         }
         return helpInfoRepository.findOne(helpInfoType);
     }
 
-    HelpInfo createHowToHelpInfo(final HelpInfo helpInfo) {
+    HelpInfo createHelpInfo(final HelpInfo helpInfo) {
         helpInfo.setId(helpInfoType);
         if (helpInfoRepository.exists(helpInfoType)) {
             throw new AlreadyExistsException(HOW_TO_HELP_INFO);
@@ -31,7 +31,7 @@ abstract class HelpInfoService {
         return helpInfoRepository.save(helpInfo);
     }
 
-    HelpInfo updateHowToHelpInfo(final HelpInfo updatedHelpInfo) {
+    HelpInfo updateHelpInfo(final HelpInfo updatedHelpInfo) {
         updatedHelpInfo.setId(helpInfoType);
         if (!helpInfoRepository.exists(helpInfoType)) {
             throw new NotFoundException(HOW_TO_HELP_INFO);
