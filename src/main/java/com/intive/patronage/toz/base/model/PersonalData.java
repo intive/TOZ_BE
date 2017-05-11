@@ -35,10 +35,6 @@ public abstract class PersonalData extends Identifiable {
                 roleEntity -> roleEntity.getRole().equals(role));
     }
 
-    public boolean isSuperAdmin() {
-        return hasRole(Role.SA);
-    }
-
     public enum Role {
         SA, TOZ, VOLUNTEER, ANONYMOUS, TEMP_HOUSE
     }

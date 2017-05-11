@@ -39,13 +39,12 @@ import static com.intive.patronage.toz.util.ModelMapper.convertToView;
 @RequestMapping(value = ApiUrl.PROPOSAL_PATH, produces = MediaType.APPLICATION_JSON_VALUE)
 public class ProposalController {
 
-    private ProposalService proposalService;
+    private final ProposalService proposalService;
 
     @Autowired
-    public ProposalController(ProposalService proposalService) {
+    ProposalController(ProposalService proposalService) {
         this.proposalService = proposalService;
     }
-
 
     @ApiOperation(value = "Get all proposals", responseContainer = "List", notes =
             "Required roles: SA, TOZ.")
@@ -82,7 +81,7 @@ public class ProposalController {
     })
     @PutMapping(value = "/{id}", consumes = MediaType.APPLICATION_JSON_VALUE)
     @PreAuthorize("hasAnyAuthority('SA', 'TOZ')")
-    private ProposalView updateProposal(@PathVariable UUID id, @Valid @RequestBody ProposalView proposalView) {
+    public ProposalView updateProposal(@PathVariable UUID id, @Valid @RequestBody ProposalView proposalView) {
         final Proposal proposal = ModelMapper.convertToModel(proposalView, Proposal.class);
         return ModelMapper.convertToView(proposalService.update(id, proposal), ProposalView.class);
     }

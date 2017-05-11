@@ -3,7 +3,6 @@ package com.intive.patronage.toz.proposals.model;
 import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import com.intive.patronage.toz.base.model.IdentifiableView;
-import com.intive.patronage.toz.base.model.PersonalData;
 import com.intive.patronage.toz.util.validation.Phone;
 import io.swagger.annotations.ApiModel;
 import io.swagger.annotations.ApiModelProperty;
@@ -42,7 +41,7 @@ public class ProposalView extends IdentifiableView {
     private String email;
 
     @NotEmpty
-    private Set<PersonalData.Role> roles = new HashSet<>();
+    private Set<Proposal.Role> roles = new HashSet<>();
 
     @ApiModelProperty(example = "1490134074968")
     @JsonProperty(access = JsonProperty.Access.READ_ONLY)

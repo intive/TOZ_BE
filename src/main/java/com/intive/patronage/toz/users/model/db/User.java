@@ -18,4 +18,8 @@ public class User extends PersonalData {
     public User(String name) {
         this.name = name;
     }
+
+    public boolean isSuperAdmin() {
+        return hasRole(Role.SA);
+    }
 }
