@@ -2,7 +2,7 @@ package com.intive.patronage.toz.schedule.model.view;
 
 import com.fasterxml.jackson.annotation.JsonFormat;
 import com.fasterxml.jackson.annotation.JsonInclude;
-import com.intive.patronage.toz.util.NotPast;
+import com.intive.patronage.toz.util.validation.NotPast;
 import io.swagger.annotations.ApiModel;
 import io.swagger.annotations.ApiModelProperty;
 import lombok.Getter;
