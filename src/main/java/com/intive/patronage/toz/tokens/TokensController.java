@@ -6,6 +6,8 @@ import com.intive.patronage.toz.error.model.ValidationErrorResponse;
 import com.intive.patronage.toz.tokens.model.UserContext;
 import com.intive.patronage.toz.tokens.model.view.JwtView;
 import com.intive.patronage.toz.tokens.model.view.UserCredentialsView;
+import com.intive.patronage.toz.users.UserService;
+import com.intive.patronage.toz.users.model.db.User;
 import io.swagger.annotations.ApiOperation;
 import io.swagger.annotations.ApiResponse;
 import io.swagger.annotations.ApiResponses;
@@ -25,29 +27,38 @@ import javax.validation.Valid;
 class TokensController {
 
     private final TokensService tokensService;
+    private final UserService userService;
 
     @Autowired
-    TokensController(TokensService tokensService) {
+    TokensController(TokensService tokensService, UserService userService) {
         this.tokensService = tokensService;
+        this.userService = userService;
     }
 
     @ApiOperation("Login to api")
     @ApiResponses(value = {
-            @ApiResponse(code = 201, message = "JWT Token"),
+            @ApiResponse(code = 201, message = "User info and JWT token"),
             @ApiResponse(code = 400, message = "Validation error", response = ValidationErrorResponse.class),
             @ApiResponse(code = 401, message = "Incorrect user or password", response = ErrorResponse.class)
     })
     @ResponseStatus(HttpStatus.CREATED)
     @PostMapping(value = "/acquire", consumes = MediaType.APPLICATION_JSON_VALUE)
     public JwtView login(@Valid @RequestBody UserCredentialsView credentials) {
-        final Boolean isAuthenticated =
-                tokensService.isUserAuthenticated(credentials.getEmail(), credentials.getPassword());
+        final User user = userService.findOneByEmail(credentials.getEmail());
 
+        final Boolean isAuthenticated = tokensService.isUserAuthenticated(user, credentials.getPassword());
         if (!isAuthenticated) {
             throw new BadCredentialsException("Incorrect email or password");
         }
 
-        return new JwtView(tokensService.getToken(credentials.getEmail()));
+        return JwtView.builder()
+                .userId(user.getId())
+                .email(user.getEmail())
+                .name(user.getName())
+                .surname(user.getSurname())
+                .roles(user.getRolesList())
+                .jwt(tokensService.getToken(user))
+                .build();
     }
 
     @ApiOperation(value = "Show current user", notes = "Required roles: TOZ, VOLUNTEER")
