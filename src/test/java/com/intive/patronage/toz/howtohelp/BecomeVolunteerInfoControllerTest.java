@@ -6,47 +6,43 @@ import com.intive.patronage.toz.howtohelp.model.db.HelpInfo;
 import com.intive.patronage.toz.howtohelp.model.enumeration.HelpInfoType;
 import org.junit.Before;
 import org.junit.Test;
-import org.junit.runner.RunWith;
 import org.mockito.Mock;
 import org.mockito.MockitoAnnotations;
-import org.springframework.http.MediaType;
-import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.setup.MockMvcBuilders;
 
+import static com.intive.patronage.toz.howtohelp.DonateInfoControllerTest.CONTENT_TYPE;
+import static com.intive.patronage.toz.howtohelp.DonateInfoControllerTest.DESCRIPTION_FIELD;
 import static com.intive.patronage.toz.howtohelp.DonateInfoServiceTest.DESCRIPTION;
 import static com.intive.patronage.toz.howtohelp.DonateInfoServiceTest.MODIFICATION_DATE;
-import static com.intive.patronage.toz.howtohelp.model.enumeration.HelpInfoType.HOW_TO_DONATE;
+import static com.intive.patronage.toz.howtohelp.model.enumeration.HelpInfoType.HOW_TO_BECOME_VOLUNTEER;
 import static org.mockito.Matchers.any;
 import static org.mockito.Mockito.verifyZeroInteractions;
 import static org.mockito.Mockito.when;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
 
-@RunWith(SpringJUnit4ClassRunner.class)
-public class DonateInfoControllerTest {
+public class BecomeVolunteerInfoControllerTest {
 
-    private final static HelpInfoType INFO_TYPE = HOW_TO_DONATE;
-    final static MediaType CONTENT_TYPE = MediaType.APPLICATION_JSON_UTF8;
-    final static String DESCRIPTION_FIELD = "howToHelpDescription";
+    private final static HelpInfoType INFO_TYPE = HOW_TO_BECOME_VOLUNTEER;
 
     @Mock
-    private DonateInfoService donateInfoService;
+    private BecomeVolunteerInfoService becomeVolunteerInfoService;
     private MockMvc mvc;
     private HelpInfo helpInfo;
 
     @Before
     public void setUp() throws Exception {
         MockitoAnnotations.initMocks(this);
-        mvc = MockMvcBuilders.standaloneSetup(new DonateInfoController(donateInfoService)).build();
+        mvc = MockMvcBuilders.standaloneSetup(new BecomeVolunteerInfoController(becomeVolunteerInfoService)).build();
         helpInfo = new HelpInfo(INFO_TYPE, DESCRIPTION, MODIFICATION_DATE);
     }
 
     @Test
     public void shouldGetHowToDonateInfo() throws Exception {
-        when(donateInfoService.findHelpInfo()).thenReturn(helpInfo);
+        when(becomeVolunteerInfoService.findHelpInfo()).thenReturn(helpInfo);
 
-        mvc.perform(get(ApiUrl.HOW_TO_DONATE_PATH))
+        mvc.perform(get(ApiUrl.HOW_TO_BECOME_VOLUNTEER_PATH))
                 .andExpect(status().isOk())
                 .andExpect(content().contentType(CONTENT_TYPE))
                 .andExpect(jsonPath(DESCRIPTION_FIELD).value(DESCRIPTION));
@@ -54,9 +50,9 @@ public class DonateInfoControllerTest {
 
     @Test
     public void shouldCreateHowToDonateInfo() throws Exception {
-        when(donateInfoService.createHelpInfo(any(HelpInfo.class))).thenReturn(helpInfo);
+        when(becomeVolunteerInfoService.createHelpInfo(any(HelpInfo.class))).thenReturn(helpInfo);
 
-        mvc.perform(post(ApiUrl.HOW_TO_DONATE_PATH)
+        mvc.perform(post(ApiUrl.HOW_TO_BECOME_VOLUNTEER_PATH)
                 .contentType(CONTENT_TYPE)
                 .content(new ObjectMapper().writeValueAsString(helpInfo)))
                 .andExpect(status().isCreated())
@@ -66,9 +62,9 @@ public class DonateInfoControllerTest {
 
     @Test
     public void shouldUpdateHowToDonate() throws Exception {
-        when(donateInfoService.updateHelpInfo(any(HelpInfo.class))).thenReturn(helpInfo);
+        when(becomeVolunteerInfoService.updateHelpInfo(any(HelpInfo.class))).thenReturn(helpInfo);
 
-        mvc.perform(put(ApiUrl.HOW_TO_DONATE_PATH)
+        mvc.perform(put(ApiUrl.HOW_TO_BECOME_VOLUNTEER_PATH)
                 .contentType(CONTENT_TYPE)
                 .content(new ObjectMapper().writeValueAsString(helpInfo)))
                 .andExpect(status().isCreated())
@@ -78,35 +74,35 @@ public class DonateInfoControllerTest {
 
     @Test
     public void shouldReturnErrorWhenMediaTypeHeaderIsMissingInPutRequest() throws Exception {
-        mvc.perform(put(ApiUrl.HOW_TO_DONATE_PATH))
+        mvc.perform(put(ApiUrl.HOW_TO_BECOME_VOLUNTEER_PATH))
                 .andExpect(status().isUnsupportedMediaType());
 
-        verifyZeroInteractions(donateInfoService);
+        verifyZeroInteractions(becomeVolunteerInfoService);
     }
 
     @Test
     public void shouldReturnErrorWhenBodyIsMissingInPutRequest() throws Exception {
-        mvc.perform(put(ApiUrl.HOW_TO_DONATE_PATH)
+        mvc.perform(put(ApiUrl.HOW_TO_BECOME_VOLUNTEER_PATH)
                 .contentType(CONTENT_TYPE))
                 .andExpect(status().isBadRequest());
 
-        verifyZeroInteractions(donateInfoService);
+        verifyZeroInteractions(becomeVolunteerInfoService);
     }
 
     @Test
     public void shouldReturnErrorWhenMediaTypeHeaderIsMissingInPostRequest() throws Exception {
-        mvc.perform(post(ApiUrl.HOW_TO_DONATE_PATH))
+        mvc.perform(post(ApiUrl.HOW_TO_BECOME_VOLUNTEER_PATH))
                 .andExpect(status().isUnsupportedMediaType());
 
-        verifyZeroInteractions(donateInfoService);
+        verifyZeroInteractions(becomeVolunteerInfoService);
     }
 
     @Test
     public void shouldReturnErrorWhenBodyIsMissingInPostRequest() throws Exception {
-        mvc.perform(post(ApiUrl.HOW_TO_DONATE_PATH)
+        mvc.perform(post(ApiUrl.HOW_TO_BECOME_VOLUNTEER_PATH)
                 .contentType(CONTENT_TYPE))
                 .andExpect(status().isBadRequest());
 
-        verifyZeroInteractions(donateInfoService);
+        verifyZeroInteractions(becomeVolunteerInfoService);
     }
 }
