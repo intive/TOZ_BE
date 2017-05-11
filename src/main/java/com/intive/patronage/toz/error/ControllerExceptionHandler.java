@@ -196,4 +196,11 @@ public class ControllerExceptionHandler {
                 "badRoleForSentUserBody", new String[]{userRoleValue}, LocaleContextHolder.getLocale());
         return new ErrorResponse(HttpStatus.BAD_REQUEST, message);
     }
+
+    @ExceptionHandler(WrongPasswordException.class)
+    @ResponseStatus(HttpStatus.BAD_REQUEST)
+    @ResponseBody
+    public ErrorResponse handleWrongPasswordException(WrongPasswordException e) {
+        return new ErrorResponse(HttpStatus.BAD_REQUEST, e.getMessage());
+    }
 }

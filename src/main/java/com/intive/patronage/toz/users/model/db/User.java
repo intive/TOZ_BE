@@ -1,13 +1,13 @@
 package com.intive.patronage.toz.users.model.db;
 
 import com.intive.patronage.toz.base.model.Identifiable;
-import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 import org.springframework.security.core.GrantedAuthority;
 
 import javax.persistence.*;
+import java.util.Date;
 import java.util.HashSet;
 import java.util.Set;
 import java.util.stream.Collectors;
@@ -16,7 +16,6 @@ import java.util.stream.Collectors;
 @Setter
 @Entity
 @NoArgsConstructor
-@AllArgsConstructor
 public class User extends Identifiable {
     private String name;
     private String passwordHash;
@@ -24,9 +23,26 @@ public class User extends Identifiable {
     private String phoneNumber;
     @Column(unique = true)
     private String email;
+    @Temporal(TemporalType.TIMESTAMP)
+    private Date passwordChangeDate;
 
     @OneToMany(cascade = CascadeType.MERGE, fetch = FetchType.EAGER)
     private Set<RoleEntity> roles = new HashSet<>();
+
+    public User(String name, String passwordHash, String surname,
+                String phoneNumber, String email, Set<User.Role> roles) {
+        this.name = name;
+        this.passwordHash = passwordHash;
+        this.surname = surname;
+        this.phoneNumber = phoneNumber;
+        this.email = email;
+        setRoles(roles);
+    }
+
+    public void setPasswordHash(String passwordHash) {
+        this.passwordHash = passwordHash;
+        passwordChangeDate = new Date();
+    }
 
     public void addRole(final Role role) {
         final RoleEntity roleEntity = RoleEntity.buildWithRole(role);

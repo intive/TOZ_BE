@@ -14,6 +14,7 @@ import org.hibernate.validator.constraints.NotEmpty;
 
 import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Size;
+import java.util.Date;
 import java.util.HashSet;
 import java.util.Set;
 
@@ -45,6 +46,10 @@ public class UserView extends IdentifiableView {
     @NotNull
     @Email
     private String email;
+
+    @ApiModelProperty(example = "1490134074968", readOnly = true, position = 5)
+    @JsonProperty(access = JsonProperty.Access.READ_ONLY)
+    private Date passwordChangeDate;
 
     @NotEmpty
     private Set<User.Role> roles = new HashSet<>();
