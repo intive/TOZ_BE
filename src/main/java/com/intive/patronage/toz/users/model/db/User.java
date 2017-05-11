@@ -29,14 +29,8 @@ public class User extends Identifiable {
     @OneToMany(cascade = CascadeType.MERGE, fetch = FetchType.EAGER)
     private Set<RoleEntity> roles = new HashSet<>();
 
-    public User(String name, String passwordHash, String surname,
-                String phoneNumber, String email, Set<User.Role> roles) {
+    public User(String name) {
         this.name = name;
-        this.passwordHash = passwordHash;
-        this.surname = surname;
-        this.phoneNumber = phoneNumber;
-        this.email = email;
-        setRoles(roles);
     }
 
     public void setPasswordHash(String passwordHash) {

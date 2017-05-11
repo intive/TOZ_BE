@@ -6,7 +6,7 @@ import io.swagger.annotations.ApiModelProperty;
 import lombok.Builder;
 import lombok.Getter;
 
-import java.util.List;
+import java.util.Set;
 import java.util.UUID;
 
 @ApiModel(value = "User info and JWT token")
@@ -23,7 +23,7 @@ public class JwtView {
     @ApiModelProperty(position = 4)
     private final String surname;
     @ApiModelProperty(position = 5)
-    private final List<User.Role> roles;
+    private final Set<User.Role> roles;
     @ApiModelProperty(position = 6)
     private final String jwt;
 }

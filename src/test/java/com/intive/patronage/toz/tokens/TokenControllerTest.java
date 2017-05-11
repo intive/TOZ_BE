@@ -122,8 +122,8 @@ public class TokenControllerTest {
 
     @Test
     public void shouldReturnValidToken() throws Exception {
-        final List<String> userRoles = user.getRolesList().stream()
-                .map(User.Role::toString)
+        final List<String> userRoles = user.getRoles().stream()
+                .map(User.Role::name)
                 .collect(Collectors.toList());
 
         MvcResult result = mockMvc.perform(post(ACQUIRE_TOKEN_PATH)
