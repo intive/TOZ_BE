@@ -261,3 +261,13 @@ databaseChangeLog:
                     type: varchar(255)
                     constraints:
                       - nullable: false
+  - changeSet:
+        id: 5
+        author: lukasz.piskadlo
+        changes:
+          - addColumn:
+              tableName: user
+              columns:
+                - column:
+                    name: password_change_date
+                    type: datetime

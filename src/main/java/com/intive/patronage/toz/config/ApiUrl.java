@@ -8,6 +8,7 @@ public final class ApiUrl {
     public final static String TOKENS_PATH = "/tokens";
     public final static String ACTIVATION_PATH = "/activate";
     public final static String ACQUIRE_TOKEN_PATH = TOKENS_PATH + "/acquire";
+    public static final String PASSWORDS_PATH = "/users/passwords";
 
     private ApiUrl() {
     }
