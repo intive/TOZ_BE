@@ -18,7 +18,7 @@ import static org.mockito.Matchers.any;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
-public class HelpInfoServiceTest {
+public class DonateInfoServiceTest {
 
     private final static HelpInfoType INFO_TYPE = HOW_TO_DONATE;
     private final static Date MODIFICATION_DATE = Date.from(Instant.now());
