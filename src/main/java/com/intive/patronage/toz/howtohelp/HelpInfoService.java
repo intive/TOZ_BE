@@ -4,38 +4,36 @@ import com.intive.patronage.toz.error.exception.AlreadyExistsException;
 import com.intive.patronage.toz.error.exception.NotFoundException;
 import com.intive.patronage.toz.howtohelp.model.db.HelpInfo;
 import com.intive.patronage.toz.howtohelp.model.enumeration.HelpInfoType;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.stereotype.Service;
 
-@Service
-class HelpInfoService {
+abstract class HelpInfoService {
 
     private final static String HOW_TO_HELP_INFO = "How to help information";
     private final HelpInfoRepository helpInfoRepository;
+    private final HelpInfoType helpInfoType;
 
-    @Autowired
-    HelpInfoService(HelpInfoRepository helpInfoRepository) {
+    HelpInfoService(HelpInfoRepository helpInfoRepository, HelpInfoType helpInfoType) {
         this.helpInfoRepository = helpInfoRepository;
+        this.helpInfoType = helpInfoType;
     }
 
-    HelpInfo findHowToHelpInfo(HelpInfoType helpType) {
-        if (!helpInfoRepository.exists(helpType)) {
+    HelpInfo findHowToHelpInfo() {
+        if (!helpInfoRepository.exists(helpInfoType)) {
             throw new NotFoundException(HOW_TO_HELP_INFO);
         }
-        return helpInfoRepository.findOne(helpType);
+        return helpInfoRepository.findOne(helpInfoType);
     }
 
-    HelpInfo createHowToHelpInfo(final HelpInfo helpInfo, HelpInfoType helpType) {
-        helpInfo.setId(helpType);
-        if (helpInfoRepository.exists(helpType)) {
+    HelpInfo createHowToHelpInfo(final HelpInfo helpInfo) {
+        helpInfo.setId(helpInfoType);
+        if (helpInfoRepository.exists(helpInfoType)) {
             throw new AlreadyExistsException(HOW_TO_HELP_INFO);
         }
         return helpInfoRepository.save(helpInfo);
     }
 
-    HelpInfo updateHowToHelpInfo(final HelpInfo updatedHelpInfo, HelpInfoType helpType) {
-        updatedHelpInfo.setId(helpType);
-        if (!helpInfoRepository.exists(helpType)) {
+    HelpInfo updateHowToHelpInfo(final HelpInfo updatedHelpInfo) {
+        updatedHelpInfo.setId(helpInfoType);
+        if (!helpInfoRepository.exists(helpInfoType)) {
             throw new NotFoundException(HOW_TO_HELP_INFO);
         }
         return helpInfoRepository.save(updatedHelpInfo);

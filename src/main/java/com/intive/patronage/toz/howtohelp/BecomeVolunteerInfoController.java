@@ -16,15 +16,13 @@ import org.springframework.web.bind.annotation.*;
 
 import javax.validation.Valid;
 
-import static com.intive.patronage.toz.howtohelp.model.enumeration.HelpInfoType.HOW_TO_BECOME_VOLUNTEER;
-
 @Api("Information on how to become volunteer.")
 @RestController
 @RequestMapping(value = ApiUrl.HOW_TO_BECOME_VOLUNTEER_PATH, produces = MediaType.APPLICATION_JSON_VALUE)
 public class BecomeVolunteerInfoController extends HelpInfoController {
 
-    BecomeVolunteerInfoController(HelpInfoService helpInfoService) {
-        super(helpInfoService, HOW_TO_BECOME_VOLUNTEER);
+    BecomeVolunteerInfoController(BecomeVolunteerInfoService becomeVolunteerInfoService) {
+        super(becomeVolunteerInfoService);
     }
 
     @ApiOperation(value = "Get information on how to become volunteer.", notes =

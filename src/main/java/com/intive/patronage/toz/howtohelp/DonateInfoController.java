@@ -18,16 +18,14 @@ import org.springframework.web.bind.annotation.*;
 
 import javax.validation.Valid;
 
-import static com.intive.patronage.toz.howtohelp.model.enumeration.HelpInfoType.HOW_TO_DONATE;
-
 @Api("Information on how to donate.")
 @RestController
 @RequestMapping(value = ApiUrl.HOW_TO_DONATE_PATH, produces = MediaType.APPLICATION_JSON_VALUE)
 public class DonateInfoController extends HelpInfoController {
 
     @Autowired
-    DonateInfoController(HelpInfoService helpInfoService) {
-        super(helpInfoService, HOW_TO_DONATE);
+    DonateInfoController(DonateInfoService donateInfoService) {
+        super(donateInfoService);
     }
 
     @ApiOperation(value = "Get information on how to donate.", notes =

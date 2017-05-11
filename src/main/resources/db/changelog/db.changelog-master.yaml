@@ -266,7 +266,7 @@ databaseChangeLog:
         author: jakub.izbicki
         changes:
           - createTable:
-              tableName: how_to_help_info
+              tableName: help_info
               columns:
                 - column:
                     name: id

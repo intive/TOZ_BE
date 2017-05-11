@@ -27,7 +27,7 @@ public class HelpInfoServiceTest {
     @Mock
     private HelpInfoRepository helpInfoRepository;
     @InjectMocks
-    private HelpInfoService helpInfoService;
+    private DonateInfoService helpInfoService;
     private HelpInfo helpInfo;
 
     @Before
@@ -40,7 +40,7 @@ public class HelpInfoServiceTest {
     public void shouldThrowErrorIfNotExists() throws Exception {
         when(helpInfoRepository.exists(INFO_TYPE)).thenReturn(false);
 
-        helpInfoService.findHowToHelpInfo(INFO_TYPE);
+        helpInfoService.findHowToHelpInfo();
     }
 
     @Test
@@ -48,7 +48,7 @@ public class HelpInfoServiceTest {
         when(helpInfoRepository.exists(any(HelpInfoType.class))).thenReturn(true);
         when(helpInfoRepository.findOne(any(HelpInfoType.class))).thenReturn(helpInfo);
 
-        helpInfoService.findHowToHelpInfo(INFO_TYPE);
+        helpInfoService.findHowToHelpInfo();
 
         verify(helpInfoRepository).findOne(any(HelpInfoType.class));
     }
@@ -57,7 +57,7 @@ public class HelpInfoServiceTest {
     public void createExistingInfoShouldThrowException() throws Exception {
         when(helpInfoRepository.exists(any(HelpInfoType.class))).thenReturn(true);
 
-        helpInfoService.createHowToHelpInfo(helpInfo, INFO_TYPE);
+        helpInfoService.createHowToHelpInfo(helpInfo);
     }
 
     @Test
@@ -65,7 +65,7 @@ public class HelpInfoServiceTest {
         when(helpInfoRepository.exists(any(HelpInfoType.class))).thenReturn(false);
         when(helpInfoRepository.save(any(HelpInfo.class))).thenReturn(helpInfo);
 
-        helpInfoService.createHowToHelpInfo(helpInfo, INFO_TYPE);
+        helpInfoService.createHowToHelpInfo(helpInfo);
 
         verify(helpInfoRepository).save(any(HelpInfo.class));
     }
@@ -74,7 +74,7 @@ public class HelpInfoServiceTest {
     public void updateNonExistingInfoShouldThrowException() throws Exception {
         when(helpInfoRepository.exists(INFO_TYPE)).thenReturn(false);
 
-        helpInfoService.updateHowToHelpInfo(helpInfo, INFO_TYPE);
+        helpInfoService.updateHowToHelpInfo(helpInfo);
     }
 
     @Test
@@ -82,7 +82,7 @@ public class HelpInfoServiceTest {
         when(helpInfoRepository.exists(any(HelpInfoType.class))).thenReturn(true);
         when(helpInfoRepository.findOne(any(HelpInfoType.class))).thenReturn(helpInfo);
         when(helpInfoRepository.save(any(HelpInfo.class))).thenReturn(helpInfo);
-        helpInfoService.updateHowToHelpInfo(helpInfo, INFO_TYPE);
+        helpInfoService.updateHowToHelpInfo(helpInfo);
 
         verify(helpInfoRepository).save(any(HelpInfo.class));
     }

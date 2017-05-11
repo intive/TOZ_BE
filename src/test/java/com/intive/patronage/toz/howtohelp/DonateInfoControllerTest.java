@@ -34,20 +34,20 @@ public class DonateInfoControllerTest {
     private final static String DESCRIPTION_FIELD = "howToHelpDescription";
 
     @Mock
-    private HelpInfoService helpInfoService;
+    private DonateInfoService donateInfoService;
     private MockMvc mvc;
     private HelpInfo helpInfo;
 
     @Before
     public void setUp() throws Exception {
         MockitoAnnotations.initMocks(this);
-        mvc = MockMvcBuilders.standaloneSetup(new DonateInfoController(helpInfoService)).build();
+        mvc = MockMvcBuilders.standaloneSetup(new DonateInfoController(donateInfoService)).build();
         helpInfo = new HelpInfo(INFO_TYPE, DESCRIPTION, MODIFICATION_DATE);
     }
 
     @Test
     public void shouldGetHowToDonateInfo() throws Exception {
-        when(helpInfoService.findHowToHelpInfo(INFO_TYPE)).thenReturn(helpInfo);
+        when(donateInfoService.findHowToHelpInfo()).thenReturn(helpInfo);
 
         mvc.perform(get(ApiUrl.HOW_TO_DONATE_PATH))
                 .andExpect(status().isOk())
@@ -57,7 +57,7 @@ public class DonateInfoControllerTest {
 
     @Test
     public void shouldCreateHowToDonateInfo() throws Exception {
-        when(helpInfoService.createHowToHelpInfo(any(HelpInfo.class), any(HelpInfoType.class))).thenReturn(helpInfo);
+        when(donateInfoService.createHowToHelpInfo(any(HelpInfo.class))).thenReturn(helpInfo);
 
         mvc.perform(post(ApiUrl.HOW_TO_DONATE_PATH)
                 .contentType(CONTENT_TYPE)
@@ -69,7 +69,7 @@ public class DonateInfoControllerTest {
 
     @Test
     public void shouldUpdateHowToDonate() throws Exception {
-        when(helpInfoService.updateHowToHelpInfo(any(HelpInfo.class), any(HelpInfoType.class))).thenReturn(helpInfo);
+        when(donateInfoService.updateHowToHelpInfo(any(HelpInfo.class))).thenReturn(helpInfo);
 
         mvc.perform(put(ApiUrl.HOW_TO_DONATE_PATH)
                 .contentType(CONTENT_TYPE)
@@ -84,7 +84,7 @@ public class DonateInfoControllerTest {
         mvc.perform(put(ApiUrl.HOW_TO_DONATE_PATH))
                 .andExpect(status().isUnsupportedMediaType());
 
-        verifyZeroInteractions(helpInfoService);
+        verifyZeroInteractions(donateInfoService);
     }
 
     @Test
@@ -93,7 +93,7 @@ public class DonateInfoControllerTest {
                 .contentType(CONTENT_TYPE))
                 .andExpect(status().isBadRequest());
 
-        verifyZeroInteractions(helpInfoService);
+        verifyZeroInteractions(donateInfoService);
     }
 
     @Test
@@ -101,7 +101,7 @@ public class DonateInfoControllerTest {
         mvc.perform(post(ApiUrl.HOW_TO_DONATE_PATH))
                 .andExpect(status().isUnsupportedMediaType());
 
-        verifyZeroInteractions(helpInfoService);
+        verifyZeroInteractions(donateInfoService);
     }
 
     @Test
@@ -110,6 +110,6 @@ public class DonateInfoControllerTest {
                 .contentType(CONTENT_TYPE))
                 .andExpect(status().isBadRequest());
 
-        verifyZeroInteractions(helpInfoService);
+        verifyZeroInteractions(donateInfoService);
     }
 }
