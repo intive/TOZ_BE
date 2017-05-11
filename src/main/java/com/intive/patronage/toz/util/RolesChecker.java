@@ -8,16 +8,16 @@ import org.springframework.security.core.context.SecurityContextHolder;
 import java.util.Collection;
 import java.util.Set;
 
-public class RolesChecker {
+public final class RolesChecker {
 
     private RolesChecker() {
     }
 
-    public static boolean isCurrentUserHasAdminRole() {
-        return isCurrentUserRole(User.Role.SA) || isCurrentUserRole(User.Role.TOZ);
+    public static boolean hasCurrentUserAdminRole() {
+        return checkCurrentUserRole(User.Role.SA) || checkCurrentUserRole(User.Role.TOZ);
     }
 
-    private static boolean isCurrentUserRole(final User.Role role) {
+    private static boolean checkCurrentUserRole(final User.Role role) {
         Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
         if (authentication == null) {
             return false;
@@ -26,7 +26,7 @@ public class RolesChecker {
         return grantedAuthorities.contains(role);
     }
 
-    public static boolean isUserHasSuperAdminRole(final User user) {
+    public static boolean hasUserSuperAdminRole(final User user) {
         Set<User.Role> userRoles = user.getRoles();
         return userRoles.contains(User.Role.SA);
     }

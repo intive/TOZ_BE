@@ -53,7 +53,7 @@ class PetsController {
     @ApiOperation(value = "Get all pets", responseContainer = "List")
     @GetMapping
     public List<PetView> getAllPets() {
-        if (RolesChecker.isCurrentUserHasAdminRole()) {
+        if (RolesChecker.hasCurrentUserAdminRole()) {
             final List<Pet> pets = petsService.findAllPets();
             return ModelMapper.convertToView(pets, PetView.class);
         }

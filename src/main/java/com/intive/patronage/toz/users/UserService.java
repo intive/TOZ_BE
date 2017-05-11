@@ -66,7 +66,7 @@ public class UserService {
     }
 
     private void throwBadRoleExceptionIfSentUserHasSuperAdminRole(final User user) {
-        if (RolesChecker.isUserHasSuperAdminRole(user)) {
+        if (RolesChecker.hasUserSuperAdminRole(user)) {
             throw new BadRoleForSentUserBodyException(User.Role.SA);
         }
     }
