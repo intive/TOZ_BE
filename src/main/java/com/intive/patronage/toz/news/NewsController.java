@@ -24,7 +24,7 @@ import java.util.UUID;
 @Api(description = "News operations.")
 @RestController
 @RequestMapping(value = ApiUrl.NEWS_PATH, produces = MediaType.APPLICATION_JSON_VALUE)
-public class NewsController {
+class NewsController {
     private final NewsService newsService;
 
     @Autowired
