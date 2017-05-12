@@ -28,4 +28,11 @@ class RoleEntity implements Serializable {
         roleEntity.role = role;
         return roleEntity;
     }
+
+    @Override
+    public String toString() {
+        return "RoleEntity{" +
+                "role=" + role +
+                '}';
+    }
 }

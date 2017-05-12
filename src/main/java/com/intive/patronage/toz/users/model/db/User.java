@@ -74,4 +74,16 @@ public class User extends Identifiable {
             return this.toString();
         }
     }
+
+    @Override
+    public String toString() {
+        return "User{" +
+                "name='" + name + '\'' +
+                ", surname='" + surname + '\'' +
+                ", phoneNumber='" + phoneNumber + '\'' +
+                ", email='" + email + '\'' +
+                ", passwordChangeDate=" + passwordChangeDate +
+                ", roles=" + roles +
+                '}';
+    }
 }
