@@ -5,6 +5,7 @@ import com.intive.patronage.toz.environment.ApiProperties;
 import com.intive.patronage.toz.passwords.model.PasswordChangeRequestView;
 import com.intive.patronage.toz.tokens.model.view.UserCredentialsView;
 import com.intive.patronage.toz.users.UserService;
+import com.intive.patronage.toz.users.model.db.Role;
 import com.intive.patronage.toz.users.model.db.User;
 import com.intive.patronage.toz.util.ModelMapper;
 import org.junit.After;
@@ -48,7 +49,7 @@ public class PasswordsControllerTest {
     private static final String NEW_PASSWORD = "NewPassword";
     private static final String AUTHORIZATION_HEADER = "Authorization";
     private static final String TOKEN_PREFIX = "Bearer ";
-    private static final User.Role USER_ROLE = User.Role.VOLUNTEER;
+    private static final Role USER_ROLE = Role.VOLUNTEER;
     private static final String JWT_JSON_SIGN = "\"jwt\":\"";
 
     @Autowired

@@ -1,5 +1,6 @@
 package com.intive.patronage.toz.users;
 
+import com.intive.patronage.toz.users.model.db.Role;
 import com.intive.patronage.toz.users.model.db.User;
 import com.intive.patronage.toz.users.model.view.UserView;
 import com.tngtech.java.junit.dataprovider.DataProvider;
@@ -17,7 +18,7 @@ public class UserDataProvider {
     static final String EXPECTED_SURNAME = "Bravo";
     static final String EXPECTED_PHONE_NUMBER = "111222333";
     static final String EXPECTED_EMAIL = "johny.bravo@gmail.com";
-    static final User.Role TOZ_ROLE = User.Role.TOZ;
+    static final Role TOZ_ROLE = Role.TOZ;
     static final MediaType JSON_CONTENT_TYPE = MediaType.APPLICATION_JSON_UTF8;
 
     @DataProvider
@@ -56,7 +57,7 @@ public class UserDataProvider {
     @DataProvider
     public static Object[] getSuperAdminUserModel() {
         final User user = (User) getTozAdminUserModel()[0];
-        user.addRole(User.Role.SA);
+        user.addRole(Role.SA);
         return new Object[]{user};
     }
 

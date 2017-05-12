@@ -2,10 +2,9 @@ package com.intive.patronage.toz.users;
 
 import com.intive.patronage.toz.error.exception.AlreadyExistsException;
 import com.intive.patronage.toz.error.exception.BadRoleForSentUserBodyException;
-import com.intive.patronage.toz.error.exception.BadRoleForSentUserBodyException;
 import com.intive.patronage.toz.error.exception.NotFoundException;
+import com.intive.patronage.toz.users.model.db.Role;
 import com.intive.patronage.toz.users.model.db.User;
-import com.intive.patronage.toz.util.RolesChecker;
 import com.intive.patronage.toz.util.RolesChecker;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -69,7 +68,7 @@ public class UserService {
 
     private void throwBadRoleExceptionIfSentUserHasSuperAdminRole(final User user) {
         if (RolesChecker.hasUserSuperAdminRole(user)) {
-            throw new BadRoleForSentUserBodyException(User.Role.SA);
+            throw new BadRoleForSentUserBodyException(Role.SA);
         }
     }
 

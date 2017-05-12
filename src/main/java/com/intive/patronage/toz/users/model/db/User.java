@@ -4,7 +4,6 @@ import com.intive.patronage.toz.base.model.Identifiable;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
-import org.springframework.security.core.GrantedAuthority;
 
 import javax.persistence.*;
 import java.util.Date;
@@ -15,6 +14,7 @@ import java.util.stream.Collectors;
 @Getter
 @Setter
 @Entity
+@Table(name = "users")
 @NoArgsConstructor
 public class User extends Identifiable {
     private String name;
@@ -27,6 +27,10 @@ public class User extends Identifiable {
     private Date passwordChangeDate;
 
     @OneToMany(cascade = CascadeType.MERGE, fetch = FetchType.EAGER)
+    @JoinTable(name = "users_role",
+            joinColumns = @JoinColumn(name = "user_id"),
+            inverseJoinColumns = @JoinColumn(name = "role_id")
+    )
     private Set<RoleEntity> roles = new HashSet<>();
 
     public User(String name) {
@@ -52,27 +56,18 @@ public class User extends Identifiable {
         return hasRole(Role.SA);
     }
 
-    public Set<User.Role> getRoles() {
-        Set<User.Role> userRoles = new HashSet<>();
+    public Set<Role> getRoles() {
+        Set<Role> userRoles = new HashSet<>();
         for (RoleEntity roleEntity : roles) {
             userRoles.add(roleEntity.getRole());
         }
         return userRoles;
     }
 
-    public void setRoles(Set<User.Role> roles) {
+    public void setRoles(Set<Role> roles) {
         this.roles = roles.stream()
                 .map(RoleEntity::buildWithRole)
                 .collect(Collectors.toSet());
-    }
-
-    public enum Role implements GrantedAuthority {
-        SA, TOZ, VOLUNTEER, ANONYMOUS;
-
-        @Override
-        public String getAuthority() {
-            return this.toString();
-        }
     }
 
     @Override

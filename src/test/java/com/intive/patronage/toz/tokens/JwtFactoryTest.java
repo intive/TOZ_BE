@@ -1,5 +1,6 @@
 package com.intive.patronage.toz.tokens;
 
+import com.intive.patronage.toz.users.model.db.Role;
 import com.intive.patronage.toz.users.model.db.User;
 import io.jsonwebtoken.Claims;
 import io.jsonwebtoken.Jwts;
@@ -14,7 +15,7 @@ import static org.assertj.core.api.AssertionsForInterfaceTypes.assertThat;
 public class JwtFactoryTest {
 
     private static final String EMAIL = "user@mail.com";
-    private static final User.Role ROLE = User.Role.VOLUNTEER;
+    private static final Role ROLE = Role.VOLUNTEER;
     private static final String SECRET = "c2VjcmV0";
     private static final long EXPIRATION_TIME = 5;
 

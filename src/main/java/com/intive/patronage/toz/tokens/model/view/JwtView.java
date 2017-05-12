@@ -1,6 +1,6 @@
 package com.intive.patronage.toz.tokens.model.view;
 
-import com.intive.patronage.toz.users.model.db.User;
+import com.intive.patronage.toz.users.model.db.Role;
 import io.swagger.annotations.ApiModel;
 import io.swagger.annotations.ApiModelProperty;
 import lombok.Builder;
@@ -24,7 +24,7 @@ public class JwtView {
     @ApiModelProperty(position = 4)
     private final String surname;
     @ApiModelProperty(position = 5)
-    private final Set<User.Role> roles;
+    private final Set<Role> roles;
     @ApiModelProperty(example = "1494698165000", position = 6)
     private final Date expirationDate;
     @ApiModelProperty(position = 7)

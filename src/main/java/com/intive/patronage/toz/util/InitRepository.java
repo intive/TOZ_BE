@@ -1,6 +1,7 @@
 package com.intive.patronage.toz.util;
 
 import com.intive.patronage.toz.users.UserRepository;
+import com.intive.patronage.toz.users.model.db.Role;
 import com.intive.patronage.toz.users.model.db.User;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -45,7 +46,7 @@ class InitRepository {
                 admin.setName(SUPER_ADMIN_USER_NAME);
                 admin.setEmail(email);
                 admin.setPasswordHash(passwordEncoder.encode(Objects.requireNonNull(password, MISSING_CONFIGURATION_MSG)));
-                admin.addRole(User.Role.SA);
+                admin.addRole(Role.SA);
                 userRepository.save(admin);
                 LOG.info("Created super admin: " + admin);
             }

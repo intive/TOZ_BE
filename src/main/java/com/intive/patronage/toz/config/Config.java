@@ -124,7 +124,7 @@ class Config extends WebMvcConfigurerAdapter {
         return new ApiKey("Authorization", "jwt", "header");
     }
 
-    @Bean @Autowired
+    @Bean
     public ExceptionHandlerExceptionResolver createExceptionResolver(MessageSource messageSource, ScheduleParser scheduleParser) {
         ExceptionHandlerExceptionResolver exceptionResolver = new ExceptionHandlerExceptionResolver() {
             @Override

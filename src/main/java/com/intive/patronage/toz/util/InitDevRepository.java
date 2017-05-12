@@ -5,6 +5,7 @@ import com.intive.patronage.toz.news.model.db.News;
 import com.intive.patronage.toz.pet.PetsRepository;
 import com.intive.patronage.toz.pet.model.db.Pet;
 import com.intive.patronage.toz.users.UserRepository;
+import com.intive.patronage.toz.users.model.db.Role;
 import com.intive.patronage.toz.users.model.db.User;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.CommandLineRunner;
@@ -47,10 +48,10 @@ class InitDevRepository {
                 final News news = createNewsWithValue(i);
                 newsRepository.save(news);
 
-                final User volunteer = createUserWithRole(User.Role.VOLUNTEER, i);
+                final User volunteer = createUserWithRole(Role.VOLUNTEER, i);
                 userRepository.save(volunteer);
 
-                final User toz = createUserWithRole(User.Role.TOZ, i);
+                final User toz = createUserWithRole(Role.TOZ, i);
                 userRepository.save(toz);
             }
         };
@@ -85,7 +86,7 @@ class InitDevRepository {
         return news;
     }
 
-    private User createUserWithRole(User.Role role, int value) {
+    private User createUserWithRole(Role role, int value) {
         final String roleString = role.toString();
         final User user = new User();
         final String name = String.format("%s_name_%d", roleString, value);

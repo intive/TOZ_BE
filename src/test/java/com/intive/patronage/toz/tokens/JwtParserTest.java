@@ -1,6 +1,7 @@
 package com.intive.patronage.toz.tokens;
 
 import com.intive.patronage.toz.error.exception.JwtAuthenticationException;
+import com.intive.patronage.toz.users.model.db.Role;
 import com.intive.patronage.toz.users.model.db.User;
 import org.junit.Before;
 import org.junit.Test;
@@ -22,7 +23,7 @@ import static org.mockito.Mockito.when;
 public class JwtParserTest {
 
     private static final String EMAIL = "user@mail.com";
-    private static final User.Role VOLUNTEER_ROLE = User.Role.VOLUNTEER;
+    private static final Role VOLUNTEER_ROLE = Role.VOLUNTEER;
     private static final String SECRET = "c2VjcmV0";
     private static final long EXPIRATION_TIME = 5;
     private static final String EXPIRED_TOKEN_MESSAGE = "Token expired";
@@ -96,7 +97,7 @@ public class JwtParserTest {
         final JwtFactory jwtFactory = new JwtFactory(SECRET);
         final String token = jwtFactory.generateToken(user, EXPIRATION_TIME);
         final List<String> userRoles = user.getRoles().stream()
-                .map(User.Role::name)
+                .map(Role::name)
                 .collect(Collectors.toList());
 
         jwtParser.parse(token);

@@ -3,6 +3,7 @@ package com.intive.patronage.toz.users;
 import com.intive.patronage.toz.config.ApiUrl;
 import com.intive.patronage.toz.environment.ApiProperties;
 import com.intive.patronage.toz.tokens.JwtFactory;
+import com.intive.patronage.toz.users.model.db.Role;
 import com.intive.patronage.toz.users.model.db.User;
 import com.intive.patronage.toz.users.model.view.UserView;
 import com.intive.patronage.toz.util.ModelMapper;
@@ -56,7 +57,7 @@ public class UserTozAdminControllerTest {
     private MockMvc mockMvc;
     private JwtFactory jwtFactory;
 
-    private static User getUserWithRole(final User.Role role) {
+    private static User getUserWithRole(final Role role) {
         final User user = (User) UserDataProvider.getTozAdminUserModel()[0];
         user.setRoles(Collections.singleton(role));
         return user;
@@ -74,12 +75,12 @@ public class UserTozAdminControllerTest {
 
     @Test
     public void getAllUsersWithTozRoleIsOk() throws Exception {
-        final String tozUserAuthorizationToken = getAuthorizationTokenWithRole(User.Role.TOZ);
+        final String tozUserAuthorizationToken = getAuthorizationTokenWithRole(Role.TOZ);
         mockMvc.perform(get(ApiUrl.USERS_PATH).header(AUTHORIZATION, tozUserAuthorizationToken))
                 .andExpect(status().isOk());
     }
 
-    private String getAuthorizationTokenWithRole(final User.Role role) {
+    private String getAuthorizationTokenWithRole(final Role role) {
         final User user = getUserWithRole(role);
         final String token = jwtFactory.generateToken(user, EXPIRATION_TIME);
         return String.format("%s %s", "Bearer", token);
@@ -93,7 +94,7 @@ public class UserTozAdminControllerTest {
 
     @Test
     public void getAllUsersWithVolunteerRoleIsForbidden() throws Exception {
-        final String volunteerUserAuthorizationToken = getAuthorizationTokenWithRole(User.Role.VOLUNTEER);
+        final String volunteerUserAuthorizationToken = getAuthorizationTokenWithRole(Role.VOLUNTEER);
         mockMvc.perform(get(ApiUrl.USERS_PATH).header(AUTHORIZATION, volunteerUserAuthorizationToken))
                 .andExpect(status().isForbidden());
     }
@@ -101,7 +102,7 @@ public class UserTozAdminControllerTest {
     @Test
     public void getUserByIdWithTozRoleIsNotForbidden() throws Exception {
         final String requestUrl = String.format("%s/%s", ApiUrl.USERS_PATH, RANDOM_UUID);
-        final String tozUserAuthorizationToken = getAuthorizationTokenWithRole(User.Role.TOZ);
+        final String tozUserAuthorizationToken = getAuthorizationTokenWithRole(Role.TOZ);
         mockMvc.perform(get(requestUrl).header(AUTHORIZATION, tozUserAuthorizationToken))
                 .andExpect(status().is(not(HttpStatus.FORBIDDEN.value())));
     }
@@ -109,7 +110,7 @@ public class UserTozAdminControllerTest {
     @Test
     public void getUserByIdWithVolunteerRoleIsForbidden() throws Exception {
         final String requestUrl = String.format("%s/%s", ApiUrl.USERS_PATH, RANDOM_UUID);
-        final String volunteerUserAuthorizationToken = getAuthorizationTokenWithRole(User.Role.VOLUNTEER);
+        final String volunteerUserAuthorizationToken = getAuthorizationTokenWithRole(Role.VOLUNTEER);
         mockMvc.perform(get(requestUrl).header(AUTHORIZATION, volunteerUserAuthorizationToken))
                 .andExpect(status().isForbidden());
     }
@@ -123,7 +124,7 @@ public class UserTozAdminControllerTest {
 
     @Test
     public void createUserWithTozRoleIsNotForbidden() throws Exception {
-        final String tozUserAuthorizationToken = getAuthorizationTokenWithRole(User.Role.TOZ);
+        final String tozUserAuthorizationToken = getAuthorizationTokenWithRole(Role.TOZ);
         mockMvc.perform(post(ApiUrl.SUPER_ADMIN_USERS_PATH)
                 .header(AUTHORIZATION, tozUserAuthorizationToken)
                 .content(getUserContentBody())
@@ -132,7 +133,7 @@ public class UserTozAdminControllerTest {
     }
 
     private String getUserContentBody() {
-        final User volunteerUser = getUserWithRole(User.Role.VOLUNTEER);
+        final User volunteerUser = getUserWithRole(Role.VOLUNTEER);
         final UserView volunteerUserView = ModelMapper.convertToView(volunteerUser, UserView.class);
         volunteerUserView.setPassword(PASSWORD);
         return ModelMapper.convertToJsonString(volunteerUserView);
@@ -140,7 +141,7 @@ public class UserTozAdminControllerTest {
 
     @Test
     public void createUserWithVolunteerRoleIsForbidden() throws Exception {
-        final String volunteerUserAuthorizationToken = getAuthorizationTokenWithRole(User.Role.VOLUNTEER);
+        final String volunteerUserAuthorizationToken = getAuthorizationTokenWithRole(Role.VOLUNTEER);
         mockMvc.perform(post(ApiUrl.USERS_PATH)
                 .header(AUTHORIZATION, volunteerUserAuthorizationToken)
                 .content(getUserContentBody())
@@ -159,7 +160,7 @@ public class UserTozAdminControllerTest {
     @Test
     public void deleteUserWithTozRoleIsNotForbidden() throws Exception {
         final String requestUrl = String.format("%s/%s", ApiUrl.USERS_PATH, RANDOM_UUID);
-        final String tozUserAuthorizationToken = getAuthorizationTokenWithRole(User.Role.TOZ);
+        final String tozUserAuthorizationToken = getAuthorizationTokenWithRole(Role.TOZ);
         mockMvc.perform(delete(requestUrl).header(AUTHORIZATION, tozUserAuthorizationToken))
                 .andExpect(status().is(not(HttpStatus.FORBIDDEN.value())));
     }
@@ -167,7 +168,7 @@ public class UserTozAdminControllerTest {
     @Test
     public void deleteUserWithVolunteerRoleIsForbidden() throws Exception {
         final String requestUrl = String.format("%s/%s", ApiUrl.USERS_PATH, RANDOM_UUID);
-        final String volunteerUserAuthorizationToken = getAuthorizationTokenWithRole(User.Role.VOLUNTEER);
+        final String volunteerUserAuthorizationToken = getAuthorizationTokenWithRole(Role.VOLUNTEER);
         mockMvc.perform(delete(requestUrl).header(AUTHORIZATION, volunteerUserAuthorizationToken))
                 .andExpect(status().isForbidden());
     }
@@ -182,7 +183,7 @@ public class UserTozAdminControllerTest {
     @Test
     public void updateUserWithTozRoleIsNotForbidden() throws Exception {
         final String requestUrl = String.format("%s/%s", ApiUrl.USERS_PATH, RANDOM_UUID);
-        final String tozUserAuthorizationToken = getAuthorizationTokenWithRole(User.Role.TOZ);
+        final String tozUserAuthorizationToken = getAuthorizationTokenWithRole(Role.TOZ);
         mockMvc.perform(put(requestUrl)
                 .header(AUTHORIZATION, tozUserAuthorizationToken)
                 .content(getUserContentBody())
@@ -193,7 +194,7 @@ public class UserTozAdminControllerTest {
     @Test
     public void updateUserWithVolunteerRoleIsForbidden() throws Exception {
         final String requestUrl = String.format("%s/%s", ApiUrl.USERS_PATH, RANDOM_UUID);
-        final String volunteerUserAuthorizationToken = getAuthorizationTokenWithRole(User.Role.VOLUNTEER);
+        final String volunteerUserAuthorizationToken = getAuthorizationTokenWithRole(Role.VOLUNTEER);
         mockMvc.perform(put(requestUrl)
                 .header(AUTHORIZATION, volunteerUserAuthorizationToken)
                 .content(getUserContentBody())

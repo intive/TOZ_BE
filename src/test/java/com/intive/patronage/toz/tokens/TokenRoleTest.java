@@ -7,6 +7,7 @@ import com.intive.patronage.toz.news.NewsRepository;
 import com.intive.patronage.toz.news.model.db.News;
 import com.intive.patronage.toz.pet.PetsRepository;
 import com.intive.patronage.toz.pet.model.db.Pet;
+import com.intive.patronage.toz.users.model.db.Role;
 import com.intive.patronage.toz.users.model.db.User;
 import com.tngtech.java.junit.dataprovider.DataProvider;
 import com.tngtech.java.junit.dataprovider.DataProviderRunner;
@@ -56,7 +57,7 @@ public class TokenRoleTest {
     private static final String RELEASED = "RELEASED";
     private static final String ACHIEVED = "ACHIEVED";
     private static final String EMAIL_VOLUNTEER = "volunteer@mail.com";
-    private static final User.Role ROLE_VOLUNTEER = User.Role.VOLUNTEER;
+    private static final Role ROLE_VOLUNTEER = Role.VOLUNTEER;
 
     @Value("${jwt.expiration-time-minutes}")
     private long expirationTime;
