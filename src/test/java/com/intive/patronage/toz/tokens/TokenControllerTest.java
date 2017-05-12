@@ -121,8 +121,8 @@ public class TokenControllerTest {
 
     @Test
     public void shouldReturnValidToken() throws Exception {
-        final List<String> userRoles = user.getRolesList().stream()
-                .map(User.Role::toString)
+        final List<String> userRoles = user.getRoles().stream()
+                .map(User.Role::name)
                 .collect(Collectors.toList());
 
         MvcResult result = mockMvc.perform(post(ACQUIRE_TOKEN_PATH)
@@ -156,7 +156,7 @@ public class TokenControllerTest {
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("userId", is(user.getId().toString())))
                 .andExpect(jsonPath("email", is(user.getEmail())))
-                .andExpect(jsonPath("authorities[0].authority", is(ROLE_ADMIN.toString())));
+                .andExpect(jsonPath("authorities[0]", is(ROLE_ADMIN.toString())));
     }
 
     @Profile("dev")

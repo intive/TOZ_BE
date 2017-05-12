@@ -8,6 +8,7 @@ import com.intive.patronage.toz.tokens.model.view.JwtView;
 import com.intive.patronage.toz.tokens.model.view.UserCredentialsView;
 import com.intive.patronage.toz.users.UserService;
 import com.intive.patronage.toz.users.model.db.User;
+import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 import io.swagger.annotations.ApiResponse;
 import io.swagger.annotations.ApiResponses;
@@ -22,6 +23,7 @@ import springfox.documentation.annotations.ApiIgnore;
 
 import javax.validation.Valid;
 
+@Api(tags = "Tokens")
 @RestController
 @RequestMapping(value = ApiUrl.TOKENS_PATH, produces = MediaType.APPLICATION_JSON_VALUE)
 class TokensController {
@@ -56,7 +58,7 @@ class TokensController {
                 .email(user.getEmail())
                 .name(user.getName())
                 .surname(user.getSurname())
-                .roles(user.getRolesList())
+                .roles(user.getRoles())
                 .jwt(tokensService.getToken(user))
                 .build();
     }

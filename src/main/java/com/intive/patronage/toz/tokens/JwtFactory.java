@@ -12,7 +12,7 @@ import java.time.temporal.ChronoUnit;
 import java.util.Date;
 
 @Component
-class JwtFactory {
+public class JwtFactory {
 
     private static final String EMAIL_CLAIM_NAME = "email";
     private static final String SCOPES_CLAIM_NAME = "scopes";
@@ -20,17 +20,17 @@ class JwtFactory {
     private final long expirationTime;
     private final String secret;
 
-    JwtFactory(@Value("${jwt.expiration-time-minutes}") long expirationTime,
+    public JwtFactory(@Value("${jwt.expiration-time-minutes}") long expirationTime,
                @Value("${jwt.secret-base64}") String secret) {
         this.expirationTime = expirationTime;
         this.secret = secret;
     }
 
-    String generateToken(User user) {
+    public String generateToken(User user) {
         return Jwts.builder()
                 .setSubject(user.getId().toString())
                 .claim(EMAIL_CLAIM_NAME, user.getEmail())
-                .claim(SCOPES_CLAIM_NAME, user.getRolesList())
+                .claim(SCOPES_CLAIM_NAME, user.getRoles())
                 .setIssuedAt(new Date(Instant.now().toEpochMilli()))
                 .setExpiration(new Date(Instant.now().plus(expirationTime, ChronoUnit.MINUTES).toEpochMilli()))
                 .signWith(SignatureAlgorithm.HS512, TextCodec.BASE64.decode(secret))

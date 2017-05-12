@@ -1,13 +1,15 @@
 package com.intive.patronage.toz.users.model.db;
 
-import com.google.common.collect.Lists;
 import com.intive.patronage.toz.base.model.Identifiable;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
+import org.springframework.security.core.GrantedAuthority;
 
 import javax.persistence.*;
-import java.util.*;
+import java.util.Date;
+import java.util.HashSet;
+import java.util.Set;
 import java.util.stream.Collectors;
 
 @Getter
@@ -27,18 +29,17 @@ public class User extends Identifiable {
     @OneToMany(cascade = CascadeType.MERGE, fetch = FetchType.EAGER)
     private Set<RoleEntity> roles = new HashSet<>();
 
-    public User(String name, String passwordHash, String surname,
-                String phoneNumber, String email, Set<RoleEntity> roles) {
+    public User(String name) {
         this.name = name;
+    }
+
+    public void setPasswordHash(String passwordHash) {
         this.passwordHash = passwordHash;
-        this.surname = surname;
-        this.phoneNumber = phoneNumber;
-        this.email = email;
-        this.roles = roles;
+        passwordChangeDate = new Date();
     }
 
     public void addRole(final Role role) {
-        final RoleEntity roleEntity = new RoleEntity(role);
+        final RoleEntity roleEntity = RoleEntity.buildWithRole(role);
         roles.add(roleEntity);
     }
 
@@ -51,19 +52,27 @@ public class User extends Identifiable {
         return hasRole(Role.SA);
     }
 
-    public List<Role> getRolesList() {
-        return roles.stream()
-                .map(RoleEntity::getRole)
-                .collect(Collectors.toList());
+    public Set<User.Role> getRoles() {
+        Set<User.Role> userRoles = new HashSet<>();
+        for (RoleEntity roleEntity : roles) {
+            userRoles.add(roleEntity.getRole());
+        }
+        return userRoles;
     }
 
-    public void setPasswordHash(String passwordHash) {
-        this.passwordHash = passwordHash;
-        passwordChangeDate = new Date();
+    public void setRoles(Set<User.Role> roles) {
+        this.roles = roles.stream()
+                .map(RoleEntity::buildWithRole)
+                .collect(Collectors.toSet());
     }
 
-    public enum Role {
-        SA, TOZ, VOLUNTEER, ANONYMOUS
+    public enum Role implements GrantedAuthority {
+        SA, TOZ, VOLUNTEER, ANONYMOUS;
+
+        @Override
+        public String getAuthority() {
+            return this.toString();
+        }
     }
 
     @Override

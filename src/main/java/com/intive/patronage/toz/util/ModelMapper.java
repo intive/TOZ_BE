@@ -1,19 +1,12 @@
 package com.intive.patronage.toz.util;
 
-import com.fasterxml.jackson.core.JsonGenerator;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.DeserializationFeature;
 import com.fasterxml.jackson.databind.MapperFeature;
 import com.fasterxml.jackson.databind.ObjectMapper;
-import com.fasterxml.jackson.databind.SerializerProvider;
-import com.fasterxml.jackson.databind.module.SimpleModule;
-import com.fasterxml.jackson.databind.ser.std.StdSerializer;
 import com.intive.patronage.toz.base.model.Identifiable;
 import com.intive.patronage.toz.base.model.IdentifiableView;
-import com.intive.patronage.toz.users.model.db.RoleEntity;
-import com.intive.patronage.toz.users.model.db.User;
 
-import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -23,10 +16,7 @@ public class ModelMapper {
     private static final ObjectMapper OBJECT_MAPPER_DISABLED_ANNOTATIONS = new ObjectMapper();
 
     static {
-        SimpleModule module = new SimpleModule();
-        module.addSerializer(RoleEntity.class, new RolesSerializer(RoleEntity.class));
         OBJECT_MAPPER_DISABLED_ANNOTATIONS
-                .registerModule(module)
                 .disable(MapperFeature.USE_ANNOTATIONS)
                 .configure(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES, false);
     }
@@ -53,19 +43,6 @@ public class ModelMapper {
             return OBJECT_MAPPER_DISABLED_ANNOTATIONS.writeValueAsString(value);
         } catch (JsonProcessingException e) {
             throw new RuntimeException(e);
-        }
-    }
-
-    private static class RolesSerializer extends StdSerializer<RoleEntity> {
-
-        RolesSerializer(Class<RoleEntity> t) {
-            super(t);
-        }
-
-        @Override
-        public void serialize(RoleEntity entity, JsonGenerator gen, SerializerProvider provider) throws IOException {
-            final User.Role role = entity.getRole();
-            gen.writeString(role.toString());
         }
     }
 }

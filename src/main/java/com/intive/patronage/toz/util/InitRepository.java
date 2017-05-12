@@ -1,9 +1,7 @@
 package com.intive.patronage.toz.util;
 
 import com.intive.patronage.toz.users.UserRepository;
-import com.intive.patronage.toz.users.model.db.RoleEntity;
 import com.intive.patronage.toz.users.model.db.User;
-import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -13,7 +11,6 @@ import org.springframework.context.annotation.Bean;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Component;
 
-import java.util.Collections;
 import java.util.Objects;
 
 @Component
@@ -48,7 +45,7 @@ class InitRepository {
                 admin.setName(SUPER_ADMIN_USER_NAME);
                 admin.setEmail(email);
                 admin.setPasswordHash(passwordEncoder.encode(Objects.requireNonNull(password, MISSING_CONFIGURATION_MSG)));
-                admin.setRoles(Collections.singleton(new RoleEntity(User.Role.SA.toString())));
+                admin.addRole(User.Role.SA);
                 userRepository.save(admin);
                 LOG.info("Created super admin: " + admin);
             }

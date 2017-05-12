@@ -1,8 +1,12 @@
 package com.intive.patronage.toz.users;
 
 import com.intive.patronage.toz.error.exception.AlreadyExistsException;
+import com.intive.patronage.toz.error.exception.BadRoleForSentUserBodyException;
+import com.intive.patronage.toz.error.exception.BadRoleForSentUserBodyException;
 import com.intive.patronage.toz.error.exception.NotFoundException;
 import com.intive.patronage.toz.users.model.db.User;
+import com.intive.patronage.toz.util.RolesChecker;
+import com.intive.patronage.toz.util.RolesChecker;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -54,6 +58,7 @@ public class UserService {
     }
 
     public User createWithPasswordHash(final User user, final String passwordHash) {
+        throwBadRoleExceptionIfSentUserHasSuperAdminRole(user);
         final String email = user.getEmail();
         if (userRepository.existsByEmail(email)) {
             throw new AlreadyExistsException(USER);
@@ -62,12 +67,19 @@ public class UserService {
         return userRepository.save(user);
     }
 
+    private void throwBadRoleExceptionIfSentUserHasSuperAdminRole(final User user) {
+        if (RolesChecker.hasUserSuperAdminRole(user)) {
+            throw new BadRoleForSentUserBodyException(User.Role.SA);
+        }
+    }
+
     public void delete(final UUID id) {
         throwNotFoundExceptionIfIdNotExists(id);
         userRepository.delete(id);
     }
 
     public User update(final UUID id, final User user) {
+        throwBadRoleExceptionIfSentUserHasSuperAdminRole(user);
         throwNotFoundExceptionIfIdNotExists(id);
         user.setId(id);
         return userRepository.save(user);

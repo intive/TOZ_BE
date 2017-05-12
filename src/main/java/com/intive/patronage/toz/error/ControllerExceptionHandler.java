@@ -187,6 +187,16 @@ public class ControllerExceptionHandler {
         return new ErrorResponse(HttpStatus.FORBIDDEN, message);
     }
 
+    @ExceptionHandler(BadRoleForSentUserBodyException.class)
+    @ResponseStatus(HttpStatus.BAD_REQUEST)
+    @ResponseBody
+    public ErrorResponse handleBadRoleForSentUserBodyException(BadRoleForSentUserBodyException e) {
+        final String userRoleValue = e.getUserRole().toString();
+        final String message = messageSource.getMessage(
+                "badRoleForSentUserBody", new String[]{userRoleValue}, LocaleContextHolder.getLocale());
+        return new ErrorResponse(HttpStatus.BAD_REQUEST, message);
+    }
+
     @ExceptionHandler(WrongPasswordException.class)
     @ResponseStatus(HttpStatus.BAD_REQUEST)
     @ResponseBody

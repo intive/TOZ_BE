@@ -57,6 +57,7 @@ class WebSecurityConfig extends WebSecurityConfigurerAdapter {
                 .and().authorizeRequests().antMatchers(REST_ENTRY_POINT).authenticated()
                 .and().authorizeRequests().antMatchers(ADMIN_ENTRY_POINT).authenticated()
                 .and().httpBasic()
+                .and().headers().frameOptions().disable()
                 .and().addFilterBefore(getAuthenticationFilter(), UsernamePasswordAuthenticationFilter.class);
     }
 }

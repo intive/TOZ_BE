@@ -8,7 +8,6 @@ import org.springframework.security.authentication.AuthenticationProvider;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.AuthenticationException;
 import org.springframework.security.core.GrantedAuthority;
-import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.stereotype.Component;
 
 import java.util.Collections;
@@ -32,8 +31,7 @@ class JwtAuthenticationProvider implements AuthenticationProvider {
         final String token = (String) authentication.getCredentials();
 
         if (token == null) {
-            List<GrantedAuthority> authorities =
-                    Collections.singletonList(new SimpleGrantedAuthority(User.Role.ANONYMOUS.toString()));
+            List<GrantedAuthority> authorities = Collections.singletonList(User.Role.ANONYMOUS);
             return new JwtAuthenticationToken(null, authorities);
         }
 
@@ -43,7 +41,7 @@ class JwtAuthenticationProvider implements AuthenticationProvider {
         final List<String> scopes = jwtParser.getScopes();
 
         final Set<GrantedAuthority> authorities = scopes.stream()
-                .map(SimpleGrantedAuthority::new)
+                .map(User.Role::valueOf)
                 .collect(Collectors.toSet());
 
         final UserContext userContext = new UserContext(userID, email, authorities);

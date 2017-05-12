@@ -10,7 +10,7 @@ import java.io.Serializable;
 
 @Getter
 @Entity
-public class RoleEntity implements Serializable {
+class RoleEntity implements Serializable {
 
     @Id
     @Enumerated(EnumType.STRING)
@@ -19,12 +19,14 @@ public class RoleEntity implements Serializable {
     private RoleEntity() {
     }
 
-    public RoleEntity(User.Role role) {
-        this.role = role;
+    private RoleEntity(String role) {
+        this.role = User.Role.valueOf(role);
     }
 
-    public RoleEntity(String role) {
-        this.role = User.Role.valueOf(role);
+    static RoleEntity buildWithRole(User.Role role) {
+        RoleEntity roleEntity = new RoleEntity();
+        roleEntity.role = role;
+        return roleEntity;
     }
 
     @Override
