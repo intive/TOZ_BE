@@ -30,7 +30,10 @@ import static org.assertj.core.api.Assertions.assertThat;
 @RunWith(SpringJUnit4ClassRunner.class)
 @ContextConfiguration(classes = Application.class)
 @WebAppConfiguration
-@TestPropertySource(properties = {ApiProperties.JWT_SECRET_BASE64, ApiProperties.SUPER_ADMIN_PASSWORD})
+@TestPropertySource(
+        properties = {ApiProperties.JWT_SECRET_BASE64,
+                ApiProperties.SUPER_ADMIN_PASSWORD}
+)
 public class ScheduleParserTest extends AbstractJUnit4SpringContextTests {
 
     private static final String DASH = "-";

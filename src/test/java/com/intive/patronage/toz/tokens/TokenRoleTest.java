@@ -20,6 +20,7 @@ import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMock
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.test.context.ActiveProfiles;
 import org.springframework.test.context.ContextConfiguration;
+import org.springframework.test.context.TestPropertySource;
 import org.springframework.test.context.junit4.rules.SpringClassRule;
 import org.springframework.test.context.junit4.rules.SpringMethodRule;
 import org.springframework.test.web.servlet.MockMvc;
@@ -35,8 +36,10 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 @RunWith(DataProviderRunner.class)
 @ContextConfiguration(classes = Application.class)
 @AutoConfigureMockMvc
-@SpringBootTest(
-        properties = {ApiProperties.JWT_SECRET_BASE64, ApiProperties.SUPER_ADMIN_PASSWORD}
+@SpringBootTest
+@TestPropertySource(
+        properties = {ApiProperties.JWT_SECRET_BASE64,
+                ApiProperties.SUPER_ADMIN_PASSWORD}
 )
 @ActiveProfiles("test")
 public class TokenRoleTest {
@@ -108,7 +111,7 @@ public class TokenRoleTest {
     @UseDataProvider("getAdmin")
     public void shouldReturnOkWhenAdminAndGetNewsReleased(User admin) throws Exception {
         mockMvc.perform(get(ApiUrl.NEWS_PATH).param(TYPE_PARAM, RELEASED)
-                .header(AUTHORIZATION_HEADER, String.format("%s%s",TOKEN_PREFIX, jwtFactory.generateToken(admin))))
+                .header(AUTHORIZATION_HEADER, String.format("%s%s", TOKEN_PREFIX, jwtFactory.generateToken(admin))))
                 .andExpect(status().isOk());
     }
 
@@ -116,7 +119,7 @@ public class TokenRoleTest {
     @UseDataProvider("getVolunteer")
     public void shouldReturnForbiddenWhenVolunteerAndNewsAchieved(User volunteer) throws Exception {
         mockMvc.perform(get(ApiUrl.NEWS_PATH).param(TYPE_PARAM, ACHIEVED)
-                .header(AUTHORIZATION_HEADER, String.format("%s%s",TOKEN_PREFIX, jwtFactory.generateToken(volunteer))))
+                .header(AUTHORIZATION_HEADER, String.format("%s%s", TOKEN_PREFIX, jwtFactory.generateToken(volunteer))))
                 .andExpect(status().isForbidden());
     }
 
@@ -124,7 +127,7 @@ public class TokenRoleTest {
     @UseDataProvider("getVolunteer")
     public void shouldReturnOkWhenVolunteerAndNewsReleased(User volunteer) throws Exception {
         mockMvc.perform(get(ApiUrl.NEWS_PATH).param(TYPE_PARAM, RELEASED)
-                .header(AUTHORIZATION_HEADER, String.format("%s%s",TOKEN_PREFIX, jwtFactory.generateToken(volunteer))))
+                .header(AUTHORIZATION_HEADER, String.format("%s%s", TOKEN_PREFIX, jwtFactory.generateToken(volunteer))))
                 .andExpect(status().isOk());
     }
 
@@ -180,7 +183,7 @@ public class TokenRoleTest {
         incompletePet.setType(DOG);
         UUID id = petsRepository.save(incompletePet).getId();
         mockMvc.perform(get(String.format("%s/%s", ApiUrl.PETS_PATH, id))
-                .header(AUTHORIZATION_HEADER, String.format("%s%s",TOKEN_PREFIX, jwtFactory.generateToken(admin))))
+                .header(AUTHORIZATION_HEADER, String.format("%s%s", TOKEN_PREFIX, jwtFactory.generateToken(admin))))
                 .andExpect(status().isOk());
     }
 }
