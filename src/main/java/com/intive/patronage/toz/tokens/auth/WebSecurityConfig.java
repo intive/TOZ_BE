@@ -1,5 +1,6 @@
-package com.intive.patronage.toz.config;
+package com.intive.patronage.toz.tokens.auth;
 
+import com.intive.patronage.toz.config.ApiUrl;
 import com.intive.patronage.toz.tokens.auth.*;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Configuration;
@@ -22,11 +23,14 @@ class WebSecurityConfig extends WebSecurityConfigurerAdapter {
     private static final String REST_ENTRY_POINT = "/**";
     private static final String ADMIN_ENTRY_POINT = "/admin/**";
 
-    @Autowired
-    private SuperAdminAuthenticationProvider superAdminAuthenticationProvider;
+    private final SuperAdminAuthenticationProvider superAdminAuthenticationProvider;
+    private final JwtAuthenticationProvider jwtAuthenticationProvider;
 
     @Autowired
-    private JwtAuthenticationProvider jwtAuthenticationProvider;
+    public WebSecurityConfig(SuperAdminAuthenticationProvider superAdminAuthenticationProvider, JwtAuthenticationProvider jwtAuthenticationProvider) {
+        this.superAdminAuthenticationProvider = superAdminAuthenticationProvider;
+        this.jwtAuthenticationProvider = jwtAuthenticationProvider;
+    }
 
     private TokenAuthenticationFilter getAuthenticationFilter() throws Exception {
         final List<String> pathsToSkip = Arrays.asList(ApiUrl.ACQUIRE_TOKEN_PATH, ADMIN_ENTRY_POINT);

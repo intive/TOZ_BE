@@ -18,7 +18,7 @@ import java.util.UUID;
 import java.util.stream.Collectors;
 
 @Component
-public class JwtAuthenticationProvider implements AuthenticationProvider {
+class JwtAuthenticationProvider implements AuthenticationProvider {
 
     private final JwtParser jwtParser;
 

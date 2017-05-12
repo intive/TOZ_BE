@@ -10,4 +10,12 @@ import lombok.Setter;
 public class Registration {
     private String url;
     private String token;
+
+    public static Registration of(String activationUrl, String token) {
+        final Registration registration = new Registration();
+        registration.setToken(token);
+        registration.setUrl(activationUrl);
+
+        return registration;
+    }
 }

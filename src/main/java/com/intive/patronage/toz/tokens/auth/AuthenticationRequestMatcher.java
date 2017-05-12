@@ -8,11 +8,11 @@ import javax.servlet.http.HttpServletRequest;
 import java.util.List;
 import java.util.stream.Collectors;
 
-public class AuthenticationRequestMatcher implements RequestMatcher {
+class AuthenticationRequestMatcher implements RequestMatcher {
 
     private final OrRequestMatcher skipMatcher;
 
-    public AuthenticationRequestMatcher(List<String> pathsToSkip) {
+    AuthenticationRequestMatcher(List<String> pathsToSkip) {
         List<RequestMatcher> matcher = pathsToSkip.stream()
                 .map(AntPathRequestMatcher::new)
                 .collect(Collectors.toList());

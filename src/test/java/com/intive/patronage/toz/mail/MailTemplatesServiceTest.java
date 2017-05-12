@@ -1,29 +1,27 @@
 package com.intive.patronage.toz.mail;
 
 import org.junit.Test;
-import org.junit.runner.RunWith;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.boot.test.context.SpringBootTest;
-import org.springframework.test.annotation.DirtiesContext;
-import org.springframework.test.context.junit4.SpringRunner;
 
 import java.io.IOException;
 
-import static org.hamcrest.Matchers.containsString;
-import static org.junit.Assert.assertThat;
+import static org.assertj.core.api.Assertions.assertThat;
 
-@RunWith(SpringRunner.class)
-@SpringBootTest
-@DirtiesContext(classMode = DirtiesContext.ClassMode.AFTER_CLASS)
+
 public class MailTemplatesServiceTest {
 
-    @Autowired
-    private MailTemplatesService mailTemplatesService;
+    private static final String EXAMPLE_TOKEN = "foo";
+    private static final String BASE_URL = "http://foo/bar";
+
+    private MailTemplatesService mailTemplatesService =
+            new MailTemplatesService("/templates", ".hbs",
+                    BASE_URL,
+                    new MailTemplateCache(1, 2));
 
     @Test
     public void shouldReturnMailBody() throws IOException {
-        String token = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiIxMjM0NTY3ODkwIiwibmFtZSI6IkpvaG4gRG9lIiwiYWRtaW4iOnRydWV9.TJVA95OrM7E2cBab30RMHrHDcEfxjoYZgeFONFh7HgQ";
-        String mailBody = mailTemplatesService.getRegistrationTemplate("localhost", token);
-        assertThat(mailBody, containsString(String.format("?token=%s", token)));
+        String mailBody = mailTemplatesService.getRegistrationTemplate(EXAMPLE_TOKEN);
+
+        String expectedLink = mailTemplatesService.createActivationUrl() + "?token=" + EXAMPLE_TOKEN;
+        assertThat(mailBody).contains(expectedLink);
     }
 }

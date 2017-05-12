@@ -17,14 +17,14 @@ import java.util.Collection;
 import java.util.Collections;
 
 @Component
-public class SuperAdminAuthenticationProvider implements AuthenticationProvider {
+class SuperAdminAuthenticationProvider implements AuthenticationProvider {
 
     private static final String BAD_CREDENTIALS_MESSAGE = "Wrong name or password!";
     private final UserService userService;
     private final PasswordEncoder passwordEncoder;
 
     @Autowired
-    public SuperAdminAuthenticationProvider(UserService userService, PasswordEncoder passwordEncoder) {
+    SuperAdminAuthenticationProvider(UserService userService, PasswordEncoder passwordEncoder) {
         this.userService = userService;
         this.passwordEncoder = passwordEncoder;
     }
