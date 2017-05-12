@@ -46,8 +46,8 @@ public class JwtParserTest {
 
     @Test
     public void shouldThrowExceptionWhenWrongSecret() throws Exception {
-        final JwtFactory jwtFactory = new JwtFactory(EXPIRATION_TIME, "wrongSecret");
-        final String badToken = jwtFactory.generateToken(user);
+        final JwtFactory jwtFactory = new JwtFactory("wrongSecret");
+        final String badToken = jwtFactory.generateToken(user, EXPIRATION_TIME);
 
         when(messageSource.getMessage(eq("invalidSignature"), any(), any(Locale.class)))
                 .thenReturn(INVALID_SIGNATURE_MESSAGE);
@@ -62,8 +62,8 @@ public class JwtParserTest {
 
     @Test
     public void shouldThrowExceptionWhenTokenExpired() throws Exception {
-        final JwtFactory jwtFactory = new JwtFactory(-5, SECRET);
-        final String expiredToken = jwtFactory.generateToken(user);
+        final JwtFactory jwtFactory = new JwtFactory(SECRET);
+        final String expiredToken = jwtFactory.generateToken(user, -5);
 
         when(messageSource.getMessage(eq("tokenExpired"), any(), any(Locale.class)))
                 .thenReturn(EXPIRED_TOKEN_MESSAGE);
@@ -93,8 +93,8 @@ public class JwtParserTest {
 
     @Test
     public void shouldReturnValidToken() throws Exception {
-        final JwtFactory jwtFactory = new JwtFactory(EXPIRATION_TIME, SECRET);
-        final String token = jwtFactory.generateToken(user);
+        final JwtFactory jwtFactory = new JwtFactory(SECRET);
+        final String token = jwtFactory.generateToken(user, EXPIRATION_TIME);
         final List<String> userRoles = user.getRoles().stream()
                 .map(User.Role::name)
                 .collect(Collectors.toList());
@@ -105,6 +105,8 @@ public class JwtParserTest {
                 .isEqualTo(user.getId());
         assertThat(jwtParser.getEmail())
                 .isEqualTo(user.getEmail());
+        assertThat(jwtParser.getTokenExpirationDate())
+                .isInTheFuture();
         assertThat(jwtParser.getScopes())
                 .hasSize(1)
                 .containsAll(userRoles);

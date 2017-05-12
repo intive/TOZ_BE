@@ -150,6 +150,8 @@ public class TokenControllerTest {
                 .isEqualTo(user.getId());
         assertThat(jwtParser.getEmail())
                 .isEqualTo(user.getEmail());
+        assertThat(jwtParser.getTokenExpirationDate())
+                .isInTheFuture();
         assertThat(jwtParser.getScopes())
                 .hasSize(1)
                 .containsExactly(ROLE_ADMIN.toString());
@@ -159,7 +161,8 @@ public class TokenControllerTest {
     @Test
     public void shouldReturnUserContext() throws Exception {
         mockMvc.perform(get(TOKENS_PATH + "/whoami")
-                .header(AUTHORIZATION_HEADER, TOKEN_PREFIX + jwtFactory.generateToken(user)))
+                .header(AUTHORIZATION_HEADER,
+                        TOKEN_PREFIX + jwtFactory.generateToken(user, expirationTime)))
                 .andExpect(content().contentType(CONTENT_TYPE))
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("userId", is(user.getId().toString())))

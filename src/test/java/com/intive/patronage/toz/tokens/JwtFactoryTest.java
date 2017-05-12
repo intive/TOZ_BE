@@ -27,12 +27,12 @@ public class JwtFactoryTest {
         user.setEmail(EMAIL);
         user.addRole(ROLE);
 
-        jwtFactory = new JwtFactory(EXPIRATION_TIME, SECRET);
+        jwtFactory = new JwtFactory(SECRET);
     }
 
     @Test
     public void shouldGenerateValidToken() throws Exception {
-        String token = jwtFactory.generateToken(user);
+        String token = jwtFactory.generateToken(user, EXPIRATION_TIME);
 
         Claims claimsBody = Jwts.parser()
                 .setSigningKey(TextCodec.BASE64.decode(SECRET))

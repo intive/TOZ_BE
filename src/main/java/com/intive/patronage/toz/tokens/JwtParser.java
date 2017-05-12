@@ -9,6 +9,7 @@ import org.springframework.context.MessageSource;
 import org.springframework.context.i18n.LocaleContextHolder;
 import org.springframework.stereotype.Component;
 
+import java.util.Date;
 import java.util.List;
 import java.util.UUID;
 
@@ -25,7 +26,7 @@ public class JwtParser {
         this.messageSource = messageSource;
     }
 
-    public void parse(String token) {
+    public void parse(final String token) {
         try {
             claimsBody = Jwts.parser()
                     .setSigningKey(TextCodec.BASE64.decode(secret))
@@ -56,5 +57,9 @@ public class JwtParser {
 
     public List<String> getScopes() {
         return claimsBody.get("scopes", List.class);
+    }
+
+    Date getTokenExpirationDate() {
+        return claimsBody.getExpiration();
     }
 }

@@ -17,16 +17,13 @@ public class JwtFactory {
     private static final String EMAIL_CLAIM_NAME = "email";
     private static final String SCOPES_CLAIM_NAME = "scopes";
 
-    private final long expirationTime;
     private final String secret;
 
-    public JwtFactory(@Value("${jwt.expiration-time-minutes}") long expirationTime,
-               @Value("${jwt.secret-base64}") String secret) {
-        this.expirationTime = expirationTime;
+    public JwtFactory(@Value("${jwt.secret-base64}") String secret) {
         this.secret = secret;
     }
 
-    public String generateToken(User user) {
+    public String generateToken(final User user, final long expirationTime) {
         return Jwts.builder()
                 .setSubject(user.getId().toString())
                 .claim(EMAIL_CLAIM_NAME, user.getEmail())

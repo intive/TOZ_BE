@@ -34,8 +34,10 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 @AutoConfigureMockMvc
 @SpringBootTest
 @TestPropertySource(
-        properties = {ApiProperties.JWT_SECRET_BASE64,
-                ApiProperties.SUPER_ADMIN_PASSWORD}
+        properties = {
+                ApiProperties.JWT_SECRET_BASE64,
+                ApiProperties.SUPER_ADMIN_PASSWORD
+        }
 )
 @ActiveProfiles("test")
 public class PasswordsControllerTest {

@@ -33,8 +33,10 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 @RunWith(SpringJUnit4ClassRunner.class)
 @SpringBootTest
 @TestPropertySource(
-        properties = {ApiProperties.JWT_SECRET_BASE64,
-                ApiProperties.SUPER_ADMIN_PASSWORD}
+        properties = {
+                ApiProperties.JWT_SECRET_BASE64,
+                ApiProperties.SUPER_ADMIN_PASSWORD
+        }
 )
 @ActiveProfiles("test")
 public class UserTozAdminControllerTest {
@@ -54,10 +56,16 @@ public class UserTozAdminControllerTest {
     private MockMvc mockMvc;
     private JwtFactory jwtFactory;
 
+    private static User getUserWithRole(final User.Role role) {
+        final User user = (User) UserDataProvider.getTozAdminUserModel()[0];
+        user.setRoles(Collections.singleton(role));
+        return user;
+    }
+
     @Before
     public void setUp() {
         MockitoAnnotations.initMocks(this);
-        jwtFactory = new JwtFactory(EXPIRATION_TIME, secret);
+        jwtFactory = new JwtFactory(secret);
         mockMvc = MockMvcBuilders
                 .webAppContextSetup(context)
                 .apply(springSecurity())
@@ -73,14 +81,8 @@ public class UserTozAdminControllerTest {
 
     private String getAuthorizationTokenWithRole(final User.Role role) {
         final User user = getUserWithRole(role);
-        final String token = jwtFactory.generateToken(user);
+        final String token = jwtFactory.generateToken(user, EXPIRATION_TIME);
         return String.format("%s %s", "Bearer", token);
-    }
-
-    private static User getUserWithRole(final User.Role role) {
-        final User user = (User) UserDataProvider.getTozAdminUserModel()[0];
-        user.setRoles(Collections.singleton(role));
-        return user;
     }
 
     @Test

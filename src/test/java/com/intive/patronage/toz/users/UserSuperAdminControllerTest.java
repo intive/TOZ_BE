@@ -1,6 +1,7 @@
 package com.intive.patronage.toz.users;
 
 import com.intive.patronage.toz.config.ApiUrl;
+import com.intive.patronage.toz.environment.ApiProperties;
 import com.intive.patronage.toz.users.model.db.User;
 import com.intive.patronage.toz.users.model.view.UserView;
 import com.intive.patronage.toz.util.ModelMapper;
@@ -29,7 +30,7 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 
 @RunWith(DataProviderRunner.class)
 @SpringBootTest(
-        properties = "jwt.secret-base64=c2VjcmV0"
+        properties = ApiProperties.JWT_SECRET_BASE64
 )
 public class UserSuperAdminControllerTest {
 

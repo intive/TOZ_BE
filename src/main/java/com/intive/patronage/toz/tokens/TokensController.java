@@ -30,11 +30,13 @@ class TokensController {
 
     private final TokensService tokensService;
     private final UserService userService;
+    private final JwtParser jwtParser;
 
     @Autowired
-    TokensController(TokensService tokensService, UserService userService) {
+    TokensController(TokensService tokensService, UserService userService, JwtParser jwtParser) {
         this.tokensService = tokensService;
         this.userService = userService;
+        this.jwtParser = jwtParser;
     }
 
     @ApiOperation("Login to api")
@@ -53,13 +55,17 @@ class TokensController {
             throw new BadCredentialsException("Incorrect email or password");
         }
 
+        final String token = tokensService.getToken(user);
+        jwtParser.parse(token);
+
         return JwtView.builder()
                 .userId(user.getId())
                 .email(user.getEmail())
                 .name(user.getName())
                 .surname(user.getSurname())
                 .roles(user.getRoles())
-                .jwt(tokensService.getToken(user))
+                .expirationDate(jwtParser.getTokenExpirationDate())
+                .jwt(token)
                 .build();
     }
 

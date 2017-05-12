@@ -1,6 +1,7 @@
 package com.intive.patronage.toz.pet;
 
 import com.intive.patronage.toz.config.ApiUrl;
+import com.intive.patronage.toz.environment.ApiProperties;
 import com.intive.patronage.toz.pet.model.db.Pet;
 import com.intive.patronage.toz.storage.StorageProperties;
 import com.intive.patronage.toz.storage.StorageService;
@@ -33,7 +34,7 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 
 @RunWith(DataProviderRunner.class)
 @SpringBootTest(
-        properties = "jwt.secret-base64=c2VjcmV0"
+        properties = ApiProperties.JWT_SECRET_BASE64
 )
 public class PetsControllerTest {
 
@@ -55,13 +56,6 @@ public class PetsControllerTest {
 
     private MockMvc mvc;
 
-    @Before
-    public void setUp() throws Exception {
-        MockitoAnnotations.initMocks(this);
-        final PetsController petsController = new PetsController(petsService, storageService, storageProperties);
-        mvc = MockMvcBuilders.standaloneSetup(petsController).build();
-    }
-
     @DataProvider
     public static Object[] getProperPet() {
         Pet pet = new Pet();
@@ -70,6 +64,13 @@ public class PetsControllerTest {
         pet.setSex(EXPECTED_SEX);
         pet.setType(EXPECTED_TYPE);
         return new Pet[]{pet};
+    }
+
+    @Before
+    public void setUp() throws Exception {
+        MockitoAnnotations.initMocks(this);
+        final PetsController petsController = new PetsController(petsService, storageService, storageProperties);
+        mvc = MockMvcBuilders.standaloneSetup(petsController).build();
     }
 
     @Test
