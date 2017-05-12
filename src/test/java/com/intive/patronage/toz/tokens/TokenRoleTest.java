@@ -125,6 +125,15 @@ public class TokenRoleTest {
 
     @Test
     @UseDataProvider("getVolunteer")
+    public void shouldReturnForbiddenWhenVolunteerAndNewsAchieved(User volunteer) throws Exception {
+        mockMvc.perform(get(ApiUrl.NEWS_PATH).param(TYPE_PARAM, ACHIEVED)
+                .header(AUTHORIZATION_HEADER,
+                        String.format("%s%s", TOKEN_PREFIX, jwtFactory.generateToken(volunteer, expirationTime))))
+                .andExpect(status().isForbidden());
+    }
+
+    @Test
+    @UseDataProvider("getVolunteer")
     public void shouldReturnOkWhenVolunteerAndNewsReleased(User volunteer) throws Exception {
         mockMvc.perform(get(ApiUrl.NEWS_PATH).param(TYPE_PARAM, RELEASED)
                 .header(AUTHORIZATION_HEADER,
@@ -143,6 +152,12 @@ public class TokenRoleTest {
     public void shouldReturnForbiddenWhenAnonymousAndGetNewsAchievedById(News achievedNews) throws Exception {
         UUID id = newsRepository.save(achievedNews).getId();
         mockMvc.perform(get(String.format("%s/%s", ApiUrl.NEWS_PATH, id)))
+                .andExpect(status().isForbidden());
+    }
+
+    @Test
+    public void shouldReturnForbiddenWhenAnonymousAndNewsAchieved() throws Exception {
+        mockMvc.perform(get(ApiUrl.NEWS_PATH).param(TYPE_PARAM, ACHIEVED))
                 .andExpect(status().isForbidden());
     }
 

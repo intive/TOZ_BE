@@ -41,7 +41,8 @@ class NewsController {
             @ApiResponse(code = 422, message = "Unprocessable entity.", response = ErrorResponse.class)
     })
     @GetMapping
-    @PreAuthorize("hasAnyAuthority('SA', 'TOZ', 'VOLUNTEER', 'ANONYMOUS')")
+    @PreAuthorize("hasAnyAuthority('SA', 'TOZ') or " +
+            "(hasAnyAuthority('SA', 'TOZ', 'VOLUNTEER', 'ANONYMOUS') and (#type == 'RELEASED' or #type == null))")
     public ResponseEntity<List<NewsView>> getAllNews(
             @ApiParam(allowableValues = "ARCHIVED, RELEASED, UNRELEASED")
             @RequestParam(value = "type", required = false) String type,
