@@ -17,7 +17,7 @@ public class JwtParser {
 
     private final MessageSource messageSource;
     private final String secret;
-    private Jws<Claims> claims;
+    private Claims claimsBody;
 
     @Autowired
     public JwtParser(MessageSource messageSource, @Value("${jwt.secret-base64}") String secret) {
@@ -27,9 +27,10 @@ public class JwtParser {
 
     public void parse(String token) {
         try {
-            claims = Jwts.parser()
+            claimsBody = Jwts.parser()
                     .setSigningKey(TextCodec.BASE64.decode(secret))
-                    .parseClaimsJws(token);
+                    .parseClaimsJws(token)
+                    .getBody();
         } catch (UnsupportedJwtException | MalformedJwtException | IllegalArgumentException e) {
             String message = messageSource.getMessage("invalidToken",
                     null, LocaleContextHolder.getLocale());
@@ -46,14 +47,14 @@ public class JwtParser {
     }
 
     public UUID getUserId() {
-        return UUID.fromString(claims.getBody().getSubject());
+        return UUID.fromString(claimsBody.getSubject());
     }
 
     public String getEmail() {
-        return claims.getBody().get("email", String.class);
+        return claimsBody.get("email", String.class);
     }
 
     public List<String> getScopes() {
-        return claims.getBody().get("scopes", List.class);
+        return claimsBody.get("scopes", List.class);
     }
 }
