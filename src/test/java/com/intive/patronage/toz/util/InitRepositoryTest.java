@@ -18,7 +18,10 @@ import static org.assertj.core.api.Assertions.assertThat;
 @RunWith(SpringJUnit4ClassRunner.class)
 @ContextConfiguration(classes = Application.class)
 @WebAppConfiguration
-@TestPropertySource(properties = {ApiProperties.JWT_SECRET_BASE64, ApiProperties.SUPER_ADMIN_PASSWORD})
+@TestPropertySource(
+        properties = {ApiProperties.JWT_SECRET_BASE64,
+                ApiProperties.SUPER_ADMIN_PASSWORD}
+)
 public class InitRepositoryTest {
 
     @Autowired
@@ -32,7 +35,6 @@ public class InitRepositoryTest {
 
     @Test
     public void superAdminShouldBePresent() throws Exception {
-
         initRepository.initDatabase().run();
 
         final User admin = userRepository.findByName(InitRepository.SUPER_ADMIN_USER_NAME);
