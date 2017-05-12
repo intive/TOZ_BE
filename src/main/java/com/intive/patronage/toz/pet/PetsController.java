@@ -50,8 +50,8 @@ class PetsController {
     }
 
     @ApiOperation(value = "Get all pets", responseContainer = "List", notes =
-    "Required roles: SA, TOZ, VOLUNTEER, ANONYMOUS if all fields are present or, " +
-            "Required roles: SA, TOZ if pet records are not complete.")
+            "Required roles: SA, TOZ, VOLUNTEER, ANONYMOUS if all fields are present or, " +
+                    "Required roles: SA, TOZ if pet records are not complete.")
     @GetMapping
     @PreAuthorize("hasAnyAuthority('SA', 'TOZ', 'VOLUNTEER', 'ANONYMOUS')")
     public List<PetView> getAllPets() {

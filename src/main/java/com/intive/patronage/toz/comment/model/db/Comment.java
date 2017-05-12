@@ -16,9 +16,12 @@ import java.util.UUID;
 @Entity
 @EntityListeners(AuditingEntityListener.class)
 public class Comment extends Identifiable {
+    @Lob
     private String contents;
     private UUID userUuid;
     private UUID petUuid;
+
+    @Enumerated(value = EnumType.STRING)
     private State state;
 
     @CreatedDate
