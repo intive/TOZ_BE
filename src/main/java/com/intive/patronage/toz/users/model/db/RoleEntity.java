@@ -26,4 +26,11 @@ public class RoleEntity implements Serializable {
     public RoleEntity(String role) {
         this.role = User.Role.valueOf(role);
     }
+
+    @Override
+    public String toString() {
+        return "RoleEntity{" +
+                "role=" + role +
+                '}';
+    }
 }

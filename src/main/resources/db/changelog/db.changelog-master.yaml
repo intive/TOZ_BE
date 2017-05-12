@@ -201,7 +201,7 @@ databaseChangeLog:
                     - nullable: false
               - column:
                   name: create_date
-                  type: date
+                  type: datetime
               - column:
                   name: path
                   type: varchar(255)
