@@ -12,7 +12,9 @@ import org.springframework.test.context.junit4.SpringRunner;
 
 import java.security.SecureRandom;
 
-import static org.junit.Assert.*;
+import static org.assertj.core.api.Assertions.assertThat;
+import static org.junit.Assert.assertFalse;
+import static org.junit.Assert.assertTrue;
 import static org.mockito.Mockito.when;
 
 @RunWith(SpringRunner.class)
@@ -60,6 +62,6 @@ public class TokensServiceTest {
 
         final String token = tokensService.getToken(user);
 
-        assertEquals(token, VALID_TOKEN);
+        assertThat(token).isEqualTo(VALID_TOKEN);
     }
 }

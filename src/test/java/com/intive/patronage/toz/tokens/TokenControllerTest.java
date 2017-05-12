@@ -27,10 +27,9 @@ import java.util.stream.Collectors;
 
 import static com.intive.patronage.toz.config.ApiUrl.ACQUIRE_TOKEN_PATH;
 import static com.intive.patronage.toz.config.ApiUrl.TOKENS_PATH;
+import static org.assertj.core.api.Assertions.assertThat;
 import static org.hamcrest.CoreMatchers.is;
 import static org.hamcrest.CoreMatchers.notNullValue;
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertTrue;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
@@ -39,8 +38,10 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 @AutoConfigureMockMvc
 @SpringBootTest
 @TestPropertySource(
-        properties = {ApiProperties.JWT_SECRET_BASE64,
-                ApiProperties.SUPER_ADMIN_PASSWORD}
+        properties = {
+                ApiProperties.JWT_SECRET_BASE64,
+                ApiProperties.SUPER_ADMIN_PASSWORD
+        }
 )
 @ActiveProfiles("test")
 public class TokenControllerTest {
@@ -128,7 +129,7 @@ public class TokenControllerTest {
                 .map(User.Role::name)
                 .collect(Collectors.toList());
 
-        MvcResult result = mockMvc.perform(post(ACQUIRE_TOKEN_PATH)
+        final MvcResult result = mockMvc.perform(post(ACQUIRE_TOKEN_PATH)
                 .contentType(CONTENT_TYPE)
                 .content(ModelMapper.convertToJsonString(credentialsView)))
                 .andExpect(content().contentType(CONTENT_TYPE))
@@ -139,15 +140,19 @@ public class TokenControllerTest {
                 .andExpect(jsonPath("jwt", notNullValue()))
                 .andReturn();
 
-        String response = result.getResponse().getContentAsString();
+        final String response = result.getResponse().getContentAsString();
         final int tokenBeginIndex = response.lastIndexOf("jwt") + "jwt\":\"".length();
         final int tokenEndIndex = response.length() - 2;
-        String token = response.substring(tokenBeginIndex, tokenEndIndex);
+        final String token = response.substring(tokenBeginIndex, tokenEndIndex);
 
         jwtParser.parse(token);
-        assertEquals(jwtParser.getUserId(), user.getId());
-        assertEquals(jwtParser.getEmail(), user.getEmail());
-        assertTrue(jwtParser.getScopes().contains(ROLE_ADMIN.toString()));
+        assertThat(jwtParser.getUserId())
+                .isEqualTo(user.getId());
+        assertThat(jwtParser.getEmail())
+                .isEqualTo(user.getEmail());
+        assertThat(jwtParser.getScopes())
+                .hasSize(1)
+                .containsExactly(ROLE_ADMIN.toString());
     }
 
     @Profile("dev")
