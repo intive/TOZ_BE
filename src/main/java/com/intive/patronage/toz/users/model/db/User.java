@@ -1,15 +1,13 @@
 package com.intive.patronage.toz.users.model.db;
 
+import com.google.common.collect.Lists;
 import com.intive.patronage.toz.base.model.Identifiable;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 
 import javax.persistence.*;
-import java.util.Date;
-import java.util.HashSet;
-import java.util.List;
-import java.util.Set;
+import java.util.*;
 import java.util.stream.Collectors;
 
 @Getter
@@ -66,5 +64,17 @@ public class User extends Identifiable {
 
     public enum Role {
         SA, TOZ, VOLUNTEER, ANONYMOUS
+    }
+
+    @Override
+    public String toString() {
+        return "User{" +
+                "name='" + name + '\'' +
+                ", surname='" + surname + '\'' +
+                ", phoneNumber='" + phoneNumber + '\'' +
+                ", email='" + email + '\'' +
+                ", passwordChangeDate=" + passwordChangeDate +
+                ", roles=" + roles +
+                '}';
     }
 }
