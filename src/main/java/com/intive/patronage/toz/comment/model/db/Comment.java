@@ -19,6 +19,7 @@ public class Comment extends Identifiable {
     private String contents;
     private UUID userUuid;
     private UUID petUuid;
+    private State state;
 
     @CreatedDate
     @Column(updatable = false)
@@ -29,4 +30,8 @@ public class Comment extends Identifiable {
     @Column(insertable = false)
     @Temporal(TemporalType.TIMESTAMP)
     private Date lastModified;
+
+    public enum State {
+        ACTIVE, DELETED
+    }
 }

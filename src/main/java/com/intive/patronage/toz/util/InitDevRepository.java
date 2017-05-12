@@ -98,6 +98,8 @@ class InitDevRepository {
     private static Comment createCommentWithValue(int value) {
         Comment comment = new Comment();
         comment.setContents(String.format("contents_%s", value));
+        Comment.State[] commentStates = Comment.State.values();
+        comment.setState(commentStates[value % commentStates.length]);
         comment.setUserUuid(UUID.randomUUID());
         comment.setPetUuid(UUID.randomUUID());
         return comment;
