@@ -23,12 +23,16 @@ class NewsService {
         this.newsRepository = newsRepository;
     }
 
-    List<News> findAllNews(String type, Boolean shortened) {
+    List<News> findAllNews(String type, Boolean shortened, Boolean ordered) {
         List<News> newsList;
-        if (type == null) {
-            newsList = newsRepository.findAll();
-        } else if (EnumUtils.isValidEnum(News.Type.class, type)) {
+        if (EnumUtils.isValidEnum(News.Type.class, type) && ordered) {
+            newsList = newsRepository.findByTypeOrderByCreatedDesc(News.Type.valueOf(type));
+        } else if (EnumUtils.isValidEnum(News.Type.class, type) && !ordered) {
             newsList = newsRepository.findByType(News.Type.valueOf(type));
+        } else if (type == null && ordered) {
+            newsList = newsRepository.findAllByOrderByCreatedDesc();
+        } else if (type == null && !ordered) {
+            newsList = newsRepository.findAll();
         } else {
             throw new WrongEnumValueException(News.Type.class);
         }

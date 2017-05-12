@@ -47,12 +47,14 @@ class NewsController {
             @ApiParam(allowableValues = "ARCHIVED, RELEASED, UNRELEASED")
             @RequestParam(value = "type", required = false) String type,
             @RequestParam(value = "shortened", required = false, defaultValue = "false")
-                    Boolean shortened) {
+                    Boolean shortened,
+            @RequestParam(value = "ordered", required = false, defaultValue = "false")
+                    Boolean ordered) {
         if (RolesChecker.hasCurrentUserAdminRole()) {
-            final List<News> newsList = newsService.findAllNews(type, shortened);
+            final List<News> newsList = newsService.findAllNews(type, shortened, ordered);
             return ResponseEntity.ok().body(ModelMapper.convertToView(newsList, NewsView.class));
         }
-        final List<News> newsList = newsService.findAllNews(DEFAULT_TYPE, shortened);
+        final List<News> newsList = newsService.findAllNews(DEFAULT_TYPE, shortened, ordered);
         return ResponseEntity.ok().body(ModelMapper.convertToView(newsList, NewsView.class));
     }
 

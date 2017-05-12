@@ -44,6 +44,7 @@ public class NewsControllerTest {
             "new dog. His name is Reksio, he is two years old ";
     private static final String DEFAULT_TYPE = News.Type.RELEASED.toString();
     private static final String DEFAULT_TYPE_AS_STRING = "RELEASED";
+    private static final Boolean DEFAULT_ORDERED = false;
     private static final MediaType CONTENT_TYPE = MediaType.APPLICATION_JSON_UTF8;
 
     @Mock
@@ -69,7 +70,7 @@ public class NewsControllerTest {
     @Test
     public void getAllNews() throws Exception {
         final List<News> newsList = getNewsList(DEFAULT_TYPE_AS_STRING, DEFAULT_SHORTENED);
-        when(newsService.findAllNews(DEFAULT_TYPE, DEFAULT_SHORTENED)).thenReturn(newsList);
+        when(newsService.findAllNews(DEFAULT_TYPE, DEFAULT_SHORTENED, DEFAULT_ORDERED)).thenReturn(newsList);
 
         mvc.perform(get(ApiUrl.NEWS_PATH))
                 .andExpect(status().isOk())
@@ -78,14 +79,14 @@ public class NewsControllerTest {
                 .andExpect(jsonPath("$", hasSize(NEWS_LIST_SIZE)));
 
         verify(newsService, times(1)).
-                findAllNews(DEFAULT_TYPE, DEFAULT_SHORTENED);
+                findAllNews(DEFAULT_TYPE, DEFAULT_SHORTENED, DEFAULT_ORDERED);
         verifyNoMoreInteractions(newsService);
     }
 
     @Test
     public void getAllNewsByType() throws Exception {
         final List<News> newsList = getNewsList(DEFAULT_TYPE, DEFAULT_SHORTENED);
-        when(newsService.findAllNews(DEFAULT_TYPE, DEFAULT_SHORTENED)).thenReturn(newsList);
+        when(newsService.findAllNews(DEFAULT_TYPE, DEFAULT_SHORTENED, DEFAULT_ORDERED)).thenReturn(newsList);
 
         mvc.perform(get(ApiUrl.NEWS_PATH).param("type", DEFAULT_TYPE))
                 .andExpect(status().isOk())
@@ -95,14 +96,14 @@ public class NewsControllerTest {
                 .andExpect(jsonPath("$", hasSize(NEWS_LIST_SIZE)));
 
         verify(newsService, times(1)).
-                findAllNews(DEFAULT_TYPE, DEFAULT_SHORTENED);
+                findAllNews(DEFAULT_TYPE, DEFAULT_SHORTENED, DEFAULT_ORDERED);
         verifyNoMoreInteractions(newsService);
     }
 
     @Test
     public void getAllNewsShortened() throws Exception {
         final List<News> newsList = getNewsList(DEFAULT_TYPE_AS_STRING, SHORTENED_FOR_TEST);
-        when(newsService.findAllNews(DEFAULT_TYPE, SHORTENED_FOR_TEST)).thenReturn(newsList);
+        when(newsService.findAllNews(DEFAULT_TYPE, SHORTENED_FOR_TEST, DEFAULT_ORDERED)).thenReturn(newsList);
 
         mvc.perform(get(ApiUrl.NEWS_PATH).param("shortened", SHORTENED_FOR_TEST.toString()))
                 .andExpect(status().isOk())
@@ -112,7 +113,7 @@ public class NewsControllerTest {
                 .andExpect(jsonPath("$", hasSize(NEWS_LIST_SIZE)));
 
         verify(newsService, times(1)).
-                findAllNews(DEFAULT_TYPE, SHORTENED_FOR_TEST);
+                findAllNews(DEFAULT_TYPE, SHORTENED_FOR_TEST, DEFAULT_ORDERED);
         verifyNoMoreInteractions(newsService);
     }
 
