@@ -9,15 +9,15 @@ import java.util.UUID;
 
 public class UserDataProvider {
 
-    public static final UUID EXPECTED_ID = UUID.randomUUID();
-    public static final String EXPECTED_NAME = "Johny";
-    public static final String EXPECTED_SURNAME = "Bravo";
-    public static final String EXPECTED_PHONE_NUMBER = "111222333";
-    public static final String EXPECTED_EMAIL = "johny.bravo@gmail.com";
-    public static final User.Role TOZ_ROLE = User.Role.TOZ;
     static final int USERS_LIST_SIZE = 5;
-    static final String EXPECTED_PASSWORD_HASH = "a7sd6a7sd67asd";
+    static final UUID EXPECTED_ID = UUID.randomUUID();
+    static final String EXPECTED_NAME = "Johny";
     static final String EXPECTED_PASSWORD = "johnyPassword";
+    static final String EXPECTED_PASSWORD_HASH = "a7sd6a7sd67asd";
+    static final String EXPECTED_SURNAME = "Bravo";
+    static final String EXPECTED_PHONE_NUMBER = "111222333";
+    static final String EXPECTED_EMAIL = "johny.bravo@gmail.com";
+    static final User.Role TOZ_ROLE = User.Role.TOZ;
     static final MediaType JSON_CONTENT_TYPE = MediaType.APPLICATION_JSON_UTF8;
 
     @DataProvider

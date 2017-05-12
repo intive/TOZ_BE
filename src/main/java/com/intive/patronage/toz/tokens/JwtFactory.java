@@ -20,7 +20,7 @@ public class JwtFactory {
     private final long expirationTime;
     private final String secret;
 
-    JwtFactory(@Value("${jwt.expiration-time-minutes}") long expirationTime,
+    public JwtFactory(@Value("${jwt.expiration-time-minutes}") long expirationTime,
                @Value("${jwt.secret-base64}") String secret) {
         this.expirationTime = expirationTime;
         this.secret = secret;
