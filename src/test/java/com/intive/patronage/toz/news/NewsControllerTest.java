@@ -28,7 +28,6 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 
 @RunWith(DataProviderRunner.class)
 @SpringBootTest(
-        webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT,
         properties = "jwt.secret-base64=c2VjcmV0"
 )
 public class NewsControllerTest {
