@@ -9,7 +9,7 @@ buildscript {
     dependencies {
         classpath "org.springframework.boot:spring-boot-gradle-plugin:${springBootVersion}"
         classpath 'com.bmuschko:gradle-docker-plugin:3.0.6'
-        classpath 'org.hidetake:gradle-ssh-plugin:2.8.0'
+        classpath 'org.hidetake:gradle-ssh-plugin:2.9.0'
     }
 }
 
@@ -66,7 +66,9 @@ remotes {
     openstack {
         host = 'patronage'
         user = 'debian'
-        identity = file('/home/mlo/.ssh/id_rsa')
+        agent = true
+        identity = file("${System.properties['user.home']}/.ssh/id_rsa")
+        knownHosts = addHostKey(file("${System.properties['user.home']}/.ssh/known_hosts"))
     }
 }
 
