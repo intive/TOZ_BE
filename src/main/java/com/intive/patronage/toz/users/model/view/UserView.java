@@ -3,7 +3,7 @@ package com.intive.patronage.toz.users.model.view;
 import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import com.intive.patronage.toz.base.model.IdentifiableView;
-import com.intive.patronage.toz.users.model.db.User;
+import com.intive.patronage.toz.users.model.db.Role;
 import com.intive.patronage.toz.util.validation.Phone;
 import io.swagger.annotations.ApiModel;
 import io.swagger.annotations.ApiModelProperty;
@@ -52,7 +52,7 @@ public class UserView extends IdentifiableView {
     private Date passwordChangeDate;
 
     @NotEmpty
-    private Set<User.Role> roles = new HashSet<>();
+    private Set<Role> roles = new HashSet<>();
 
     public void setName(String name) {
         if (name != null) {
@@ -72,7 +72,7 @@ public class UserView extends IdentifiableView {
         }
     }
 
-    public void addRole(User.Role role) {
+    public void addRole(Role role) {
         roles.add(role);
     }
 }

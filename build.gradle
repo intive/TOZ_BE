@@ -84,6 +84,10 @@ task deploy {
     }
 }
 
+test {
+    testLogging.showStandardStreams = true
+}
+
 dependencies {
     compile("org.springframework.boot:spring-boot-starter-web") {
         exclude module: "spring-boot-starter-tomcat"
@@ -94,16 +98,15 @@ dependencies {
     compile 'org.springframework.boot:spring-boot-starter-data-jpa'
     compile 'org.springframework.boot:spring-boot-starter-mail'
     compile 'org.springframework.boot:spring-boot-starter-security'
-    compile 'org.liquibase:liquibase-core'
-    compile 'org.projectlombok:lombok'
     compile 'com.fasterxml.jackson.datatype:jackson-datatype-jsr310'
-    compile 'io.jsonwebtoken:jjwt:0.7.0'
     compile 'org.apache.commons:commons-lang3:3.5'
-    compile 'org.assertj:assertj-joda-time:2.0.0'
+    compile 'org.liquibase:liquibase-core'
+    compile 'io.jsonwebtoken:jjwt:0.7.0'
+    compile 'org.projectlombok:lombok'
 
     compile 'io.springfox:springfox-swagger2:2.6.1'
     compile 'io.springfox:springfox-swagger-ui:2.6.1'
-    
+
     compile 'com.github.jknack:handlebars:4.0.6'
     compile 'com.github.jknack:handlebars-guava-cache:4.0.6'
     compile group: 'com.github.jknack', name: 'handlebars-jackson2', version: '4.0.6'
@@ -111,9 +114,11 @@ dependencies {
     compile project(':iban-validator')
 
     testCompile 'org.springframework.boot:spring-boot-starter-test'
-    testCompile 'com.tngtech.java:junit-dataprovider:1.12.0'
     testCompile 'org.springframework.security:spring-security-test:4.0.0.RELEASE'
+    testCompile 'com.tngtech.java:junit-dataprovider:1.12.0'
+    testCompile 'org.assertj:assertj-joda-time:2.0.0'
 
+    compile "com.zaxxer:HikariCP:2.4.6"
     runtime 'org.springframework.boot:spring-boot-devtools'
     runtime 'com.h2database:h2'
     runtime 'org.postgresql:postgresql'

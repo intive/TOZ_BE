@@ -2,7 +2,7 @@ package com.intive.patronage.toz.tokens.auth;
 
 import com.intive.patronage.toz.tokens.JwtParser;
 import com.intive.patronage.toz.tokens.model.UserContext;
-import com.intive.patronage.toz.users.model.db.User;
+import com.intive.patronage.toz.users.model.db.Role;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.authentication.AuthenticationProvider;
 import org.springframework.security.core.Authentication;
@@ -31,7 +31,7 @@ class JwtAuthenticationProvider implements AuthenticationProvider {
         final String token = (String) authentication.getCredentials();
 
         if (token == null) {
-            List<GrantedAuthority> authorities = Collections.singletonList(User.Role.ANONYMOUS);
+            List<GrantedAuthority> authorities = Collections.singletonList(Role.ANONYMOUS);
             return new JwtAuthenticationToken(null, authorities);
         }
 
@@ -41,7 +41,7 @@ class JwtAuthenticationProvider implements AuthenticationProvider {
         final List<String> scopes = jwtParser.getScopes();
 
         final Set<GrantedAuthority> authorities = scopes.stream()
-                .map(User.Role::valueOf)
+                .map(Role::valueOf)
                 .collect(Collectors.toSet());
 
         final UserContext userContext = new UserContext(userID, email, authorities);

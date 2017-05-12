@@ -13,10 +13,10 @@ public class RoleTest {
 
     @Test
     public void getAuthority() {
-        assertThat(User.Role.SA.getAuthority()).isEqualTo(SA);
-        assertThat(User.Role.TOZ.getAuthority()).isEqualTo(TOZ);
-        assertThat(User.Role.VOLUNTEER.getAuthority()).isEqualTo(VOLUNTEER);
-        assertThat(User.Role.ANONYMOUS.getAuthority()).isEqualTo(ANONYMOUS);
+        assertThat(Role.SA.getAuthority()).isEqualTo(SA);
+        assertThat(Role.TOZ.getAuthority()).isEqualTo(TOZ);
+        assertThat(Role.VOLUNTEER.getAuthority()).isEqualTo(VOLUNTEER);
+        assertThat(Role.ANONYMOUS.getAuthority()).isEqualTo(ANONYMOUS);
     }
 
 }

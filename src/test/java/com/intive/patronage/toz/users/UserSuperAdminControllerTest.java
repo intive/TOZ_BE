@@ -2,6 +2,7 @@ package com.intive.patronage.toz.users;
 
 import com.intive.patronage.toz.config.ApiUrl;
 import com.intive.patronage.toz.environment.ApiProperties;
+import com.intive.patronage.toz.users.model.db.Role;
 import com.intive.patronage.toz.users.model.db.User;
 import com.intive.patronage.toz.users.model.view.UserView;
 import com.intive.patronage.toz.util.ModelMapper;
@@ -59,7 +60,7 @@ public class UserSuperAdminControllerTest {
             user.setSurname(String.format("%s_%d", "surname", i));
             user.setPhoneNumber(String.format("%s_%d", "phone number", i));
             user.setEmail(String.format("%s_%d", "email", i));
-            user.addRole(User.Role.values()[i % 2]);
+            user.addRole(Role.values()[i % 2]);
             users.add(user);
         }
         return users;

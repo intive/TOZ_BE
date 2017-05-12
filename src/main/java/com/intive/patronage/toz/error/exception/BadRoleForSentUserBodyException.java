@@ -1,16 +1,16 @@
 package com.intive.patronage.toz.error.exception;
 
-import com.intive.patronage.toz.users.model.db.User;
+import com.intive.patronage.toz.users.model.db.Role;
 
 public class BadRoleForSentUserBodyException extends RuntimeException {
 
-    private final User.Role userRole;
+    private final Role userRole;
 
-    public BadRoleForSentUserBodyException(User.Role userRole) {
+    public BadRoleForSentUserBodyException(Role userRole) {
         this.userRole = userRole;
     }
 
-    public User.Role getUserRole() {
+    public Role getUserRole() {
         return userRole;
     }
 }

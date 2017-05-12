@@ -1,5 +1,6 @@
 package com.intive.patronage.toz.util;
 
+import com.intive.patronage.toz.users.model.db.Role;
 import com.intive.patronage.toz.users.model.db.User;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.GrantedAuthority;
@@ -14,10 +15,10 @@ public final class RolesChecker {
     }
 
     public static boolean hasCurrentUserAdminRole() {
-        return checkCurrentUserRole(User.Role.SA) || checkCurrentUserRole(User.Role.TOZ);
+        return checkCurrentUserRole(Role.SA) || checkCurrentUserRole(Role.TOZ);
     }
 
-    private static boolean checkCurrentUserRole(final User.Role role) {
+    private static boolean checkCurrentUserRole(final Role role) {
         Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
         if (authentication == null) {
             return false;
@@ -27,7 +28,7 @@ public final class RolesChecker {
     }
 
     public static boolean hasUserSuperAdminRole(final User user) {
-        Set<User.Role> userRoles = user.getRoles();
-        return userRoles.contains(User.Role.SA);
+        Set<Role> userRoles = user.getRoles();
+        return userRoles.contains(Role.SA);
     }
 }

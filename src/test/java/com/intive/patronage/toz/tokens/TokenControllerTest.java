@@ -3,6 +3,7 @@ package com.intive.patronage.toz.tokens;
 import com.intive.patronage.toz.environment.ApiProperties;
 import com.intive.patronage.toz.tokens.model.view.UserCredentialsView;
 import com.intive.patronage.toz.users.UserService;
+import com.intive.patronage.toz.users.model.db.Role;
 import com.intive.patronage.toz.users.model.db.User;
 import com.intive.patronage.toz.util.ModelMapper;
 import org.junit.After;
@@ -49,7 +50,7 @@ public class TokenControllerTest {
     static final String EMAIL = "user@mail.com";
     static final String AUTHORIZATION_HEADER = "Authorization";
     static final String TOKEN_PREFIX = "Bearer ";
-    static final User.Role ROLE_ADMIN = User.Role.TOZ;
+    static final Role ROLE_ADMIN = Role.TOZ;
     private static final String PASSWORD = "Password";
     private static final MediaType CONTENT_TYPE = MediaType.APPLICATION_JSON_UTF8;
 
@@ -126,7 +127,7 @@ public class TokenControllerTest {
     @Test
     public void shouldReturnValidToken() throws Exception {
         final List<String> userRoles = user.getRoles().stream()
-                .map(User.Role::name)
+                .map(Role::name)
                 .collect(Collectors.toList());
 
         final MvcResult result = mockMvc.perform(post(ACQUIRE_TOKEN_PATH)
