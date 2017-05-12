@@ -12,7 +12,9 @@ import org.springframework.test.context.junit4.SpringRunner;
 
 import java.security.SecureRandom;
 
-import static org.junit.Assert.*;
+import static org.assertj.core.api.Assertions.assertThat;
+import static org.junit.Assert.assertFalse;
+import static org.junit.Assert.assertTrue;
 import static org.mockito.Mockito.when;
 
 @RunWith(SpringRunner.class)
@@ -22,6 +24,7 @@ public class TokensServiceTest {
     private static final String CORRECT_PASSWORD = "123456";
     private static final String WRONG_PASSWORD = "WrongPa55word";
     private static final String VALID_TOKEN = "valid.token.1234";
+    private static final long EXPIRATION_TIME = 5;
 
     @Mock
     private JwtFactory jwtFactory;
@@ -37,7 +40,7 @@ public class TokensServiceTest {
         random.nextBytes(new byte[20]);
         PasswordEncoder passwordEncoder = new BCryptPasswordEncoder(10, random);
 
-        tokensService = new TokensService(passwordEncoder, jwtFactory);
+        tokensService = new TokensService(EXPIRATION_TIME, passwordEncoder, jwtFactory);
 
         user = new User();
         user.setEmail(EMAIL);
@@ -56,10 +59,10 @@ public class TokensServiceTest {
 
     @Test
     public void shouldReturnToken() throws Exception {
-        when(jwtFactory.generateToken(user)).thenReturn(VALID_TOKEN);
+        when(jwtFactory.generateToken(user, EXPIRATION_TIME)).thenReturn(VALID_TOKEN);
 
         final String token = tokensService.getToken(user);
 
-        assertEquals(token, VALID_TOKEN);
+        assertThat(token).isEqualTo(VALID_TOKEN);
     }
 }

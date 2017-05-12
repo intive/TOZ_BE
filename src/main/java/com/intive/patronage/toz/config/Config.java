@@ -33,6 +33,7 @@ import java.lang.reflect.Method;
 import java.security.SecureRandom;
 import java.time.LocalTime;
 import java.util.Collections;
+import java.util.Date;
 
 @EnableWebMvc
 @Configuration
@@ -88,6 +89,7 @@ class Config extends WebMvcConfigurerAdapter {
                 .build()
                 .apiInfo(apiInfo())
                 .directModelSubstitute(LocalTime.class, String.class)
+                .directModelSubstitute(Date.class, Long.class)
                 .genericModelSubstitutes(ResponseEntity.class)
                 .securitySchemes(Collections.singletonList(apiKey()));
     }

@@ -2,6 +2,7 @@ package com.intive.patronage.toz.news;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.intive.patronage.toz.config.ApiUrl;
+import com.intive.patronage.toz.environment.ApiProperties;
 import com.intive.patronage.toz.news.model.db.News;
 import com.tngtech.java.junit.dataprovider.DataProvider;
 import com.tngtech.java.junit.dataprovider.DataProviderRunner;
@@ -28,7 +29,7 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 
 @RunWith(DataProviderRunner.class)
 @SpringBootTest(
-        properties = "jwt.secret-base64=c2VjcmV0"
+        properties = ApiProperties.JWT_SECRET_BASE64
 )
 public class NewsControllerTest {
     private static final int NEWS_LIST_SIZE = 5;
@@ -49,12 +50,6 @@ public class NewsControllerTest {
     private NewsService newsService;
     private MockMvc mvc;
 
-    @Before
-    public void setUp() throws Exception {
-        MockitoAnnotations.initMocks(this);
-        mvc = MockMvcBuilders.standaloneSetup(new NewsController(newsService)).build();
-    }
-
     @DataProvider
     public static Object[] getProperNews() {
         News news = new News();
@@ -63,6 +58,12 @@ public class NewsControllerTest {
         news.setContents(EXPECTED_CONTENTS);
         news.setType(News.Type.valueOf(EXPECTED_TYPE));
         return new News[]{news};
+    }
+
+    @Before
+    public void setUp() throws Exception {
+        MockitoAnnotations.initMocks(this);
+        mvc = MockMvcBuilders.standaloneSetup(new NewsController(newsService)).build();
     }
 
     @Test

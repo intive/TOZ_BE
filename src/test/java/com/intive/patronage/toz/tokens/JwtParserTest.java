@@ -13,8 +13,7 @@ import java.util.List;
 import java.util.Locale;
 import java.util.stream.Collectors;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertTrue;
+import static org.assertj.core.api.Assertions.assertThat;
 import static org.mockito.Matchers.any;
 import static org.mockito.Matchers.eq;
 import static org.mockito.Mockito.when;
@@ -47,8 +46,8 @@ public class JwtParserTest {
 
     @Test
     public void shouldThrowExceptionWhenWrongSecret() throws Exception {
-        final JwtFactory jwtFactory = new JwtFactory(EXPIRATION_TIME, "wrongSecret");
-        final String badToken = jwtFactory.generateToken(user);
+        final JwtFactory jwtFactory = new JwtFactory("wrongSecret");
+        final String badToken = jwtFactory.generateToken(user, EXPIRATION_TIME);
 
         when(messageSource.getMessage(eq("invalidSignature"), any(), any(Locale.class)))
                 .thenReturn(INVALID_SIGNATURE_MESSAGE);
@@ -56,14 +55,15 @@ public class JwtParserTest {
         try {
             jwtParser.parse(badToken);
         } catch (JwtAuthenticationException e) {
-            assertEquals(e.getMessage(), INVALID_SIGNATURE_MESSAGE);
+            assertThat(e.getMessage())
+                    .isEqualTo(INVALID_SIGNATURE_MESSAGE);
         }
     }
 
     @Test
     public void shouldThrowExceptionWhenTokenExpired() throws Exception {
-        final JwtFactory jwtFactory = new JwtFactory(-5, SECRET);
-        final String expiredToken = jwtFactory.generateToken(user);
+        final JwtFactory jwtFactory = new JwtFactory(SECRET);
+        final String expiredToken = jwtFactory.generateToken(user, -5);
 
         when(messageSource.getMessage(eq("tokenExpired"), any(), any(Locale.class)))
                 .thenReturn(EXPIRED_TOKEN_MESSAGE);
@@ -71,7 +71,8 @@ public class JwtParserTest {
         try {
             jwtParser.parse(expiredToken);
         } catch (JwtAuthenticationException e) {
-            assertEquals(e.getMessage(), EXPIRED_TOKEN_MESSAGE);
+            assertThat(e.getMessage())
+                    .isEqualTo(EXPIRED_TOKEN_MESSAGE);
         }
     }
 
@@ -85,22 +86,29 @@ public class JwtParserTest {
         try {
             jwtParser.parse(invalidToken);
         } catch (JwtAuthenticationException e) {
-            assertEquals(e.getMessage(), INVALID_TOKEN_MESSAGE);
+            assertThat(e.getMessage())
+                    .isEqualTo(INVALID_TOKEN_MESSAGE);
         }
     }
 
     @Test
     public void shouldReturnValidToken() throws Exception {
-        final JwtFactory jwtFactory = new JwtFactory(EXPIRATION_TIME, SECRET);
-        final String token = jwtFactory.generateToken(user);
-
-        jwtParser.parse(token);
-
-        assertEquals(jwtParser.getUserId(), user.getId());
-        assertEquals(jwtParser.getEmail(), user.getEmail());
+        final JwtFactory jwtFactory = new JwtFactory(SECRET);
+        final String token = jwtFactory.generateToken(user, EXPIRATION_TIME);
         final List<String> userRoles = user.getRoles().stream()
                 .map(User.Role::name)
                 .collect(Collectors.toList());
-        assertTrue(jwtParser.getScopes().containsAll(userRoles));
+
+        jwtParser.parse(token);
+
+        assertThat(jwtParser.getUserId())
+                .isEqualTo(user.getId());
+        assertThat(jwtParser.getEmail())
+                .isEqualTo(user.getEmail());
+        assertThat(jwtParser.getTokenExpirationDate())
+                .isInTheFuture();
+        assertThat(jwtParser.getScopes())
+                .hasSize(1)
+                .containsAll(userRoles);
     }
 }

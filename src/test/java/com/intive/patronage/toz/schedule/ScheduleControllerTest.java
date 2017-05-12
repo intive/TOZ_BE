@@ -3,6 +3,7 @@ package com.intive.patronage.toz.schedule;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.datatype.jsr310.JavaTimeModule;
 import com.fasterxml.jackson.datatype.jsr310.deser.LocalDateTimeDeserializer;
+import com.intive.patronage.toz.environment.ApiProperties;
 import com.intive.patronage.toz.schedule.model.view.ReservationRequestView;
 import com.intive.patronage.toz.schedule.model.view.ReservationResponseView;
 import com.intive.patronage.toz.schedule.util.ScheduleParser;
@@ -35,7 +36,7 @@ import static org.springframework.test.web.servlet.request.MockMvcRequestBuilder
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
 @SpringBootTest(
-        properties = "jwt.secret-base64=c2VjcmV0"
+        properties = ApiProperties.JWT_SECRET_BASE64
 )
 @RunWith(DataProviderRunner.class)
 public class ScheduleControllerTest {
