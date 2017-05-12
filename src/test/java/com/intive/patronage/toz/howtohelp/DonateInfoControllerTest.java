@@ -6,11 +6,9 @@ import com.intive.patronage.toz.howtohelp.model.db.HelpInfo;
 import com.intive.patronage.toz.howtohelp.model.enumeration.HelpInfoType;
 import org.junit.Before;
 import org.junit.Test;
-import org.junit.runner.RunWith;
 import org.mockito.Mock;
 import org.mockito.MockitoAnnotations;
 import org.springframework.http.MediaType;
-import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.setup.MockMvcBuilders;
 
@@ -23,7 +21,6 @@ import static org.mockito.Mockito.when;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
 
-@RunWith(SpringJUnit4ClassRunner.class)
 public class DonateInfoControllerTest {
 
     private final static HelpInfoType INFO_TYPE = HOW_TO_DONATE;
