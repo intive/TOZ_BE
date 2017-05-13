@@ -17,25 +17,31 @@ abstract class HelpInfoService {
     }
 
     HelpInfo findHelpInfo() {
-        if (!helpInfoRepository.exists(helpInfoType)) {
-            throw new NotFoundException(HOW_TO_HELP_INFO);
-        }
+        throwNotFoundIfDoesntExist(helpInfoType);
         return helpInfoRepository.findOne(helpInfoType);
     }
 
     HelpInfo createHelpInfo(final HelpInfo helpInfo) {
+        throwAlreadyExistsIfFound(helpInfoType);
         helpInfo.setId(helpInfoType);
-        if (helpInfoRepository.exists(helpInfoType)) {
-            throw new AlreadyExistsException(HOW_TO_HELP_INFO);
-        }
         return helpInfoRepository.save(helpInfo);
     }
 
     HelpInfo updateHelpInfo(final HelpInfo updatedHelpInfo) {
+        throwNotFoundIfDoesntExist(helpInfoType);
         updatedHelpInfo.setId(helpInfoType);
-        if (!helpInfoRepository.exists(helpInfoType)) {
+        return helpInfoRepository.save(updatedHelpInfo);
+    }
+
+    private void throwNotFoundIfDoesntExist(HelpInfoType id) {
+        if (!helpInfoRepository.exists(id)) {
             throw new NotFoundException(HOW_TO_HELP_INFO);
         }
-        return helpInfoRepository.save(updatedHelpInfo);
+    }
+
+    private void throwAlreadyExistsIfFound(HelpInfoType id) {
+        if (helpInfoRepository.exists(helpInfoType)) {
+            throw new AlreadyExistsException(HOW_TO_HELP_INFO);
+        }
     }
 }

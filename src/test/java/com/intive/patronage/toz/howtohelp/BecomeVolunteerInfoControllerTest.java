@@ -1,9 +1,9 @@
 package com.intive.patronage.toz.howtohelp;
 
-import com.fasterxml.jackson.databind.ObjectMapper;
 import com.intive.patronage.toz.config.ApiUrl;
 import com.intive.patronage.toz.howtohelp.model.db.HelpInfo;
 import com.intive.patronage.toz.howtohelp.model.enumeration.HelpInfoType;
+import com.intive.patronage.toz.util.ModelMapper;
 import org.junit.Before;
 import org.junit.Test;
 import org.mockito.Mock;
@@ -24,18 +24,17 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 
 public class BecomeVolunteerInfoControllerTest {
 
-    private final static HelpInfoType INFO_TYPE = HOW_TO_BECOME_VOLUNTEER;
+    private static final HelpInfoType INFO_TYPE = HOW_TO_BECOME_VOLUNTEER;
 
     @Mock
     private BecomeVolunteerInfoService becomeVolunteerInfoService;
     private MockMvc mvc;
-    private HelpInfo helpInfo;
+    private static final HelpInfo helpInfo = new HelpInfo(INFO_TYPE, DESCRIPTION, MODIFICATION_DATE);
 
     @Before
     public void setUp() throws Exception {
         MockitoAnnotations.initMocks(this);
         mvc = MockMvcBuilders.standaloneSetup(new BecomeVolunteerInfoController(becomeVolunteerInfoService)).build();
-        helpInfo = new HelpInfo(INFO_TYPE, DESCRIPTION, MODIFICATION_DATE);
     }
 
     @Test
@@ -54,7 +53,7 @@ public class BecomeVolunteerInfoControllerTest {
 
         mvc.perform(post(ApiUrl.HOW_TO_BECOME_VOLUNTEER_PATH)
                 .contentType(CONTENT_TYPE)
-                .content(new ObjectMapper().writeValueAsString(helpInfo)))
+                .content(ModelMapper.convertToJsonString(helpInfo)))
                 .andExpect(status().isCreated())
                 .andExpect(content().contentType(CONTENT_TYPE))
                 .andExpect(jsonPath(DESCRIPTION_FIELD).value(DESCRIPTION));
@@ -66,7 +65,7 @@ public class BecomeVolunteerInfoControllerTest {
 
         mvc.perform(put(ApiUrl.HOW_TO_BECOME_VOLUNTEER_PATH)
                 .contentType(CONTENT_TYPE)
-                .content(new ObjectMapper().writeValueAsString(helpInfo)))
+                .content(ModelMapper.convertToJsonString(helpInfo)))
                 .andExpect(status().isCreated())
                 .andExpect(content().contentType(CONTENT_TYPE))
                 .andExpect(jsonPath(DESCRIPTION_FIELD).value(DESCRIPTION));

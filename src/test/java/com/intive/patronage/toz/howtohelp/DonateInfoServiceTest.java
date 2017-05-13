@@ -20,20 +20,19 @@ import static org.mockito.Mockito.when;
 
 public class DonateInfoServiceTest {
 
-    private final static HelpInfoType INFO_TYPE = HOW_TO_DONATE;
-    final static Date MODIFICATION_DATE = Date.from(Instant.now());
-    final static String DESCRIPTION = "string";
+    private static final HelpInfoType INFO_TYPE = HOW_TO_DONATE;
+    static final  Date MODIFICATION_DATE = Date.from(Instant.now());
+    static final String DESCRIPTION = "string";
 
     @Mock
     private HelpInfoRepository helpInfoRepository;
     @InjectMocks
     private DonateInfoService donateInfoService;
-    private HelpInfo helpInfo;
+    private static final HelpInfo helpInfo = new HelpInfo(INFO_TYPE, DESCRIPTION, MODIFICATION_DATE);
 
     @Before
     public void setUp() throws Exception {
         MockitoAnnotations.initMocks(this);
-        helpInfo = new HelpInfo(INFO_TYPE, DESCRIPTION, MODIFICATION_DATE);
     }
 
     @Test(expected = NotFoundException.class)

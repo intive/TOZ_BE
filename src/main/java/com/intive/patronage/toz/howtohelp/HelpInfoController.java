@@ -14,7 +14,7 @@ import java.net.URI;
 abstract class HelpInfoController {
 
     private final HelpInfoService helpInfoService;
-    private final ObjectMapper objectMapper = new ObjectMapper();
+    private static final ObjectMapper objectMapper = new ObjectMapper();
 
     HelpInfoController(HelpInfoService helpInfoService) {
         this.helpInfoService = helpInfoService;

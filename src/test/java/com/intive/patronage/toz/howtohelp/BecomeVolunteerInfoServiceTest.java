@@ -19,19 +19,17 @@ import static org.mockito.Mockito.when;
 
 public class BecomeVolunteerInfoServiceTest {
 
-
-    private final static HelpInfoType INFO_TYPE = HOW_TO_BECOME_VOLUNTEER;
+    private static final HelpInfoType INFO_TYPE = HOW_TO_BECOME_VOLUNTEER;
 
     @Mock
     private HelpInfoRepository helpInfoRepository;
     @InjectMocks
     private BecomeVolunteerInfoService becomeVolunteerInfoService;
-    private HelpInfo helpInfo;
+    private static final HelpInfo helpInfo = new HelpInfo(INFO_TYPE, DESCRIPTION, MODIFICATION_DATE);
 
     @Before
     public void setUp() throws Exception {
         MockitoAnnotations.initMocks(this);
-        helpInfo = new HelpInfo(INFO_TYPE, DESCRIPTION, MODIFICATION_DATE);
     }
 
     @Test(expected = NotFoundException.class)

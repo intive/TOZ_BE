@@ -1,9 +1,9 @@
 package com.intive.patronage.toz.howtohelp;
 
-import com.fasterxml.jackson.databind.ObjectMapper;
 import com.intive.patronage.toz.config.ApiUrl;
 import com.intive.patronage.toz.howtohelp.model.db.HelpInfo;
 import com.intive.patronage.toz.howtohelp.model.enumeration.HelpInfoType;
+import com.intive.patronage.toz.util.ModelMapper;
 import org.junit.Before;
 import org.junit.Test;
 import org.mockito.Mock;
@@ -23,20 +23,19 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 
 public class DonateInfoControllerTest {
 
-    private final static HelpInfoType INFO_TYPE = HOW_TO_DONATE;
-    final static MediaType CONTENT_TYPE = MediaType.APPLICATION_JSON_UTF8;
-    final static String DESCRIPTION_FIELD = "howToHelpDescription";
+    private static final HelpInfoType INFO_TYPE = HOW_TO_DONATE;
+    static final MediaType CONTENT_TYPE = MediaType.APPLICATION_JSON_UTF8;
+    static final String DESCRIPTION_FIELD = "howToHelpDescription";
 
     @Mock
     private DonateInfoService donateInfoService;
     private MockMvc mvc;
-    private HelpInfo helpInfo;
+    private static final HelpInfo helpInfo = new HelpInfo(INFO_TYPE, DESCRIPTION, MODIFICATION_DATE);
 
     @Before
     public void setUp() throws Exception {
         MockitoAnnotations.initMocks(this);
         mvc = MockMvcBuilders.standaloneSetup(new DonateInfoController(donateInfoService)).build();
-        helpInfo = new HelpInfo(INFO_TYPE, DESCRIPTION, MODIFICATION_DATE);
     }
 
     @Test
@@ -55,7 +54,7 @@ public class DonateInfoControllerTest {
 
         mvc.perform(post(ApiUrl.HOW_TO_DONATE_PATH)
                 .contentType(CONTENT_TYPE)
-                .content(new ObjectMapper().writeValueAsString(helpInfo)))
+                .content(ModelMapper.convertToJsonString(helpInfo)))
                 .andExpect(status().isCreated())
                 .andExpect(content().contentType(CONTENT_TYPE))
                 .andExpect(jsonPath(DESCRIPTION_FIELD).value(DESCRIPTION));
@@ -67,7 +66,7 @@ public class DonateInfoControllerTest {
 
         mvc.perform(put(ApiUrl.HOW_TO_DONATE_PATH)
                 .contentType(CONTENT_TYPE)
-                .content(new ObjectMapper().writeValueAsString(helpInfo)))
+                .content(ModelMapper.convertToJsonString(helpInfo)))
                 .andExpect(status().isCreated())
                 .andExpect(content().contentType(CONTENT_TYPE))
                 .andExpect(jsonPath(DESCRIPTION_FIELD).value(DESCRIPTION));
