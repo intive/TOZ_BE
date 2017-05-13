@@ -1,4 +1,4 @@
-package com.intive.patronage.toz.howtohelp.model.View;
+package com.intive.patronage.toz.howtohelp.model.view;
 
 import com.fasterxml.jackson.annotation.JsonInclude;
 import io.swagger.annotations.ApiModel;

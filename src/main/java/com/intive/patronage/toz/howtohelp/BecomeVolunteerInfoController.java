@@ -3,7 +3,7 @@ package com.intive.patronage.toz.howtohelp;
 import com.intive.patronage.toz.config.ApiUrl;
 import com.intive.patronage.toz.error.model.ErrorResponse;
 import com.intive.patronage.toz.error.model.ValidationErrorResponse;
-import com.intive.patronage.toz.howtohelp.model.View.HelpInfoView;
+import com.intive.patronage.toz.howtohelp.model.view.HelpInfoView;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 import io.swagger.annotations.ApiResponse;

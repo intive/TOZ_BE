@@ -2,7 +2,7 @@ package com.intive.patronage.toz.howtohelp;
 
 import com.fasterxml.jackson.databind.DeserializationFeature;
 import com.fasterxml.jackson.databind.ObjectMapper;
-import com.intive.patronage.toz.howtohelp.model.View.HelpInfoView;
+import com.intive.patronage.toz.howtohelp.model.view.HelpInfoView;
 import com.intive.patronage.toz.howtohelp.model.db.HelpInfo;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.RequestBody;
