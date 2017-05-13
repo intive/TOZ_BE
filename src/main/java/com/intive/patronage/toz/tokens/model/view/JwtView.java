@@ -7,7 +7,6 @@ import io.swagger.annotations.ApiModelProperty;
 import lombok.Builder;
 import lombok.Getter;
 
-import java.util.Date;
 import java.util.Set;
 import java.util.UUID;
 
@@ -27,12 +26,8 @@ public class JwtView {
     private final String surname;
     @ApiModelProperty(position = 5)
     private final Set<Role> roles;
-    private final Date expirationDate;
+    @ApiModelProperty(example = "1494750569", position = 6)
+    private final Long expirationDate;
     @ApiModelProperty(position = 7)
     private final String jwt;
-
-    @ApiModelProperty(example = "1494750569", position = 6)
-    public Long getExpirationDate() {
-        return expirationDate.toInstant().getEpochSecond();
-    }
 }

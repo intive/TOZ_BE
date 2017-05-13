@@ -28,7 +28,7 @@ public class JwtFactory {
                 .setSubject(user.getId().toString())
                 .claim(EMAIL_CLAIM_NAME, user.getEmail())
                 .claim(SCOPES_CLAIM_NAME, user.getRoles())
-                .setIssuedAt(new Date(Instant.now().toEpochMilli()))
+                .setIssuedAt(new Date())
                 .setExpiration(new Date(Instant.now().plus(expirationTime, ChronoUnit.MINUTES).toEpochMilli()))
                 .signWith(SignatureAlgorithm.HS512, TextCodec.BASE64.decode(secret))
                 .compact();
