@@ -28,12 +28,12 @@ import static org.mockito.Mockito.*;
 @RunWith(DataProviderRunner.class)
 public class CommentServiceTest {
     private static final UUID EXPECTED_ID = UUID.randomUUID();
-    private static final UUID EXPECTED_PET_UUID = UUID.randomUUID();
     private static final UUID DEFAULT_PET_UUID = null;
+    private static final UUID EXPECTED_PET_UUID = UUID.randomUUID();
+    private static final Comment.State DEFAULT_STATE = Comment.State.ACTIVE;
     private static final String EXPECTED_CONTENTS = "Very nice dog!";
     private static final UUID EXPECTED_USER_UUID = UUID.randomUUID();
     private static final Boolean DEFAULT_SHORTENED = false;
-    private static final Boolean DEFAULT_ORDERED = false;
     private static final UserContext USER_CONTEXT = new UserContext(EXPECTED_USER_UUID,
             null, null);
     private Comment comment;
@@ -72,8 +72,8 @@ public class CommentServiceTest {
     public void findAllComments() throws Exception {
         when(commentRepository.findAll()).thenReturn(Collections.emptyList());
 
-        List<Comment> commentList = commentService.findAllComments(DEFAULT_PET_UUID,
-                DEFAULT_SHORTENED, DEFAULT_ORDERED);
+        List<Comment> commentList = commentService.findAllComments(DEFAULT_PET_UUID, DEFAULT_SHORTENED,
+                DEFAULT_STATE.toString());
         assertTrue(commentList.isEmpty());
     }
 
@@ -83,7 +83,7 @@ public class CommentServiceTest {
                 .emptyList());
 
         List<Comment> commentList = commentService
-                .findAllComments(EXPECTED_PET_UUID, DEFAULT_SHORTENED, DEFAULT_ORDERED);
+                .findAllComments(DEFAULT_PET_UUID, DEFAULT_SHORTENED, DEFAULT_STATE.toString());
         assertTrue(commentList.isEmpty());
     }
 
@@ -131,11 +131,13 @@ public class CommentServiceTest {
     @Test
     public void deleteComment() throws Exception {
         SecurityContextHolder.setContext(securityContext);
+        when(commentRepository.exists(EXPECTED_ID)).thenReturn(true);
+        when(commentRepository.save(any(Comment.class))).thenReturn(this.comment);
         when(commentRepository.findOne(EXPECTED_ID)).thenReturn(this.comment);
         when(securityContext.getAuthentication()).thenReturn(authentication);
         when(authentication.getPrincipal()).thenReturn(USER_CONTEXT);
-        when(commentRepository.exists(any(UUID.class))).thenReturn(true);
         when(userRepository.exists(any(UUID.class))).thenReturn(true);
+        when(commentRepository.getOne(EXPECTED_ID)).thenReturn(this.comment);
 
         commentService.deleteComment(EXPECTED_ID);
         SecurityContextHolder.clearContext();
@@ -143,9 +145,11 @@ public class CommentServiceTest {
         verify(commentRepository, times(1))
                 .exists(eq(EXPECTED_ID));
         verify(commentRepository, times(1))
-                .delete(eq(EXPECTED_ID));
+                .save(any(Comment.class));
         verify(commentRepository, times(1))
                 .findOne(eq(EXPECTED_ID));
+        verify(commentRepository, times(1))
+                .getOne(eq(EXPECTED_ID));
         verifyNoMoreInteractions(commentRepository);
     }
 
