@@ -64,7 +64,7 @@ class TokensController {
                 .name(user.getName())
                 .surname(user.getSurname())
                 .roles(user.getRoles())
-                .expirationDate(jwtParser.getTokenExpirationDate().toInstant().getEpochSecond())
+                .expirationDateSeconds(jwtParser.getTokenExpirationDate().toInstant().getEpochSecond())
                 .jwt(token)
                 .build();
     }

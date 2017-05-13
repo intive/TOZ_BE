@@ -27,7 +27,7 @@ public class JwtView {
     @ApiModelProperty(position = 5)
     private final Set<Role> roles;
     @ApiModelProperty(example = "1494750569", position = 6)
-    private final Long expirationDate;
+    private final Long expirationDateSeconds;
     @ApiModelProperty(position = 7)
     private final String jwt;
 }
