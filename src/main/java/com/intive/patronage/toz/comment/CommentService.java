@@ -4,9 +4,11 @@ import com.intive.patronage.toz.base.repository.IdentifiableRepository;
 import com.intive.patronage.toz.comment.model.db.Comment;
 import com.intive.patronage.toz.error.exception.NoPermissionException;
 import com.intive.patronage.toz.error.exception.NotFoundException;
+import com.intive.patronage.toz.error.exception.WrongEnumValueException;
 import com.intive.patronage.toz.tokens.model.UserContext;
 import com.intive.patronage.toz.users.UserRepository;
 import com.intive.patronage.toz.util.StringFormatter;
+import org.apache.commons.lang3.EnumUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
@@ -20,6 +22,8 @@ public class CommentService {
     private final CommentRepository commentRepository;
     private final UserRepository userRepository;
     private static final Integer SHORTENED_COMMENT_CONTENTS_LENGTH = 220;
+    private static final Comment.State STATE_ACTIVE = Comment.State.ACTIVE;
+    private static final Comment.State STATE_DELETE = Comment.State.DELETED;
     private static final String COMMENT = "Comment";
     private static final String USER = "User";
 
@@ -30,20 +34,27 @@ public class CommentService {
         this.userRepository = userRepository;
     }
 
-    List<Comment> findAllComments(UUID petUuid, Boolean shortened,
-                                  Boolean ordered) {
+    List<Comment> findAllComments(UUID petUuid, Boolean shortened, String state) {
+        checkIfEnumIsValid(state);
         List<Comment> commentList;
-        if (petUuid != null && ordered) {
-            commentList = commentRepository
-                    .findByPetUuidOrderByCreatedDesc(petUuid);
-        } else if (petUuid != null && !ordered) {
-            commentList = commentRepository.findByPetUuid(petUuid);
-        } else if (petUuid == null && ordered) {
-            commentList = commentRepository.findAllByOrderByCreatedDesc();
+        if (state != null && petUuid != null) {
+            commentList = commentRepository.findByPetUuidAndStateOrderByCreatedDesc(petUuid,
+                    Comment.State.valueOf(state));
+        } else if (state != null && petUuid == null) {
+            commentList = commentRepository.findByStateOrderByCreatedDesc(Comment.State.
+                    valueOf(state));
+        } else if (state == null && petUuid != null) {
+            commentList = commentRepository.findByPetUuidOrderByCreatedDesc(petUuid);
         } else {
-            commentList = commentRepository.findAll();
+            commentList = commentRepository.findAllByOrderByCreatedDesc();
         }
         return createShortenedCommentContents(shortened, commentList);
+    }
+
+    private void checkIfEnumIsValid(String state) {
+        if (state != null && !EnumUtils.isValidEnum(Comment.State.class, state)) {
+            throw new WrongEnumValueException(Comment.State.class);
+        }
     }
 
     Comment findById(final UUID id) {
@@ -54,6 +65,7 @@ public class CommentService {
     Comment createComment(Comment comment) {
         UUID userUuid = getUserUuid();
         comment.setUserUuid(userUuid);
+        comment.setState(STATE_ACTIVE);
         return commentRepository.save(comment);
     }
 
@@ -61,7 +73,9 @@ public class CommentService {
         throwNotFoundExceptionIfNotExists(id);
         UUID userUuid = getUserUuid();
         checkPermissionToManageComment(id, userUuid);
-        commentRepository.delete(id);
+        Comment comment = commentRepository.getOne(id);
+        comment.setState(STATE_DELETE);
+        commentRepository.save(comment);
     }
 
     Comment updateComment(final UUID id, final Comment comment) {
@@ -70,6 +84,7 @@ public class CommentService {
         UUID userUuid = getUserUuid();
         checkPermissionToManageComment(id, userUuid);
         comment.setUserUuid(userUuid);
+        comment.setState(STATE_ACTIVE);
         return commentRepository.save(comment);
     }
 

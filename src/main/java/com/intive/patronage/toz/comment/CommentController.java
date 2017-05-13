@@ -42,10 +42,8 @@ public class CommentController {
             @RequestParam(value = "petUuid", required = false) UUID petUuid,
             @RequestParam(value = "shortened", required = false, defaultValue = "false")
                     Boolean shortened,
-            @RequestParam(value = "ordered", required = false, defaultValue = "false")
-                    Boolean ordered) {
-        final List<Comment> commentList = commentService.findAllComments(petUuid,
-                shortened, ordered);
+            @RequestParam(value = "state", required = false) String state) {
+        final List<Comment> commentList = commentService.findAllComments(petUuid, shortened, state);
         return ResponseEntity.ok().body(ModelMapper.convertToView(commentList,
                 CommentView.class));
     }
