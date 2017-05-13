@@ -148,16 +148,16 @@ public class TokenRoleTest {
     }
 
     @Test
-    public void shouldReturnForbiddenWhenAnonymousAndNewsAchieved() throws Exception {
-        mockMvc.perform(get(ApiUrl.NEWS_PATH).param(TYPE_PARAM, ACHIEVED))
-                .andExpect(status().isForbidden());
-    }
-
-    @Test
     @UseDataProvider("getNewsAchieved")
     public void shouldReturnForbiddenWhenAnonymousAndGetNewsAchievedById(News achievedNews) throws Exception {
         UUID id = newsRepository.save(achievedNews).getId();
         mockMvc.perform(get(String.format("%s/%s", ApiUrl.NEWS_PATH, id)))
+                .andExpect(status().isForbidden());
+    }
+
+    @Test
+    public void shouldReturnForbiddenWhenAnonymousAndNewsAchieved() throws Exception {
+        mockMvc.perform(get(ApiUrl.NEWS_PATH).param(TYPE_PARAM, ACHIEVED))
                 .andExpect(status().isForbidden());
     }
 
