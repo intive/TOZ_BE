@@ -12,11 +12,13 @@ import com.intive.patronage.toz.storage.StorageService;
 import com.intive.patronage.toz.storage.model.db.UploadedFile;
 import com.intive.patronage.toz.storage.model.view.UrlView;
 import com.intive.patronage.toz.util.ModelMapper;
+import com.intive.patronage.toz.util.RolesChecker;
 import io.swagger.annotations.*;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PostAuthorize;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
@@ -31,7 +33,7 @@ import java.net.URI;
 import java.util.List;
 import java.util.UUID;
 
-@Api(description = "Operations for pet resources")
+@Api(tags = "Pets", description = "Operations for pet resources")
 @RestController
 @RequestMapping(value = ApiUrl.PETS_PATH, produces = MediaType.APPLICATION_JSON_VALUE)
 class PetsController {
@@ -48,13 +50,12 @@ class PetsController {
     }
 
     @ApiOperation(value = "Get all pets", responseContainer = "List", notes =
-    "Required roles: SA, TOZ, VOLUNTEER, ANONYMOIS when isAdmin == false, " +
-            "SA, TOZ for the rest.")
+    "Required roles: SA, TOZ, VOLUNTEER, ANONYMOUS if all fields are present or, " +
+            "Required roles: SA, TOZ if pet records are not complete.")
     @GetMapping
-    @PreAuthorize("hasAnyAuthority('SA', 'TOZ') or " + //TODO: correct after task 230
-            "(hasAnyAuthority('SA', 'TOZ', 'VOLUNTEER', 'ANONYMOUS') and #isAdmin != true)")
-    public List<PetView> getAllPets(@RequestParam(value = "admin", required = false) boolean isAdmin) {
-        if (isAdmin) { // TODO: implement with task 230
+    @PreAuthorize("hasAnyAuthority('SA', 'TOZ', 'VOLUNTEER', 'ANONYMOUS')")
+    public List<PetView> getAllPets() {
+        if (RolesChecker.hasCurrentUserAdminRole()) {
             final List<Pet> pets = petsService.findAllPets();
             return ModelMapper.convertToView(pets, PetView.class);
         }
@@ -63,12 +64,15 @@ class PetsController {
     }
 
     @ApiOperation(value = "Get single pet by id", notes =
-            "Required roles: SA, TOZ.")
+            "Required roles: SA, TOZ, VOLUNTEER, ANONYMOUS if all fields are present, or " +
+                    "Required roles: SA, TOZ if pet record is not complete.")
     @ApiResponses(value = {
             @ApiResponse(code = 404, message = "Pet not found", response = ErrorResponse.class),
     })
     @GetMapping(value = "/{id}")
-    @PreAuthorize("hasAnyAuthority('SA', 'TOZ')")
+    @PostAuthorize("hasAnyAuthority('SA', 'TOZ') or " +
+            "(hasAnyAuthority('SA', 'TOZ', 'VOLUNTEER', 'ANONYMOUS') and " +
+            "(returnObject.name != null and returnObject.type != null and returnObject.sex != null))")
     public PetView getPetById(@ApiParam(required = true) @PathVariable UUID id) {
         return convertToView(petsService.findById(id));
     }

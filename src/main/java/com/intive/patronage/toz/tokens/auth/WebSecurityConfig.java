@@ -1,8 +1,8 @@
-package com.intive.patronage.toz.config;
+package com.intive.patronage.toz.tokens.auth;
 
+import com.intive.patronage.toz.config.ApiUrl;
 import com.intive.patronage.toz.tokens.auth.*;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.security.config.annotation.authentication.builders.AuthenticationManagerBuilder;
 import org.springframework.security.config.annotation.method.configuration.EnableGlobalMethodSecurity;
@@ -23,11 +23,14 @@ class WebSecurityConfig extends WebSecurityConfigurerAdapter {
     private static final String REST_ENTRY_POINT = "/**";
     private static final String ADMIN_ENTRY_POINT = "/admin/**";
 
-    @Value("${jwt.secret-base64}")
-    private String secret;
+    private final SuperAdminAuthenticationProvider superAdminAuthenticationProvider;
+    private final JwtAuthenticationProvider jwtAuthenticationProvider;
 
     @Autowired
-    private SuperAdminAuthenticationProvider superAdminAuthenticationProvider;
+    public WebSecurityConfig(SuperAdminAuthenticationProvider superAdminAuthenticationProvider, JwtAuthenticationProvider jwtAuthenticationProvider) {
+        this.superAdminAuthenticationProvider = superAdminAuthenticationProvider;
+        this.jwtAuthenticationProvider = jwtAuthenticationProvider;
+    }
 
     private TokenAuthenticationFilter getAuthenticationFilter() throws Exception {
         final List<String> pathsToSkip = Arrays.asList(ApiUrl.ACQUIRE_TOKEN_PATH, ADMIN_ENTRY_POINT);
@@ -35,13 +38,14 @@ class WebSecurityConfig extends WebSecurityConfigurerAdapter {
         final TokenAuthenticationFilter filter =
                 new TokenAuthenticationFilter(new TokenAuthenticationFailureHandler(), matcher);
         filter.setAuthenticationManager(authenticationManager());
+
         return filter;
     }
 
     @Override
     protected void configure(AuthenticationManagerBuilder auth) throws Exception {
         auth.authenticationProvider(superAdminAuthenticationProvider);
-        auth.authenticationProvider(new JwtAuthenticationProvider(secret));
+        auth.authenticationProvider(jwtAuthenticationProvider);
     }
 
     @Override
@@ -53,6 +57,7 @@ class WebSecurityConfig extends WebSecurityConfigurerAdapter {
                 .and().authorizeRequests().antMatchers(REST_ENTRY_POINT).authenticated()
                 .and().authorizeRequests().antMatchers(ADMIN_ENTRY_POINT).authenticated()
                 .and().httpBasic()
+                .and().headers().frameOptions().disable()
                 .and().addFilterBefore(getAuthenticationFilter(), UsernamePasswordAuthenticationFilter.class);
     }
 }

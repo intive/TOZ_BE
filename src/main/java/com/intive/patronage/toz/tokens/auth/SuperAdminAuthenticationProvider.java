@@ -1,6 +1,7 @@
 package com.intive.patronage.toz.tokens.auth;
 
 import com.intive.patronage.toz.users.UserService;
+import com.intive.patronage.toz.users.model.db.Role;
 import com.intive.patronage.toz.users.model.db.User;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.authentication.AuthenticationProvider;
@@ -17,14 +18,14 @@ import java.util.Collection;
 import java.util.Collections;
 
 @Component
-public class SuperAdminAuthenticationProvider implements AuthenticationProvider {
+class SuperAdminAuthenticationProvider implements AuthenticationProvider {
 
     private static final String BAD_CREDENTIALS_MESSAGE = "Wrong name or password!";
     private final UserService userService;
     private final PasswordEncoder passwordEncoder;
 
     @Autowired
-    public SuperAdminAuthenticationProvider(UserService userService, PasswordEncoder passwordEncoder) {
+    SuperAdminAuthenticationProvider(UserService userService, PasswordEncoder passwordEncoder) {
         this.userService = userService;
         this.passwordEncoder = passwordEncoder;
     }
@@ -38,7 +39,7 @@ public class SuperAdminAuthenticationProvider implements AuthenticationProvider 
         final User user = userService.findOneByName(name);
         if (user.isSuperAdmin()) {
             checkPasswordMatching(authentication, user);
-            final String superAdminRole = User.Role.SA.toString();
+            final String superAdminRole = Role.SA.toString();
             Collection<? extends GrantedAuthority> authorities =
                     Collections.singleton(new SimpleGrantedAuthority(superAdminRole));
             return new UsernamePasswordAuthenticationToken(name, authentication.getCredentials(), authorities);

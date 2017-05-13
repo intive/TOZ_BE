@@ -33,6 +33,7 @@ import java.lang.reflect.Method;
 import java.security.SecureRandom;
 import java.time.LocalTime;
 import java.util.Collections;
+import java.util.Date;
 
 @EnableWebMvc
 @Configuration
@@ -88,6 +89,7 @@ class Config extends WebMvcConfigurerAdapter {
                 .build()
                 .apiInfo(apiInfo())
                 .directModelSubstitute(LocalTime.class, String.class)
+                .directModelSubstitute(Date.class, Long.class)
                 .genericModelSubstitutes(ResponseEntity.class)
                 .securitySchemes(Collections.singletonList(apiKey()));
     }
@@ -122,7 +124,7 @@ class Config extends WebMvcConfigurerAdapter {
         return new ApiKey("Authorization", "jwt", "header");
     }
 
-    @Bean @Autowired
+    @Bean
     public ExceptionHandlerExceptionResolver createExceptionResolver(MessageSource messageSource, ScheduleParser scheduleParser) {
         ExceptionHandlerExceptionResolver exceptionResolver = new ExceptionHandlerExceptionResolver() {
             @Override

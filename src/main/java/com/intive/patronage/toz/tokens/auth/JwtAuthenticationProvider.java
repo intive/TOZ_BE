@@ -1,15 +1,13 @@
 package com.intive.patronage.toz.tokens.auth;
 
-import com.intive.patronage.toz.error.exception.JwtAuthenticationException;
+import com.intive.patronage.toz.tokens.JwtParser;
 import com.intive.patronage.toz.tokens.model.UserContext;
-import com.intive.patronage.toz.users.model.db.User;
-import io.jsonwebtoken.*;
-import io.jsonwebtoken.impl.TextCodec;
+import com.intive.patronage.toz.users.model.db.Role;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.authentication.AuthenticationProvider;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.AuthenticationException;
 import org.springframework.security.core.GrantedAuthority;
-import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.stereotype.Component;
 
 import java.util.Collections;
@@ -19,16 +17,13 @@ import java.util.UUID;
 import java.util.stream.Collectors;
 
 @Component
-public class JwtAuthenticationProvider implements AuthenticationProvider {
+class JwtAuthenticationProvider implements AuthenticationProvider {
 
-    private final String secret;
+    private final JwtParser jwtParser;
 
-    JwtAuthenticationProvider() {
-        secret = null;
-    }
-
-    public JwtAuthenticationProvider(String secret) {
-        this.secret = secret;
+    @Autowired
+    public JwtAuthenticationProvider(JwtParser jwtParser) {
+        this.jwtParser = jwtParser;
     }
 
     @Override
@@ -36,30 +31,17 @@ public class JwtAuthenticationProvider implements AuthenticationProvider {
         final String token = (String) authentication.getCredentials();
 
         if (token == null) {
-            List<GrantedAuthority> authorities =
-                    Collections.singletonList(new SimpleGrantedAuthority(User.Role.ANONYMOUS.toString()));
+            List<GrantedAuthority> authorities = Collections.singletonList(Role.ANONYMOUS);
             return new JwtAuthenticationToken(null, authorities);
         }
 
-        Jws<Claims> claims;
-        try {
-            claims = Jwts.parser()
-                    .setSigningKey(TextCodec.BASE64.decode(secret))
-                    .parseClaimsJws(token);
-        } catch (UnsupportedJwtException | MalformedJwtException | IllegalArgumentException e) {
-            throw new JwtAuthenticationException("Invalid token");
-        } catch (SignatureException e) {
-            throw new JwtAuthenticationException("Invalid signature");
-        } catch (ExpiredJwtException e) {
-            throw new JwtAuthenticationException("Token expired");
-        }
+        jwtParser.parse(token);
+        final UUID userID = jwtParser.getUserId();
+        final String email = jwtParser.getEmail();
+        final List<String> scopes = jwtParser.getScopes();
 
-        final UUID userID = UUID.fromString(claims.getBody().getSubject());
-        final String email = claims.getBody().get("email", String.class);
-        final List<String> scopes = claims.getBody().get("scopes", List.class);
-
-        Set<GrantedAuthority> authorities = scopes.stream()
-                .map(SimpleGrantedAuthority::new)
+        final Set<GrantedAuthority> authorities = scopes.stream()
+                .map(Role::valueOf)
                 .collect(Collectors.toSet());
 
         final UserContext userContext = new UserContext(userID, email, authorities);

@@ -7,6 +7,8 @@ import lombok.Setter;
 import lombok.ToString;
 
 import javax.persistence.Entity;
+import javax.persistence.EnumType;
+import javax.persistence.Enumerated;
 import java.util.UUID;
 
 @Getter
@@ -17,6 +19,7 @@ import java.util.UUID;
 public class ScheduleReservationChangelog extends Reservation {
 
     private UUID reservationId;
+    @Enumerated(value = EnumType.STRING)
     private OperationType operationType;
     private String modificationMessage;
     private UUID modificationAuthorUuid;
