@@ -264,3 +264,26 @@ databaseChangeLog:
                 - column:
                     name: role_id
                     type: uuid
+  - changeSet:
+        id : 5
+        author: jakub.izbicki
+        changes:
+          - createTable:
+              tableName: help_info
+              columns:
+                - column:
+                    name: id
+                    type: varchar(255)
+                    constraints:
+                      - primaryKey: true
+                      - nullable: false
+                - column:
+                    name: how_to_help_description
+                    type: varchar(1024)
+                    constraints:
+                      - nullable: false
+                - column:
+                    name: modification_date
+                    type: datetime
+                    constraints:
+                      - nullable: false
