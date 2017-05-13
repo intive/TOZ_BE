@@ -25,18 +25,23 @@ class NewsService {
 
     List<News> findAllNews(String type, Boolean shortened, Boolean ordered) {
         List<News> newsList;
+        checkIfEnumIsValid(type);
         if (EnumUtils.isValidEnum(News.Type.class, type) && ordered) {
             newsList = newsRepository.findByTypeOrderByCreatedDesc(News.Type.valueOf(type));
         } else if (EnumUtils.isValidEnum(News.Type.class, type) && !ordered) {
             newsList = newsRepository.findByType(News.Type.valueOf(type));
         } else if (type == null && ordered) {
             newsList = newsRepository.findAllByOrderByCreatedDesc();
-        } else if (type == null && !ordered) {
-            newsList = newsRepository.findAll();
         } else {
-            throw new WrongEnumValueException(News.Type.class);
+            newsList = newsRepository.findAll();
         }
         return createShortenedNewsContents(shortened, newsList);
+    }
+
+    private void checkIfEnumIsValid(String state) {
+        if (state != null && !EnumUtils.isValidEnum(News.Type.class, state)) {
+            throw new WrongEnumValueException(News.Type.class);
+        }
     }
 
     News findById(final UUID id) {

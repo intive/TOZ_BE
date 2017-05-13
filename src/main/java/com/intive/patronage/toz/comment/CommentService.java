@@ -7,6 +7,7 @@ import com.intive.patronage.toz.error.exception.NotFoundException;
 import com.intive.patronage.toz.error.exception.WrongEnumValueException;
 import com.intive.patronage.toz.tokens.model.UserContext;
 import com.intive.patronage.toz.users.UserRepository;
+import com.intive.patronage.toz.util.RolesChecker;
 import com.intive.patronage.toz.util.StringFormatter;
 import org.apache.commons.lang3.EnumUtils;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -71,8 +72,10 @@ public class CommentService {
 
     void deleteComment(final UUID id) {
         throwNotFoundExceptionIfNotExists(id);
-        UUID userUuid = getUserUuid();
-        checkPermissionToManageComment(id, userUuid);
+        if (!RolesChecker.hasCurrentUserAdminRole()) {
+            UUID userUuid = getUserUuid();
+            checkPermissionToManageComment(id, userUuid);
+        }
         Comment comment = commentRepository.getOne(id);
         comment.setState(STATE_DELETE);
         commentRepository.save(comment);
@@ -81,10 +84,15 @@ public class CommentService {
     Comment updateComment(final UUID id, final Comment comment) {
         throwNotFoundExceptionIfNotExists(id);
         comment.setId(id);
-        UUID userUuid = getUserUuid();
-        checkPermissionToManageComment(id, userUuid);
+        UUID userUuid;
+        if (RolesChecker.hasCurrentUserAdminRole()) {
+            userUuid = commentRepository.findOne(id).getUserUuid();
+        } else {
+            userUuid = getUserUuid();
+            checkPermissionToManageComment(id, userUuid);
+            comment.setState(STATE_ACTIVE);
+        }
         comment.setUserUuid(userUuid);
-        comment.setState(STATE_ACTIVE);
         return commentRepository.save(comment);
     }
 

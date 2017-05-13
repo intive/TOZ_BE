@@ -6,6 +6,7 @@ import com.intive.patronage.toz.config.ApiUrl;
 import com.intive.patronage.toz.error.model.ErrorResponse;
 import com.intive.patronage.toz.error.model.ValidationErrorResponse;
 import com.intive.patronage.toz.util.ModelMapper;
+import com.intive.patronage.toz.util.RolesChecker;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 import io.swagger.annotations.ApiResponse;
@@ -14,6 +15,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PostAuthorize;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
@@ -23,10 +25,11 @@ import java.net.URI;
 import java.util.List;
 import java.util.UUID;
 
-@Api(description = "Comment operations.")
+@Api(tags = "Comments", description = "Comment operations.")
 @RestController
 @RequestMapping(value = ApiUrl.COMMENTS_PATH, produces = MediaType.APPLICATION_JSON_VALUE)
 public class CommentController {
+    private final static String DEFAULT_TYPE = "ACTIVE";
     private final CommentService commentService;
 
     @Autowired
@@ -35,30 +38,36 @@ public class CommentController {
     }
 
     @ApiOperation(value = "Get all comments.", responseContainer = "List", notes =
-            "Required roles: SA, TOZ, VOLUNTEER, ANONYMOUS.")
+            "Required roles: SA, TOZ, VOLUNTEER.")
     @GetMapping
-    @PreAuthorize("hasAnyAuthority('SA', 'TOZ', 'VOLUNTEER', 'ANONYMOUS')")
+    @PreAuthorize("hasAnyAuthority('SA', 'TOZ') or " +
+            "(hasAnyAuthority('SA', 'TOZ', 'VOLUNTEER') and (#state == 'ACTIVE' or #state == null))")
     public ResponseEntity<List<CommentView>> getAllComments(
             @RequestParam(value = "petUuid", required = false) UUID petUuid,
             @RequestParam(value = "shortened", required = false, defaultValue = "false")
                     Boolean shortened,
             @RequestParam(value = "state", required = false) String state) {
-        final List<Comment> commentList = commentService.findAllComments(petUuid, shortened, state);
-        return ResponseEntity.ok().body(ModelMapper.convertToView(commentList,
-                CommentView.class));
+        if (RolesChecker.hasCurrentUserAdminRole()) {
+            final List<Comment> newsList = commentService.findAllComments(petUuid, shortened, state);
+            return ResponseEntity.ok().body(ModelMapper.convertToView(newsList, CommentView.class));
+        }
+        final List<Comment> newsList = commentService.findAllComments(petUuid, shortened, DEFAULT_TYPE);
+        return ResponseEntity.ok().body(ModelMapper.convertToView(newsList, CommentView.class));
     }
 
     @ApiOperation(value = "Get comment by id.", notes =
-            "Required roles: SA, TOZ, VOLUNTEER, ANONYMOUS.")
+            "Required roles: SA, TOZ, VOLUNTEER for ACTIVE type, or " +
+                    "SA, TOZ for other types.")
     @ApiResponses(value = {
-            @ApiResponse(code = 404, message = "Comment not found.",
-                    response = ErrorResponse.class)
+            @ApiResponse(code = 404, message = "Comment not found.", response = ErrorResponse.class),
     })
     @GetMapping(value = "/{id}")
-    @PreAuthorize("hasAnyAuthority('SA', 'TOZ', 'VOLUNTEER', 'ANONYMOUS')")
-    public ResponseEntity<CommentView> getCommentById(@PathVariable UUID id) {
-        return ResponseEntity.ok()
-                .body(ModelMapper.convertToView(commentService.findById(id), CommentView.class));
+    @ResponseStatus(HttpStatus.OK)
+    @PostAuthorize("hasAnyAuthority('SA', 'TOZ') or " +
+            "(hasAnyAuthority('SA', 'TOZ', 'VOLUNTEER') and returnObject.state == 'ACTIVE')")
+    public CommentView getCommentById(@PathVariable UUID id) {
+        return ModelMapper.convertToView(commentService.findById(id), CommentView.class);
+
     }
 
     @ApiOperation(value = "Create comment.", response = CommentView.class, notes =
