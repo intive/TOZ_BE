@@ -10,9 +10,9 @@ import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.MockitoAnnotations;
 
-import static com.intive.patronage.toz.howtohelp.DonateInfoServiceTest.DESCRIPTION;
-import static com.intive.patronage.toz.howtohelp.DonateInfoServiceTest.MODIFICATION_DATE;
+import static com.intive.patronage.toz.howtohelp.DonateInfoServiceTest.*;
 import static com.intive.patronage.toz.howtohelp.model.enumeration.HelpInfoType.HOW_TO_BECOME_VOLUNTEER;
+import static org.assertj.core.api.Assertions.assertThat;
 import static org.mockito.Matchers.any;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
@@ -20,6 +20,7 @@ import static org.mockito.Mockito.when;
 public class BecomeVolunteerInfoServiceTest {
 
     private static final HelpInfoType INFO_TYPE = HOW_TO_BECOME_VOLUNTEER;
+    static final Boolean NOT_SHORTENED = false;
 
     @Mock
     private HelpInfoRepository helpInfoRepository;
@@ -36,7 +37,18 @@ public class BecomeVolunteerInfoServiceTest {
     public void shouldThrowErrorIfNotExists() throws Exception {
         when(helpInfoRepository.exists(INFO_TYPE)).thenReturn(false);
 
-        becomeVolunteerInfoService.findHelpInfo();
+        becomeVolunteerInfoService.findHelpInfo(NOT_SHORTENED);
+    }
+
+    @Test
+    public void findShouldGetShortenedInfo() {
+        when(helpInfoRepository.exists(any(HelpInfoType.class))).thenReturn(true);
+        when(helpInfoRepository.findOne(any(HelpInfoType.class))).thenReturn(helpInfo);
+
+        HelpInfo shortenedInfo = becomeVolunteerInfoService.findHelpInfo(SHORTENED);
+
+        assertThat(shortenedInfo.getHowToHelpDescription()).isEqualTo(DESCRIPTION_SHORTENED);
+        verify(helpInfoRepository).findOne(any(HelpInfoType.class));
     }
 
     @Test
@@ -44,8 +56,9 @@ public class BecomeVolunteerInfoServiceTest {
         when(helpInfoRepository.exists(any(HelpInfoType.class))).thenReturn(true);
         when(helpInfoRepository.findOne(any(HelpInfoType.class))).thenReturn(helpInfo);
 
-        becomeVolunteerInfoService.findHelpInfo();
+        HelpInfo getHelpInfo = becomeVolunteerInfoService.findHelpInfo(NOT_SHORTENED);
 
+        assertThat(getHelpInfo).isEqualToComparingFieldByField(helpInfo);
         verify(helpInfoRepository).findOne(any(HelpInfoType.class));
     }
 
@@ -61,8 +74,9 @@ public class BecomeVolunteerInfoServiceTest {
         when(helpInfoRepository.exists(any(HelpInfoType.class))).thenReturn(false);
         when(helpInfoRepository.save(any(HelpInfo.class))).thenReturn(helpInfo);
 
-        becomeVolunteerInfoService.createHelpInfo(helpInfo);
+        HelpInfo createdInfo = becomeVolunteerInfoService.createHelpInfo(helpInfo);
 
+        assertThat(createdInfo).isEqualToComparingFieldByField(helpInfo);
         verify(helpInfoRepository).save(any(HelpInfo.class));
     }
 
@@ -78,8 +92,9 @@ public class BecomeVolunteerInfoServiceTest {
         when(helpInfoRepository.exists(any(HelpInfoType.class))).thenReturn(true);
         when(helpInfoRepository.findOne(any(HelpInfoType.class))).thenReturn(helpInfo);
         when(helpInfoRepository.save(any(HelpInfo.class))).thenReturn(helpInfo);
-        becomeVolunteerInfoService.updateHelpInfo(helpInfo);
+        HelpInfo updatedInfo = becomeVolunteerInfoService.updateHelpInfo(helpInfo);
 
+        assertThat(updatedInfo).isEqualToComparingFieldByField(helpInfo);
         verify(helpInfoRepository).save(any(HelpInfo.class));
     }
 }

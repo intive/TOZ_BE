@@ -17,6 +17,7 @@ import static com.intive.patronage.toz.howtohelp.DonateInfoServiceTest.DESCRIPTI
 import static com.intive.patronage.toz.howtohelp.DonateInfoServiceTest.MODIFICATION_DATE;
 import static com.intive.patronage.toz.howtohelp.model.enumeration.HelpInfoType.HOW_TO_BECOME_VOLUNTEER;
 import static org.mockito.Matchers.any;
+import static org.mockito.Matchers.anyBoolean;
 import static org.mockito.Mockito.verifyZeroInteractions;
 import static org.mockito.Mockito.when;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
@@ -39,7 +40,7 @@ public class BecomeVolunteerInfoControllerTest {
 
     @Test
     public void shouldGetHowToDonateInfo() throws Exception {
-        when(becomeVolunteerInfoService.findHelpInfo()).thenReturn(helpInfo);
+        when(becomeVolunteerInfoService.findHelpInfo(anyBoolean())).thenReturn(helpInfo);
 
         mvc.perform(get(ApiUrl.HOW_TO_BECOME_VOLUNTEER_PATH))
                 .andExpect(status().isOk())
