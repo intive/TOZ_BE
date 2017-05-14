@@ -39,7 +39,7 @@ public class CommentControllerTest {
     private static final UUID EXPECTED_ID = UUID.randomUUID();
     private static final UUID EXPECTED_PET_UUID = UUID.randomUUID();
     private static final UUID DEFAULT_PET_UUID = null;
-    private static final Comment.State EXPECTED_STATE = Comment.State.ACTIVE;
+    private static final Comment.State DEFAULT_STATE = Comment.State.ACTIVE;
     private static final String EXPECTED_CONTENTS = "Very nice dog! I hope that he will " +
             "find new home very, very soon because he deserves to get new home and loving " +
             "owners. Very nice dog! I hope that he will find new home very, very soon " +
@@ -50,7 +50,6 @@ public class CommentControllerTest {
             "because he deserves to get new ";
     private static final UUID EXPECTED_USER_UUID = UUID.randomUUID();
     private static final Boolean DEFAULT_SHORTENED = false;
-    private static final String DEFAULT_STATE = "ACTIVE";
     private static final Boolean SHORTENED_FOR_TEST = true;
     private static final MediaType CONTENT_TYPE = MediaType.APPLICATION_JSON_UTF8;
 
@@ -72,7 +71,7 @@ public class CommentControllerTest {
         comment.setPetUuid(EXPECTED_PET_UUID);
         comment.setContents(EXPECTED_CONTENTS);
         comment.setUserUuid(EXPECTED_USER_UUID);
-        comment.setState(EXPECTED_STATE);
+        comment.setState(DEFAULT_STATE);
         return new Comment[]{comment};
     }
 
@@ -80,7 +79,7 @@ public class CommentControllerTest {
     public void getAllComments() throws Exception {
         final List<Comment> commentList = getCommentList(DEFAULT_PET_UUID, DEFAULT_SHORTENED);
         when(commentService.findAllComments(DEFAULT_PET_UUID, DEFAULT_SHORTENED,
-                DEFAULT_STATE)).thenReturn(commentList);
+                DEFAULT_STATE.toString())).thenReturn(commentList);
 
         mockMvc.perform(get(ApiUrl.COMMENTS_PATH))
                 .andExpect(status().isOk())
@@ -89,7 +88,7 @@ public class CommentControllerTest {
                 .andExpect(jsonPath("$", hasSize(COMMENTS_LIST_SIZE)));
 
         verify(commentService, times(1))
-                .findAllComments(DEFAULT_PET_UUID, DEFAULT_SHORTENED, DEFAULT_STATE);
+                .findAllComments(DEFAULT_PET_UUID, DEFAULT_SHORTENED, DEFAULT_STATE.toString());
         verifyNoMoreInteractions(commentService);
     }
 
@@ -98,7 +97,7 @@ public class CommentControllerTest {
         final List<Comment> commentList = getCommentList(EXPECTED_PET_UUID,
                 DEFAULT_SHORTENED);
         when(commentService.findAllComments(EXPECTED_PET_UUID, DEFAULT_SHORTENED,
-                DEFAULT_STATE)).thenReturn(commentList);
+                DEFAULT_STATE.toString())).thenReturn(commentList);
 
         mockMvc.perform(get(ApiUrl.COMMENTS_PATH).param("petUuid", EXPECTED_PET_UUID
                 .toString()))
@@ -111,7 +110,26 @@ public class CommentControllerTest {
                 .andExpect(jsonPath("$", hasSize(COMMENTS_LIST_SIZE)));
 
         verify(commentService, times(1))
-                .findAllComments(EXPECTED_PET_UUID, DEFAULT_SHORTENED, DEFAULT_STATE);
+                .findAllComments(EXPECTED_PET_UUID, DEFAULT_SHORTENED, DEFAULT_STATE.toString());
+        verifyNoMoreInteractions(commentService);
+    }
+
+    @Test
+    public void getAllCommentsByState() throws Exception {
+        final List<Comment> commentList = getCommentList(DEFAULT_PET_UUID,
+                DEFAULT_SHORTENED);
+        when(commentService.findAllComments(DEFAULT_PET_UUID, DEFAULT_SHORTENED, DEFAULT_STATE
+                .toString())).thenReturn(commentList);
+
+        mockMvc.perform(get(ApiUrl.COMMENTS_PATH).param("state", DEFAULT_STATE.toString()))
+                .andExpect(status().isOk())
+                .andExpect(content().contentType(CONTENT_TYPE))
+                .andExpect(jsonPath("$[0].state", is(DEFAULT_STATE.toString())))
+                .andExpect(jsonPath("$[1].state", is(DEFAULT_STATE.toString())))
+                .andExpect(jsonPath("$", hasSize(COMMENTS_LIST_SIZE)));
+
+        verify(commentService, times(1)).
+                findAllComments(DEFAULT_PET_UUID, DEFAULT_SHORTENED, DEFAULT_STATE.toString());
         verifyNoMoreInteractions(commentService);
     }
 
@@ -119,7 +137,7 @@ public class CommentControllerTest {
     public void getAllCommentsShortened() throws Exception {
         final List<Comment> commentList = getCommentList(DEFAULT_PET_UUID, SHORTENED_FOR_TEST);
         when(commentService.findAllComments(DEFAULT_PET_UUID, SHORTENED_FOR_TEST,
-                DEFAULT_STATE)).thenReturn(commentList);
+                DEFAULT_STATE.toString())).thenReturn(commentList);
 
         mockMvc.perform(get(ApiUrl.COMMENTS_PATH).param("shortened",
                 SHORTENED_FOR_TEST.toString()))
@@ -133,7 +151,7 @@ public class CommentControllerTest {
 
         verify(commentService, times(1))
                 .findAllComments(DEFAULT_PET_UUID, SHORTENED_FOR_TEST,
-                        DEFAULT_STATE);
+                        DEFAULT_STATE.toString());
         verifyNoMoreInteractions(commentService);
     }
 
@@ -143,7 +161,7 @@ public class CommentControllerTest {
             Comment comment = new Comment();
             comment.setUserUuid(EXPECTED_USER_UUID);
             comment.setPetUuid(UUID.randomUUID());
-            comment.setState(EXPECTED_STATE);
+            comment.setState(DEFAULT_STATE);
             if (!shortened) {
                 comment.setContents(EXPECTED_CONTENTS);
             } else {
@@ -190,7 +208,7 @@ public class CommentControllerTest {
                 .andExpect(jsonPath("$.petUuid", is(EXPECTED_PET_UUID
                         .toString())))
                 .andExpect(jsonPath("$.contents", is(EXPECTED_CONTENTS)))
-                .andExpect(jsonPath("$.state", is(EXPECTED_STATE.toString())))
+                .andExpect(jsonPath("$.state", is(DEFAULT_STATE.toString())))
                 .andExpect(jsonPath("$.userUuid", is(EXPECTED_USER_UUID
                         .toString())));
 
