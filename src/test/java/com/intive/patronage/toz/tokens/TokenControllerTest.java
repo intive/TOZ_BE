@@ -149,7 +149,7 @@ public class TokenControllerTest {
     @Test
     public void shouldReturnUserContext() throws Exception {
         mockMvc.perform(get(TOKENS_PATH + "/whoami")
-                .header(AUTHORIZATION_HEADER, TOKEN_PREFIX + jwtFactory.generateToken(user)))
+                .header(AUTHORIZATION_HEADER, TOKEN_PREFIX + jwtFactory.generateTokenWithSpecifiedExpirationTime(user, expirationTime)))
                 .andExpect(content().contentType(CONTENT_TYPE))
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("userId", is(user.getId().toString())))

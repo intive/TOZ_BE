@@ -3,6 +3,7 @@ package com.intive.patronage.toz.tokens;
 import com.intive.patronage.toz.users.UserService;
 import com.intive.patronage.toz.users.model.db.User;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
@@ -12,6 +13,9 @@ class TokensService {
     private final UserService userService;
     private final PasswordEncoder passwordEncoder;
     private final JwtFactory jwtFactory;
+
+    @Value("${jwt.expiration-time-minutes}")
+    private long expirationTime;
 
     @Autowired
     TokensService(UserService userService, PasswordEncoder passwordEncoder, JwtFactory jwtFactory) {
@@ -26,6 +30,6 @@ class TokensService {
     }
 
     String getToken(String userEmail) {
-        return jwtFactory.generateToken(userService.findOneByEmail(userEmail));
+        return jwtFactory.generateTokenWithSpecifiedExpirationTime(userService.findOneByEmail(userEmail), expirationTime);
     }
 }

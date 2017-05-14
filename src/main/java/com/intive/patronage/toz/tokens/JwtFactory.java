@@ -20,15 +20,11 @@ import java.util.List;
 public class JwtFactory {
 
     public static final String EMAIL_CLAIM_NAME = "email";
-    public static final String NAME_CLAIM_NAME = "name";
     public static final String SCOPES_CLAIM_NAME = "scopes";
 
-    private final long expirationTime;
     private final String secret;
 
-    public JwtFactory(@Value("${jwt.expiration-time-minutes}") long expirationTime,
-                      @Value("${jwt.secret-base64}") String secret) {
-        this.expirationTime = expirationTime;
+    public JwtFactory(@Value("${jwt.secret-base64}") String secret) {
         this.secret = secret;
     }
 
@@ -43,17 +39,12 @@ public class JwtFactory {
     private String generateTokenData(PersonalData personalData, long expirationTimeInMinutes){
         return Jwts.builder()
                 .setSubject(personalData.getId().toString())
-                .claim(NAME_CLAIM_NAME, personalData.getName())
                 .claim(EMAIL_CLAIM_NAME, personalData.getEmail())
                 .claim(SCOPES_CLAIM_NAME, getRolesFromPersonalData(personalData))
                 .setIssuedAt(new Date(Instant.now().toEpochMilli()))
                 .setExpiration(new Date(Instant.now().plus(expirationTimeInMinutes, ChronoUnit.MINUTES).toEpochMilli()))
                 .signWith(SignatureAlgorithm.HS512, TextCodec.BASE64.decode(secret))
                 .compact();
-    }
-
-    public String generateToken(PersonalData personalData) {
-        return generateTokenData(personalData, expirationTime);
     }
 
     public String generateTokenWithSpecifiedExpirationTime(PersonalData personalData, long expirationTimeInMinutes){

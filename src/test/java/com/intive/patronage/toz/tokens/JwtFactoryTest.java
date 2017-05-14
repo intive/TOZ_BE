@@ -8,6 +8,7 @@ import io.jsonwebtoken.impl.TextCodec;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.test.context.junit4.SpringRunner;
 
 import java.util.List;
@@ -32,12 +33,12 @@ public class JwtFactoryTest {
         user.setEmail(EMAIL);
         user.addRole(ROLE);
 
-        jwtFactory = new JwtFactory(EXPIRATION_TIME, SECRET);
+        jwtFactory = new JwtFactory(SECRET);
     }
 
     @Test
     public void shouldGenerateValidToken() throws Exception {
-        String token = jwtFactory.generateToken(user);
+        String token = jwtFactory.generateTokenWithSpecifiedExpirationTime(user, EXPIRATION_TIME);
 
         Jws<Claims> claims = Jwts.parser()
                 .setSigningKey(TextCodec.BASE64.decode(SECRET))

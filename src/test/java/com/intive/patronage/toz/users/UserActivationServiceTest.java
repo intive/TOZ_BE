@@ -66,7 +66,7 @@ public class UserActivationServiceTest {
 
 
         userActivationService = new UserActivationService(
-                new JwtFactory(EXPIRATION_TIME,SECRET),
+                new JwtFactory(SECRET),
                 userRepository,
                 proposalRepository,
                 mailTemplatesService,
@@ -103,7 +103,7 @@ public class UserActivationServiceTest {
         when(userRepository.save(any(User.class))).thenReturn(user);
         when(proposalRepository.findByEmail(USER_EMAIL)).thenReturn(proposal);
 
-        JwtFactory jwtFactory = new JwtFactory(EXPIRATION_TIME, SECRET );
+        JwtFactory jwtFactory = new JwtFactory(SECRET );
         String token = jwtFactory.generateTokenWithSpecifiedExpirationTime(proposal, EXPIRATION_TIME);
         User userToCompare = userActivationService.checkActivationToken(token, EXAMPLE_PASSWORD);
 
