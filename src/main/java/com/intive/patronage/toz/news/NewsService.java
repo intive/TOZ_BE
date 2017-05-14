@@ -1,8 +1,8 @@
 package com.intive.patronage.toz.news;
 
-import com.intive.patronage.toz.error.exception.NotFoundException;
 import com.intive.patronage.toz.error.exception.WrongEnumValueException;
 import com.intive.patronage.toz.news.model.db.News;
+import com.intive.patronage.toz.util.RepositoryChecker;
 import com.intive.patronage.toz.util.StringFormatter;
 import org.apache.commons.lang3.EnumUtils;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -45,7 +45,7 @@ class NewsService {
     }
 
     News findById(final UUID id) {
-        throwNotFoundExceptionIfNotExists(id);
+        RepositoryChecker.throwNotFoundExceptionIfNotExists(id, newsRepository, NEWS);
         return newsRepository.findOne(id);
     }
 
@@ -59,12 +59,12 @@ class NewsService {
     }
 
     void deleteNews(final UUID id) {
-        throwNotFoundExceptionIfNotExists(id);
+        RepositoryChecker.throwNotFoundExceptionIfNotExists(id, newsRepository, NEWS);
         newsRepository.delete(id);
     }
 
     News updateNews(final UUID id, final News news) {
-        throwNotFoundExceptionIfNotExists(id);
+        RepositoryChecker.throwNotFoundExceptionIfNotExists(id, newsRepository, NEWS);
         news.setId(id);
         Date published = newsRepository.findOne(id).getPublished();
         if (news.getType() == News.Type.RELEASED && published == null) {
@@ -83,11 +83,5 @@ class NewsService {
             }
         }
         return newsList;
-    }
-
-    private void throwNotFoundExceptionIfNotExists(final UUID id) {
-        if (!newsRepository.exists(id)) {
-            throw new NotFoundException(NEWS);
-        }
     }
 }

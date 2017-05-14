@@ -2,7 +2,6 @@ package com.intive.patronage.toz.comment;
 
 import com.intive.patronage.toz.comment.model.db.Comment;
 import com.intive.patronage.toz.error.exception.NotFoundException;
-import com.intive.patronage.toz.error.exception.WrongEnumValueException;
 import com.intive.patronage.toz.tokens.model.UserContext;
 import com.intive.patronage.toz.users.UserRepository;
 import com.tngtech.java.junit.dataprovider.DataProvider;
@@ -33,7 +32,6 @@ public class CommentServiceTest {
     private static final UUID EXPECTED_PET_UUID = UUID.randomUUID();
     private static final Comment.State DEFAULT_STATE = Comment.State.ACTIVE;
     private static final Comment.State EXPECTED_STATE = Comment.State.DELETED;
-    private static final String WRONG_STATE = "active";
     private static final String EXPECTED_CONTENTS = "Very nice dog!";
     private static final UUID EXPECTED_USER_UUID = UUID.randomUUID();
     private static final Boolean DEFAULT_SHORTENED = false;
@@ -76,7 +74,7 @@ public class CommentServiceTest {
         when(commentRepository.findAll()).thenReturn(Collections.emptyList());
 
         List<Comment> commentList = commentService.findAllComments(DEFAULT_PET_UUID,
-                DEFAULT_SHORTENED, DEFAULT_STATE.toString());
+                DEFAULT_SHORTENED, DEFAULT_STATE);
         assertTrue(commentList.isEmpty());
     }
 
@@ -87,8 +85,7 @@ public class CommentServiceTest {
                         .emptyList());
 
         List<Comment> commentList = commentService
-                .findAllComments(DEFAULT_PET_UUID, DEFAULT_SHORTENED, DEFAULT_STATE
-                        .toString());
+                .findAllComments(DEFAULT_PET_UUID, DEFAULT_SHORTENED, DEFAULT_STATE);
         assertTrue(commentList.isEmpty());
     }
 
@@ -98,18 +95,7 @@ public class CommentServiceTest {
                 .thenReturn(Collections.emptyList());
 
         List<Comment> commentList = commentService.
-                findAllComments(DEFAULT_PET_UUID, DEFAULT_SHORTENED, EXPECTED_STATE
-                        .toString());
-        assertTrue(commentList.isEmpty());
-    }
-
-    @Test(expected = WrongEnumValueException.class)
-    public void findAllCommentsByStateWrongEnumValueException() throws Exception {
-        when(commentRepository.findByStateOrderByCreatedDesc(EXPECTED_STATE))
-                .thenReturn(Collections.emptyList());
-
-        List<Comment> commentList = commentService.findAllComments(DEFAULT_PET_UUID,
-                DEFAULT_SHORTENED, WRONG_STATE);
+                findAllComments(DEFAULT_PET_UUID, DEFAULT_SHORTENED, EXPECTED_STATE);
         assertTrue(commentList.isEmpty());
     }
 

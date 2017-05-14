@@ -4,7 +4,6 @@ import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import com.intive.patronage.toz.base.model.IdentifiableView;
 import com.intive.patronage.toz.comment.model.db.Comment;
-import com.intive.patronage.toz.util.validation.EnumValidate;
 import io.swagger.annotations.ApiModel;
 import io.swagger.annotations.ApiModelProperty;
 import lombok.Getter;
@@ -39,8 +38,7 @@ public class CommentView extends IdentifiableView {
 
     @ApiModelProperty(example = "ACTIVE", allowableValues = "ACTIVE, DELETED",
             position = 4)
-    @EnumValidate(enumClass = Comment.State.class)
-    private String state;
+    private Comment.State state;
 
     @ApiModelProperty(example = "1222333444555", position = 5)
     @JsonProperty(access = JsonProperty.Access.READ_ONLY)

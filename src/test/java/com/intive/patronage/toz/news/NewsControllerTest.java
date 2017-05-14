@@ -105,7 +105,7 @@ public class NewsControllerTest {
         final List<News> newsList = getNewsList(DEFAULT_TYPE_AS_STRING, SHORTENED_FOR_TEST);
         when(newsService.findAllNews(DEFAULT_TYPE, SHORTENED_FOR_TEST, DEFAULT_ORDERED)).thenReturn(newsList);
 
-        mvc.perform(get(ApiUrl.NEWS_PATH).param("shortened", SHORTENED_FOR_TEST.toString()))
+        mvc.perform(get(ApiUrl.NEWS_PATH).param("isShortened", SHORTENED_FOR_TEST.toString()))
                 .andExpect(status().isOk())
                 .andExpect(content().contentType(CONTENT_TYPE))
                 .andExpect(jsonPath("$[0].contents", is(EXPECTED_SHORTENED_CONTENTS)))

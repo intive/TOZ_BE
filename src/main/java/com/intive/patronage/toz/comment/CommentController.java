@@ -6,7 +6,7 @@ import com.intive.patronage.toz.config.ApiUrl;
 import com.intive.patronage.toz.error.model.ErrorResponse;
 import com.intive.patronage.toz.error.model.ValidationErrorResponse;
 import com.intive.patronage.toz.util.ModelMapper;
-import com.intive.patronage.toz.util.RolesChecker;
+import com.intive.patronage.toz.util.UserInfoGetter;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 import io.swagger.annotations.ApiResponse;
@@ -29,7 +29,7 @@ import java.util.UUID;
 @RestController
 @RequestMapping(value = ApiUrl.COMMENTS_PATH, produces = MediaType.APPLICATION_JSON_VALUE)
 public class CommentController {
-    private final static String DEFAULT_TYPE = "ACTIVE";
+    private final static Comment.State DEFAULT_TYPE = Comment.State.ACTIVE;
     private final CommentService commentService;
 
     @Autowired
@@ -41,17 +41,19 @@ public class CommentController {
             "Required roles: SA, TOZ, VOLUNTEER.")
     @GetMapping
     @PreAuthorize("hasAnyAuthority('SA', 'TOZ') or " +
-            "(hasAnyAuthority('SA', 'TOZ', 'VOLUNTEER') and (#state == 'ACTIVE' or #state == null))")
+            "(hasAnyAuthority('SA', 'TOZ', 'VOLUNTEER') and (#state == T(com.intive.patronage.toz" +
+            ".comment.model.db.Comment.State).ACTIVE or #state == null))")
     public ResponseEntity<List<CommentView>> getAllComments(
             @RequestParam(value = "petUuid", required = false) UUID petUuid,
-            @RequestParam(value = "shortened", required = false, defaultValue = "false")
-                    Boolean shortened,
-            @RequestParam(value = "state", required = false) String state) {
-        if (RolesChecker.hasCurrentUserAdminRole()) {
-            final List<Comment> newsList = commentService.findAllComments(petUuid, shortened, state);
+            @RequestParam(value = "isShortened", required = false, defaultValue = "false")
+                    Boolean isShortened,
+            @RequestParam(value = "state", required = false) Comment.State state) {
+        final List<Comment> newsList;
+        if (UserInfoGetter.hasCurrentUserAdminRole()) {
+            newsList = commentService.findAllComments(petUuid, isShortened, state);
             return ResponseEntity.ok().body(ModelMapper.convertToView(newsList, CommentView.class));
         }
-        final List<Comment> newsList = commentService.findAllComments(petUuid, shortened, DEFAULT_TYPE);
+        newsList = commentService.findAllComments(petUuid, isShortened, DEFAULT_TYPE);
         return ResponseEntity.ok().body(ModelMapper.convertToView(newsList, CommentView.class));
     }
 

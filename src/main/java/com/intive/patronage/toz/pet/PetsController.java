@@ -12,7 +12,7 @@ import com.intive.patronage.toz.storage.StorageService;
 import com.intive.patronage.toz.storage.model.db.UploadedFile;
 import com.intive.patronage.toz.storage.model.view.UrlView;
 import com.intive.patronage.toz.util.ModelMapper;
-import com.intive.patronage.toz.util.RolesChecker;
+import com.intive.patronage.toz.util.UserInfoGetter;
 import io.swagger.annotations.*;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
@@ -55,7 +55,7 @@ class PetsController {
     @GetMapping
     @PreAuthorize("hasAnyAuthority('SA', 'TOZ', 'VOLUNTEER', 'ANONYMOUS')")
     public List<PetView> getAllPets() {
-        if (RolesChecker.hasCurrentUserAdminRole()) {
+        if (UserInfoGetter.hasCurrentUserAdminRole()) {
             final List<Pet> pets = petsService.findAllPets();
             return ModelMapper.convertToView(pets, PetView.class);
         }

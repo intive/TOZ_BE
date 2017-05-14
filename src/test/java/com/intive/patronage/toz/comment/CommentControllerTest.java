@@ -29,7 +29,6 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
-
 @RunWith(DataProviderRunner.class)
 @SpringBootTest(
         properties = ApiProperties.JWT_SECRET_BASE64
@@ -79,7 +78,7 @@ public class CommentControllerTest {
     public void getAllComments() throws Exception {
         final List<Comment> commentList = getCommentList(DEFAULT_PET_UUID, DEFAULT_SHORTENED);
         when(commentService.findAllComments(DEFAULT_PET_UUID, DEFAULT_SHORTENED,
-                DEFAULT_STATE.toString())).thenReturn(commentList);
+                DEFAULT_STATE)).thenReturn(commentList);
 
         mockMvc.perform(get(ApiUrl.COMMENTS_PATH))
                 .andExpect(status().isOk())
@@ -88,7 +87,7 @@ public class CommentControllerTest {
                 .andExpect(jsonPath("$", hasSize(COMMENTS_LIST_SIZE)));
 
         verify(commentService, times(1))
-                .findAllComments(DEFAULT_PET_UUID, DEFAULT_SHORTENED, DEFAULT_STATE.toString());
+                .findAllComments(DEFAULT_PET_UUID, DEFAULT_SHORTENED, DEFAULT_STATE);
         verifyNoMoreInteractions(commentService);
     }
 
@@ -97,7 +96,7 @@ public class CommentControllerTest {
         final List<Comment> commentList = getCommentList(EXPECTED_PET_UUID,
                 DEFAULT_SHORTENED);
         when(commentService.findAllComments(EXPECTED_PET_UUID, DEFAULT_SHORTENED,
-                DEFAULT_STATE.toString())).thenReturn(commentList);
+                DEFAULT_STATE)).thenReturn(commentList);
 
         mockMvc.perform(get(ApiUrl.COMMENTS_PATH).param("petUuid", EXPECTED_PET_UUID
                 .toString()))
@@ -110,7 +109,7 @@ public class CommentControllerTest {
                 .andExpect(jsonPath("$", hasSize(COMMENTS_LIST_SIZE)));
 
         verify(commentService, times(1))
-                .findAllComments(EXPECTED_PET_UUID, DEFAULT_SHORTENED, DEFAULT_STATE.toString());
+                .findAllComments(EXPECTED_PET_UUID, DEFAULT_SHORTENED, DEFAULT_STATE);
         verifyNoMoreInteractions(commentService);
     }
 
@@ -118,8 +117,8 @@ public class CommentControllerTest {
     public void getAllCommentsByState() throws Exception {
         final List<Comment> commentList = getCommentList(DEFAULT_PET_UUID,
                 DEFAULT_SHORTENED);
-        when(commentService.findAllComments(DEFAULT_PET_UUID, DEFAULT_SHORTENED, DEFAULT_STATE
-                .toString())).thenReturn(commentList);
+        when(commentService.findAllComments(DEFAULT_PET_UUID, DEFAULT_SHORTENED, DEFAULT_STATE))
+                .thenReturn(commentList);
 
         mockMvc.perform(get(ApiUrl.COMMENTS_PATH).param("state", DEFAULT_STATE.toString()))
                 .andExpect(status().isOk())
@@ -129,7 +128,7 @@ public class CommentControllerTest {
                 .andExpect(jsonPath("$", hasSize(COMMENTS_LIST_SIZE)));
 
         verify(commentService, times(1)).
-                findAllComments(DEFAULT_PET_UUID, DEFAULT_SHORTENED, DEFAULT_STATE.toString());
+                findAllComments(DEFAULT_PET_UUID, DEFAULT_SHORTENED, DEFAULT_STATE);
         verifyNoMoreInteractions(commentService);
     }
 
@@ -137,9 +136,9 @@ public class CommentControllerTest {
     public void getAllCommentsShortened() throws Exception {
         final List<Comment> commentList = getCommentList(DEFAULT_PET_UUID, SHORTENED_FOR_TEST);
         when(commentService.findAllComments(DEFAULT_PET_UUID, SHORTENED_FOR_TEST,
-                DEFAULT_STATE.toString())).thenReturn(commentList);
+                DEFAULT_STATE)).thenReturn(commentList);
 
-        mockMvc.perform(get(ApiUrl.COMMENTS_PATH).param("shortened",
+        mockMvc.perform(get(ApiUrl.COMMENTS_PATH).param("isShortened",
                 SHORTENED_FOR_TEST.toString()))
                 .andExpect(status().isOk())
                 .andExpect(content().contentType(CONTENT_TYPE))
@@ -151,7 +150,7 @@ public class CommentControllerTest {
 
         verify(commentService, times(1))
                 .findAllComments(DEFAULT_PET_UUID, SHORTENED_FOR_TEST,
-                        DEFAULT_STATE.toString());
+                        DEFAULT_STATE);
         verifyNoMoreInteractions(commentService);
     }
 
