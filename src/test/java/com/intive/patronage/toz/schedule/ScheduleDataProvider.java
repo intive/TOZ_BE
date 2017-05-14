@@ -17,7 +17,6 @@ public class ScheduleDataProvider {
     static final LocalDate VALID_LOCAL_DATE_FROM = LocalDate.now();
     static final LocalDate VALID_LOCAL_DATE_TO = LocalDate.now().plusDays(7);
     static final LocalTime VALID_LOCAL_TIME = LocalTime.parse("10:00");
-    static final String MODIFICATION_MESSAGE = "string";
     static final Date VALID_DATE_FROM = Date.from(LocalDate.parse("2017-03-01").atStartOfDay().toInstant(ZoneOffset.UTC));
     private static final Date VALID_DATE_TO = Date.from(LocalDate.parse("2017-03-02").atStartOfDay().toInstant(ZoneOffset.UTC));
     private static final UUID OWNER_UUID = UUID.randomUUID();

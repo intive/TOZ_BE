@@ -8,10 +8,7 @@ import com.intive.patronage.toz.schedule.model.view.ReservationRequestView;
 import com.intive.patronage.toz.schedule.model.view.ReservationResponseView;
 import com.intive.patronage.toz.schedule.model.view.ScheduleView;
 import com.intive.patronage.toz.schedule.util.ScheduleParser;
-import io.swagger.annotations.ApiOperation;
-import io.swagger.annotations.ApiParam;
-import io.swagger.annotations.ApiResponse;
-import io.swagger.annotations.ApiResponses;
+import io.swagger.annotations.*;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.PropertySource;
@@ -30,6 +27,7 @@ import java.time.LocalDate;
 import java.util.List;
 import java.util.UUID;
 
+@Api(tags = "Schedule")
 @PropertySource("classpath:application.properties")
 @RestController
 @RequestMapping(value = "/schedule", produces = MediaType.APPLICATION_JSON_VALUE)

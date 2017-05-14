@@ -2,6 +2,7 @@ package com.intive.patronage.toz.news;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.intive.patronage.toz.config.ApiUrl;
+import com.intive.patronage.toz.environment.ApiProperties;
 import com.intive.patronage.toz.news.model.db.News;
 import com.tngtech.java.junit.dataprovider.DataProvider;
 import com.tngtech.java.junit.dataprovider.DataProviderRunner;
@@ -28,8 +29,7 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 
 @RunWith(DataProviderRunner.class)
 @SpringBootTest(
-        webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT,
-        properties = "jwt.secret-base64=c2VjcmV0"
+        properties = ApiProperties.JWT_SECRET_BASE64
 )
 public class NewsControllerTest {
     private static final int NEWS_LIST_SIZE = 5;
@@ -42,19 +42,13 @@ public class NewsControllerTest {
             "He was found in the neighborhood of allotment gardens.";
     private static final String EXPECTED_SHORTENED_CONTENTS = "Today to our facility in Szczecin arrived a " +
             "new dog. His name is Reksio, he is two years old ";
-    private static final String EXPECTED_TYPE = News.Type.RELEASED.toString();
-    private static final String DEFAULT_TYPE = null;
+    private static final String DEFAULT_TYPE = News.Type.RELEASED.toString();
+    private static final String DEFAULT_TYPE_AS_STRING = "RELEASED";
     private static final MediaType CONTENT_TYPE = MediaType.APPLICATION_JSON_UTF8;
 
     @Mock
     private NewsService newsService;
     private MockMvc mvc;
-
-    @Before
-    public void setUp() throws Exception {
-        MockitoAnnotations.initMocks(this);
-        mvc = MockMvcBuilders.standaloneSetup(new NewsController(newsService)).build();
-    }
 
     @DataProvider
     public static Object[] getProperNews() {
@@ -62,13 +56,19 @@ public class NewsControllerTest {
         news.setId(EXPECTED_ID);
         news.setTitle(EXPECTED_TITLE);
         news.setContents(EXPECTED_CONTENTS);
-        news.setType(News.Type.valueOf(EXPECTED_TYPE));
+        news.setType(News.Type.valueOf(DEFAULT_TYPE));
         return new News[]{news};
+    }
+
+    @Before
+    public void setUp() throws Exception {
+        MockitoAnnotations.initMocks(this);
+        mvc = MockMvcBuilders.standaloneSetup(new NewsController(newsService)).build();
     }
 
     @Test
     public void getAllNews() throws Exception {
-        final List<News> newsList = getNewsList("", false);
+        final List<News> newsList = getNewsList(DEFAULT_TYPE_AS_STRING, DEFAULT_SHORTENED);
         when(newsService.findAllNews(DEFAULT_TYPE, DEFAULT_SHORTENED)).thenReturn(newsList);
 
         mvc.perform(get(ApiUrl.NEWS_PATH))
@@ -84,24 +84,24 @@ public class NewsControllerTest {
 
     @Test
     public void getAllNewsByType() throws Exception {
-        final List<News> newsList = getNewsList(EXPECTED_TYPE, false);
-        when(newsService.findAllNews(EXPECTED_TYPE, DEFAULT_SHORTENED)).thenReturn(newsList);
+        final List<News> newsList = getNewsList(DEFAULT_TYPE, DEFAULT_SHORTENED);
+        when(newsService.findAllNews(DEFAULT_TYPE, DEFAULT_SHORTENED)).thenReturn(newsList);
 
-        mvc.perform(get(ApiUrl.NEWS_PATH).param("type", EXPECTED_TYPE))
+        mvc.perform(get(ApiUrl.NEWS_PATH).param("type", DEFAULT_TYPE))
                 .andExpect(status().isOk())
                 .andExpect(content().contentType(CONTENT_TYPE))
-                .andExpect(jsonPath("$[0].type", is(EXPECTED_TYPE)))
-                .andExpect(jsonPath("$[1].type", is(EXPECTED_TYPE)))
+                .andExpect(jsonPath("$[0].type", is(DEFAULT_TYPE)))
+                .andExpect(jsonPath("$[1].type", is(DEFAULT_TYPE)))
                 .andExpect(jsonPath("$", hasSize(NEWS_LIST_SIZE)));
 
         verify(newsService, times(1)).
-                findAllNews(EXPECTED_TYPE, DEFAULT_SHORTENED);
+                findAllNews(DEFAULT_TYPE, DEFAULT_SHORTENED);
         verifyNoMoreInteractions(newsService);
     }
 
     @Test
     public void getAllNewsShortened() throws Exception {
-        final List<News> newsList = getNewsList("", true);
+        final List<News> newsList = getNewsList(DEFAULT_TYPE_AS_STRING, SHORTENED_FOR_TEST);
         when(newsService.findAllNews(DEFAULT_TYPE, SHORTENED_FOR_TEST)).thenReturn(newsList);
 
         mvc.perform(get(ApiUrl.NEWS_PATH).param("shortened", SHORTENED_FOR_TEST.toString()))
@@ -126,7 +126,7 @@ public class NewsControllerTest {
             } else {
                 news.setContents(EXPECTED_SHORTENED_CONTENTS);
             }
-            if (type.equals(EXPECTED_TYPE)) {
+            if (type.equals(DEFAULT_TYPE)) {
                 news.setType(News.Type.RELEASED);
             } else {
                 news.setType(News.Type.values()[i % 2]);
@@ -146,7 +146,7 @@ public class NewsControllerTest {
                 .andExpect(jsonPath("$.id", is(EXPECTED_ID.toString())))
                 .andExpect(jsonPath("$.title", is(EXPECTED_TITLE)))
                 .andExpect(jsonPath("$.contents", is(EXPECTED_CONTENTS)))
-                .andExpect(jsonPath("$.type", is(EXPECTED_TYPE)));
+                .andExpect(jsonPath("$.type", is(DEFAULT_TYPE)));
 
         verify(newsService, times(1)).findById(EXPECTED_ID);
         verifyNoMoreInteractions(newsService);
@@ -163,7 +163,7 @@ public class NewsControllerTest {
                 .andExpect(jsonPath("$.id", is(EXPECTED_ID.toString())))
                 .andExpect(jsonPath("$.title", is(EXPECTED_TITLE)))
                 .andExpect(jsonPath("$.contents", is(EXPECTED_CONTENTS)))
-                .andExpect(jsonPath("$.type", is(EXPECTED_TYPE)));
+                .andExpect(jsonPath("$.type", is(DEFAULT_TYPE)));
 
         verify(newsService, times(1)).
                 createNews(any(News.class));
@@ -182,7 +182,7 @@ public class NewsControllerTest {
                 .andExpect(jsonPath("$.id", is(EXPECTED_ID.toString())))
                 .andExpect(jsonPath("$.title", is(EXPECTED_TITLE)))
                 .andExpect(jsonPath("$.contents", is(EXPECTED_CONTENTS)))
-                .andExpect(jsonPath("$.type", is(EXPECTED_TYPE)));
+                .andExpect(jsonPath("$.type", is(DEFAULT_TYPE)));
 
         verify(newsService, times(1)).
                 updateNews(eq(EXPECTED_ID), any(News.class));

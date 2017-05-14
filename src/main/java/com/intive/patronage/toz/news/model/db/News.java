@@ -15,9 +15,15 @@ import java.util.Date;
 @Entity
 @EntityListeners(AuditingEntityListener.class)
 public class News extends Identifiable {
+
     private String title;
+
+    @Lob
     private String contents;
+
+    @Enumerated(value = EnumType.STRING)
     private Type type;
+
     private String photoUrl;
 
     @CreatedDate

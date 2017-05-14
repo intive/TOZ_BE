@@ -17,7 +17,9 @@ import java.util.Date;
 public class Pet extends Identifiable {
 
     private String name;
+    @Enumerated(value = EnumType.STRING)
     private Type type;
+    @Enumerated(value = EnumType.STRING)
     private Sex sex;
     private String description;
     private String address;

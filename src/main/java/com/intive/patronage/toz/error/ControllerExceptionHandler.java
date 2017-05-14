@@ -5,6 +5,7 @@ import com.intive.patronage.toz.error.exception.InvalidImageFileException;
 import com.intive.patronage.toz.error.exception.NotFoundException;
 import com.intive.patronage.toz.error.exception.WrongEnumValueException;
 import com.intive.patronage.toz.error.exception.WrongProposalRoleException;
+import com.intive.patronage.toz.error.exception.*;
 import com.intive.patronage.toz.error.model.ArgumentErrorResponse;
 import com.intive.patronage.toz.error.model.ErrorResponse;
 import com.intive.patronage.toz.error.model.ValidationErrorResponse;
@@ -189,6 +190,23 @@ public class ControllerExceptionHandler {
         final String message = messageSource.getMessage(
                 "accessDenied", null, LocaleContextHolder.getLocale());
         return new ErrorResponse(HttpStatus.FORBIDDEN, message);
+    }
+
+    @ExceptionHandler(BadRoleForSentUserBodyException.class)
+    @ResponseStatus(HttpStatus.BAD_REQUEST)
+    @ResponseBody
+    public ErrorResponse handleBadRoleForSentUserBodyException(BadRoleForSentUserBodyException e) {
+        final String userRoleValue = e.getUserRole().toString();
+        final String message = messageSource.getMessage(
+                "badRoleForSentUserBody", new String[]{userRoleValue}, LocaleContextHolder.getLocale());
+        return new ErrorResponse(HttpStatus.BAD_REQUEST, message);
+    }
+
+    @ExceptionHandler(WrongPasswordException.class)
+    @ResponseStatus(HttpStatus.BAD_REQUEST)
+    @ResponseBody
+    public ErrorResponse handleWrongPasswordException(WrongPasswordException e) {
+        return new ErrorResponse(HttpStatus.BAD_REQUEST, e.getMessage());
     }
 
     @ExceptionHandler(WrongProposalRoleException.class)

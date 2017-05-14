@@ -1,30 +1,36 @@
 package com.intive.patronage.toz.users.model.db;
 
-import com.intive.patronage.toz.base.model.PersonalData;
+import com.intive.patronage.toz.base.model.Identifiable;
 import lombok.Getter;
 
-import javax.persistence.Entity;
-import javax.persistence.EnumType;
-import javax.persistence.Enumerated;
-import javax.persistence.Id;
+import javax.persistence.*;
 import java.io.Serializable;
 
 @Getter
 @Entity
-public class RoleEntity implements Serializable {
+@Table(name = "role")
+class RoleEntity extends Identifiable implements Serializable {
 
-    @Id
     @Enumerated(EnumType.STRING)
-    private PersonalData.Role role;
+    private Role role;
 
     private RoleEntity() {
     }
 
-    public RoleEntity(PersonalData.Role role) {
-        this.role = role;
+    private RoleEntity(String role) {
+        this.role = Role.valueOf(role);
     }
 
-    public RoleEntity(String role) {
-        this.role = PersonalData.Role.valueOf(role);
+    static RoleEntity buildWithRole(Role role) {
+        RoleEntity roleEntity = new RoleEntity();
+        roleEntity.role = role;
+        return roleEntity;
+    }
+
+    @Override
+    public String toString() {
+        return "RoleEntity{" +
+                "role=" + role +
+                '}';
     }
 }

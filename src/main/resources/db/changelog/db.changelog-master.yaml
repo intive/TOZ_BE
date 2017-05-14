@@ -201,7 +201,7 @@ databaseChangeLog:
                     - nullable: false
               - column:
                   name: create_date
-                  type: date
+                  type: datetime
               - column:
                   name: path
                   type: varchar(255)
@@ -210,7 +210,7 @@ databaseChangeLog:
         author: marek.macko
         changes:
           - createTable:
-              tableName: user
+              tableName: users
               columns:
                 - column:
                     name: id
@@ -222,37 +222,86 @@ databaseChangeLog:
                     name: name
                     type: varchar(255)
                 - column:
-                    name: password_hash
-                    type: varchar(255)
-                - column:
                     name: surname
-                    type: varchar(255)
-                - column:
-                    name: phone_number
                     type: varchar(255)
                 - column:
                     name: email
                     type: varchar(255)
                     constraints:
                       - unique: true
+                - column:
+                    name: phone_number
+                    type: varchar(255)
+                - column:
+                    name: password_hash
+                    type: varchar(255)
+                - column:
+                    name: password_change_date
+                    type: datetime
   - changeSet:
         id : 4
         author: marek.macko
         changes:
           - createTable:
-              tableName: role_entity
+              tableName: role
               columns:
+                - column:
+                    name: id
+                    type: uuid
+                    constraints:
+                      - primaryKey: true
                 - column:
                     name: role
                     type: varchar(255)
                     constraints:
                       - primaryKey: true
-                      - nullable: false
           - createTable:
-              tableName: user_roles
+              tableName: users_role
               columns:
                 - column:
                     name: user_id
+                    type: uuid
+                - column:
+                    name: role_id
+                    type: uuid
+  - changeSet:
+          id : 5
+          author: macieg-b
+          changes:
+            - createTable:
+                tableName: proposal
+                columns:
+                  - column:
+                      name: id
+                      type: uuid
+                      constraints:
+                        - primaryKey: true
+                        - nullable: false
+                  - column:
+                      name: name
+                      type: varchar(255)
+                  - column:
+                      name: surname
+                      type: varchar(255)
+                  - column:
+                      name: phone_number
+                      type: varchar(255)
+                  - column:
+                      name: email
+                      type: varchar(255)
+                      constraints:
+                        - unique: true
+                  - column:
+                      name: creation_date
+                      type: datetime
+                  - column:
+                      name: is_read
+                      type: boolean
+            - createTable:
+                tableName: proposal_roles
+                columns:
+                - column:
+                    name: proposal_id
                     type: uuid
                     constraints:
                       - nullable: false
@@ -261,49 +310,3 @@ databaseChangeLog:
                     type: varchar(255)
                     constraints:
                       - nullable: false
-  - changeSet:
-        id : 5
-        author: macieg-b
-        changes:
-          - createTable:
-              tableName: proposal
-              columns:
-                - column:
-                    name: id
-                    type: uuid
-                    constraints:
-                      - primaryKey: true
-                      - nullable: false
-                - column:
-                    name: name
-                    type: varchar(255)
-                - column:
-                    name: surname
-                    type: varchar(255)
-                - column:
-                    name: phone_number
-                    type: varchar(255)
-                - column:
-                    name: email
-                    type: varchar(255)
-                    constraints:
-                      - unique: true
-                - column:
-                    name: creation_date
-                    type: datetime
-                - column:
-                    name: is_read
-                    type: boolean
-          - createTable:
-              tableName: proposal_roles
-              columns:
-              - column:
-                  name: proposal_id
-                  type: uuid
-                  constraints:
-                    - nullable: false
-              - column:
-                  name: roles_role
-                  type: varchar(255)
-                  constraints:
-                    - nullable: false

@@ -12,7 +12,7 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
 
-public class TokenAuthenticationFailureHandler implements AuthenticationFailureHandler {
+class TokenAuthenticationFailureHandler implements AuthenticationFailureHandler {
 
     private static final ObjectMapper MAPPER = new ObjectMapper();
 
