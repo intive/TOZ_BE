@@ -18,8 +18,8 @@ abstract class HelpInfoController {
         this.helpInfoService = helpInfoService;
     }
 
-    public HelpInfoView getHowToHelpInfo() {
-        return convertToView(helpInfoService.findHelpInfo());
+    public HelpInfoView getHowToHelpInfo(Boolean isShortened) {
+        return convertToView(helpInfoService.findHelpInfo(isShortened));
     }
 
     public ResponseEntity<HelpInfoView> createHowToHelpInfo(@Valid @RequestBody HelpInfoView helpInfoView) {

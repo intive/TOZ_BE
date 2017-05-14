@@ -14,8 +14,8 @@ class DonateInfoService extends HelpInfoService {
         super(helpInfoRepository, HOW_TO_DONATE);
     }
 
-    HelpInfo findHelpInfo() {
-        return super.findHelpInfo();
+    HelpInfo findHelpInfo(Boolean isShortened) {
+        return super.findHelpInfo(isShortened);
     }
 
     HelpInfo createHelpInfo(final HelpInfo helpInfo) {

@@ -14,8 +14,8 @@ class BecomeVolunteerInfoService extends HelpInfoService {
         super(helpInfoRepository, HOW_TO_BECOME_VOLUNTEER);
     }
 
-    HelpInfo findHelpInfo() {
-        return super.findHelpInfo();
+    HelpInfo findHelpInfo(Boolean isShortened) {
+        return super.findHelpInfo(isShortened);
     }
 
     HelpInfo createHelpInfo(final HelpInfo helpInfo) {

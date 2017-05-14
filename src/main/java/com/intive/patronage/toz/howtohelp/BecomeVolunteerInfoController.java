@@ -35,8 +35,9 @@ public class BecomeVolunteerInfoController extends HelpInfoController {
     @ResponseStatus(HttpStatus.OK)
     @PreAuthorize("hasAnyAuthority('SA', 'TOZ', 'VOLUNTEER', 'ANONYMOUS')")
     @Override
-    public HelpInfoView getHowToHelpInfo() {
-        return super.getHowToHelpInfo();
+    public HelpInfoView getHowToHelpInfo(
+            @Valid @RequestParam(value = "isShortened", required = false, defaultValue = "false") Boolean isShortened) {
+        return super.getHowToHelpInfo(isShortened);
     }
 
     @ApiOperation(value = "Create how to become volunteer information.", notes =
