@@ -24,7 +24,7 @@ abstract class UserBasicController {
 
     protected List<UserView> getAllUsers() {
         final List<User> users = userService.findAll();
-        return ModelMapper.convertToView(users, UserView.class);
+        return ModelMapper.convertIdentifiableToView(users, UserView.class);
     }
 
     protected UserView getUserById(UUID id) {
@@ -33,7 +33,7 @@ abstract class UserBasicController {
     }
 
     private UserView convertToView(final User user) {
-        return ModelMapper.convertToView(user, UserView.class);
+        return ModelMapper.convertIdentifiableToView(user, UserView.class);
     }
 
     protected ResponseEntity<UserView> createUser(UserView userView) {
@@ -48,7 +48,7 @@ abstract class UserBasicController {
     }
 
     private User convertToModel(final UserView userView) {
-        return ModelMapper.convertToModel(userView, User.class);
+        return ModelMapper.convertIdentifiableToModel(userView, User.class);
     }
 
     protected ResponseEntity<?> deleteUser(UUID id) {

@@ -1,9 +1,8 @@
 package com.intive.patronage.toz.howtohelp;
 
-import com.fasterxml.jackson.databind.DeserializationFeature;
-import com.fasterxml.jackson.databind.ObjectMapper;
-import com.intive.patronage.toz.howtohelp.model.view.HelpInfoView;
 import com.intive.patronage.toz.howtohelp.model.db.HelpInfo;
+import com.intive.patronage.toz.howtohelp.model.view.HelpInfoView;
+import com.intive.patronage.toz.util.ModelMapper;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
@@ -14,11 +13,9 @@ import java.net.URI;
 abstract class HelpInfoController {
 
     private final HelpInfoService helpInfoService;
-    private static final ObjectMapper objectMapper = new ObjectMapper();
 
     HelpInfoController(HelpInfoService helpInfoService) {
         this.helpInfoService = helpInfoService;
-        objectMapper.configure(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES, false);
     }
 
     public HelpInfoView getHowToHelpInfo() {
@@ -46,10 +43,10 @@ abstract class HelpInfoController {
     }
 
     private HelpInfoView convertToView(final HelpInfo helpInfo) {
-        return objectMapper.convertValue(helpInfo, HelpInfoView.class);
+        return ModelMapper.convertToView(helpInfo, HelpInfoView.class);
     }
 
     private HelpInfo convertToModel(final HelpInfoView helpInfoView) {
-        return objectMapper.convertValue(helpInfoView, HelpInfo.class);
+        return ModelMapper.convertToModel(helpInfoView, HelpInfo.class);
     }
 }

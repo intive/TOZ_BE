@@ -134,7 +134,7 @@ public class UserTozAdminControllerTest {
 
     private String getUserContentBody() {
         final User volunteerUser = getUserWithRole(Role.VOLUNTEER);
-        final UserView volunteerUserView = ModelMapper.convertToView(volunteerUser, UserView.class);
+        final UserView volunteerUserView = ModelMapper.convertIdentifiableToView(volunteerUser, UserView.class);
         volunteerUserView.setPassword(PASSWORD);
         return ModelMapper.convertToJsonString(volunteerUserView);
     }

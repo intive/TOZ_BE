@@ -21,20 +21,28 @@ public class ModelMapper {
                 .configure(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES, false);
     }
 
-    public static <T extends IdentifiableView> T convertToView(Object model, Class<T> viewClass) {
+    public static <T extends IdentifiableView> T convertIdentifiableToView(Object model, Class<T> viewClass) {
         return OBJECT_MAPPER_DISABLED_ANNOTATIONS.convertValue(model, viewClass);
     }
 
-    public static <T extends IdentifiableView> List<T> convertToView(List<? extends Identifiable> models, Class<T> viewClass) {
+    public static <T> T convertToView(Object model, Class<T> viewClass) {
+        return OBJECT_MAPPER_DISABLED_ANNOTATIONS.convertValue(model, viewClass);
+    }
+
+    public static <T extends IdentifiableView> List<T> convertIdentifiableToView(List<? extends Identifiable> models, Class<T> viewClass) {
         List<T> views = new ArrayList<>();
         for (Object model : models) {
-            T view = convertToView(model, viewClass);
+            T view = convertIdentifiableToView(model, viewClass);
             views.add(view);
         }
         return views;
     }
 
-    public static <T extends Identifiable> T convertToModel(Object view, Class<T> modelClass) {
+    public static <T extends Identifiable> T convertIdentifiableToModel(Object view, Class<T> modelClass) {
+        return OBJECT_MAPPER_ENABLED_ANNOTATIONS.convertValue(view, modelClass);
+    }
+
+    public static <T> T convertToModel(Object view, Class<T> modelClass) {
         return OBJECT_MAPPER_ENABLED_ANNOTATIONS.convertValue(view, modelClass);
     }
 

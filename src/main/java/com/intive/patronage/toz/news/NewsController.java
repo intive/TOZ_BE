@@ -50,10 +50,10 @@ class NewsController {
                     Boolean shortened) {
         if (RolesChecker.hasCurrentUserAdminRole()) {
             final List<News> newsList = newsService.findAllNews(type, shortened);
-            return ResponseEntity.ok().body(ModelMapper.convertToView(newsList, NewsView.class));
+            return ResponseEntity.ok().body(ModelMapper.convertIdentifiableToView(newsList, NewsView.class));
         }
         final List<News> newsList = newsService.findAllNews(DEFAULT_TYPE, shortened);
-        return ResponseEntity.ok().body(ModelMapper.convertToView(newsList, NewsView.class));
+        return ResponseEntity.ok().body(ModelMapper.convertIdentifiableToView(newsList, NewsView.class));
     }
 
     @ApiOperation(value = "Get news by id.", notes =
@@ -67,7 +67,7 @@ class NewsController {
     @PostAuthorize("hasAnyAuthority('SA', 'TOZ') or " +
             "(hasAnyAuthority('SA', 'TOZ', 'VOLUNTEER', 'ANONYMOUS') and returnObject.type == 'RELEASED')")
     public NewsView getNewsById(@PathVariable UUID id) {
-        return ModelMapper.convertToView(newsService.findById(id), NewsView.class);
+        return ModelMapper.convertIdentifiableToView(newsService.findById(id), NewsView.class);
     }
 
     @ApiOperation(value = "Create news.", response = NewsView.class, notes =
@@ -82,7 +82,7 @@ class NewsController {
         final URI baseLocation = ServletUriComponentsBuilder.fromCurrentRequest()
                 .build().toUri();
         return ResponseEntity.created(baseLocation)
-                .body(ModelMapper.convertToView(newsService.createNews(convertFromView(newsView)), NewsView.class));
+                .body(ModelMapper.convertIdentifiableToView(newsService.createNews(convertFromView(newsView)), NewsView.class));
     }
 
     @ApiOperation(value = "Delete news.", notes =
@@ -110,10 +110,10 @@ class NewsController {
         final URI baseLocation = ServletUriComponentsBuilder.fromCurrentRequest()
                 .build().toUri();
         return ResponseEntity.created(baseLocation)
-                .body(ModelMapper.convertToView(newsService.updateNews(id, convertFromView(newsView)), NewsView.class));
+                .body(ModelMapper.convertIdentifiableToView(newsService.updateNews(id, convertFromView(newsView)), NewsView.class));
     }
 
     private static News convertFromView(final NewsView newsView) {
-        return ModelMapper.convertToModel(newsView, News.class);
+        return ModelMapper.convertIdentifiableToModel(newsView, News.class);
     }
 }

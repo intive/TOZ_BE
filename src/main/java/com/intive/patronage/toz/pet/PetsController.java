@@ -57,10 +57,10 @@ class PetsController {
     public List<PetView> getAllPets() {
         if (RolesChecker.hasCurrentUserAdminRole()) {
             final List<Pet> pets = petsService.findAllPets();
-            return ModelMapper.convertToView(pets, PetView.class);
+            return ModelMapper.convertIdentifiableToView(pets, PetView.class);
         }
         final List<Pet> pets = petsService.findPetsWithFilledFields();
-        return ModelMapper.convertToView(pets, PetView.class);
+        return ModelMapper.convertIdentifiableToView(pets, PetView.class);
     }
 
     @ApiOperation(value = "Get single pet by id", notes =
@@ -78,7 +78,7 @@ class PetsController {
     }
 
     private static PetView convertToView(final Pet pet) {
-        return ModelMapper.convertToView(pet, PetView.class);
+        return ModelMapper.convertIdentifiableToView(pet, PetView.class);
     }
 
     @ApiOperation(value = "Create new pet", response = PetView.class, notes =
@@ -101,7 +101,7 @@ class PetsController {
     }
 
     private static Pet convertToModel(final PetView petView) {
-        return ModelMapper.convertToModel(petView, Pet.class);
+        return ModelMapper.convertIdentifiableToModel(petView, Pet.class);
     }
 
     @ApiOperation(value = "Delete pet", notes =
