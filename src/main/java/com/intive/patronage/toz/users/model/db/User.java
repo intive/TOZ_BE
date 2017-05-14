@@ -10,9 +10,6 @@ import javax.persistence.Table;
 import javax.persistence.Temporal;
 import javax.persistence.TemporalType;
 import java.util.Date;
-import java.util.HashSet;
-import java.util.Set;
-import java.util.stream.Collectors;
 
 @Getter
 @Setter
@@ -30,22 +27,9 @@ public class User extends PersonalData {
         this.name = name;
     }
 
-    public boolean isSuperAdmin() {
-        return hasRole(Role.SA);
-    }
-
-    public Set<Role> getRoles() {
-        Set<Role> userRoles = new HashSet<>();
-        for (RoleEntity roleEntity : roles) {
-            userRoles.add(roleEntity.getRole());
-        }
-        return userRoles;
-    }
-
-    public void setRoles(Set<Role> roles) {
-        this.roles = roles.stream()
-                .map(RoleEntity::buildWithRole)
-                .collect(Collectors.toSet());
+    public void setPasswordHash(String passwordHash) {
+        this.passwordHash = passwordHash;
+        passwordChangeDate = new Date();
     }
 
     @Override

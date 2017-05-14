@@ -1,12 +1,12 @@
 package com.intive.patronage.toz.proposals;
 
-import com.intive.patronage.toz.base.model.PersonalData;
 import com.intive.patronage.toz.config.ApiUrl;
 import com.intive.patronage.toz.error.exception.WrongProposalRoleException;
 import com.intive.patronage.toz.error.model.ErrorResponse;
 import com.intive.patronage.toz.error.model.ValidationErrorResponse;
 import com.intive.patronage.toz.proposals.model.Proposal;
 import com.intive.patronage.toz.proposals.model.ProposalView;
+import com.intive.patronage.toz.users.model.db.Role;
 import com.intive.patronage.toz.util.ModelMapper;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
@@ -102,8 +102,8 @@ public class ProposalController {
     }
 
     private void validateProposalRoles(ProposalView proposalView){
-        for(PersonalData.Role role : proposalView.getRoles()){
-            if(!role.equals(PersonalData.Role.VOLUNTEER) && !role.equals(PersonalData.Role.TEMP_HOUSE)){
+        for(Role role : proposalView.getRoles()){
+            if(!role.equals(Role.VOLUNTEER) && !role.equals(Role.TEMP_HOUSE)){
                 throw new WrongProposalRoleException();
             }
         }

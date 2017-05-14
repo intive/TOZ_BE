@@ -1,9 +1,9 @@
 package com.intive.patronage.toz.proposals;
 
-import com.intive.patronage.toz.base.model.PersonalData;
 import com.intive.patronage.toz.config.ApiUrl;
 import com.intive.patronage.toz.proposals.model.Proposal;
 import com.intive.patronage.toz.proposals.model.ProposalView;
+import com.intive.patronage.toz.users.model.db.Role;
 import com.intive.patronage.toz.util.ModelMapper;
 import com.tngtech.java.junit.dataprovider.DataProvider;
 import com.tngtech.java.junit.dataprovider.DataProviderRunner;
@@ -49,7 +49,7 @@ public class ProposalControllerTest {
     private static final String EXPECTED_SURNAME = "Kowalski";
     private static final String EXPECTED_PHONE_NUMBER = "600100200";
     private static final String EXPECTED_EMAIL = "jan.ko@gmail.com";
-    private static final PersonalData.Role EXPECTED_ROLE = PersonalData.Role.VOLUNTEER;
+    private static final Role EXPECTED_ROLE = Role.VOLUNTEER;
     private static final MediaType CONTENT_TYPE = MediaType.APPLICATION_JSON_UTF8;
 
     @Mock
@@ -87,7 +87,7 @@ public class ProposalControllerTest {
             proposal.setSurname(String.format("%s%d", "surname", i));
             proposal.setPhoneNumber(String.format("%s%d", "number", i));
             proposal.setEmail(String.format("%s%d", "email", i));
-            proposal.addRole(PersonalData.Role.values()[i % 2]);
+            proposal.addRole(Role.values()[i % 2]);
             proposals.add(proposal);
         }
         return proposals;

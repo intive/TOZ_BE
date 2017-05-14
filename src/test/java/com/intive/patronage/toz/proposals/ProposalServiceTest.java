@@ -1,11 +1,11 @@
 package com.intive.patronage.toz.proposals;
 
 
-import com.intive.patronage.toz.base.model.PersonalData;
 import com.intive.patronage.toz.error.exception.AlreadyExistsException;
 import com.intive.patronage.toz.error.exception.NotFoundException;
 import com.intive.patronage.toz.proposals.model.Proposal;
 import com.intive.patronage.toz.users.UserRepository;
+import com.intive.patronage.toz.users.model.db.Role;
 import com.tngtech.java.junit.dataprovider.DataProvider;
 import com.tngtech.java.junit.dataprovider.DataProviderRunner;
 import com.tngtech.java.junit.dataprovider.UseDataProvider;
@@ -25,7 +25,6 @@ import static org.mockito.Matchers.any;
 import static org.mockito.Matchers.eq;
 import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
-import static org.mockito.Mockito.verifyNoMoreInteractions;
 import static org.mockito.Mockito.when;
 
 @RunWith(DataProviderRunner.class)
@@ -34,7 +33,7 @@ public class ProposalServiceTest {
     private static final String EXPECTED_NAME = "Johny";
     private static final String EXPECTED_SURNAME = "Bravo";
     private static final String EXPECTED_MAIL = "name@server.com";
-    private static final PersonalData.Role EXPECTED_ROLE = PersonalData.Role.TEMP_HOUSE;
+    private static final Role EXPECTED_ROLE = Role.TEMP_HOUSE;
 
     @Mock
     private ProposalRepository proposalRepository;

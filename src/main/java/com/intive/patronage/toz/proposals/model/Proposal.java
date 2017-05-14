@@ -24,4 +24,17 @@ public class Proposal extends PersonalData {
     private Date creationDate;
 
     boolean isRead;
+
+    @Override
+    public String toString() {
+        return "Proposal{" +
+                "name='" + name + '\'' +
+                ", surname='" + surname + '\'' +
+                ", phoneNumber='" + phoneNumber + '\'' +
+                ", email='" + email + '\'' +
+                ", roles=" + roles +
+                ", creationDate=" + creationDate +
+                ", isRead=" + isRead +
+                '}';
+    }
 }
