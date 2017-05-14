@@ -1,12 +1,20 @@
 package com.intive.patronage.toz.mail;
 
+import com.intive.patronage.toz.environment.ApiProperties;
 import org.junit.Test;
+import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.test.context.TestPropertySource;
 
 import java.io.IOException;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
+@SpringBootTest
+@TestPropertySource(
+        properties = {ApiProperties.JWT_SECRET_BASE64,
+                ApiProperties.SUPER_ADMIN_PASSWORD}
 
+)
 public class MailTemplatesServiceTest {
 
     private static final String EXAMPLE_TOKEN = "foo";
