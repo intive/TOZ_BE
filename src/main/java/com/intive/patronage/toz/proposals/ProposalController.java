@@ -1,6 +1,8 @@
 package com.intive.patronage.toz.proposals;
 
+import com.intive.patronage.toz.base.model.PersonalData;
 import com.intive.patronage.toz.config.ApiUrl;
+import com.intive.patronage.toz.error.exception.WrongProposalRoleException;
 import com.intive.patronage.toz.error.model.ErrorResponse;
 import com.intive.patronage.toz.error.model.ValidationErrorResponse;
 import com.intive.patronage.toz.proposals.model.Proposal;
@@ -64,6 +66,7 @@ public class ProposalController {
     @PostMapping(consumes = MediaType.APPLICATION_JSON_VALUE)
     @PreAuthorize("hasAnyAuthority('SA', 'TOZ', 'ANONYMOUS')")
     public ResponseEntity<ProposalView> createProposal(@Valid @RequestBody ProposalView proposalView) {
+        validateProposalRoles(proposalView);
         final Proposal proposal = ModelMapper.convertToModel(proposalView, Proposal.class);
         final ProposalView createdProposal = convertToView(proposalService.create(proposal), ProposalView.class);
         final URI baseLocation = ServletUriComponentsBuilder.fromCurrentRequest()
@@ -96,5 +99,13 @@ public class ProposalController {
     public ResponseEntity<?> deleteProposal(@PathVariable UUID id) {
         proposalService.delete(id);
         return ResponseEntity.ok().build();
+    }
+
+    private void validateProposalRoles(ProposalView proposalView){
+        for(PersonalData.Role role : proposalView.getRoles()){
+            if(!role.equals(PersonalData.Role.VOLUNTEER) && !role.equals(PersonalData.Role.TEMP_HOUSE)){
+                throw new WrongProposalRoleException();
+            }
+        }
     }
 }

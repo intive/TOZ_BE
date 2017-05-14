@@ -4,6 +4,7 @@ import com.intive.patronage.toz.error.exception.AlreadyExistsException;
 import com.intive.patronage.toz.error.exception.InvalidImageFileException;
 import com.intive.patronage.toz.error.exception.NotFoundException;
 import com.intive.patronage.toz.error.exception.WrongEnumValueException;
+import com.intive.patronage.toz.error.exception.WrongProposalRoleException;
 import com.intive.patronage.toz.error.model.ArgumentErrorResponse;
 import com.intive.patronage.toz.error.model.ErrorResponse;
 import com.intive.patronage.toz.error.model.ValidationErrorResponse;
@@ -188,5 +189,16 @@ public class ControllerExceptionHandler {
         final String message = messageSource.getMessage(
                 "accessDenied", null, LocaleContextHolder.getLocale());
         return new ErrorResponse(HttpStatus.FORBIDDEN, message);
+    }
+
+    @ExceptionHandler(WrongProposalRoleException.class)
+    @ResponseStatus(HttpStatus.UNPROCESSABLE_ENTITY)
+    @ResponseBody
+    public ErrorResponse handleWrongProposalRoleException(WrongProposalRoleException e) {
+        final String allowedValues = StringUtils.join(Arrays.asList(e.getAllowedValues()), ", ");
+        final String message = messageSource.getMessage("mustHaveValue",
+                new String[]{"Role", allowedValues},
+                LocaleContextHolder.getLocale());
+        return new ErrorResponse(HttpStatus.UNPROCESSABLE_ENTITY, message);
     }
 }
