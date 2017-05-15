@@ -203,4 +203,13 @@ public class ControllerExceptionHandler {
     public ErrorResponse handleWrongPasswordException(WrongPasswordException e) {
         return new ErrorResponse(HttpStatus.BAD_REQUEST, e.getMessage());
     }
+
+    @ExceptionHandler(NoPermissionException.class)
+    @ResponseStatus(HttpStatus.FORBIDDEN)
+    @ResponseBody
+    public ErrorResponse handleNoPermissionException(NoPermissionException e) {
+        final String message = messageSource.getMessage(
+                "noPermission", null, LocaleContextHolder.getLocale());
+        return new ErrorResponse(HttpStatus.FORBIDDEN, message);
+    }
 }

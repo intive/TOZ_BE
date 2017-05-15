@@ -1,12 +1,12 @@
 package com.intive.patronage.toz.organization;
 
 import com.intive.patronage.toz.error.exception.AlreadyExistsException;
-import com.intive.patronage.toz.error.exception.NotFoundException;
 import com.intive.patronage.toz.organization.model.db.OrganizationInfo;
 import com.intive.patronage.toz.organization.model.view.AddressView;
 import com.intive.patronage.toz.organization.model.view.BankAccountView;
 import com.intive.patronage.toz.organization.model.view.ContactView;
 import com.intive.patronage.toz.organization.model.view.OrganizationInfoView;
+import com.intive.patronage.toz.util.RepositoryChecker;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -32,9 +32,7 @@ class OrganizationInfoService {
     }
 
     OrganizationInfoView findOrganizationInfo() {
-        if (!infoRepository.exists(organizationId)) {
-            throw new NotFoundException(ORGANIZATION);
-        }
+        RepositoryChecker.throwNotFoundExceptionIfNotExists(organizationId, infoRepository, ORGANIZATION);
 
         final OrganizationInfo info = infoRepository.findOne(organizationId);
         return convertToView(info);
@@ -55,9 +53,7 @@ class OrganizationInfoService {
     }
 
     OrganizationInfoView deleteOrganizationInfo() {
-        if (!infoRepository.exists(organizationId)) {
-            throw new NotFoundException(ORGANIZATION);
-        }
+        RepositoryChecker.throwNotFoundExceptionIfNotExists(organizationId, infoRepository, ORGANIZATION);
 
         final OrganizationInfo info = infoRepository.findOne(organizationId);
         infoRepository.delete(organizationId);
@@ -65,9 +61,7 @@ class OrganizationInfoService {
     }
 
     OrganizationInfoView updateOrganizationInfo(final OrganizationInfoView infoView) {
-        if (!infoRepository.exists(organizationId)) {
-            throw new NotFoundException(ORGANIZATION);
-        }
+        RepositoryChecker.throwNotFoundExceptionIfNotExists(organizationId, infoRepository, ORGANIZATION);
 
         final OrganizationInfo oldInfo = infoRepository.findOne(organizationId);
         final OrganizationInfo updatedInfo = new OrganizationInfo.Builder(oldInfo.getId(), infoView.getName())

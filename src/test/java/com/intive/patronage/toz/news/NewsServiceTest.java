@@ -33,6 +33,7 @@ public class NewsServiceTest {
     private static final News.Type EXPECTED_TYPE_VALUE = EXPECTED_TYPE;
     private static final Boolean DEFAULT_SHORTENED = false;
     private static final String DEFAULT_TYPE = null;
+    private static final Boolean DEFAULT_ORDERED = false;
     private static final Date EXPECTED_PUBLISHED = new Date(12412412412L);
     private static final UUID EXPECTED_ID = UUID.randomUUID();
     private News news;
@@ -68,7 +69,7 @@ public class NewsServiceTest {
     public void findAllNews() throws Exception {
         when(newsRepository.findAll()).thenReturn(Collections.emptyList());
 
-        List<News> newsList = newsService.findAllNews(DEFAULT_TYPE, DEFAULT_SHORTENED);
+        List<News> newsList = newsService.findAllNews(DEFAULT_TYPE, DEFAULT_SHORTENED, DEFAULT_ORDERED);
         assertTrue(newsList.isEmpty());
     }
 
@@ -77,7 +78,7 @@ public class NewsServiceTest {
         when(newsRepository.findByType(EXPECTED_TYPE)).thenReturn(Collections.emptyList());
 
         List<News> newsList = newsService.
-                findAllNews(EXPECTED_TYPE.toString(), DEFAULT_SHORTENED);
+                findAllNews(EXPECTED_TYPE.toString(), DEFAULT_SHORTENED, DEFAULT_ORDERED);
         assertTrue(newsList.isEmpty());
     }
 
@@ -85,7 +86,7 @@ public class NewsServiceTest {
     public void findAllNewsByTypeWrongEnumValueException() throws Exception {
         when(newsRepository.findByType(EXPECTED_TYPE)).thenReturn(Collections.emptyList());
 
-        List<News> newsList = newsService.findAllNews(WRONG_TYPE, DEFAULT_SHORTENED);
+        List<News> newsList = newsService.findAllNews(WRONG_TYPE, DEFAULT_SHORTENED, DEFAULT_ORDERED);
         assertTrue(newsList.isEmpty());
     }
 
