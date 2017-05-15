@@ -1,4 +1,4 @@
-package com.intive.patronage.toz.news.model.db;
+package com.intive.patronage.toz.comment.model.db;
 
 import com.intive.patronage.toz.base.model.Identifiable;
 import lombok.Getter;
@@ -9,20 +9,19 @@ import org.springframework.data.jpa.domain.support.AuditingEntityListener;
 
 import javax.persistence.*;
 import java.util.Date;
+import java.util.UUID;
 
 @Getter
 @Setter
 @Entity
 @EntityListeners(AuditingEntityListener.class)
-public class News extends Identifiable {
-
-    private String title;
+public class Comment extends Identifiable {
     private String contents;
+    private UUID userUuid;
+    private UUID petUuid;
 
     @Enumerated(value = EnumType.STRING)
-    private Type type;
-
-    private String photoUrl;
+    private State state;
 
     @CreatedDate
     @Column(updatable = false)
@@ -34,10 +33,7 @@ public class News extends Identifiable {
     @Temporal(TemporalType.TIMESTAMP)
     private Date lastModified;
 
-    @Temporal(TemporalType.TIMESTAMP)
-    private Date published;
-
-    public enum Type {
-        RELEASED, UNRELEASED, ARCHIVED
+    public enum State {
+        ACTIVE, DELETED
     }
 }

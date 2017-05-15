@@ -6,7 +6,7 @@ import com.intive.patronage.toz.error.model.ValidationErrorResponse;
 import com.intive.patronage.toz.news.model.db.News;
 import com.intive.patronage.toz.news.model.view.NewsView;
 import com.intive.patronage.toz.util.ModelMapper;
-import com.intive.patronage.toz.util.RolesChecker;
+import com.intive.patronage.toz.util.UserInfoGetter;
 import io.swagger.annotations.*;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
@@ -46,13 +46,15 @@ class NewsController {
     public ResponseEntity<List<NewsView>> getAllNews(
             @ApiParam(allowableValues = "ARCHIVED, RELEASED, UNRELEASED")
             @RequestParam(value = "type", required = false) String type,
-            @RequestParam(value = "shortened", required = false, defaultValue = "false")
-                    Boolean shortened) {
-        if (RolesChecker.hasCurrentUserAdminRole()) {
-            final List<News> newsList = newsService.findAllNews(type, shortened);
+            @RequestParam(value = "isShortened", required = false, defaultValue = "false")
+                    Boolean isShortened,
+            @RequestParam(value = "isOrdered", required = false, defaultValue = "false")
+                    Boolean isOrdered) {
+        if (UserInfoGetter.hasCurrentUserAdminRole()) {
+            final List<News> newsList = newsService.findAllNews(type, isShortened, isOrdered);
             return ResponseEntity.ok().body(ModelMapper.convertToView(newsList, NewsView.class));
         }
-        final List<News> newsList = newsService.findAllNews(DEFAULT_TYPE, shortened);
+        final List<News> newsList = newsService.findAllNews(DEFAULT_TYPE, isShortened, isOrdered);
         return ResponseEntity.ok().body(ModelMapper.convertToView(newsList, NewsView.class));
     }
 

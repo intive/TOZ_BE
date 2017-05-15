@@ -10,6 +10,7 @@ public final class ApiUrl {
     public final static String ACTIVATION_PATH = "/activate";
     public final static String ACQUIRE_TOKEN_PATH = TOKENS_PATH + "/acquire";
     public static final String PASSWORDS_PATH = "/users/passwords";
+    public final static String COMMENTS_PATH = "/comments";
     public final static String PROPOSAL_PATH = "/proposals";
 
     private ApiUrl() {

@@ -219,4 +219,13 @@ public class ControllerExceptionHandler {
                 LocaleContextHolder.getLocale());
         return new ErrorResponse(HttpStatus.UNPROCESSABLE_ENTITY, message);
     }
+
+    @ExceptionHandler(NoPermissionException.class)
+    @ResponseStatus(HttpStatus.FORBIDDEN)
+    @ResponseBody
+    public ErrorResponse handleNoPermissionException(NoPermissionException e) {
+        final String message = messageSource.getMessage(
+                "noPermission", null, LocaleContextHolder.getLocale());
+        return new ErrorResponse(HttpStatus.FORBIDDEN, message);
+    }
 }

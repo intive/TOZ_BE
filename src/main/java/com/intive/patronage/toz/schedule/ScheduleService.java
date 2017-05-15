@@ -1,7 +1,5 @@
 package com.intive.patronage.toz.schedule;
 
-import com.intive.patronage.toz.base.repository.IdentifiableRepository;
-import com.intive.patronage.toz.error.exception.NotFoundException;
 import com.intive.patronage.toz.schedule.constant.OperationType;
 import com.intive.patronage.toz.schedule.excception.ReservationAlreadyExistsException;
 import com.intive.patronage.toz.schedule.model.db.ScheduleReservation;
@@ -11,6 +9,7 @@ import com.intive.patronage.toz.schedule.model.view.ReservationResponseView;
 import com.intive.patronage.toz.schedule.util.ScheduleParser;
 import com.intive.patronage.toz.tokens.model.UserContext;
 import com.intive.patronage.toz.users.UserRepository;
+import com.intive.patronage.toz.util.RepositoryChecker;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.PropertySource;
@@ -69,36 +68,39 @@ class ScheduleService {
     }
 
     ReservationResponseView findReservation(UUID id) {
-        ifEntityDoesntExistInRepoThrowException(id, reservationRepository, RESERVATION);
+        RepositoryChecker.throwNotFoundExceptionIfNotExists(id, reservationRepository, RESERVATION);
         return convertToReservationResponseView(reservationRepository.findOne(id));
     }
 
     ReservationResponseView makeReservation(ReservationRequestView reservationRequestView) {
         ScheduleReservation scheduleReservation = convertToReservation(reservationRequestView);
-        ifEntityDoesntExistInRepoThrowException(scheduleReservation.getOwnerUuid(), userRepository, USER);
+        RepositoryChecker.throwNotFoundExceptionIfNotExists(scheduleReservation.getOwnerUuid(), userRepository, USER);
         ifReservationExistsThrowException(scheduleReservation.getStartDate());
         scheduleParser.validateHours(scheduleReservation.getStartDate(), scheduleReservation.getEndDate());
         ScheduleReservation newScheduleReservation = reservationRepository.save(scheduleReservation);
-        saveReservationChangelog(newScheduleReservation, reservationRequestView.getModificationMessage(), OperationType.CREATE);
+        saveReservationChangelog(newScheduleReservation, reservationRequestView.getModificationMessage(),
+                OperationType.CREATE);
         return convertToReservationResponseView(newScheduleReservation);
     }
 
     ReservationResponseView updateReservation(UUID id, ReservationRequestView reservationRequestView) {
         ScheduleReservation newScheduleReservation = convertToReservation(reservationRequestView);
-        ifEntityDoesntExistInRepoThrowException(newScheduleReservation.getOwnerUuid(), userRepository, USER);
-        ifEntityDoesntExistInRepoThrowException(id, reservationRepository, RESERVATION);
+        RepositoryChecker.throwNotFoundExceptionIfNotExists(newScheduleReservation.getOwnerUuid(), userRepository,
+                USER);
+        RepositoryChecker.throwNotFoundExceptionIfNotExists(id, reservationRepository, RESERVATION);
         scheduleParser.validateHours(newScheduleReservation.getStartDate(), newScheduleReservation.getEndDate());
         ScheduleReservation scheduleReservation = reservationRepository.findOne(id);
         scheduleReservation.setStartDate(newScheduleReservation.getStartDate());
         scheduleReservation.setEndDate(newScheduleReservation.getEndDate());
         scheduleReservation.setOwnerUuid(newScheduleReservation.getOwnerUuid());
         ScheduleReservation updatedScheduleReservation = reservationRepository.save(scheduleReservation);
-        saveReservationChangelog(updatedScheduleReservation, reservationRequestView.getModificationMessage(), OperationType.UPDATE);
+        saveReservationChangelog(updatedScheduleReservation, reservationRequestView.getModificationMessage(),
+                OperationType.UPDATE);
         return convertToReservationResponseView(updatedScheduleReservation);
     }
 
     ReservationResponseView removeReservation(UUID id) {
-        ifEntityDoesntExistInRepoThrowException(id, reservationRepository, RESERVATION);
+        RepositoryChecker.throwNotFoundExceptionIfNotExists(id, reservationRepository, RESERVATION);
         ScheduleReservation deletedScheduleReservation = reservationRepository.findOne(id);
         reservationRepository.delete(id);
         saveReservationChangelog(deletedScheduleReservation, null, OperationType.DELETE);
@@ -119,12 +121,6 @@ class ScheduleService {
         }
     }
 
-    private void ifEntityDoesntExistInRepoThrowException(UUID id, IdentifiableRepository repo, String entityName) {
-        if (!repo.exists(id)) {
-            throw new NotFoundException(entityName);
-        }
-    }
-
     private void saveReservationChangelog(ScheduleReservation scheduleReservation, String modificationMessage,
                                           OperationType operationType) {
         ScheduleReservationChangelog newLog = new ScheduleReservationChangelog();
@@ -133,7 +129,8 @@ class ScheduleService {
         if (authentication != null && authentication.getPrincipal() != null) {
             final UserContext userContext = (UserContext) authentication.getPrincipal();
             newLog.setModificationAuthorUuid(userContext.getUserId());
-            ifEntityDoesntExistInRepoThrowException(newLog.getModificationAuthorUuid(), userRepository, USER);
+            RepositoryChecker.throwNotFoundExceptionIfNotExists(newLog.getModificationAuthorUuid(), userRepository,
+                    USER);
         }
         newLog.setModificationMessage(modificationMessage);
         newLog.setOperationType(operationType);
@@ -162,9 +159,12 @@ class ScheduleService {
 
     public ReservationResponseView convertToReservationResponseView(ScheduleReservation scheduleReservation) {
         ReservationResponseView reservationResponseView = new ReservationResponseView();
-        reservationResponseView.setDate(scheduleReservation.getStartDate().toInstant().atOffset(ZoneOffset.of(zoneOffset)).toLocalDate());
-        reservationResponseView.setStartTime(scheduleReservation.getStartDate().toInstant().atOffset(ZoneOffset.of(zoneOffset)).toLocalTime());
-        reservationResponseView.setEndTime(scheduleReservation.getEndDate().toInstant().atOffset(ZoneOffset.of(zoneOffset)).toLocalTime());
+        reservationResponseView.setDate(scheduleReservation.getStartDate().toInstant().atOffset(ZoneOffset
+                .of(zoneOffset)).toLocalDate());
+        reservationResponseView.setStartTime(scheduleReservation.getStartDate().toInstant().atOffset(ZoneOffset
+                .of(zoneOffset)).toLocalTime());
+        reservationResponseView.setEndTime(scheduleReservation.getEndDate().toInstant().atOffset(ZoneOffset
+                .of(zoneOffset)).toLocalTime());
         reservationResponseView.setOwnerId(scheduleReservation
                 .getOwnerUuid());
         reservationResponseView.setCreated(scheduleReservation
@@ -180,5 +180,4 @@ class ScheduleService {
                 userRepository.findOne(scheduleReservation.getOwnerUuid()).getSurname());
         return reservationResponseView;
     }
-
 }
