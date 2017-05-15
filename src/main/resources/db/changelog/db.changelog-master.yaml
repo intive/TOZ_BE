@@ -279,7 +279,7 @@ databaseChangeLog:
                       - nullable: false
                 - column:
                     name: contents
-                    type: text
+                    type: varchar
                 - column:
                     name: user_uuid
                     type: uuid
