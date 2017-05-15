@@ -101,9 +101,9 @@ public class ProposalController {
         return ResponseEntity.ok().build();
     }
 
-    private void validateProposalRoles(ProposalView proposalView){
-        for(Role role : proposalView.getRoles()){
-            if(!role.equals(Role.VOLUNTEER) && !role.equals(Role.TEMP_HOUSE)){
+    private void validateProposalRoles(ProposalView proposalView) {
+        for (Role role : proposalView.getRoles()) {
+            if (!role.equals(Role.VOLUNTEER) && !role.equals(Role.TEMP_HOUSE)) {
                 throw new WrongProposalRoleException();
             }
         }

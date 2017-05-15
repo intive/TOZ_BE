@@ -30,12 +30,7 @@ public class ProposalService {
 
     Proposal create(final Proposal proposal) {
         final String email = proposal.getEmail();
-        if (proposalRepository.existsByEmail(email)) {
-            throw new AlreadyExistsException(PROPOSAL);
-        }
-        if (userRepository.existsByEmail(email)) {
-            throw new AlreadyExistsException(USER);
-        }
+        validateIfMailExist(email);
         return proposalRepository.save(proposal);
     }
 
@@ -50,9 +45,18 @@ public class ProposalService {
         proposalRepository.delete(id);
     }
 
-    private void throwNotFoundExceptionIfIdNotExists(final UUID id) {
+    void throwNotFoundExceptionIfIdNotExists(final UUID id) {
         if (!proposalRepository.exists(id)) {
             throw new NotFoundException(PROPOSAL);
+        }
+    }
+
+    void validateIfMailExist(String email){
+        if (proposalRepository.existsByEmail(email)) {
+            throw new AlreadyExistsException(PROPOSAL);
+        }
+        if (userRepository.existsByEmail(email)) {
+            throw new AlreadyExistsException(USER);
         }
     }
 }

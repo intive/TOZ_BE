@@ -215,7 +215,7 @@ public class ControllerExceptionHandler {
     public ErrorResponse handleWrongProposalRoleException(WrongProposalRoleException e) {
         final String allowedValues = StringUtils.join(Arrays.asList(e.getAllowedValues()), ", ");
         final String message = messageSource.getMessage("mustHaveValue",
-                new String[]{"Role", allowedValues},
+                new String[]{"roles", allowedValues},
                 LocaleContextHolder.getLocale());
         return new ErrorResponse(HttpStatus.UNPROCESSABLE_ENTITY, message);
     }

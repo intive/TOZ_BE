@@ -19,6 +19,7 @@ import java.util.Collections;
 import java.util.List;
 import java.util.UUID;
 
+import static org.assertj.core.api.Assertions.assertThat;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertTrue;
 import static org.mockito.Matchers.any;
@@ -79,7 +80,7 @@ public class ProposalServiceTest {
         assertEquals(EXPECTED_NAME, createdProposal.getName());
         assertEquals(EXPECTED_MAIL, createdProposal.getEmail());
         assertEquals(EXPECTED_SURNAME, createdProposal.getSurname());
-        assertTrue(createdProposal.hasRole(EXPECTED_ROLE));
+        assertThat(createdProposal.getRoles()).contains(EXPECTED_ROLE);
         verify(proposalRepository, times(1)).save(any(Proposal.class));
     }
 
