@@ -166,7 +166,7 @@ databaseChangeLog:
                     - nullable: false
               - column:
                   name: contents
-                  type: text
+                  type: varchar
                   constraints:
                     - nullable: false
               - column:
