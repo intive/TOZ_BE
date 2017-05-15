@@ -84,4 +84,11 @@ class NewsService {
         }
         return newsList;
     }
+
+    void updateNewsImageUrl(final UUID id, String photoUrl) {
+        RepositoryChecker.throwNotFoundExceptionIfNotExists(id, newsRepository, NEWS);
+        final News news = newsRepository.findOne(id);
+        news.setPhotoUrl(photoUrl);
+        updateNews(id, news);
+    }
 }

@@ -4,6 +4,8 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import com.intive.patronage.toz.config.ApiUrl;
 import com.intive.patronage.toz.environment.ApiProperties;
 import com.intive.patronage.toz.news.model.db.News;
+import com.intive.patronage.toz.storage.StorageProperties;
+import com.intive.patronage.toz.storage.StorageService;
 import com.tngtech.java.junit.dataprovider.DataProvider;
 import com.tngtech.java.junit.dataprovider.DataProviderRunner;
 import com.tngtech.java.junit.dataprovider.UseDataProvider;
@@ -49,6 +51,10 @@ public class NewsControllerTest {
 
     @Mock
     private NewsService newsService;
+    @Mock
+    private StorageService storageService;
+    @Mock
+    private StorageProperties storageProperties;
     private MockMvc mvc;
 
     @DataProvider
@@ -64,7 +70,8 @@ public class NewsControllerTest {
     @Before
     public void setUp() throws Exception {
         MockitoAnnotations.initMocks(this);
-        mvc = MockMvcBuilders.standaloneSetup(new NewsController(newsService)).build();
+        mvc = MockMvcBuilders.standaloneSetup(new NewsController(newsService,
+                storageService, storageProperties)).build();
     }
 
     @Test

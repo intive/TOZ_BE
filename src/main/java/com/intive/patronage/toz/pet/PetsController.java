@@ -13,6 +13,7 @@ import com.intive.patronage.toz.storage.model.db.UploadedFile;
 import com.intive.patronage.toz.storage.model.view.UrlView;
 import com.intive.patronage.toz.util.ModelMapper;
 import com.intive.patronage.toz.util.UserInfoGetter;
+import com.intive.patronage.toz.util.validation.ImageValidator;
 import io.swagger.annotations.*;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
@@ -140,7 +141,7 @@ class PetsController {
     @PostMapping(value = "/{id}/images", consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
     @PreAuthorize("hasAnyAuthority('SA', 'TOZ')")
     public ResponseEntity<UrlView> uploadFile(@PathVariable UUID id, @RequestParam("file") MultipartFile file) {
-        validateImageArgument(file);
+        ImageValidator.validateImageArgument(file);
         final UploadedFile uploadedFile = storageService.store(file);
         UrlView urlView = new UrlView();
         urlView.setUrl(String.format("%s/%s", this.storageProperties.getStoragePathRoot(), uploadedFile.getPath()));
@@ -150,17 +151,5 @@ class PetsController {
 
         return ResponseEntity.created(location)
                 .body(urlView);
-    }
-
-    private void validateImageArgument(MultipartFile multipartFile) {
-        try (InputStream input = multipartFile.getInputStream()) {
-            try {
-                ImageIO.read(input).toString();
-            } catch (Exception e) {
-                throw new InvalidImageFileException(String.format("%s: %s", "Images ", e.getMessage()));
-            }
-        } catch (IOException e) {
-            throw new InvalidImageFileException(String.format("%s: %s", "Images ", e.getMessage()));
-        }
     }
 }
