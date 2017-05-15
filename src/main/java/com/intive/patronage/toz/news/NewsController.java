@@ -130,7 +130,6 @@ class NewsController {
         return ModelMapper.convertToModel(newsView, News.class);
     }
 
-
     @ApiOperation(value = "Upload image", notes =
             "Required roles: SA, TOZ.")
     @ApiResponses(value = {
@@ -152,5 +151,4 @@ class NewsController {
         return ResponseEntity.created(location)
                 .body(urlView);
     }
-
 }
