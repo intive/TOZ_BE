@@ -8,7 +8,7 @@ import java.util.Set;
 
 public class WrongProposalRoleException extends RuntimeException {
 
-    private final static Set<Role> allowedValues = new HashSet<>(Arrays.asList(Role.VOLUNTEER, Role.TEMP_HOUSE));
+    private final static Set<Role> allowedValues = new HashSet<>(Arrays.asList(Role.VOLUNTEER));
 
     public String getAllowedValues() {
         StringBuilder stringBuilder = new StringBuilder();

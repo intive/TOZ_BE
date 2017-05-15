@@ -103,7 +103,7 @@ public class ProposalController {
 
     private void validateProposalRoles(ProposalView proposalView) {
         for (Role role : proposalView.getRoles()) {
-            if (!role.equals(Role.VOLUNTEER) && !role.equals(Role.TEMP_HOUSE)) {
+            if (!role.equals(Role.VOLUNTEER)) {
                 throw new WrongProposalRoleException();
             }
         }

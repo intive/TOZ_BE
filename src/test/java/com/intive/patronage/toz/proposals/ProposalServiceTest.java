@@ -34,7 +34,7 @@ public class ProposalServiceTest {
     private static final String EXPECTED_NAME = "Johny";
     private static final String EXPECTED_SURNAME = "Bravo";
     private static final String EXPECTED_MAIL = "name@server.com";
-    private static final Role EXPECTED_ROLE = Role.TEMP_HOUSE;
+    private static final Role EXPECTED_ROLE = Role.VOLUNTEER;
 
     @Mock
     private ProposalRepository proposalRepository;
