@@ -40,6 +40,7 @@ public class OrganizationInfoControllerTest {
     private final static String ORG_NAME = "Org";
     private final static String ACCOUNT = "63102047950000940201035419";
     private final static String INVALID_ACCOUNT = "631-02047950000940201035419";
+    private final static String EMPTY_JSON_CONTENT = "{}";
     private final MediaType contentType = MediaType.APPLICATION_JSON_UTF8;
 
     @Mock
@@ -88,7 +89,8 @@ public class OrganizationInfoControllerTest {
 
     @Test
     public void shouldReturnErrorWhenMediaTypeHeaderIsMissingInPostRequest() throws Exception {
-        mvc.perform(post(ApiUrl.ORGANIZATION_INFO_PATH))
+        mvc.perform(post(ApiUrl.ORGANIZATION_INFO_PATH)
+                .content(EMPTY_JSON_CONTENT))
                 .andExpect(status().isUnsupportedMediaType());
 
         verifyZeroInteractions(organizationInfoService);
@@ -97,7 +99,8 @@ public class OrganizationInfoControllerTest {
     @Test
     public void shouldReturnErrorWhenBodyIsMissingInPostRequest() throws Exception {
         mvc.perform(post(ApiUrl.ORGANIZATION_INFO_PATH)
-                .contentType(contentType))
+                .contentType(contentType)
+                .content(EMPTY_JSON_CONTENT))
                 .andExpect(status().isBadRequest());
 
         verifyZeroInteractions(organizationInfoService);
@@ -105,7 +108,8 @@ public class OrganizationInfoControllerTest {
 
     @Test
     public void shouldCreateOrganizationInfo() throws Exception {
-        when(organizationInfoService.createOrganizationInfo(any(OrganizationInfoView.class))).thenReturn(infoView);
+        when(organizationInfoService.createOrganizationInfo(any(OrganizationInfoView.class)))
+                .thenReturn(infoView);
 
         mvc.perform(post(ApiUrl.ORGANIZATION_INFO_PATH)
                 .contentType(contentType)
@@ -140,7 +144,8 @@ public class OrganizationInfoControllerTest {
     @Test
     public void shouldReturnErrorWhenBodyIsMissingInPutRequest() throws Exception {
         mvc.perform(put(ApiUrl.ORGANIZATION_INFO_PATH)
-                .contentType(contentType))
+                .contentType(contentType)
+                .content(EMPTY_JSON_CONTENT))
                 .andExpect(status().isBadRequest());
 
         verifyZeroInteractions(organizationInfoService);

@@ -17,8 +17,6 @@ import java.util.Date;
 public class News extends Identifiable {
 
     private String title;
-
-    @Lob
     private String contents;
 
     @Enumerated(value = EnumType.STRING)
