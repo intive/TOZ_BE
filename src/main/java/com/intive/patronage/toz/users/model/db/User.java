@@ -23,6 +23,7 @@ public class User extends PersonalData {
     @Temporal(TemporalType.TIMESTAMP)
     private Date passwordChangeDate;
 
+
     public User(String name) {
         this.name = name;
     }
