@@ -19,7 +19,6 @@ import java.util.Date;
 public class User extends PersonalData {
 
     private String passwordHash;
-    private boolean isActive;
 
     @Temporal(TemporalType.TIMESTAMP)
     private Date passwordChangeDate;

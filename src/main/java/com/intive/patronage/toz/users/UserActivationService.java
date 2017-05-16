@@ -13,7 +13,6 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
-
 import javax.mail.MessagingException;
 import java.io.IOException;
 
@@ -48,7 +47,7 @@ public class UserActivationService {
             MailService mailService,
             MailTemplatesService mailTemplatesService,
             PasswordEncoder passwordEncoder
-        ) {
+    ) {
         this.mailService = mailService;
         this.jwtParser = jwtParser;
         this.jwtFactory = jwtFactory;
@@ -60,7 +59,6 @@ public class UserActivationService {
 
     public void sendActivationEmail(Proposal proposal) throws IOException, MessagingException {
 
-        System.out.println(proposal);
         String token = jwtFactory.generateToken(proposal, expirationTime);
         String mailBody = mailTemplatesService.getRegistrationTemplate(token);
         mailService.sendMail(mailSubject, mailBody, proposal.getEmail());
@@ -71,12 +69,12 @@ public class UserActivationService {
 
         String email = jwtParser.getEmail();
 
-        if (userRepository.findByEmail(email) != null){
+        if (userRepository.findByEmail(email) != null) {
             throw new JwtAuthenticationException(USER_ALREADY_EXISTS);
         }
 
         Proposal proposal = proposalRepository.findByEmail(email);
-        if (proposal == null){
+        if (proposal == null) {
             throw new JwtAuthenticationException(PROPOSAL_DOES_NOT_EXISTS);
         }
 
@@ -87,7 +85,6 @@ public class UserActivationService {
         user.setPhoneNumber(proposal.getPhoneNumber());
         user.setPasswordHash(passwordEncoder.encode(password));
         user.setRoles(proposal.getRoles());
-        user.setActive(true);
 
         return userRepository.save(user);
 

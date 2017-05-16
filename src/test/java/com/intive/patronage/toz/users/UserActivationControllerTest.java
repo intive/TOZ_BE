@@ -7,9 +7,6 @@ import com.intive.patronage.toz.proposals.model.Proposal;
 import com.intive.patronage.toz.tokens.JwtFactory;
 import com.intive.patronage.toz.users.model.db.Role;
 import com.intive.patronage.toz.users.model.db.User;
-import com.tngtech.java.junit.dataprovider.DataProvider;
-import com.tngtech.java.junit.dataprovider.DataProviderRunner;
-import com.tngtech.java.junit.dataprovider.UseDataProvider;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -17,17 +14,12 @@ import org.mockito.Mock;
 import org.mockito.MockitoAnnotations;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.boot.test.context.SpringBootTest;
-import org.springframework.http.MediaType;
-import org.springframework.test.context.ActiveProfiles;
 import org.springframework.test.context.TestPropertySource;
 import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.setup.MockMvcBuilders;
-
 import java.util.UUID;
-
 import static org.mockito.Matchers.any;
-import static org.mockito.Matchers.eq;
 import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
@@ -52,8 +44,6 @@ public class UserActivationControllerTest {
     private static final String EXPECTED_EMAIL = "jan.ko@gmail.com";
     private static final Role EXPECTED_ROLE = Role.VOLUNTEER;
 
-    private static final String AUTHORIZATION = "Authorization";
-    private static final MediaType JSON_CONTENT_TYPE = MediaType.APPLICATION_JSON_UTF8;
     @Value("${jwt.secret-base64}")
     private String secret;
 
@@ -62,7 +52,6 @@ public class UserActivationControllerTest {
 
     @Mock
     ProposalService proposalService;
-
 
     private MockMvc mockMvc;
 
@@ -74,11 +63,6 @@ public class UserActivationControllerTest {
         jwtFactory = new JwtFactory(secret);
         final UserActivationController petsController = new UserActivationController(userActivationService, proposalService);
         mockMvc = MockMvcBuilders.standaloneSetup(petsController).build();
-    }
-    private String getAuthorizationTokenWithRole(final Role role) {
-        final User user = UserTestsUtils.getUserWithRole(role);
-        final String token = jwtFactory.generateToken(user, EXPIRATION_TIME);
-        return String.format("%s %s", "Bearer", token);
     }
 
     private Proposal getProposalModel(){

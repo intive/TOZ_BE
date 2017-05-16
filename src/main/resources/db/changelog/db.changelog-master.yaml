@@ -238,9 +238,6 @@ databaseChangeLog:
                 - column:
                     name: password_change_date
                     type: datetime
-                - column:
-                    name: is_active
-                    type: boolean
   - changeSet:
         id : 4
         author: marek.macko
