@@ -32,7 +32,6 @@ public class UserDataProvider {
         user.setPhoneNumber(EXPECTED_PHONE_NUMBER);
         user.setEmail(EXPECTED_EMAIL);
         user.addRole(TOZ_ROLE);
-        user.setActive(EXPECTED_ACTIVE);
         return new Object[]{user};
     }
 
