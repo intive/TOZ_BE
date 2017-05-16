@@ -14,6 +14,7 @@ import static org.assertj.core.api.Assertions.assertThat;
 public class ModelMapperTest {
 
     private static final String PASSWORD_HASH = "passwordHash";
+    private static final String IS_ACTIVE = "isActive";
     private static final String PASSWORD = "password";
 
     @Test
@@ -27,7 +28,7 @@ public class ModelMapperTest {
     @UseDataProvider(value = "getTozAdminUserView", location = UserDataProvider.class)
     public void convertToModel(final UserView userView) throws Exception {
         User user = ModelMapper.convertToModel(userView, User.class);
-        assertThat(user).isEqualToIgnoringGivenFields(userView, PASSWORD_HASH);
+        assertThat(user).isEqualToIgnoringGivenFields(userView, PASSWORD_HASH, IS_ACTIVE);
     }
 
 }

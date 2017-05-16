@@ -1,5 +1,7 @@
 package com.intive.patronage.toz.tokens;
 
+import com.intive.patronage.toz.base.model.PersonalData;
+import com.intive.patronage.toz.proposals.model.Proposal;
 import com.intive.patronage.toz.users.model.db.User;
 import io.jsonwebtoken.Jwts;
 import io.jsonwebtoken.SignatureAlgorithm;
@@ -23,7 +25,7 @@ public class JwtFactory {
         this.secret = secret;
     }
 
-    public String generateToken(final User user, final long expirationTime) {
+    public String generateToken(final PersonalData user, final long expirationTime) {
         return Jwts.builder()
                 .setSubject(user.getId().toString())
                 .claim(EMAIL_CLAIM_NAME, user.getEmail())

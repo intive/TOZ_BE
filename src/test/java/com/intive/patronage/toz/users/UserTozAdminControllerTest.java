@@ -57,11 +57,6 @@ public class UserTozAdminControllerTest {
     private MockMvc mockMvc;
     private JwtFactory jwtFactory;
 
-    private static User getUserWithRole(final Role role) {
-        final User user = (User) UserDataProvider.getTozAdminUserModel()[0];
-        user.setRoles(Collections.singleton(role));
-        return user;
-    }
 
     @Before
     public void setUp() {
@@ -81,7 +76,7 @@ public class UserTozAdminControllerTest {
     }
 
     private String getAuthorizationTokenWithRole(final Role role) {
-        final User user = getUserWithRole(role);
+        final User user = UserTestsUtils.getUserWithRole(role);
         final String token = jwtFactory.generateToken(user, EXPIRATION_TIME);
         return String.format("%s %s", "Bearer", token);
     }
@@ -133,7 +128,7 @@ public class UserTozAdminControllerTest {
     }
 
     private String getUserContentBody() {
-        final User volunteerUser = getUserWithRole(Role.VOLUNTEER);
+        final User volunteerUser = UserTestsUtils.getUserWithRole(Role.VOLUNTEER);
         final UserView volunteerUserView = ModelMapper.convertToView(volunteerUser, UserView.class);
         volunteerUserView.setPassword(PASSWORD);
         return ModelMapper.convertToJsonString(volunteerUserView);
@@ -195,7 +190,7 @@ public class UserTozAdminControllerTest {
     public void updateUserWithVolunteerRoleIsForbidden() throws Exception {
         final String requestUrl = String.format("%s/%s", ApiUrl.USERS_PATH, RANDOM_UUID);
         final String volunteerUserAuthorizationToken = getAuthorizationTokenWithRole(Role.VOLUNTEER);
-        mockMvc.perform(put(requestUrl)
+        mockMvc.perform(get(requestUrl)
                 .header(AUTHORIZATION, volunteerUserAuthorizationToken)
                 .content(getUserContentBody())
                 .contentType(JSON_CONTENT_TYPE))
@@ -205,7 +200,7 @@ public class UserTozAdminControllerTest {
     @Test
     public void updateUserWithoutRoleIsForbidden() throws Exception {
         final String requestUrl = String.format("%s/%s", ApiUrl.USERS_PATH, RANDOM_UUID);
-        mockMvc.perform(put(requestUrl)
+        mockMvc.perform(get(requestUrl)
                 .content(getUserContentBody())
                 .contentType(JSON_CONTENT_TYPE))
                 .andExpect(status().isForbidden());

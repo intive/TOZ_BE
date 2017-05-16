@@ -19,6 +19,7 @@ public class UserDataProvider {
     static final String EXPECTED_PHONE_NUMBER = "111222333";
     static final String EXPECTED_EMAIL = "johny.bravo@gmail.com";
     static final Role TOZ_ROLE = Role.TOZ;
+    static final boolean EXPECTED_ACTIVE = true;
     static final MediaType JSON_CONTENT_TYPE = MediaType.APPLICATION_JSON_UTF8;
 
     @DataProvider
@@ -31,6 +32,7 @@ public class UserDataProvider {
         user.setPhoneNumber(EXPECTED_PHONE_NUMBER);
         user.setEmail(EXPECTED_EMAIL);
         user.addRole(TOZ_ROLE);
+        user.setActive(EXPECTED_ACTIVE);
         return new Object[]{user};
     }
 
