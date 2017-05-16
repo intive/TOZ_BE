@@ -24,7 +24,7 @@ import static com.intive.patronage.toz.config.ApiUrl.ACTIVATION_PATH;
 import static com.intive.patronage.toz.util.ModelMapper.convertToJsonString;
 
 @Service
-class MailTemplatesService {
+public class MailTemplatesService {
 
     private static final String REGISTRATION_TEMPLATE_NAME = "Registration";
     private static final ObjectMapper OBJECT_MAPPER = new ObjectMapper();
@@ -42,7 +42,7 @@ class MailTemplatesService {
         this.handlebarsTemplates = createHandlebarsWithCache(mailTemplatesPath, templatesExtension, templateCache.getCache());
     }
 
-    String getRegistrationTemplate(String token) throws IOException {
+    public String getRegistrationTemplate(String token) throws IOException {
         final Registration registration = Registration.of(createActivationUrl(), token);
         final JsonNode jsonNode = OBJECT_MAPPER.readValue(convertToJsonString(registration), JsonNode.class);
         final Template template = getCompiledTemplate(REGISTRATION_TEMPLATE_NAME);

@@ -28,6 +28,10 @@ public class ProposalService {
         return proposalRepository.findAll();
     }
 
+    public Proposal findOne(final UUID id){
+        throwNotFoundExceptionIfIdNotExists(id);
+        return proposalRepository.findOne(id);
+    }
     Proposal create(final Proposal proposal) {
         final String email = proposal.getEmail();
         validateIfMailExist(email);
