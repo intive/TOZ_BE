@@ -1,5 +1,6 @@
 package com.intive.patronage.toz.news;
 
+import com.intive.patronage.toz.error.exception.NotFoundException;
 import com.intive.patronage.toz.error.exception.WrongEnumValueException;
 import com.intive.patronage.toz.news.model.db.News;
 import com.intive.patronage.toz.util.RepositoryChecker;
@@ -83,5 +84,14 @@ class NewsService {
             }
         }
         return newsList;
+    }
+
+    void updateNewsImageUrl(final UUID id, String photoUrl) {
+        final News news = newsRepository.findOne(id);
+        if (news == null) {
+            throw new NotFoundException(NEWS);
+        }
+        news.setPhotoUrl(photoUrl);
+        updateNews(id, news);
     }
 }
