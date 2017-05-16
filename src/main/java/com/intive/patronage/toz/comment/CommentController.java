@@ -51,10 +51,10 @@ public class CommentController {
         final List<Comment> newsList;
         if (UserInfoGetter.hasCurrentUserAdminRole()) {
             newsList = commentService.findAllComments(petUuid, isShortened, state);
-            return ResponseEntity.ok().body(ModelMapper.convertToView(newsList, CommentView.class));
+            return ResponseEntity.ok().body(ModelMapper.convertIdentifiableToView(newsList, CommentView.class));
         }
         newsList = commentService.findAllComments(petUuid, isShortened, DEFAULT_TYPE);
-        return ResponseEntity.ok().body(ModelMapper.convertToView(newsList, CommentView.class));
+        return ResponseEntity.ok().body(ModelMapper.convertIdentifiableToView(newsList, CommentView.class));
     }
 
     @ApiOperation(value = "Get comment by id.", notes =

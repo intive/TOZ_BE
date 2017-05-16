@@ -20,14 +20,14 @@ public class ModelMapperTest {
     @Test
     @UseDataProvider(value = "getTozAdminUserModel", location = UserDataProvider.class)
     public void convertToView(final User user) throws Exception {
-        UserView userView = ModelMapper.convertToView(user, UserView.class);
+        UserView userView = ModelMapper.convertIdentifiableToView(user, UserView.class);
         assertThat(userView).isEqualToIgnoringGivenFields(user, PASSWORD);
     }
 
     @Test
     @UseDataProvider(value = "getTozAdminUserView", location = UserDataProvider.class)
     public void convertToModel(final UserView userView) throws Exception {
-        User user = ModelMapper.convertToModel(userView, User.class);
+        User user = ModelMapper.convertIdentifiableToModel(userView, User.class);
         assertThat(user).isEqualToIgnoringGivenFields(userView, PASSWORD_HASH, IS_ACTIVE);
     }
 

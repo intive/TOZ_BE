@@ -34,6 +34,7 @@ import java.net.URI;
 import java.util.List;
 import java.util.UUID;
 
+import static com.intive.patronage.toz.util.ModelMapper.convertIdentifiableToView;
 import static com.intive.patronage.toz.util.ModelMapper.convertToView;
 
 @Api(description = "Operations for proposal resource")
@@ -54,7 +55,7 @@ public class ProposalController {
     @PreAuthorize("hasAnyAuthority('SA', 'TOZ')")
     public List<ProposalView> getAllProposals() {
         final List<Proposal> proposals = proposalService.findAll();
-        return convertToView(proposals, ProposalView.class);
+        return convertIdentifiableToView(proposals, ProposalView.class);
     }
 
     @ResponseStatus(HttpStatus.CREATED)
