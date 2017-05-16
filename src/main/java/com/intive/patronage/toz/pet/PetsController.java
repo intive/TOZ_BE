@@ -144,7 +144,7 @@ class PetsController {
         ImageValidator.validateImageArgument(file);
         final UploadedFile uploadedFile = storageService.store(file);
         UrlView urlView = new UrlView();
-        urlView.setUrl(String.format("%s/%s", this.storageProperties.getStoragePathRoot(), uploadedFile.getPath()));
+        urlView.setUrl(String.format("/%s/%s", this.storageProperties.getStoragePathRoot(), uploadedFile.getPath()));
         petsService.updatePetImageUrl(id, urlView.getUrl());
         final URI location = ServletUriComponentsBuilder.fromCurrentRequest()
                 .build().toUri();

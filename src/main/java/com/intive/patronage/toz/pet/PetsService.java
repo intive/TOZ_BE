@@ -1,5 +1,6 @@
 package com.intive.patronage.toz.pet;
 
+import com.intive.patronage.toz.error.exception.NotFoundException;
 import com.intive.patronage.toz.pet.model.db.Pet;
 import com.intive.patronage.toz.util.RepositoryChecker;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -48,8 +49,10 @@ class PetsService {
     }
 
     void updatePetImageUrl(final UUID id, String imageUrl) {
-        RepositoryChecker.throwNotFoundExceptionIfNotExists(id, petsRepository, PET);
         final Pet pet = petsRepository.findOne(id);
+        if (pet == null){
+            throw new NotFoundException(PET);
+        }
         pet.setImageUrl(imageUrl);
         updatePet(id, pet);
     }
