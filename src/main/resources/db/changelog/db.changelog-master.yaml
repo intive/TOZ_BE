@@ -166,7 +166,7 @@ databaseChangeLog:
                     - nullable: false
               - column:
                   name: contents
-                  type: text
+                  type: varchar
                   constraints:
                     - nullable: false
               - column:
@@ -264,6 +264,79 @@ databaseChangeLog:
                 - column:
                     name: role_id
                     type: uuid
+  - changeSet:
+          id : 5
+          author: macieg-b
+          changes:
+            - createTable:
+                tableName: proposal
+                columns:
+                  - column:
+                      name: id
+                      type: uuid
+                      constraints:
+                        - primaryKey: true
+                        - nullable: false
+                  - column:
+                      name: name
+                      type: varchar(255)
+                  - column:
+                      name: surname
+                      type: varchar(255)
+                  - column:
+                      name: phone_number
+                      type: varchar(255)
+                  - column:
+                      name: email
+                      type: varchar(255)
+                      constraints:
+                        - unique: true
+                  - column:
+                      name: creation_date
+                      type: datetime
+                  - column:
+                      name: is_read
+                      type: boolean
+            - createTable:
+                tableName: proposals_roles
+                columns:
+                - column:
+                    name: proposal_id
+                    type: uuid
+                - column:
+                    name: role_id
+                    type: uuid
+  - changeSet:
+        id : 5
+        author: mateuszsz93
+        changes:
+          - createTable:
+              tableName: comment
+              columns:
+                - column:
+                    name: id
+                    type: uuid
+                    constraints:
+                      - primaryKey: true
+                      - nullable: false
+                - column:
+                    name: contents
+                    type: varchar
+                - column:
+                    name: user_uuid
+                    type: uuid
+                - column:
+                    name: pet_uuid
+                    type: uuid
+                - column:
+                    name: state
+                    type: varchar(255)
+                - column:
+                    name: created
+                    type: datetime
+                - column:
+                    name: last_modified
+                    type: datetime
   - changeSet:
         id : 5
         author: jakub.izbicki

@@ -1,6 +1,13 @@
 package com.intive.patronage.toz.error;
 
-import com.intive.patronage.toz.error.exception.*;
+import com.intive.patronage.toz.error.exception.AlreadyExistsException;
+import com.intive.patronage.toz.error.exception.BadRoleForSentUserBodyException;
+import com.intive.patronage.toz.error.exception.InvalidImageFileException;
+import com.intive.patronage.toz.error.exception.NoPermissionException;
+import com.intive.patronage.toz.error.exception.NotFoundException;
+import com.intive.patronage.toz.error.exception.WrongEnumValueException;
+import com.intive.patronage.toz.error.exception.WrongPasswordException;
+import com.intive.patronage.toz.error.exception.WrongProposalRoleException;
 import com.intive.patronage.toz.error.model.ArgumentErrorResponse;
 import com.intive.patronage.toz.error.model.ErrorResponse;
 import com.intive.patronage.toz.error.model.ValidationErrorResponse;
@@ -202,5 +209,25 @@ public class ControllerExceptionHandler {
     @ResponseBody
     public ErrorResponse handleWrongPasswordException(WrongPasswordException e) {
         return new ErrorResponse(HttpStatus.BAD_REQUEST, e.getMessage());
+    }
+
+    @ExceptionHandler(WrongProposalRoleException.class)
+    @ResponseStatus(HttpStatus.UNPROCESSABLE_ENTITY)
+    @ResponseBody
+    public ErrorResponse handleWrongProposalRoleException(WrongProposalRoleException e) {
+        final String allowedValues = StringUtils.join(Arrays.asList(e.getAllowedValues()), ", ");
+        final String message = messageSource.getMessage("mustHaveValue",
+                new String[]{"roles", allowedValues},
+                LocaleContextHolder.getLocale());
+        return new ErrorResponse(HttpStatus.UNPROCESSABLE_ENTITY, message);
+    }
+
+    @ExceptionHandler(NoPermissionException.class)
+    @ResponseStatus(HttpStatus.FORBIDDEN)
+    @ResponseBody
+    public ErrorResponse handleNoPermissionException(NoPermissionException e) {
+        final String message = messageSource.getMessage(
+                "noPermission", null, LocaleContextHolder.getLocale());
+        return new ErrorResponse(HttpStatus.FORBIDDEN, message);
     }
 }

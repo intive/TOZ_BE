@@ -5,8 +5,13 @@ import com.intive.patronage.toz.error.model.ErrorResponse;
 import com.intive.patronage.toz.error.model.ValidationErrorResponse;
 import com.intive.patronage.toz.news.model.db.News;
 import com.intive.patronage.toz.news.model.view.NewsView;
+import com.intive.patronage.toz.storage.StorageProperties;
+import com.intive.patronage.toz.storage.StorageService;
+import com.intive.patronage.toz.storage.model.db.UploadedFile;
+import com.intive.patronage.toz.storage.model.view.UrlView;
 import com.intive.patronage.toz.util.ModelMapper;
-import com.intive.patronage.toz.util.RolesChecker;
+import com.intive.patronage.toz.util.UserInfoGetter;
+import com.intive.patronage.toz.util.validation.ImageValidator;
 import io.swagger.annotations.*;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
@@ -15,6 +20,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PostAuthorize;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.multipart.MultipartFile;
 import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
 
 import javax.validation.Valid;
@@ -28,10 +34,15 @@ import java.util.UUID;
 class NewsController {
     private final static String DEFAULT_TYPE = "RELEASED";
     private final NewsService newsService;
+    private final StorageService storageService;
+    private final StorageProperties storageProperties;
 
     @Autowired
-    NewsController(NewsService newsService) {
+    NewsController(NewsService newsService, StorageService storageService,
+                   StorageProperties storageProperties) {
         this.newsService = newsService;
+        this.storageService = storageService;
+        this.storageProperties = storageProperties;
     }
 
     @ApiOperation(value = "Get all news.", responseContainer = "List", notes =
@@ -46,13 +57,15 @@ class NewsController {
     public ResponseEntity<List<NewsView>> getAllNews(
             @ApiParam(allowableValues = "ARCHIVED, RELEASED, UNRELEASED")
             @RequestParam(value = "type", required = false) String type,
-            @RequestParam(value = "shortened", required = false, defaultValue = "false")
-                    Boolean shortened) {
-        if (RolesChecker.hasCurrentUserAdminRole()) {
-            final List<News> newsList = newsService.findAllNews(type, shortened);
+            @RequestParam(value = "isShortened", required = false, defaultValue = "false")
+                    Boolean isShortened,
+            @RequestParam(value = "isOrdered", required = false, defaultValue = "false")
+                    Boolean isOrdered) {
+        if (UserInfoGetter.hasCurrentUserAdminRole()) {
+            final List<News> newsList = newsService.findAllNews(type, isShortened, isOrdered);
             return ResponseEntity.ok().body(ModelMapper.convertIdentifiableToView(newsList, NewsView.class));
         }
-        final List<News> newsList = newsService.findAllNews(DEFAULT_TYPE, shortened);
+        final List<News> newsList = newsService.findAllNews(DEFAULT_TYPE, isShortened, isOrdered);
         return ResponseEntity.ok().body(ModelMapper.convertIdentifiableToView(newsList, NewsView.class));
     }
 
@@ -115,5 +128,27 @@ class NewsController {
 
     private static News convertFromView(final NewsView newsView) {
         return ModelMapper.convertIdentifiableToModel(newsView, News.class);
+    }
+
+    @ApiOperation(value = "Upload image", notes =
+            "Required roles: SA, TOZ.")
+    @ApiResponses(value = {
+            @ApiResponse(code = 400, message = "Bad Request"),
+            @ApiResponse(code = 422, message = "Invalid image file")
+    })
+    @ResponseStatus(HttpStatus.CREATED)
+    @PostMapping(value = "/{id}/images", consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
+    @PreAuthorize("hasAnyAuthority('SA', 'TOZ')")
+    public ResponseEntity<UrlView> uploadFile(@PathVariable UUID id, @RequestParam MultipartFile file) {
+        ImageValidator.validateImageArgument(file);
+        final UploadedFile uploadedFile = storageService.store(file);
+        UrlView urlView = new UrlView();
+        urlView.setUrl(String.format("/%s/%s", this.storageProperties.getStoragePathRoot(), uploadedFile.getPath()));
+        newsService.updateNewsImageUrl(id, urlView.getUrl());
+        final URI location = ServletUriComponentsBuilder.fromCurrentRequest()
+                .build().toUri();
+
+        return ResponseEntity.created(location)
+                .body(urlView);
     }
 }

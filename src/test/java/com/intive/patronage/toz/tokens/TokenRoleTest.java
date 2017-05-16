@@ -1,6 +1,8 @@
 package com.intive.patronage.toz.tokens;
 
 import com.intive.patronage.toz.Application;
+import com.intive.patronage.toz.comment.CommentRepository;
+import com.intive.patronage.toz.comment.model.db.Comment;
 import com.intive.patronage.toz.config.ApiUrl;
 import com.intive.patronage.toz.environment.ApiProperties;
 import com.intive.patronage.toz.news.NewsRepository;
@@ -54,8 +56,11 @@ public class TokenRoleTest {
     public final SpringMethodRule springMethodRule = new SpringMethodRule();
 
     private static final String TYPE_PARAM = "type";
+    private static final String STATE_PARAM = "state";
     private static final String RELEASED = "RELEASED";
     private static final String ACHIEVED = "ACHIEVED";
+    private static final String ACTIVE = "ACTIVE";
+    private static final String DELETED = "DELETED";
     private static final String EMAIL_VOLUNTEER = "volunteer@mail.com";
     private static final Role ROLE_VOLUNTEER = Role.VOLUNTEER;
 
@@ -70,6 +75,8 @@ public class TokenRoleTest {
     private PetsRepository petsRepository;
     @Autowired
     private JwtFactory jwtFactory;
+    @Autowired
+    private CommentRepository commentRepository;
 
     @DataProvider
     public static Object[] getAdmin() {
@@ -112,6 +119,16 @@ public class TokenRoleTest {
         pet.setSex(MALE);
         pet.setName("string");
         return new Pet[]{pet};
+    }
+
+    @DataProvider
+    public static Object[] getCommentActive() {
+        Comment comment = new Comment();
+        comment.setContents("string");
+        comment.setPetUuid(UUID.randomUUID());
+        comment.setUserUuid(UUID.randomUUID());
+        comment.setState(Comment.State.ACTIVE);
+        return new Comment[]{comment};
     }
 
     @Test
@@ -196,5 +213,46 @@ public class TokenRoleTest {
                 .header(AUTHORIZATION_HEADER,
                         String.format("%s%s", TOKEN_PREFIX, jwtFactory.generateToken(admin, expirationTime))))
                 .andExpect(status().isOk());
+    }
+
+    @Test
+    @UseDataProvider("getAdmin")
+    public void shouldReturnOkWhenAdminAndGetCommentDeleted(User admin) throws Exception {
+        mockMvc.perform(get(ApiUrl.COMMENTS_PATH).param(STATE_PARAM, DELETED)
+                .header(AUTHORIZATION_HEADER,
+                        String.format("%s%s", TOKEN_PREFIX, jwtFactory.generateToken(admin, expirationTime))))
+                .andExpect(status().isOk());
+    }
+
+    @Test
+    @UseDataProvider("getVolunteer")
+    public void shouldReturnForbiddenWhenVolunteerAndCommentDeleted(User volunteer) throws Exception {
+        mockMvc.perform(get(ApiUrl.COMMENTS_PATH).param(STATE_PARAM, DELETED)
+                .header(AUTHORIZATION_HEADER,
+                        String.format("%s%s", TOKEN_PREFIX, jwtFactory.generateToken(volunteer, expirationTime))))
+                .andExpect(status().isForbidden());
+    }
+
+    @Test
+    @UseDataProvider("getVolunteer")
+    public void shouldReturnOkWhenVolunteerAndCommentActive(User volunteer) throws Exception {
+        mockMvc.perform(get(ApiUrl.COMMENTS_PATH).param(STATE_PARAM, ACTIVE)
+                .header(AUTHORIZATION_HEADER,
+                        String.format("%s%s", TOKEN_PREFIX, jwtFactory.generateToken(volunteer, expirationTime))))
+                .andExpect(status().isOk());
+    }
+
+    @Test
+    public void shouldReturnForbiddenWhenAnonymousAndGetCommentActive() throws Exception {
+        mockMvc.perform(get(ApiUrl.COMMENTS_PATH).param(STATE_PARAM, ACTIVE))
+                .andExpect(status().isForbidden());
+    }
+
+    @Test
+    @UseDataProvider("getCommentActive")
+    public void shouldReturnForbiddenWhenAnonymousAndGetCommentActiveById(Comment activeComment) throws Exception {
+        UUID id = commentRepository.save(activeComment).getId();
+        mockMvc.perform(get(String.format("%s/%s", ApiUrl.COMMENTS_PATH, id)))
+                .andExpect(status().isForbidden());
     }
 }

@@ -1,12 +1,13 @@
-package com.intive.patronage.toz.users.model.db;
+package com.intive.patronage.toz.proposals.model;
 
 import com.intive.patronage.toz.base.model.PersonalData;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
+import org.hibernate.annotations.CreationTimestamp;
 
+import javax.persistence.Column;
 import javax.persistence.Entity;
-import javax.persistence.Table;
 import javax.persistence.Temporal;
 import javax.persistence.TemporalType;
 import java.util.Date;
@@ -14,33 +15,26 @@ import java.util.Date;
 @Getter
 @Setter
 @Entity
-@Table(name = "users")
 @NoArgsConstructor
-public class User extends PersonalData {
+public class Proposal extends PersonalData {
 
-    private String passwordHash;
-
+    @CreationTimestamp
+    @Column(updatable = false)
     @Temporal(TemporalType.TIMESTAMP)
-    private Date passwordChangeDate;
+    private Date creationDate;
 
-    public User(String name) {
-        this.name = name;
-    }
-
-    public void setPasswordHash(String passwordHash) {
-        this.passwordHash = passwordHash;
-        passwordChangeDate = new Date();
-    }
+    boolean isRead;
 
     @Override
     public String toString() {
-        return "User{" +
+        return "Proposal{" +
                 "name='" + name + '\'' +
                 ", surname='" + surname + '\'' +
                 ", phoneNumber='" + phoneNumber + '\'' +
                 ", email='" + email + '\'' +
-                ", passwordChangeDate=" + passwordChangeDate +
                 ", roles=" + roles +
+                ", creationDate=" + creationDate +
+                ", isRead=" + isRead +
                 '}';
     }
 }

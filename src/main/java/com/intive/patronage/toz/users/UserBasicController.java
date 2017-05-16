@@ -57,7 +57,9 @@ abstract class UserBasicController {
     }
 
     protected UserView updateUser(UUID id, UserView userView) {
+        final String passwordHash = passwordEncoder.encode(userView.getPassword());
         final User user = convertToModel(userView);
+        user.setPasswordHash(passwordHash);
         return convertToView(userService.update(id, user));
     }
 

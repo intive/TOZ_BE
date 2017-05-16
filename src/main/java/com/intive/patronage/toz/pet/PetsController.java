@@ -12,7 +12,8 @@ import com.intive.patronage.toz.storage.StorageService;
 import com.intive.patronage.toz.storage.model.db.UploadedFile;
 import com.intive.patronage.toz.storage.model.view.UrlView;
 import com.intive.patronage.toz.util.ModelMapper;
-import com.intive.patronage.toz.util.RolesChecker;
+import com.intive.patronage.toz.util.UserInfoGetter;
+import com.intive.patronage.toz.util.validation.ImageValidator;
 import io.swagger.annotations.*;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
@@ -50,12 +51,12 @@ class PetsController {
     }
 
     @ApiOperation(value = "Get all pets", responseContainer = "List", notes =
-    "Required roles: SA, TOZ, VOLUNTEER, ANONYMOUS if all fields are present or, " +
-            "Required roles: SA, TOZ if pet records are not complete.")
+            "Required roles: SA, TOZ, VOLUNTEER, ANONYMOUS if all fields are present or, " +
+                    "Required roles: SA, TOZ if pet records are not complete.")
     @GetMapping
     @PreAuthorize("hasAnyAuthority('SA', 'TOZ', 'VOLUNTEER', 'ANONYMOUS')")
     public List<PetView> getAllPets() {
-        if (RolesChecker.hasCurrentUserAdminRole()) {
+        if (UserInfoGetter.hasCurrentUserAdminRole()) {
             final List<Pet> pets = petsService.findAllPets();
             return ModelMapper.convertIdentifiableToView(pets, PetView.class);
         }
@@ -139,28 +140,16 @@ class PetsController {
     @ResponseStatus(HttpStatus.CREATED)
     @PostMapping(value = "/{id}/images", consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
     @PreAuthorize("hasAnyAuthority('SA', 'TOZ')")
-    public ResponseEntity<UrlView> uploadFile(@PathVariable UUID id, @RequestParam("file") MultipartFile file) {
-        validateImageArgument(file);
+    public ResponseEntity<UrlView> uploadFile(@PathVariable UUID id, @RequestParam MultipartFile file) {
+        ImageValidator.validateImageArgument(file);
         final UploadedFile uploadedFile = storageService.store(file);
         UrlView urlView = new UrlView();
-        urlView.setUrl(String.format("%s/%s", this.storageProperties.getStoragePathRoot(), uploadedFile.getPath()));
+        urlView.setUrl(String.format("/%s/%s", this.storageProperties.getStoragePathRoot(), uploadedFile.getPath()));
         petsService.updatePetImageUrl(id, urlView.getUrl());
         final URI location = ServletUriComponentsBuilder.fromCurrentRequest()
                 .build().toUri();
 
         return ResponseEntity.created(location)
                 .body(urlView);
-    }
-
-    private void validateImageArgument(MultipartFile multipartFile) {
-        try (InputStream input = multipartFile.getInputStream()) {
-            try {
-                ImageIO.read(input).toString();
-            } catch (Exception e) {
-                throw new InvalidImageFileException(String.format("%s: %s", "Images ", e.getMessage()));
-            }
-        } catch (IOException e) {
-            throw new InvalidImageFileException(String.format("%s: %s", "Images ", e.getMessage()));
-        }
     }
 }

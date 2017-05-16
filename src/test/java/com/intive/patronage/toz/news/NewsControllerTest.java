@@ -4,6 +4,8 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import com.intive.patronage.toz.config.ApiUrl;
 import com.intive.patronage.toz.environment.ApiProperties;
 import com.intive.patronage.toz.news.model.db.News;
+import com.intive.patronage.toz.storage.StorageProperties;
+import com.intive.patronage.toz.storage.StorageService;
 import com.tngtech.java.junit.dataprovider.DataProvider;
 import com.tngtech.java.junit.dataprovider.DataProviderRunner;
 import com.tngtech.java.junit.dataprovider.UseDataProvider;
@@ -44,10 +46,15 @@ public class NewsControllerTest {
             "new dog. His name is Reksio, he is two years old ";
     private static final String DEFAULT_TYPE = News.Type.RELEASED.toString();
     private static final String DEFAULT_TYPE_AS_STRING = "RELEASED";
+    private static final Boolean DEFAULT_ORDERED = false;
     private static final MediaType CONTENT_TYPE = MediaType.APPLICATION_JSON_UTF8;
 
     @Mock
     private NewsService newsService;
+    @Mock
+    private StorageService storageService;
+    @Mock
+    private StorageProperties storageProperties;
     private MockMvc mvc;
 
     @DataProvider
@@ -63,13 +70,14 @@ public class NewsControllerTest {
     @Before
     public void setUp() throws Exception {
         MockitoAnnotations.initMocks(this);
-        mvc = MockMvcBuilders.standaloneSetup(new NewsController(newsService)).build();
+        mvc = MockMvcBuilders.standaloneSetup(new NewsController(newsService,
+                storageService, storageProperties)).build();
     }
 
     @Test
     public void getAllNews() throws Exception {
         final List<News> newsList = getNewsList(DEFAULT_TYPE_AS_STRING, DEFAULT_SHORTENED);
-        when(newsService.findAllNews(DEFAULT_TYPE, DEFAULT_SHORTENED)).thenReturn(newsList);
+        when(newsService.findAllNews(DEFAULT_TYPE, DEFAULT_SHORTENED, DEFAULT_ORDERED)).thenReturn(newsList);
 
         mvc.perform(get(ApiUrl.NEWS_PATH))
                 .andExpect(status().isOk())
@@ -78,14 +86,14 @@ public class NewsControllerTest {
                 .andExpect(jsonPath("$", hasSize(NEWS_LIST_SIZE)));
 
         verify(newsService, times(1)).
-                findAllNews(DEFAULT_TYPE, DEFAULT_SHORTENED);
+                findAllNews(DEFAULT_TYPE, DEFAULT_SHORTENED, DEFAULT_ORDERED);
         verifyNoMoreInteractions(newsService);
     }
 
     @Test
     public void getAllNewsByType() throws Exception {
         final List<News> newsList = getNewsList(DEFAULT_TYPE, DEFAULT_SHORTENED);
-        when(newsService.findAllNews(DEFAULT_TYPE, DEFAULT_SHORTENED)).thenReturn(newsList);
+        when(newsService.findAllNews(DEFAULT_TYPE, DEFAULT_SHORTENED, DEFAULT_ORDERED)).thenReturn(newsList);
 
         mvc.perform(get(ApiUrl.NEWS_PATH).param("type", DEFAULT_TYPE))
                 .andExpect(status().isOk())
@@ -95,16 +103,16 @@ public class NewsControllerTest {
                 .andExpect(jsonPath("$", hasSize(NEWS_LIST_SIZE)));
 
         verify(newsService, times(1)).
-                findAllNews(DEFAULT_TYPE, DEFAULT_SHORTENED);
+                findAllNews(DEFAULT_TYPE, DEFAULT_SHORTENED, DEFAULT_ORDERED);
         verifyNoMoreInteractions(newsService);
     }
 
     @Test
     public void getAllNewsShortened() throws Exception {
         final List<News> newsList = getNewsList(DEFAULT_TYPE_AS_STRING, SHORTENED_FOR_TEST);
-        when(newsService.findAllNews(DEFAULT_TYPE, SHORTENED_FOR_TEST)).thenReturn(newsList);
+        when(newsService.findAllNews(DEFAULT_TYPE, SHORTENED_FOR_TEST, DEFAULT_ORDERED)).thenReturn(newsList);
 
-        mvc.perform(get(ApiUrl.NEWS_PATH).param("shortened", SHORTENED_FOR_TEST.toString()))
+        mvc.perform(get(ApiUrl.NEWS_PATH).param("isShortened", SHORTENED_FOR_TEST.toString()))
                 .andExpect(status().isOk())
                 .andExpect(content().contentType(CONTENT_TYPE))
                 .andExpect(jsonPath("$[0].contents", is(EXPECTED_SHORTENED_CONTENTS)))
@@ -112,7 +120,7 @@ public class NewsControllerTest {
                 .andExpect(jsonPath("$", hasSize(NEWS_LIST_SIZE)));
 
         verify(newsService, times(1)).
-                findAllNews(DEFAULT_TYPE, SHORTENED_FOR_TEST);
+                findAllNews(DEFAULT_TYPE, SHORTENED_FOR_TEST, DEFAULT_ORDERED);
         verifyNoMoreInteractions(newsService);
     }
 

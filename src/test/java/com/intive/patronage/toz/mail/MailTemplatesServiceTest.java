@@ -6,7 +6,6 @@ import java.io.IOException;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
-
 public class MailTemplatesServiceTest {
 
     private static final String EXAMPLE_TOKEN = "foo";

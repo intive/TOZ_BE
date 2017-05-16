@@ -7,4 +7,6 @@ import java.util.List;
 
 public interface NewsRepository extends IdentifiableRepository<News> {
     List<News> findByType(News.Type type);
+    List<News> findByTypeOrderByCreatedDesc(News.Type type);
+    List<News> findAllByOrderByCreatedDesc();
 }

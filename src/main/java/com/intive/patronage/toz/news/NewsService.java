@@ -3,6 +3,7 @@ package com.intive.patronage.toz.news;
 import com.intive.patronage.toz.error.exception.NotFoundException;
 import com.intive.patronage.toz.error.exception.WrongEnumValueException;
 import com.intive.patronage.toz.news.model.db.News;
+import com.intive.patronage.toz.util.RepositoryChecker;
 import com.intive.patronage.toz.util.StringFormatter;
 import org.apache.commons.lang3.EnumUtils;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -23,20 +24,29 @@ class NewsService {
         this.newsRepository = newsRepository;
     }
 
-    List<News> findAllNews(String type, Boolean shortened) {
+    List<News> findAllNews(String type, Boolean shortened, Boolean ordered) {
         List<News> newsList;
-        if (type == null) {
-            newsList = newsRepository.findAll();
-        } else if (EnumUtils.isValidEnum(News.Type.class, type)) {
+        checkIfEnumIsValid(type);
+        if (type != null && ordered) {
+            newsList = newsRepository.findByTypeOrderByCreatedDesc(News.Type.valueOf(type));
+        } else if (type != null && !ordered) {
             newsList = newsRepository.findByType(News.Type.valueOf(type));
+        } else if (type == null && ordered) {
+            newsList = newsRepository.findAllByOrderByCreatedDesc();
         } else {
-            throw new WrongEnumValueException(News.Type.class);
+            newsList = newsRepository.findAll();
         }
         return createShortenedNewsContents(shortened, newsList);
     }
 
+    private void checkIfEnumIsValid(String type) {
+        if (type != null && !EnumUtils.isValidEnum(News.Type.class, type)) {
+            throw new WrongEnumValueException(News.Type.class);
+        }
+    }
+
     News findById(final UUID id) {
-        throwNotFoundExceptionIfNotExists(id);
+        RepositoryChecker.throwNotFoundExceptionIfNotExists(id, newsRepository, NEWS);
         return newsRepository.findOne(id);
     }
 
@@ -50,12 +60,12 @@ class NewsService {
     }
 
     void deleteNews(final UUID id) {
-        throwNotFoundExceptionIfNotExists(id);
+        RepositoryChecker.throwNotFoundExceptionIfNotExists(id, newsRepository, NEWS);
         newsRepository.delete(id);
     }
 
     News updateNews(final UUID id, final News news) {
-        throwNotFoundExceptionIfNotExists(id);
+        RepositoryChecker.throwNotFoundExceptionIfNotExists(id, newsRepository, NEWS);
         news.setId(id);
         Date published = newsRepository.findOne(id).getPublished();
         if (news.getType() == News.Type.RELEASED && published == null) {
@@ -76,9 +86,12 @@ class NewsService {
         return newsList;
     }
 
-    private void throwNotFoundExceptionIfNotExists(final UUID id) {
-        if (!newsRepository.exists(id)) {
+    void updateNewsImageUrl(final UUID id, String photoUrl) {
+        final News news = newsRepository.findOne(id);
+        if (news == null) {
             throw new NotFoundException(NEWS);
         }
+        news.setPhotoUrl(photoUrl);
+        updateNews(id, news);
     }
 }
