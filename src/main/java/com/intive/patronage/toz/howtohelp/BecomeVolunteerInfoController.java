@@ -19,7 +19,7 @@ import javax.validation.Valid;
 @Api("Information on how to become volunteer.")
 @RestController
 @RequestMapping(value = ApiUrl.HOW_TO_BECOME_VOLUNTEER_PATH, produces = MediaType.APPLICATION_JSON_VALUE)
-public class BecomeVolunteerInfoController extends HelpInfoController {
+class BecomeVolunteerInfoController extends HelpInfoController {
 
     BecomeVolunteerInfoController(BecomeVolunteerInfoService becomeVolunteerInfoService) {
         super(becomeVolunteerInfoService);
@@ -36,7 +36,7 @@ public class BecomeVolunteerInfoController extends HelpInfoController {
     @PreAuthorize("hasAnyAuthority('SA', 'TOZ', 'VOLUNTEER', 'ANONYMOUS')")
     @Override
     public HelpInfoView getHowToHelpInfo(
-            @Valid @RequestParam(value = "isShortened", required = false, defaultValue = "false") Boolean isShortened) {
+            @Valid @RequestParam(defaultValue = "false") Boolean isShortened) {
         return super.getHowToHelpInfo(isShortened);
     }
 

@@ -21,7 +21,7 @@ import javax.validation.Valid;
 @Api("Information on how to donate.")
 @RestController
 @RequestMapping(value = ApiUrl.HOW_TO_DONATE_PATH, produces = MediaType.APPLICATION_JSON_VALUE)
-public class DonateInfoController extends HelpInfoController {
+class DonateInfoController extends HelpInfoController {
 
     @Autowired
     DonateInfoController(DonateInfoService donateInfoService) {
@@ -39,7 +39,7 @@ public class DonateInfoController extends HelpInfoController {
     @PreAuthorize("hasAnyAuthority('SA', 'TOZ', 'VOLUNTEER', 'ANONYMOUS')")
     @Override
     public HelpInfoView getHowToHelpInfo(
-            @Valid @RequestParam(value = "isShortened", required = false, defaultValue = "false") Boolean isShortened) {
+            @Valid @RequestParam(defaultValue = "false") Boolean isShortened) {
         return super.getHowToHelpInfo(isShortened);
     }
 
