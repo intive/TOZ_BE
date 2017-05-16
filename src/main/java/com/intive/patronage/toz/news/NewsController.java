@@ -139,7 +139,7 @@ class NewsController {
     @ResponseStatus(HttpStatus.CREATED)
     @PostMapping(value = "/{id}/images", consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
     @PreAuthorize("hasAnyAuthority('SA', 'TOZ')")
-    public ResponseEntity<UrlView> uploadFile(@PathVariable UUID id, @RequestParam("file") MultipartFile file) {
+    public ResponseEntity<UrlView> uploadFile(@PathVariable UUID id, @RequestParam() MultipartFile file) {
         ImageValidator.validateImageArgument(file);
         final UploadedFile uploadedFile = storageService.store(file);
         UrlView urlView = new UrlView();

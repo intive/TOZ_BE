@@ -50,7 +50,7 @@ class PetsService {
 
     void updatePetImageUrl(final UUID id, String imageUrl) {
         final Pet pet = petsRepository.findOne(id);
-        if (pet == null){
+        if (pet == null) {
             throw new NotFoundException(PET);
         }
         pet.setImageUrl(imageUrl);

@@ -88,7 +88,7 @@ class NewsService {
 
     void updateNewsImageUrl(final UUID id, String photoUrl) {
         final News news = newsRepository.findOne(id);
-        if (news == null){
+        if (news == null) {
             throw new NotFoundException(NEWS);
         }
         news.setPhotoUrl(photoUrl);
