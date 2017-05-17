@@ -81,7 +81,7 @@ public class OrganizationInfoView {
         public Builder(@JsonProperty("name") String name,
                        @JsonProperty("bankAccount") BankAccountView bankAccount,
                        @JsonProperty("invitationText") String invitationText,
-                       @JsonProperty("invitationText") String volunteerText) {
+                       @JsonProperty("volunteerText") String volunteerText) {
             this.name = name;
             this.bankAccount = bankAccount;
             this.invitationText = invitationText;
