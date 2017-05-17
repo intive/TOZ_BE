@@ -43,11 +43,12 @@ class OrganizationInfoService {
             throw new AlreadyExistsException(ORGANIZATION);
         }
 
-        final OrganizationInfo newInfo = new OrganizationInfo.Builder(organizationId, infoView.getName())
-                .setAddress(infoView.getAddress())
-                .setContact(infoView.getContact())
-                .setBankAccount(infoView.getBankAccount())
-                .build();
+        final OrganizationInfo newInfo =
+                new OrganizationInfo.Builder(organizationId, infoView.getName(), infoView.getInvitationText(), infoView.getVolunteerText())
+                        .setAddress(infoView.getAddress())
+                        .setContact(infoView.getContact())
+                        .setBankAccount(infoView.getBankAccount())
+                        .build();
 
         return convertToView(infoRepository.save(newInfo));
     }
@@ -64,11 +65,12 @@ class OrganizationInfoService {
         RepositoryChecker.throwNotFoundExceptionIfNotExists(organizationId, infoRepository, ORGANIZATION);
 
         final OrganizationInfo oldInfo = infoRepository.findOne(organizationId);
-        final OrganizationInfo updatedInfo = new OrganizationInfo.Builder(oldInfo.getId(), infoView.getName())
-                .setAddress(infoView.getAddress())
-                .setContact(infoView.getContact())
-                .setBankAccount(infoView.getBankAccount())
-                .build();
+        final OrganizationInfo updatedInfo =
+                new OrganizationInfo.Builder(oldInfo.getId(), infoView.getName(), infoView.getInvitationText(), infoView.getVolunteerText())
+                        .setAddress(infoView.getAddress())
+                        .setContact(infoView.getContact())
+                        .setBankAccount(infoView.getBankAccount())
+                        .build();
 
         return convertToView(infoRepository.save(updatedInfo));
     }
@@ -91,7 +93,7 @@ class OrganizationInfoService {
                 .setBankName(info.getBankName())
                 .build();
 
-        return new OrganizationInfoView.Builder(info.getName(), bankAccount)
+        return new OrganizationInfoView.Builder(info.getName(), bankAccount, info.getInvitationText(), info.getVolunteerText())
                 .setAddress(address)
                 .setContact(contact)
                 .build();

@@ -21,8 +21,10 @@ import static org.mockito.Mockito.when;
 @RunWith(SpringRunner.class)
 public class OrganizationInfoServiceTest {
 
-    private final static String ORG_NAME = "Org";
-    private final static String ACCOUNT = "63102047950000940201035419";
+    final static String ORG_NAME = "Org";
+    final static String INVITATION_TEXT = "string";
+    final static String VOLUNTEER_TEXT = "string";
+    final static String ACCOUNT = "63102047950000940201035419";
     private final static UUID ID = UUID.randomUUID();
 
     @Mock
@@ -38,12 +40,12 @@ public class OrganizationInfoServiceTest {
         infoService = new OrganizationInfoService(infoRepository);
         infoRepository.deleteAllInBatch();
 
-        info = new OrganizationInfo.Builder(ID, ORG_NAME)
+        info = new OrganizationInfo.Builder(ID, ORG_NAME, INVITATION_TEXT, VOLUNTEER_TEXT)
                 .build();
 
         BankAccountView bankAccountView = new BankAccountView.Builder(ACCOUNT)
                 .build();
-        infoView = new OrganizationInfoView.Builder(ORG_NAME, bankAccountView)
+        infoView = new OrganizationInfoView.Builder(ORG_NAME, bankAccountView, INVITATION_TEXT, VOLUNTEER_TEXT)
                 .build();
     }
 

@@ -12,6 +12,8 @@ import java.util.UUID;
 public class OrganizationInfo extends Identifiable {
 
     private String name;
+    private String invitationText;
+    private String volunteerText;
 
     private String postCode;
     private String city;
@@ -34,6 +36,8 @@ public class OrganizationInfo extends Identifiable {
     private OrganizationInfo(Builder builder) {
         this.setId(builder.id);
         this.name = builder.name;
+        this.invitationText = builder.invitationText;
+        this.volunteerText = builder.volunteerText;
 
         if (builder.address != null) {
             this.postCode = builder.address.getPostCode();
@@ -59,6 +63,14 @@ public class OrganizationInfo extends Identifiable {
 
     public String getName() {
         return name;
+    }
+
+    public String getInvitationText() {
+        return invitationText;
+    }
+
+    public String getVolunteerText() {
+        return volunteerText;
     }
 
     public String getPostCode() {
@@ -112,13 +124,17 @@ public class OrganizationInfo extends Identifiable {
     public static class Builder {
         private final UUID id;
         private final String name;
+        private final String invitationText;
+        private final String volunteerText;
         private AddressView address;
         private ContactView contact;
         private BankAccountView bankAccount;
 
-        public Builder(UUID id, String name) {
+        public Builder(UUID id, String name, String invitationText, String volunteerText) {
             this.id = id;
             this.name = name;
+            this.invitationText = invitationText;
+            this.volunteerText = volunteerText;
         }
 
         public Builder setAddress(AddressView address) {

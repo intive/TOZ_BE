@@ -9,6 +9,8 @@ import io.swagger.annotations.ApiModelProperty;
 import org.hibernate.validator.constraints.NotEmpty;
 
 import javax.validation.Valid;
+import javax.validation.constraints.Max;
+import javax.validation.constraints.Size;
 
 @ApiModel("Organization information")
 @JsonInclude(JsonInclude.Include.NON_EMPTY)
@@ -27,9 +29,17 @@ public class OrganizationInfoView {
     @Valid
     @ApiModelProperty(position = 4)
     private final BankAccountView bankAccount;
+    @ApiModelProperty(value = "Invitation text", example = "Hello to TOZ", position = 5)
+    @Size(max = 500)
+    private final String invitationText;
+    @ApiModelProperty(value = "Text about volunteers", example = "TOZ volunteers are people who..", position = 6)
+    @Size(max = 500)
+    private final String volunteerText;
 
     private OrganizationInfoView(Builder builder) {
         this.name = builder.name;
+        this.invitationText = builder.invitationText;
+        this.volunteerText = builder.volunteerText;
         this.address = builder.address;
         this.contact = builder.contact;
         this.bankAccount = builder.bankAccount;
@@ -37,6 +47,14 @@ public class OrganizationInfoView {
 
     public String getName() {
         return name;
+    }
+
+    public String getInvitationText() {
+        return invitationText;
+    }
+
+    public String getVolunteerText() {
+        return volunteerText;
     }
 
     public AddressView getAddress() {
@@ -53,15 +71,21 @@ public class OrganizationInfoView {
 
     @JsonPOJOBuilder(withPrefix = "set")
     public static class Builder {
+        private final String invitationText;
+        private final String volunteerText;
         private final String name;
         private final BankAccountView bankAccount;
         private AddressView address;
         private ContactView contact;
 
         public Builder(@JsonProperty("name") String name,
-                       @JsonProperty("bankAccount") BankAccountView bankAccount) {
+                       @JsonProperty("bankAccount") BankAccountView bankAccount,
+                       @JsonProperty("invitationText") String invitationText,
+                       @JsonProperty("invitationText") String volunteerText) {
             this.name = name;
             this.bankAccount = bankAccount;
+            this.invitationText = invitationText;
+            this.volunteerText = volunteerText;
         }
 
         public Builder setAddress(AddressView address) {
