@@ -1,5 +1,6 @@
 package com.intive.patronage.toz.schedule;
 
+import com.intive.patronage.toz.error.exception.NoPermissionException;
 import com.intive.patronage.toz.error.model.ArgumentErrorResponse;
 import com.intive.patronage.toz.error.model.ErrorResponse;
 import com.intive.patronage.toz.error.model.ValidationErrorResponse;
@@ -8,6 +9,8 @@ import com.intive.patronage.toz.schedule.model.view.ReservationRequestView;
 import com.intive.patronage.toz.schedule.model.view.ReservationResponseView;
 import com.intive.patronage.toz.schedule.model.view.ScheduleView;
 import com.intive.patronage.toz.schedule.util.ScheduleParser;
+import com.intive.patronage.toz.tokens.model.UserContext;
+import com.intive.patronage.toz.util.UserInfoGetter;
 import io.swagger.annotations.*;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
@@ -17,9 +20,11 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
+import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
 import org.springframework.web.util.UriComponentsBuilder;
+import springfox.documentation.annotations.ApiIgnore;
 
 import javax.validation.Valid;
 import java.net.URI;
@@ -74,8 +79,15 @@ class ScheduleController {
     @GetMapping(value = "/{id}")
     @ResponseStatus(HttpStatus.OK)
     @PreAuthorize("hasAnyAuthority('SA', 'TOZ', 'VOLUNTEER')")
-    public ReservationResponseView getReservation(@PathVariable UUID id) {
-        return scheduleService.findReservation(id);
+    public ReservationResponseView getReservation(@PathVariable UUID id,
+                                                  @ApiIgnore @AuthenticationPrincipal UserContext userContext) {
+
+        final ReservationResponseView reservation = scheduleService.findReservation(id);
+        if (!UserInfoGetter.hasCurrentUserAdminRole() &&
+                !reservation.getOwnerId().equals(userContext.getUserId())) {
+            throw new NoPermissionException();
+        }
+        return reservation;
     }
 
     @ApiOperation(value = "Make reservation", notes =
@@ -97,14 +109,14 @@ class ScheduleController {
     }
 
     @ApiOperation(value = "Update reservation", notes =
-            "Required roles: SA, TOZ, VOLUNTEER.")
+            "Required roles: SA, TOZ")
     @ApiResponses(value = {
             @ApiResponse(code = 400, message = "Bad request", response = ValidationErrorResponse.class),
             @ApiResponse(code = 404, message = "Not found", response = ErrorResponse.class)
     })
     @PutMapping(value = "/{id}", consumes = MediaType.APPLICATION_JSON_VALUE)
     @ResponseStatus(HttpStatus.CREATED)
-    @PreAuthorize("hasAnyAuthority('SA', 'TOZ', 'VOLUNTEER')")
+    @PreAuthorize("hasAnyAuthority('SA', 'TOZ')")
     public ResponseEntity<ReservationResponseView> updateReservation(@PathVariable UUID id,
                                                                      @Valid @RequestBody ReservationRequestView reservationRequestView) {
         ReservationResponseView updatedReservationResponseView =
@@ -115,14 +127,14 @@ class ScheduleController {
     }
 
     @ApiOperation(value = "Delete reservation", notes =
-            "Required roles: SA, TOZ, VOLUNTEER.")
+            "Required roles: SA, TOZ")
     @ApiResponses(value = {
             @ApiResponse(code = 400, message = "Bad request", response = ArgumentErrorResponse.class),
             @ApiResponse(code = 404, message = "Not found", response = ErrorResponse.class)
     })
     @DeleteMapping(value = "/{id}")
     @ResponseStatus(HttpStatus.OK)
-    @PreAuthorize("hasAnyAuthority('SA', 'TOZ', 'VOLUNTEER')")
+    @PreAuthorize("hasAnyAuthority('SA', 'TOZ')")
     public ReservationResponseView removeReservation(@PathVariable UUID id) {
         return scheduleService.removeReservation(id);
     }
