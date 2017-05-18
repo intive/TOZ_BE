@@ -307,7 +307,7 @@ databaseChangeLog:
                     name: role_id
                     type: uuid
   - changeSet:
-        id : 5
+        id : 6
         author: mateuszsz93
         changes:
           - createTable:
@@ -338,7 +338,7 @@ databaseChangeLog:
                     name: last_modified
                     type: datetime
   - changeSet:
-        id : 5
+        id : 7
         author: jakub.izbicki
         changes:
           - createTable:
@@ -360,3 +360,19 @@ databaseChangeLog:
                     type: datetime
                     constraints:
                       - nullable: false
+  - changeSet:
+        id: 8
+        author: jakub.izbicki
+        changes:
+          - addColumn:
+              columns:
+              - column:
+                  name: invitation_text
+                  type: varchar(500)
+              tableName: organization_info
+          - addColumn:
+              columns:
+              - column:
+                  name: volunteer_text
+                  type: varchar(500)
+              tableName: organization_info
