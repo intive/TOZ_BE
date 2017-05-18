@@ -4,10 +4,15 @@ import com.intive.patronage.toz.base.model.Identifiable;
 import com.intive.patronage.toz.organization.model.view.AddressView;
 import com.intive.patronage.toz.organization.model.view.BankAccountView;
 import com.intive.patronage.toz.organization.model.view.ContactView;
+import lombok.Builder;
+import lombok.Getter;
+import lombok.NoArgsConstructor;
 
 import javax.persistence.Entity;
 import java.util.UUID;
 
+@Getter
+@NoArgsConstructor
 @Entity
 public class OrganizationInfo extends Identifiable {
 
@@ -29,9 +34,6 @@ public class OrganizationInfo extends Identifiable {
 
     private String bankAccountNumber;
     private String bankName;
-
-    OrganizationInfo() {
-    }
 
     private OrganizationInfo(Builder builder) {
         this.setId(builder.id);
@@ -59,66 +61,6 @@ public class OrganizationInfo extends Identifiable {
             this.bankAccountNumber = builder.bankAccount.getNumber();
             this.bankName = builder.bankAccount.getBankName();
         }
-    }
-
-    public String getName() {
-        return name;
-    }
-
-    public String getInvitationText() {
-        return invitationText;
-    }
-
-    public String getVolunteerText() {
-        return volunteerText;
-    }
-
-    public String getPostCode() {
-        return postCode;
-    }
-
-    public String getCity() {
-        return city;
-    }
-
-    public String getStreet() {
-        return street;
-    }
-
-    public String getCountry() {
-        return country;
-    }
-
-    public String getHouseNumber() {
-        return houseNumber;
-    }
-
-    public String getApartmentNumber() {
-        return apartmentNumber;
-    }
-
-    public String getEmail() {
-        return email;
-    }
-
-    public String getPhone() {
-        return phone;
-    }
-
-    public String getFax() {
-        return fax;
-    }
-
-    public String getWebsite() {
-        return website;
-    }
-
-    public String getBankAccountNumber() {
-        return bankAccountNumber;
-    }
-
-    public String getBankName() {
-        return bankName;
     }
 
     public static class Builder {

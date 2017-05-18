@@ -45,7 +45,11 @@ public class OrganizationInfoServiceTest {
 
         BankAccountView bankAccountView = new BankAccountView.Builder(ACCOUNT)
                 .build();
-        infoView = new OrganizationInfoView.Builder(ORG_NAME, bankAccountView, INVITATION_TEXT, VOLUNTEER_TEXT)
+        infoView = OrganizationInfoView.builder()
+                .name(ORG_NAME)
+                .bankAccount(bankAccountView)
+                .invitationText(INVITATION_TEXT)
+                .volunteerText(VOLUNTEER_TEXT)
                 .build();
     }
 

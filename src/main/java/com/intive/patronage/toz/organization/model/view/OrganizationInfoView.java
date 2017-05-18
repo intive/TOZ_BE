@@ -1,11 +1,14 @@
 package com.intive.patronage.toz.organization.model.view;
 
+import com.fasterxml.jackson.annotation.JsonCreator;
 import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
 import com.fasterxml.jackson.databind.annotation.JsonPOJOBuilder;
+import com.fasterxml.jackson.databind.annotation.JsonSerialize;
 import io.swagger.annotations.ApiModel;
 import io.swagger.annotations.ApiModelProperty;
+import lombok.*;
 import org.hibernate.validator.constraints.NotEmpty;
 
 import javax.validation.Valid;
@@ -14,7 +17,9 @@ import javax.validation.constraints.Size;
 
 @ApiModel("Organization information")
 @JsonInclude(JsonInclude.Include.NON_EMPTY)
-@JsonDeserialize(builder = OrganizationInfoView.Builder.class)
+@Getter
+@Builder
+@JsonDeserialize(builder = OrganizationInfoView.OrganizationInfoViewBuilder.class)
 public class OrganizationInfoView {
 
     @NotEmpty
@@ -36,70 +41,7 @@ public class OrganizationInfoView {
     @Size(max = 500)
     private final String volunteerText;
 
-    private OrganizationInfoView(Builder builder) {
-        this.name = builder.name;
-        this.invitationText = builder.invitationText;
-        this.volunteerText = builder.volunteerText;
-        this.address = builder.address;
-        this.contact = builder.contact;
-        this.bankAccount = builder.bankAccount;
-    }
-
-    public String getName() {
-        return name;
-    }
-
-    public String getInvitationText() {
-        return invitationText;
-    }
-
-    public String getVolunteerText() {
-        return volunteerText;
-    }
-
-    public AddressView getAddress() {
-        return address;
-    }
-
-    public ContactView getContact() {
-        return contact;
-    }
-
-    public BankAccountView getBankAccount() {
-        return bankAccount;
-    }
-
-    @JsonPOJOBuilder(withPrefix = "set")
-    public static class Builder {
-        private final String invitationText;
-        private final String volunteerText;
-        private final String name;
-        private final BankAccountView bankAccount;
-        private AddressView address;
-        private ContactView contact;
-
-        public Builder(@JsonProperty("name") String name,
-                       @JsonProperty("bankAccount") BankAccountView bankAccount,
-                       @JsonProperty("invitationText") String invitationText,
-                       @JsonProperty("volunteerText") String volunteerText) {
-            this.name = name;
-            this.bankAccount = bankAccount;
-            this.invitationText = invitationText;
-            this.volunteerText = volunteerText;
-        }
-
-        public Builder setAddress(AddressView address) {
-            this.address = address;
-            return this;
-        }
-
-        public Builder setContact(ContactView contact) {
-            this.contact = contact;
-            return this;
-        }
-
-        public OrganizationInfoView build() {
-            return new OrganizationInfoView(this);
-        }
+    @JsonPOJOBuilder(withPrefix = "")
+    public static class OrganizationInfoViewBuilder {
     }
 }
