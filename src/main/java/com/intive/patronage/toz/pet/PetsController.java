@@ -1,7 +1,7 @@
 package com.intive.patronage.toz.pet;
 
 import com.intive.patronage.toz.config.ApiUrl;
-import com.intive.patronage.toz.error.exception.InvalidImageFileException;
+import com.intive.patronage.toz.error.exception.NoPermissionException;
 import com.intive.patronage.toz.error.model.ErrorResponse;
 import com.intive.patronage.toz.error.model.ValidationErrorResponse;
 import com.intive.patronage.toz.pet.model.db.Pet;
@@ -19,17 +19,13 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
-import org.springframework.security.access.prepost.PostAuthorize;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
 import org.springframework.web.util.UriComponentsBuilder;
 
-import javax.imageio.ImageIO;
 import javax.validation.Valid;
-import java.io.IOException;
-import java.io.InputStream;
 import java.net.URI;
 import java.util.List;
 import java.util.UUID;
@@ -71,11 +67,15 @@ class PetsController {
             @ApiResponse(code = 404, message = "Pet not found", response = ErrorResponse.class),
     })
     @GetMapping(value = "/{id}")
-    @PostAuthorize("hasAnyAuthority('SA', 'TOZ') or " +
-            "(hasAnyAuthority('SA', 'TOZ', 'VOLUNTEER', 'ANONYMOUS') and " +
-            "(returnObject.name != null and returnObject.type != null and returnObject.sex != null))")
+    @PreAuthorize("hasAnyAuthority('SA', 'TOZ', 'VOLUNTEER', 'ANONYMOUS')")
     public PetView getPetById(@ApiParam(required = true) @PathVariable UUID id) {
-        return convertToView(petsService.findById(id));
+        Pet pet = petsService.findById(id);
+        if (UserInfoGetter.hasCurrentUserAdminRole() || (pet.getName() != null && pet
+                .getType() != null && pet.getSex() != null)) {
+            return convertToView(pet);
+        } else {
+            throw new NoPermissionException();
+        }
     }
 
     private static PetView convertToView(final Pet pet) {

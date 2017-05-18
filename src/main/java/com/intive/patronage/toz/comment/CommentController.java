@@ -3,6 +3,7 @@ package com.intive.patronage.toz.comment;
 import com.intive.patronage.toz.comment.model.db.Comment;
 import com.intive.patronage.toz.comment.model.view.CommentView;
 import com.intive.patronage.toz.config.ApiUrl;
+import com.intive.patronage.toz.error.exception.NoPermissionException;
 import com.intive.patronage.toz.error.model.ErrorResponse;
 import com.intive.patronage.toz.error.model.ValidationErrorResponse;
 import com.intive.patronage.toz.util.ModelMapper;
@@ -15,7 +16,6 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
-import org.springframework.security.access.prepost.PostAuthorize;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
@@ -65,11 +65,14 @@ public class CommentController {
     })
     @GetMapping(value = "/{id}")
     @ResponseStatus(HttpStatus.OK)
-    @PostAuthorize("hasAnyAuthority('SA', 'TOZ') or " +
-            "(hasAnyAuthority('SA', 'TOZ', 'VOLUNTEER') and returnObject.state == 'ACTIVE')")
+    @PreAuthorize("hasAnyAuthority('SA', 'TOZ', 'VOLUNTEER')")
     public CommentView getCommentById(@PathVariable UUID id) {
-        return ModelMapper.convertToView(commentService.findById(id), CommentView.class);
-
+        Comment comment = commentService.findById(id);
+        if (UserInfoGetter.hasCurrentUserAdminRole() || comment.getState().equals(Comment.State.ACTIVE)) {
+            return ModelMapper.convertToView(comment, CommentView.class);
+        } else {
+            throw new NoPermissionException();
+        }
     }
 
     @ApiOperation(value = "Create comment.", response = CommentView.class, notes =
