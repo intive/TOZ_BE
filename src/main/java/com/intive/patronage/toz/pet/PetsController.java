@@ -70,12 +70,11 @@ class PetsController {
     @PreAuthorize("hasAnyAuthority('SA', 'TOZ', 'VOLUNTEER', 'ANONYMOUS')")
     public PetView getPetById(@ApiParam(required = true) @PathVariable UUID id) {
         Pet pet = petsService.findById(id);
-        if (UserInfoGetter.hasCurrentUserAdminRole()
-                || (pet.getName() != null && pet.getType() != null && pet.getSex() != null)) {
-            return convertToView(pet);
-        } else {
+        if (!UserInfoGetter.hasCurrentUserAdminRole()
+                && (pet.getName() == null || pet.getType() == null || pet.getSex() == null)) {
             throw new NoPermissionException();
         }
+        return convertToView(pet);
     }
 
     private static PetView convertToView(final Pet pet) {

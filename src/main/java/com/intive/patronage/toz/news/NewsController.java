@@ -80,11 +80,10 @@ class NewsController {
     @PreAuthorize("hasAnyAuthority('SA', 'TOZ', 'VOLUNTEER', 'ANONYMOUS')")
     public NewsView getNewsById(@PathVariable UUID id) {
         News news = newsService.findById(id);
-        if (UserInfoGetter.hasCurrentUserAdminRole() || news.getType().equals(News.Type.RELEASED)) {
-            return ModelMapper.convertToView(news, NewsView.class);
-        } else {
+        if (!UserInfoGetter.hasCurrentUserAdminRole() && !news.getType().equals(News.Type.RELEASED)) {
             throw new NoPermissionException();
         }
+        return ModelMapper.convertToView(news, NewsView.class);
     }
 
     @ApiOperation(value = "Create news.", response = NewsView.class, notes =

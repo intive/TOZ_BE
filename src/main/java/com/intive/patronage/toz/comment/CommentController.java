@@ -68,11 +68,10 @@ public class CommentController {
     @PreAuthorize("hasAnyAuthority('SA', 'TOZ', 'VOLUNTEER')")
     public CommentView getCommentById(@PathVariable UUID id) {
         Comment comment = commentService.findById(id);
-        if (UserInfoGetter.hasCurrentUserAdminRole() || comment.getState().equals(Comment.State.ACTIVE)) {
-            return ModelMapper.convertToView(comment, CommentView.class);
-        } else {
+        if (!UserInfoGetter.hasCurrentUserAdminRole() && !comment.getState().equals(Comment.State.ACTIVE)) {
             throw new NoPermissionException();
         }
+        return ModelMapper.convertToView(comment, CommentView.class);
     }
 
     @ApiOperation(value = "Create comment.", response = CommentView.class, notes =
