@@ -307,7 +307,7 @@ databaseChangeLog:
                     name: role_id
                     type: uuid
   - changeSet:
-        id : 6
+        id : 5
         author: mateuszsz93
         changes:
           - createTable:
@@ -338,7 +338,7 @@ databaseChangeLog:
                     name: last_modified
                     type: datetime
   - changeSet:
-        id : 7
+        id : 5
         author: jakub.izbicki
         changes:
           - createTable:
@@ -361,7 +361,7 @@ databaseChangeLog:
                     constraints:
                       - nullable: false
   - changeSet:
-        id: 8
+        id: 6
         author: jakub.izbicki
         changes:
           - addColumn:
