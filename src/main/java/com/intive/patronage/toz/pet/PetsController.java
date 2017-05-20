@@ -94,7 +94,7 @@ class PetsController {
         final PetView createdPetView = convertToView(createdPet);
         final URI baseLocation = ServletUriComponentsBuilder.fromCurrentRequest()
                 .build().toUri();
-        final String petLocationString = String.format("%s/%s", baseLocation, createdPetView.getId());
+        final String petLocationString = String.format("/%s/%s", baseLocation, createdPetView.getId());
         final URI location = UriComponentsBuilder.fromUriString(petLocationString).build().toUri();
         return ResponseEntity.created(location)
                 .body(createdPetView);
