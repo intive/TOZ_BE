@@ -24,6 +24,7 @@ import java.util.UUID;
 abstract class ReservationView {
 
     @ApiModelProperty(value = "Date in UTC", example = "2017-01-20", required = true, position = 1)
+    @NotNull
     @DateTimeFormat(iso = DateTimeFormat.ISO.DATE)
     @JsonFormat(pattern = "yyyy-MM-dd")
     @NotPast
