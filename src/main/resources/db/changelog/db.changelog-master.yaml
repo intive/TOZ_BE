@@ -360,3 +360,19 @@ databaseChangeLog:
                     type: datetime
                     constraints:
                       - nullable: false
+  - changeSet:
+        id: 6
+        author: jakub.izbicki
+        changes:
+          - addColumn:
+              columns:
+              - column:
+                  name: invitation_text
+                  type: varchar(500)
+              tableName: organization_info
+          - addColumn:
+              columns:
+              - column:
+                  name: volunteer_text
+                  type: varchar(500)
+              tableName: organization_info

@@ -2,6 +2,7 @@ package com.intive.patronage.toz.organization;
 
 import com.intive.patronage.toz.config.ApiUrl;
 import com.intive.patronage.toz.environment.ApiProperties;
+import com.intive.patronage.toz.organization.model.db.OrganizationInfo;
 import com.intive.patronage.toz.organization.model.view.BankAccountView;
 import com.intive.patronage.toz.organization.model.view.OrganizationInfoView;
 import com.intive.patronage.toz.schedule.util.ScheduleParser;
@@ -21,6 +22,7 @@ import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.setup.MockMvcBuilders;
 import org.springframework.web.servlet.mvc.method.annotation.ExceptionHandlerExceptionResolver;
 
+import static com.intive.patronage.toz.organization.OrganizationInfoServiceTest.*;
 import static org.mockito.Matchers.any;
 import static org.mockito.Mockito.verifyZeroInteractions;
 import static org.mockito.Mockito.when;
@@ -37,8 +39,6 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 )
 public class OrganizationInfoControllerTest {
 
-    private final static String ORG_NAME = "Org";
-    private final static String ACCOUNT = "63102047950000940201035419";
     private final static String INVALID_ACCOUNT = "631-02047950000940201035419";
     private final static String EMPTY_JSON_CONTENT = "{}";
     private final MediaType contentType = MediaType.APPLICATION_JSON_UTF8;
@@ -65,14 +65,21 @@ public class OrganizationInfoControllerTest {
         mvc = MockMvcBuilders.standaloneSetup(new OrganizationInfoController(organizationInfoService)).build();
         mvcWithCustomHandlers = MockMvcBuilders.standaloneSetup(new OrganizationInfoController(organizationInfoService))
                 .setHandlerExceptionResolvers(exceptionHandlerExceptionResolver).build();
-
         BankAccountView bankAccountView = new BankAccountView.Builder(ACCOUNT)
                 .build();
-        infoView = new OrganizationInfoView.Builder(ORG_NAME, bankAccountView)
+        infoView = OrganizationInfoView.builder()
+                .name(ORG_NAME)
+                .bankAccount(bankAccountView)
+                .invitationText(INVITATION_TEXT)
+                .volunteerText(VOLUNTEER_TEXT)
                 .build();
         BankAccountView invalidBankAccountView = new BankAccountView.Builder(INVALID_ACCOUNT)
                 .build();
-        invalidInfoView = new OrganizationInfoView.Builder(ORG_NAME, invalidBankAccountView)
+        invalidInfoView = OrganizationInfoView.builder()
+                .name(ORG_NAME)
+                .bankAccount(invalidBankAccountView)
+                .invitationText(INVITATION_TEXT)
+                .volunteerText(VOLUNTEER_TEXT)
                 .build();
     }
 
@@ -156,6 +163,7 @@ public class OrganizationInfoControllerTest {
         final String validationErrorMessage = messageSource.getMessage("validationError",
                 null,
                 LocaleContextHolder.getLocale());
+        String ss = ModelMapper.convertToJsonString(invalidInfoView);
         mvcWithCustomHandlers.perform(put(ApiUrl.ORGANIZATION_INFO_PATH)
                 .contentType(contentType)
                 .content(ModelMapper.convertToJsonString(invalidInfoView)))

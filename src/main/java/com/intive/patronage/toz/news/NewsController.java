@@ -1,6 +1,7 @@
 package com.intive.patronage.toz.news;
 
 import com.intive.patronage.toz.config.ApiUrl;
+import com.intive.patronage.toz.error.exception.NoPermissionException;
 import com.intive.patronage.toz.error.model.ErrorResponse;
 import com.intive.patronage.toz.error.model.ValidationErrorResponse;
 import com.intive.patronage.toz.news.model.db.News;
@@ -17,7 +18,6 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
-import org.springframework.security.access.prepost.PostAuthorize;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
@@ -77,10 +77,13 @@ class NewsController {
     })
     @GetMapping(value = "/{id}")
     @ResponseStatus(HttpStatus.OK)
-    @PostAuthorize("hasAnyAuthority('SA', 'TOZ') or " +
-            "(hasAnyAuthority('SA', 'TOZ', 'VOLUNTEER', 'ANONYMOUS') and returnObject.type == 'RELEASED')")
+    @PreAuthorize("hasAnyAuthority('SA', 'TOZ', 'VOLUNTEER', 'ANONYMOUS')")
     public NewsView getNewsById(@PathVariable UUID id) {
-        return ModelMapper.convertIdentifiableToView(newsService.findById(id), NewsView.class);
+        News news = newsService.findById(id);
+        if (!UserInfoGetter.hasCurrentUserAdminRole() && !news.getType().equals(News.Type.RELEASED)) {
+            throw new NoPermissionException();
+        }
+        return ModelMapper.convertToView(news, NewsView.class);
     }
 
     @ApiOperation(value = "Create news.", response = NewsView.class, notes =
