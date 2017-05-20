@@ -11,14 +11,10 @@ import org.hibernate.validator.constraints.NotEmpty;
 @Getter
 @Setter
 @NoArgsConstructor
-public class PasswordChangeRequestView extends PasswordRequestViewBase{
+public class PasswordRequestViewBase {
 
-    @ApiModelProperty(value = "Old password", required = true, position = 1)
+    @ApiModelProperty(value = "New password", required = true, position = 2)
     @NotEmpty
-    private String oldPassword;
+    protected String newPassword;
 
-    public PasswordChangeRequestView(String oldPassword, String newPassword) {
-        this.oldPassword = oldPassword;
-        this.newPassword = newPassword;
-    }
 }

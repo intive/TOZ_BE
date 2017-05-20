@@ -23,6 +23,15 @@ class PasswordsService {
         this.messageSource = messageSource;
     }
 
+    User changePassword(String email, String newPassword) {
+        final User user = userService.findOneByEmail(email);
+        validateNewPassword(user, newPassword);
+
+        user.setPasswordHash(passwordEncoder.encode(newPassword));
+        userService.update(user.getId(), user);
+        return user;
+    }
+
     void changePasswordForExistingUser(String email, String oldPassword, String newPassword) {
         final User user = userService.findOneByEmail(email);
         authenticateUser(user, oldPassword);

@@ -11,14 +11,13 @@ import org.hibernate.validator.constraints.NotEmpty;
 @Getter
 @Setter
 @NoArgsConstructor
-public class PasswordChangeRequestView extends PasswordRequestViewBase{
+public class PasswordResetRequestView extends PasswordRequestViewBase {
 
-    @ApiModelProperty(value = "Old password", required = true, position = 1)
+    @ApiModelProperty(value = "Reset Token", required = true, position = 1)
     @NotEmpty
-    private String oldPassword;
+    private String token;
 
-    public PasswordChangeRequestView(String oldPassword, String newPassword) {
-        this.oldPassword = oldPassword;
+    public PasswordResetRequestView(String newPassword) {
         this.newPassword = newPassword;
     }
 }
