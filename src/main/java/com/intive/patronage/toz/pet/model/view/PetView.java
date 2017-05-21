@@ -51,5 +51,6 @@ public class PetView extends IdentifiableView {
     private Long lastModified;
 
     @ApiModelProperty(example = "/storage/a5/0d/4d/a50d4d4c-ccd2-4747-8dec-d6d7f521336e.jpg", position = 8)
+    @JsonProperty(access = JsonProperty.Access.READ_ONLY)
     private String imageUrl;
 }
