@@ -27,6 +27,7 @@ import static com.intive.patronage.toz.util.ModelMapper.convertToJsonString;
 public class MailTemplatesService {
 
     private static final String REGISTRATION_TEMPLATE_NAME = "Registration";
+    private static final String RESET_PASSWORD_TEMPLATE_NAME = "ResetPassword";
     private static final ObjectMapper OBJECT_MAPPER = new ObjectMapper();
 
     private final String baseUrl;
@@ -46,6 +47,13 @@ public class MailTemplatesService {
         final Registration registration = Registration.of(createActivationUrl(), token);
         final JsonNode jsonNode = OBJECT_MAPPER.readValue(convertToJsonString(registration), JsonNode.class);
         final Template template = getCompiledTemplate(REGISTRATION_TEMPLATE_NAME);
+        return template.apply(getContext(jsonNode));
+    }
+
+    public String getResetPasswordTemplate(String token) throws IOException {
+        final Registration registration = Registration.of(createActivationUrl(), token);
+        final JsonNode jsonNode = OBJECT_MAPPER.readValue(convertToJsonString(registration), JsonNode.class);
+        final Template template = getCompiledTemplate(RESET_PASSWORD_TEMPLATE_NAME);
         return template.apply(getContext(jsonNode));
     }
 

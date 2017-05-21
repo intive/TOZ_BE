@@ -24,7 +24,7 @@ public class UserService {
         this.userRepository = userRepository;
     }
 
-    User findOneById(final UUID id) {
+    public User findOneById(final UUID id) {
         RepositoryChecker.throwNotFoundExceptionIfNotExists(id, userRepository, USER);
         return userRepository.findOne(id);
     }
