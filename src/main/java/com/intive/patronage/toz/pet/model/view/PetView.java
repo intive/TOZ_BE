@@ -50,14 +50,6 @@ public class PetView extends IdentifiableView {
     @JsonProperty(access = JsonProperty.Access.READ_ONLY)
     private Long lastModified;
 
-    @ApiModelProperty(example = "storage/a5/0d/4d/a50d4d4c-ccd2-4747-8dec-d6d7f521336e.jpg", position = 8)
-    @Getter(AccessLevel.NONE)
+    @ApiModelProperty(example = "/storage/a5/0d/4d/a50d4d4c-ccd2-4747-8dec-d6d7f521336e.jpg", position = 8)
     private String imageUrl;
-
-    public String getImageUrl(){
-        if (imageUrl != null && imageUrl.length() > 0 && imageUrl.charAt(0) != '/' ){
-            return String.format("/%s", imageUrl);
-        }
-        return imageUrl;
-    }
 }
