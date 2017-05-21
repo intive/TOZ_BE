@@ -73,12 +73,12 @@ public class PasswordsController {
         return new PasswordResponseView(message);
     }
     @ApiOperation(value = "Send email with reset password token")
-    @GetMapping(value = PASSWORDS_RESET_SEND_TOKEN_PATH  + "/{id}" )
+    @GetMapping(value = PASSWORDS_RESET_SEND_TOKEN_PATH )
     @ApiResponses(value = {
             @ApiResponse(code = 400, message = "Bad request", response = ErrorResponse.class),
-            @ApiResponse(code = 404, message = "Proposal not found", response = ErrorResponse.class),
+            @ApiResponse(code = 404, message = "User not found", response = ErrorResponse.class),
     })
-    @PreAuthorize("hasAuthority('TOZ')")
+    @PreAuthorize("hasAnyAuthority('SA', 'TOZ', 'ANONYMOUS')")
     public User sendResetPasswordEmail(@PathVariable UUID id) throws IOException, MessagingException {
         User user = userService.findOneById(id);
         passwordsResetService.sendResetPaswordToken(user);

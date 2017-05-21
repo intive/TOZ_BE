@@ -1,11 +1,14 @@
 package com.intive.patronage.toz.passwords;
 
+import com.github.jknack.handlebars.Template;
+import com.intive.patronage.toz.error.exception.JwtAuthenticationException;
 import com.intive.patronage.toz.mail.MailService;
 import com.intive.patronage.toz.mail.MailTemplatesService;
 import com.intive.patronage.toz.tokens.JwtFactory;
 import com.intive.patronage.toz.tokens.JwtParser;
 import com.intive.patronage.toz.users.UserService;
 import com.intive.patronage.toz.users.model.db.User;
+import io.jsonwebtoken.ExpiredJwtException;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -23,8 +26,11 @@ import org.springframework.test.context.junit4.SpringRunner;
 import javax.mail.Session;
 import javax.mail.internet.MimeMessage;
 import java.security.SecureRandom;
+import java.util.Locale;
 
+import static org.assertj.core.api.Assertions.assertThat;
 import static org.mockito.Matchers.any;
+import static org.mockito.Matchers.eq;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
@@ -38,6 +44,8 @@ public class PasswordResetServiceTest {
     private static final String PASSWORD_RESET_TOPIC = "TOZ RESET PASSWORD";
     private static final String TEST_MESSAGE_CONTENT = "TEST MESSAGE";
     private static final long EXPIRATION_TIME = 5;
+    private static final long EXPIRATION_TIME_MINUS = -5;
+    private static final String INVALID_TOKEN_MESSAGE =  "Invalid token";
 
     private PasswordsResetService passwordsResetService;
 
@@ -59,6 +67,9 @@ public class PasswordResetServiceTest {
     private PasswordsService passwordsService;
     private User user;
     private String testToken;
+
+    @Mock
+    Template template;
 
     @Before
     public void setUp() throws Exception {
@@ -95,17 +106,38 @@ public class PasswordResetServiceTest {
     @Test
     public void shouldSendResetPasswordToken() throws Exception {
         when(userService.findOneByEmail(EMAIL)).thenReturn(user);
-        when(mailTemplatesService.getRegistrationTemplate(any(String.class))).thenReturn(TEST_MESSAGE_CONTENT);
+        when(mailTemplatesService.getResetPasswordTemplate(any(String.class))).thenReturn(TEST_MESSAGE_CONTENT);
         Session session = null;
         MimeMessage mimeMessage = new MimeMessage(session);
         when(javaMailSender.createMimeMessage()).thenReturn(mimeMessage);
+
+
+
         passwordsResetService.sendResetPaswordToken(user);
-        verify(mailTemplatesService).getRegistrationTemplate(testToken);
         verify(javaMailSender).send(mimeMessage);
     }
+    @Test
+    public void shouldChangePassword() throws Exception {
+        String testExpiredToken = createTestExpiredToken();
+        when(userService.findOneByEmail(EMAIL)).thenReturn(user);
 
+        when(messageSource.getMessage(eq("tokenExpired"), any(), any(Locale.class)))
+                .thenReturn(INVALID_TOKEN_MESSAGE);
+
+        try {
+            passwordsResetService.changePasswordUsingToken(testExpiredToken, NEW_PASSWORD);
+        } catch (JwtAuthenticationException e) {
+            assertThat(e.getMessage())
+                    .isEqualTo(INVALID_TOKEN_MESSAGE);
+        }
+    }
     public String createTestToken(){
         JwtFactory jwtFactory = new JwtFactory(SECRET);
         return jwtFactory.generateToken(user, EXPIRATION_TIME);
     }
+    public String createTestExpiredToken(){
+        JwtFactory jwtFactory = new JwtFactory(SECRET);
+        return jwtFactory.generateToken(user, EXPIRATION_TIME_MINUS);
+    }
+
 }

@@ -53,7 +53,7 @@ public class PasswordsResetService {
     public void sendResetPaswordToken(User user) throws IOException, MessagingException {
 
         String token = jwtFactory.generateToken(user, expirationTime);
-        String mailBody = mailTemplatesService.getRegistrationTemplate(token);
+        String mailBody = mailTemplatesService.getResetPasswordTemplate(token);
         mailService.sendMail(mailSubject, mailBody, user.getEmail());
     }
 }

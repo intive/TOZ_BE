@@ -14,7 +14,7 @@ public final class ApiUrl {
     public final static String HOW_TO_DONATE_PATH = "/organization/howtodonate";
     public static final String PASSWORDS_PATH = "/users/passwords";
     public static final String PASSWORDS_RESET_PATH = "/reset";
-    public static final String PASSWORDS_RESET_SEND_TOKEN_PATH = "/reset/send";
+    public static final String PASSWORDS_RESET_SEND_TOKEN_PATH = "/reset/send/{id}";
     public final static String COMMENTS_PATH = "/comments";
     public final static String PROPOSAL_PATH = "/proposals";
 
