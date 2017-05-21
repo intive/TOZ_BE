@@ -7,6 +7,7 @@ import com.intive.patronage.toz.pet.model.db.Pet;
 import com.intive.patronage.toz.util.validation.EnumValidate;
 import io.swagger.annotations.ApiModel;
 import io.swagger.annotations.ApiModelProperty;
+import lombok.AccessLevel;
 import lombok.Getter;
 import lombok.Setter;
 
@@ -49,6 +50,7 @@ public class PetView extends IdentifiableView {
     @JsonProperty(access = JsonProperty.Access.READ_ONLY)
     private Long lastModified;
 
-    @ApiModelProperty(example = "storage/a5/0d/4d/a50d4d4c-ccd2-4747-8dec-d6d7f521336e.jpg", position = 8)
+    @ApiModelProperty(example = "/storage/a5/0d/4d/a50d4d4c-ccd2-4747-8dec-d6d7f521336e.jpg", position = 8)
+    @JsonProperty(access = JsonProperty.Access.READ_ONLY)
     private String imageUrl;
 }
