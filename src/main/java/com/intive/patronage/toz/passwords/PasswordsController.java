@@ -3,6 +3,7 @@ package com.intive.patronage.toz.passwords;
 import com.intive.patronage.toz.error.model.ErrorResponse;
 import com.intive.patronage.toz.error.model.ValidationErrorResponse;
 import com.intive.patronage.toz.passwords.model.PasswordChangeRequestView;
+import com.intive.patronage.toz.passwords.model.PasswordRequestSendTokenView;
 import com.intive.patronage.toz.passwords.model.PasswordResetRequestView;
 import com.intive.patronage.toz.passwords.model.PasswordResponseView;
 import com.intive.patronage.toz.tokens.model.UserContext;
@@ -73,14 +74,13 @@ public class PasswordsController {
         return new PasswordResponseView(message);
     }
     @ApiOperation(value = "Send email with reset password token")
-    @GetMapping(value = PASSWORDS_RESET_SEND_TOKEN_PATH )
+    @PostMapping(value = PASSWORDS_RESET_SEND_TOKEN_PATH )
     @ApiResponses(value = {
             @ApiResponse(code = 400, message = "Bad request", response = ErrorResponse.class),
             @ApiResponse(code = 404, message = "User not found", response = ErrorResponse.class),
     })
-    @PreAuthorize("hasAnyAuthority('SA', 'TOZ', 'ANONYMOUS')")
-    public User sendResetPasswordEmail(@PathVariable UUID id) throws IOException, MessagingException {
-        User user = userService.findOneById(id);
+    public User sendResetPasswordEmail(@PathVariable PasswordRequestSendTokenView passwordRequestSendTokenView) throws IOException, MessagingException {
+        User user = userService.findOneByEmail(passwordRequestSendTokenView.getEmail());
         passwordsResetService.sendResetPaswordToken(user);
         return user;
     }
@@ -91,7 +91,6 @@ public class PasswordsController {
             @ApiResponse(code = 400, message = "Bad request", response = ValidationErrorResponse.class)
     })
     @PostMapping(value = PASSWORDS_RESET_PATH, consumes = MediaType.APPLICATION_JSON_VALUE)
-    @PreAuthorize("hasAnyAuthority('SA', 'TOZ', 'ANONYMOUS')")
     public ResponseEntity<User> resetPassword(@Valid @RequestBody PasswordResetRequestView passwordResetRequestView) {
 
         User user = passwordsResetService.changePasswordUsingToken(passwordResetRequestView.getToken(),passwordResetRequestView.getNewPassword());
