@@ -19,8 +19,8 @@ public class NotPastValidator implements ConstraintValidator<NotPast, LocalDate>
     }
 
     @Override
-    public boolean isValid(LocalDate value, ConstraintValidatorContext context) {
+    public boolean isValid(LocalDate date, ConstraintValidatorContext context) {
         LocalDate today = LocalDate.now();
-        return value == null || value.isEqual(today) || value.isAfter(today);
+        return date == null || date.isEqual(today) || date.isAfter(today);
     }
 }
