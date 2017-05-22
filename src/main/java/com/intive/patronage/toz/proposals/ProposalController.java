@@ -37,7 +37,7 @@ import java.util.UUID;
 import static com.intive.patronage.toz.util.ModelMapper.convertIdentifiableToView;
 import static com.intive.patronage.toz.util.ModelMapper.convertToView;
 
-@Api(tags = "Proposals", description = "Proposals management operations like getting all proposals, creating new one, accepting or rejecting existing proposals.")
+@Api(tags = "Proposals", description = "Proposals management operations (CRUD).")
 @RestController
 @RequestMapping(value = ApiUrl.PROPOSAL_PATH, produces = MediaType.APPLICATION_JSON_VALUE)
 public class ProposalController {

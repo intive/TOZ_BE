@@ -19,7 +19,7 @@ import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
 import javax.validation.Valid;
 import java.net.URI;
 
-@Api(tags = "Organization info", description = "Information about organization.")
+@Api(tags = "Organization info", description = "Management information about organization.")
 @RestController
 @RequestMapping(value = ApiUrl.ORGANIZATION_INFO_PATH, produces = MediaType.APPLICATION_JSON_VALUE)
 class OrganizationInfoController {

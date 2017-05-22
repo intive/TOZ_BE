@@ -25,7 +25,7 @@ import java.net.URI;
 import java.util.List;
 import java.util.UUID;
 
-@Api(tags = "Comments", description = "Comments management, e.g. creating new one, editing, changing state.")
+@Api(tags = "Comments", description = "Comments management operations (CRUD).")
 @RestController
 @RequestMapping(value = ApiUrl.COMMENTS_PATH, produces = MediaType.APPLICATION_JSON_VALUE)
 public class CommentController {

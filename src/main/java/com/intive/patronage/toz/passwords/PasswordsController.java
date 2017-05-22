@@ -36,7 +36,7 @@ import static com.intive.patronage.toz.config.ApiUrl.PASSWORDS_PATH;
 import static com.intive.patronage.toz.config.ApiUrl.PASSWORDS_RESET_PATH;
 import static com.intive.patronage.toz.config.ApiUrl.PASSWORDS_RESET_SEND_TOKEN_PATH;
 
-@Api(tags = "Passwords", description = "Changing passwords.")
+@Api(tags = "Passwords", description = "Passwords operations (change and reset password).")
 @RestController
 @RequestMapping(value = PASSWORDS_PATH, produces = MediaType.APPLICATION_JSON_VALUE)
 public class PasswordsController {
