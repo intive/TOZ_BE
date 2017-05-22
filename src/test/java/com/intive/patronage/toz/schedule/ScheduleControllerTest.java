@@ -217,4 +217,16 @@ public class ScheduleControllerTest {
                 .content(objectMapper.writeValueAsString(reservationRequestView)))
                 .andExpect(status().isBadRequest());
     }
+
+    @Test
+    @UseDataProvider(value = "getReservationRequestView",
+            location = ScheduleDataProvider.class)
+    public void shouldReturnBadRequestWhenDateIsNull(ReservationRequestView reservationRequestView) throws Exception {
+        reservationRequestView.setDate(null);
+        mvc.perform(post(String.format("%s", SCHEDULE_PATH))
+                .param(ID_PARAM, UUID.randomUUID().toString())
+                .contentType(CONTENT_TYPE)
+                .content(objectMapper.writeValueAsString(reservationRequestView)))
+                .andExpect(status().isBadRequest());
+    }
 }
