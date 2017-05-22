@@ -27,7 +27,7 @@ import java.time.LocalDate;
 import java.util.List;
 import java.util.UUID;
 
-@Api(tags = "Schedule")
+@Api(tags = "Schedule", description = "Schedule operations like checking schedule, making or changing reservation.")
 @PropertySource("classpath:application.properties")
 @RestController
 @RequestMapping(value = "/schedule", produces = MediaType.APPLICATION_JSON_VALUE)

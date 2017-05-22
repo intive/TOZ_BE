@@ -24,7 +24,7 @@ import java.net.URI;
 import java.util.UUID;
 
 
-@Api(tags = "Users", description = "Operations for users activation")
+@Api(tags = "Users", description = "User management operations like registering and activating.")
 @RestController
 @RequestMapping(value = ApiUrl.REGISTER_PATH, produces = MediaType.APPLICATION_JSON_VALUE)
 class UserActivationController {

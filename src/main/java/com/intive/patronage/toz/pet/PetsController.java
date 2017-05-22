@@ -30,7 +30,7 @@ import java.net.URI;
 import java.util.List;
 import java.util.UUID;
 
-@Api(tags = "Pets", description = "Operations for pet resources")
+@Api(tags = "Pets", description = "Animal management, e.g. creating new one, editing etc.")
 @RestController
 @RequestMapping(value = ApiUrl.PETS_PATH, produces = MediaType.APPLICATION_JSON_VALUE)
 class PetsController {
