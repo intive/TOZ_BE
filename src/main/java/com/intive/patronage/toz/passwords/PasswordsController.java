@@ -79,7 +79,7 @@ public class PasswordsController {
             @ApiResponse(code = 400, message = "Bad request", response = ErrorResponse.class),
             @ApiResponse(code = 404, message = "User not found", response = ErrorResponse.class),
     })
-    public User sendResetPasswordEmail(@PathVariable PasswordRequestSendTokenView passwordRequestSendTokenView) throws IOException, MessagingException {
+    public User sendResetPasswordEmail(@Valid @RequestBody PasswordRequestSendTokenView passwordRequestSendTokenView) throws IOException, MessagingException {
         User user = userService.findOneByEmail(passwordRequestSendTokenView.getEmail());
         passwordsResetService.sendResetPaswordToken(user);
         return user;
