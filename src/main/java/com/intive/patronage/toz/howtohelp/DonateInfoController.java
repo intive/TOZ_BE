@@ -18,7 +18,7 @@ import org.springframework.web.bind.annotation.*;
 
 import javax.validation.Valid;
 
-@Api("Information on how to donate.")
+@Api(tags = "Donate info", description = "Management information about how to make donation.")
 @RestController
 @RequestMapping(value = ApiUrl.HOW_TO_DONATE_PATH, produces = MediaType.APPLICATION_JSON_VALUE)
 class DonateInfoController extends HelpInfoController {

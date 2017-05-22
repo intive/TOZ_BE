@@ -9,6 +9,7 @@ import com.intive.patronage.toz.passwords.model.PasswordResponseView;
 import com.intive.patronage.toz.tokens.model.UserContext;
 import com.intive.patronage.toz.users.UserService;
 import com.intive.patronage.toz.users.model.db.User;
+import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 import io.swagger.annotations.ApiResponse;
 import io.swagger.annotations.ApiResponses;
@@ -30,12 +31,12 @@ import javax.validation.Valid;
 
 import java.io.IOException;
 import java.net.URI;
-import java.util.UUID;
 
 import static com.intive.patronage.toz.config.ApiUrl.PASSWORDS_PATH;
 import static com.intive.patronage.toz.config.ApiUrl.PASSWORDS_RESET_PATH;
 import static com.intive.patronage.toz.config.ApiUrl.PASSWORDS_RESET_SEND_TOKEN_PATH;
 
+@Api(tags = "Passwords", description = "Passwords operations (change and reset).")
 @RestController
 @RequestMapping(value = PASSWORDS_PATH, produces = MediaType.APPLICATION_JSON_VALUE)
 public class PasswordsController {
