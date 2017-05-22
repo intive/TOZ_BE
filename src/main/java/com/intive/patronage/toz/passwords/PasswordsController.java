@@ -31,7 +31,6 @@ import javax.validation.Valid;
 
 import java.io.IOException;
 import java.net.URI;
-import java.util.UUID;
 
 import static com.intive.patronage.toz.config.ApiUrl.PASSWORDS_PATH;
 import static com.intive.patronage.toz.config.ApiUrl.PASSWORDS_RESET_PATH;
