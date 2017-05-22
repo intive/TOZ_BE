@@ -1,6 +1,5 @@
 package com.intive.patronage.toz.users.model.db;
 
-import com.intive.patronage.toz.base.model.Identifiable;
 import lombok.Getter;
 
 import javax.persistence.*;
@@ -9,8 +8,9 @@ import java.io.Serializable;
 @Getter
 @Entity
 @Table(name = "role")
-public class RoleEntity extends Identifiable implements Serializable {
+public class RoleEntity implements Serializable {
 
+    @Id
     @Enumerated(EnumType.STRING)
     private Role role;
 
