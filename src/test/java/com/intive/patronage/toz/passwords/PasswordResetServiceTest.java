@@ -8,14 +8,11 @@ import com.intive.patronage.toz.tokens.JwtFactory;
 import com.intive.patronage.toz.tokens.JwtParser;
 import com.intive.patronage.toz.users.UserService;
 import com.intive.patronage.toz.users.model.db.User;
-import io.jsonwebtoken.ExpiredJwtException;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.beans.factory.annotation.Value;
 import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.context.MessageSource;
 import org.springframework.mail.javamail.JavaMailSender;
@@ -30,6 +27,7 @@ import java.util.Locale;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.mockito.Matchers.any;
+import static org.mockito.Matchers.anyString;
 import static org.mockito.Matchers.eq;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
@@ -86,6 +84,7 @@ public class PasswordResetServiceTest {
                 jwtFactory,
                 mailTemplatesService,
                 mailService,
+                userService,
                 PASSWORD_RESET_TOPIC,
                 EXPIRATION_TIME
         );
@@ -96,6 +95,7 @@ public class PasswordResetServiceTest {
 
         testToken = createTestToken();
     }
+
     @Test
     public void shouldResetPassword() throws Exception {
 
@@ -103,6 +103,7 @@ public class PasswordResetServiceTest {
         passwordsResetService.changePasswordUsingToken(testToken, NEW_PASSWORD);
         verify(userService).update(user.getId(), user);
     }
+
     @Test
     public void shouldSendResetPasswordToken() throws Exception {
         when(userService.findOneByEmail(EMAIL)).thenReturn(user);
@@ -110,12 +111,13 @@ public class PasswordResetServiceTest {
         Session session = null;
         MimeMessage mimeMessage = new MimeMessage(session);
         when(javaMailSender.createMimeMessage()).thenReturn(mimeMessage);
+        when(userService.existsByEmail(anyString())).thenReturn(true);
+        when(userService.findOneByEmail(anyString())).thenReturn(user);
 
-
-
-        passwordsResetService.sendResetPaswordToken(user);
+        passwordsResetService.sendResetPasswordTokenIfEmailExists(user.getEmail());
         verify(javaMailSender).send(mimeMessage);
     }
+
     @Test
     public void shouldChangePassword() throws Exception {
         String testExpiredToken = createTestExpiredToken();

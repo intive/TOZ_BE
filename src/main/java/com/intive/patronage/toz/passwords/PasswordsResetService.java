@@ -4,6 +4,7 @@ import com.intive.patronage.toz.mail.MailService;
 import com.intive.patronage.toz.mail.MailTemplatesService;
 import com.intive.patronage.toz.tokens.JwtFactory;
 import com.intive.patronage.toz.tokens.JwtParser;
+import com.intive.patronage.toz.users.UserService;
 import com.intive.patronage.toz.users.model.db.User;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
@@ -20,6 +21,7 @@ public class PasswordsResetService {
     private final JwtFactory jwtFactory;
     private final MailTemplatesService mailTemplatesService;
     private final MailService mailService;
+    private final UserService userService;
 
     private long expirationTime;
     private String mailSubject;
@@ -31,14 +33,16 @@ public class PasswordsResetService {
             JwtFactory jwtFactory,
             MailTemplatesService mailTemplatesService,
             MailService mailService,
+            UserService userService,
             @Value("${mail.reset-password.subject}") String mailSubject,
             @Value("${jwt.email.activation.expiration-time-minutes}") long expirationTime
-    ){
+    ) {
         this.passwordService = passwordService;
         this.jwtParser = jwtParser;
         this.jwtFactory = jwtFactory;
         this.mailTemplatesService = mailTemplatesService;
         this.mailService = mailService;
+        this.userService = userService;
         this.mailSubject = mailSubject;
         this.expirationTime = expirationTime;
     }
@@ -50,8 +54,11 @@ public class PasswordsResetService {
         return passwordService.changePassword(userEmail, newPassword);
     }
 
-    void sendResetPaswordToken(User user) throws IOException, MessagingException {
-
+    void sendResetPasswordTokenIfEmailExists(String email) throws IOException, MessagingException {
+        if (!userService.existsByEmail(email)) {
+            return;
+        }
+        User user = userService.findOneByEmail(email);
         String token = jwtFactory.generateToken(user, expirationTime);
         String mailBody = mailTemplatesService.getResetPasswordTemplate(token);
         mailService.sendMail(mailSubject, mailBody, user.getEmail());
