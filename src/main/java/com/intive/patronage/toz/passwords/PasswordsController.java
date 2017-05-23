@@ -27,6 +27,8 @@ import javax.mail.MessagingException;
 import javax.validation.Valid;
 
 import java.io.IOException;
+import java.net.URI;
+import java.util.UUID;
 
 import static com.intive.patronage.toz.config.ApiUrl.PASSWORDS_PATH;
 import static com.intive.patronage.toz.config.ApiUrl.PASSWORDS_RESET_PATH;
@@ -36,6 +38,9 @@ import static com.intive.patronage.toz.config.ApiUrl.PASSWORDS_RESET_SEND_TOKEN_
 @RestController
 @RequestMapping(value = PASSWORDS_PATH, produces = MediaType.APPLICATION_JSON_VALUE)
 public class PasswordsController {
+
+    private final String TOKEN_SENT = "tokenSent";
+    private final String PASSWORD_CHANGE_SUCCESSFUL = "passwordChangeSuccessful";
 
     private final PasswordsService passwordsService;
     private final MessageSource messageSource;
@@ -56,8 +61,8 @@ public class PasswordsController {
             @ApiResponse(code = 400, message = "Wrong password", response = ErrorResponse.class)
     })
     @PreAuthorize("hasAnyAuthority('TOZ', 'VOLUNTEER')")
-    @PostMapping(consumes = MediaType.APPLICATION_JSON_VALUE)
     @ResponseStatus(HttpStatus.CREATED)
+    @PostMapping(consumes = MediaType.APPLICATION_JSON_VALUE)
     public PasswordResponseView changePassword(@Valid @RequestBody PasswordChangeRequestView passwordChangeRequest,
                                                @ApiIgnore @AuthenticationPrincipal UserContext userContext) {
 
@@ -71,16 +76,15 @@ public class PasswordsController {
         return new PasswordResponseView(message);
     }
     @ApiOperation(value = "Send email with reset password token")
-    @PostMapping(value = PASSWORDS_RESET_SEND_TOKEN_PATH )
     @ApiResponses(value = {
             @ApiResponse(code = 400, message = "Bad request", response = ErrorResponse.class),
             @ApiResponse(code = 404, message = "User not found", response = ErrorResponse.class),
-            @ApiResponse(code = 400, message = "Something goes wrong with email sending", response = MessagingException.class),
     })
+    @PostMapping(value = PASSWORDS_RESET_SEND_TOKEN_PATH )
     public PasswordResponseView sendResetPasswordEmail(@Valid @RequestBody PasswordRequestSendTokenView passwordRequestSendTokenView) throws IOException, MessagingException {
         passwordsResetService.sendResetPasswordTokenIfEmailExists(passwordRequestSendTokenView.getEmail());
         final String message = messageSource.getMessage(
-                "tokenSent", null, LocaleContextHolder.getLocale());
+                TOKEN_SENT, null, LocaleContextHolder.getLocale());
         return new PasswordResponseView(message);
     }
 
@@ -95,7 +99,7 @@ public class PasswordsController {
         User user = passwordsResetService.changePasswordUsingToken(passwordResetRequestView.getToken(),passwordResetRequestView.getNewPassword());
 
         final String message = messageSource.getMessage(
-                "passwordChangeSuccessful", null, LocaleContextHolder.getLocale());
+                PASSWORD_CHANGE_SUCCESSFUL, null, LocaleContextHolder.getLocale());
 
         return new PasswordResponseView(message);
     }
