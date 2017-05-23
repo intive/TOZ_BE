@@ -9,6 +9,7 @@ import com.intive.patronage.toz.passwords.model.PasswordResponseView;
 import com.intive.patronage.toz.tokens.model.UserContext;
 import com.intive.patronage.toz.users.UserService;
 import com.intive.patronage.toz.users.model.db.User;
+import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 import io.swagger.annotations.ApiResponse;
 import io.swagger.annotations.ApiResponses;
@@ -17,12 +18,9 @@ import org.springframework.context.MessageSource;
 import org.springframework.context.i18n.LocaleContextHolder;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
-import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.*;
-import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
-import org.springframework.web.util.UriComponentsBuilder;
 import springfox.documentation.annotations.ApiIgnore;
 
 import javax.mail.MessagingException;
@@ -36,6 +34,7 @@ import static com.intive.patronage.toz.config.ApiUrl.PASSWORDS_PATH;
 import static com.intive.patronage.toz.config.ApiUrl.PASSWORDS_RESET_PATH;
 import static com.intive.patronage.toz.config.ApiUrl.PASSWORDS_RESET_SEND_TOKEN_PATH;
 
+@Api(tags = "Passwords", description = "Passwords operations (change and reset).")
 @RestController
 @RequestMapping(value = PASSWORDS_PATH, produces = MediaType.APPLICATION_JSON_VALUE)
 public class PasswordsController {
@@ -47,7 +46,6 @@ public class PasswordsController {
     private final MessageSource messageSource;
     private final UserService userService;
     private final PasswordsResetService passwordsResetService;
-
 
     @Autowired
     PasswordsController(PasswordsService passwordsService, MessageSource messageSource, UserService userService, PasswordsResetService passwordsResetService) {
@@ -81,13 +79,10 @@ public class PasswordsController {
     @ApiResponses(value = {
             @ApiResponse(code = 400, message = "Bad request", response = ErrorResponse.class),
             @ApiResponse(code = 404, message = "User not found", response = ErrorResponse.class),
-            @ApiResponse(code = 400, message = "Something goes wrong with email sending", response = MessagingException.class),
     })
     @PostMapping(value = PASSWORDS_RESET_SEND_TOKEN_PATH )
     public PasswordResponseView sendResetPasswordEmail(@Valid @RequestBody PasswordRequestSendTokenView passwordRequestSendTokenView) throws IOException, MessagingException {
-        User user = userService.findOneByEmail(passwordRequestSendTokenView.getEmail());
-        passwordsResetService.sendResetPaswordToken(user);
-
+        passwordsResetService.sendResetPasswordTokenIfEmailExists(passwordRequestSendTokenView.getEmail());
         final String message = messageSource.getMessage(
                 TOKEN_SENT, null, LocaleContextHolder.getLocale());
         return new PasswordResponseView(message);

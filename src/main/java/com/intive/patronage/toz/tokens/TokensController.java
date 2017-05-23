@@ -23,7 +23,7 @@ import springfox.documentation.annotations.ApiIgnore;
 
 import javax.validation.Valid;
 
-@Api(tags = "Tokens")
+@Api(tags = "Tokens", description = "Tokens operations (operations related to authentication).")
 @RestController
 @RequestMapping(value = ApiUrl.TOKENS_PATH, produces = MediaType.APPLICATION_JSON_VALUE)
 class TokensController {

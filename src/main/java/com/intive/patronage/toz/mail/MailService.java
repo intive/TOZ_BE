@@ -4,6 +4,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.core.io.InputStreamSource;
 import org.springframework.mail.javamail.JavaMailSender;
 import org.springframework.mail.javamail.MimeMessageHelper;
+import org.springframework.scheduling.annotation.Async;
 import org.springframework.stereotype.Service;
 
 import javax.mail.MessagingException;
@@ -23,11 +24,13 @@ public class MailService {
         this.javaMailSender = javaMailSender;
     }
 
+    @Async
     public void sendMail(String subject, String messageContent, String recipient)
             throws MessagingException {
         sendMail(subject, messageContent, recipient, null, null);
     }
 
+    @Async
     public void sendMail(String subject, String messageContent, String recipient,
                          String attachmentFileName, InputStreamSource attachmentFile)
             throws MessagingException {
