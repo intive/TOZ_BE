@@ -11,6 +11,8 @@ import javax.mail.internet.MimeMessage;
 
 @Service
 public class MailService {
+
+    private static final String EMAIL_ENCODING = "UTF-8";
     private static final boolean ENABLE_MULTIPART = true;
     private JavaMailSender javaMailSender;
 
@@ -28,10 +30,12 @@ public class MailService {
                          String attachmentFileName, InputStreamSource attachmentFile)
             throws MessagingException {
         MimeMessage mimeMessage = javaMailSender.createMimeMessage();
-        MimeMessageHelper messageHelper = new MimeMessageHelper(mimeMessage, ENABLE_MULTIPART);
+
+        MimeMessageHelper messageHelper = new MimeMessageHelper(mimeMessage, ENABLE_MULTIPART, EMAIL_ENCODING);
         messageHelper.setTo(recipient);
         messageHelper.setSubject(subject);
-        messageHelper.setText(messageContent);
+        messageHelper.setText(messageContent, true);
+
         if (attachmentFileName != null) {
             messageHelper.addAttachment(attachmentFileName, attachmentFile);
         }
