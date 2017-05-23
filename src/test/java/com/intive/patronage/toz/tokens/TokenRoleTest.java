@@ -255,4 +255,25 @@ public class TokenRoleTest {
         mockMvc.perform(get(String.format("%s/%s", ApiUrl.COMMENTS_PATH, id)))
                 .andExpect(status().isForbidden());
     }
+
+    @Test
+    public void shouldReturnForbiddenWhenAnonymousAndGetAllHelpers() throws Exception {
+        mockMvc.perform(get(ApiUrl.HELPERS_PATH)).andExpect(status().isForbidden());
+    }
+
+    @Test
+    @UseDataProvider("getAdmin")
+    public void shouldReturnOkWhenAdminAndGetAllHelpers(User admin) throws Exception {
+        mockMvc.perform(get(ApiUrl.HELPERS_PATH).header(AUTHORIZATION_HEADER,
+                String.format("%s%s", TOKEN_PREFIX, jwtFactory.generateToken(admin, expirationTime))))
+                .andExpect(status().isOk());
+    }
+
+    @Test
+    @UseDataProvider("getVolunteer")
+    public void shouldReturnForbiddenWhenVolunteerAndGetAllHelpers(User volunteer) throws Exception {
+        mockMvc.perform(get(ApiUrl.HELPERS_PATH).header(AUTHORIZATION_HEADER,
+                String.format("%s%s", TOKEN_PREFIX, jwtFactory.generateToken(volunteer, expirationTime))))
+                .andExpect(status().isForbidden());
+    }
 }
