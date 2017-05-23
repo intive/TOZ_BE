@@ -5,6 +5,7 @@ import io.swagger.annotations.ApiModelProperty;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
+import org.hibernate.validator.constraints.Email;
 import org.hibernate.validator.constraints.NotEmpty;
 
 @ApiModel("Password send reset token request body")
@@ -15,6 +16,7 @@ public class PasswordRequestSendTokenView {
 
     @ApiModelProperty(value = "Email", required = true, position = 1)
     @NotEmpty
+    @Email
     private String email;
 
     public PasswordRequestSendTokenView(String email) {
