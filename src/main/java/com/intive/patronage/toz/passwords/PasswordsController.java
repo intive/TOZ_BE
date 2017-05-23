@@ -78,11 +78,15 @@ public class PasswordsController {
     @ApiResponses(value = {
             @ApiResponse(code = 400, message = "Bad request", response = ErrorResponse.class),
             @ApiResponse(code = 404, message = "User not found", response = ErrorResponse.class),
+            @ApiResponse(code = 400, message = "Something goes wrong with email sending", response = MessagingException.class),
     })
-    public User sendResetPasswordEmail(@Valid @RequestBody PasswordRequestSendTokenView passwordRequestSendTokenView) throws IOException, MessagingException {
+    public PasswordResponseView sendResetPasswordEmail(@Valid @RequestBody PasswordRequestSendTokenView passwordRequestSendTokenView) throws IOException, MessagingException {
         User user = userService.findOneByEmail(passwordRequestSendTokenView.getEmail());
         passwordsResetService.sendResetPaswordToken(user);
-        return user;
+
+        final String message = messageSource.getMessage(
+                "tokenSended", null, LocaleContextHolder.getLocale());
+        return new PasswordResponseView(message);
     }
 
     @ResponseStatus(HttpStatus.CREATED)
@@ -91,14 +95,13 @@ public class PasswordsController {
             @ApiResponse(code = 400, message = "Bad request", response = ValidationErrorResponse.class)
     })
     @PostMapping(value = PASSWORDS_RESET_PATH, consumes = MediaType.APPLICATION_JSON_VALUE)
-    public ResponseEntity<User> resetPassword(@Valid @RequestBody PasswordResetRequestView passwordResetRequestView) {
+    public PasswordResponseView resetPassword(@Valid @RequestBody PasswordResetRequestView passwordResetRequestView) {
 
         User user = passwordsResetService.changePasswordUsingToken(passwordResetRequestView.getToken(),passwordResetRequestView.getNewPassword());
 
-        final URI baseLocation = ServletUriComponentsBuilder.fromCurrentRequest()
-                .build().toUri();
-        final String userLocationString = String.format("%s/%s", baseLocation, user.getId());
-        final URI location = UriComponentsBuilder.fromUriString(userLocationString).build().toUri();
-        return ResponseEntity.created(location).body(user);
+        final String message = messageSource.getMessage(
+                "passwordChangeSuccessful", null, LocaleContextHolder.getLocale());
+
+        return new PasswordResponseView(message);
     }
 }

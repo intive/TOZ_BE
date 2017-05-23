@@ -1,13 +1,6 @@
 package com.intive.patronage.toz.error;
 
-import com.intive.patronage.toz.error.exception.AlreadyExistsException;
-import com.intive.patronage.toz.error.exception.BadRoleForSentUserBodyException;
-import com.intive.patronage.toz.error.exception.InvalidImageFileException;
-import com.intive.patronage.toz.error.exception.NoPermissionException;
-import com.intive.patronage.toz.error.exception.NotFoundException;
-import com.intive.patronage.toz.error.exception.WrongEnumValueException;
-import com.intive.patronage.toz.error.exception.WrongPasswordException;
-import com.intive.patronage.toz.error.exception.WrongProposalRoleException;
+import com.intive.patronage.toz.error.exception.*;
 import com.intive.patronage.toz.error.model.ArgumentErrorResponse;
 import com.intive.patronage.toz.error.model.ErrorResponse;
 import com.intive.patronage.toz.error.model.ValidationErrorResponse;
@@ -33,6 +26,7 @@ import org.springframework.web.bind.annotation.ResponseStatus;
 import org.springframework.web.method.annotation.MethodArgumentTypeMismatchException;
 import org.springframework.web.servlet.config.annotation.EnableWebMvc;
 
+import javax.mail.AuthenticationFailedException;
 import javax.mail.MessagingException;
 import java.io.PrintWriter;
 import java.io.StringWriter;
@@ -229,5 +223,19 @@ public class ControllerExceptionHandler {
         final String message = messageSource.getMessage(
                 "noPermission", null, LocaleContextHolder.getLocale());
         return new ErrorResponse(HttpStatus.FORBIDDEN, message);
+    }
+
+    @ExceptionHandler(JwtAuthenticationException.class)
+    @ResponseStatus(HttpStatus.BAD_REQUEST)
+    @ResponseBody
+    public ErrorResponse handleJwtAuthenticationException(JwtAuthenticationException e) {
+        return new ErrorResponse(HttpStatus.BAD_REQUEST, e.getMessage());
+    }
+
+    @ExceptionHandler(AuthenticationFailedException.class)
+    @ResponseStatus(HttpStatus.BAD_REQUEST)
+    @ResponseBody
+    public ErrorResponse handleAuthenticationFailedException(AuthenticationFailedException e) {
+        return new ErrorResponse(HttpStatus.BAD_REQUEST, e.getMessage());
     }
 }

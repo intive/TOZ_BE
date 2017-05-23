@@ -7,7 +7,7 @@ import lombok.NoArgsConstructor;
 import lombok.Setter;
 import org.hibernate.validator.constraints.NotEmpty;
 
-@ApiModel("Password change request body")
+@ApiModel("Password reset request body")
 @Getter
 @Setter
 @NoArgsConstructor
