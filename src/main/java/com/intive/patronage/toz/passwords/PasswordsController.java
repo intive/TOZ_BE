@@ -18,19 +18,15 @@ import org.springframework.context.MessageSource;
 import org.springframework.context.i18n.LocaleContextHolder;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
-import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.*;
-import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
-import org.springframework.web.util.UriComponentsBuilder;
 import springfox.documentation.annotations.ApiIgnore;
 
 import javax.mail.MessagingException;
 import javax.validation.Valid;
 
 import java.io.IOException;
-import java.net.URI;
 
 import static com.intive.patronage.toz.config.ApiUrl.PASSWORDS_PATH;
 import static com.intive.patronage.toz.config.ApiUrl.PASSWORDS_RESET_PATH;
@@ -82,11 +78,9 @@ public class PasswordsController {
             @ApiResponse(code = 400, message = "Something goes wrong with email sending", response = MessagingException.class),
     })
     public PasswordResponseView sendResetPasswordEmail(@Valid @RequestBody PasswordRequestSendTokenView passwordRequestSendTokenView) throws IOException, MessagingException {
-        User user = userService.findOneByEmail(passwordRequestSendTokenView.getEmail());
-        passwordsResetService.sendResetPaswordToken(user);
-
+        passwordsResetService.sendResetPasswordTokenIfEmailExists(passwordRequestSendTokenView.getEmail());
         final String message = messageSource.getMessage(
-                "tokenSended", null, LocaleContextHolder.getLocale());
+                "tokenSent", null, LocaleContextHolder.getLocale());
         return new PasswordResponseView(message);
     }
 

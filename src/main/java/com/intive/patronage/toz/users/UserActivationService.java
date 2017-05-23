@@ -57,14 +57,14 @@ public class UserActivationService {
         this.passwordEncoder = passwordEncoder;
     }
 
-    public void sendActivationEmail(Proposal proposal) throws IOException, MessagingException {
+    void sendActivationEmail(Proposal proposal) throws IOException, MessagingException {
 
         String token = jwtFactory.generateToken(proposal, expirationTime);
         String mailBody = mailTemplatesService.getRegistrationTemplate(token);
         mailService.sendMail(mailSubject, mailBody, proposal.getEmail());
     }
 
-    public User checkActivationToken(String token, String password) {
+    User checkActivationToken(String token, String password) {
         jwtParser.parse(token);
 
         String email = jwtParser.getEmail();
