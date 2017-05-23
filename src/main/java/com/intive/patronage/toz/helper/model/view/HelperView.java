@@ -5,7 +5,6 @@ import com.fasterxml.jackson.annotation.JsonProperty;
 import com.intive.patronage.toz.base.model.IdentifiableView;
 import com.intive.patronage.toz.helper.model.db.Helper;
 import com.intive.patronage.toz.util.validation.EnumValidate;
-import com.intive.patronage.toz.util.validation.Phone;
 import lombok.Getter;
 import lombok.Setter;
 import org.hibernate.validator.constraints.Email;
@@ -16,20 +15,20 @@ import javax.validation.constraints.Size;
 @Setter
 @JsonInclude(JsonInclude.Include.NON_EMPTY)
 public class HelperView extends IdentifiableView {
-    @Size(min = 1, max = 35)
+    @Size(max = 35)
     private String name;
 
-    @Size(min = 1, max = 35)
+    @Size(max = 35)
     private String surname;
 
-    @Size(min = 1, max = 500)
+    @Size(max = 500)
     private String notes;
 
-    @Phone
+    @Size(max = 11)
     private String phoneNumber;
 
     @Email
-    @Size(min = 1, max = 255)
+    @Size(max = 255)
     private String email;
 
     @EnumValidate(enumClass = Helper.Category.class)
