@@ -18,6 +18,7 @@ public final class ApiUrl {
     public static final String PASSWORDS_RESET_SEND_TOKEN_PATH = "/reset/send";
     public final static String COMMENTS_PATH = "/comments";
     public final static String PROPOSAL_PATH = "/proposals";
+    public final static String HELPERS_PATH = "/helpers";
 
     private ApiUrl() {
     }

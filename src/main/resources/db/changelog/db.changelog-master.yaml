@@ -371,3 +371,40 @@ databaseChangeLog:
                   name: volunteer_text
                   type: varchar(500)
               tableName: organization_info
+  - changeSet:
+          id : 7
+          author: mateuszsz93
+          changes:
+            - createTable:
+                tableName: helper
+                columns:
+                  - column:
+                      name: id
+                      type: uuid
+                      constraints:
+                        - primaryKey: true
+                        - nullable: false
+                  - column:
+                      name: name
+                      type: varchar(255)
+                  - column:
+                      name: surname
+                      type: varchar(255)
+                  - column:
+                      name: notes
+                      type: varchar
+                  - column:
+                      name: phone_number
+                      type: varchar(255)
+                  - column:
+                      name: email
+                      type: varchar(255)
+                  - column:
+                      name: category
+                      type: varchar(255)
+                  - column:
+                      name: created
+                      type: datetime
+                  - column:
+                      name: last_modified
+                      type: datetime
