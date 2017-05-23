@@ -2,6 +2,8 @@ package com.intive.patronage.toz.util;
 
 import com.intive.patronage.toz.comment.CommentRepository;
 import com.intive.patronage.toz.comment.model.db.Comment;
+import com.intive.patronage.toz.helper.HelperRepository;
+import com.intive.patronage.toz.helper.model.db.Helper;
 import com.intive.patronage.toz.news.NewsRepository;
 import com.intive.patronage.toz.news.model.db.News;
 import com.intive.patronage.toz.pet.PetsRepository;
@@ -42,6 +44,9 @@ class InitDevRepository {
     @Autowired
     private PasswordEncoder passwordEncoder;
 
+    @Autowired
+    private HelperRepository helperRepository;
+
     @Bean
     public CommandLineRunner initDevDatabase() {
         return args -> {
@@ -62,6 +67,9 @@ class InitDevRepository {
 
                 final User toz = createUserWithRole(Role.TOZ, i);
                 userRepository.save(toz);
+
+                final Helper helper = createHelperWithValue(i);
+                helperRepository.save(helper);
             }
         };
     }
@@ -116,6 +124,18 @@ class InitDevRepository {
         user.setPhoneNumber(getRandomPhoneNumber());
         user.addRole(role);
         return user;
+    }
+
+    private static Helper createHelperWithValue(int value) {
+        Helper helper = new Helper();
+        helper.setName(String.format("name_%s", value));
+        helper.setSurname(String.format("surname_%s", value));
+        helper.setPhoneNumber(getRandomPhoneNumber());
+        helper.setEmail(String.format("email_%s@gmail.com", value));
+        helper.setNotes(String.format("notes_%s", value));
+        Helper.Category[] helperCategories = Helper.Category.values();
+        helper.setCategory(helperCategories[value % helperCategories.length]);
+        return helper;
     }
 
     private static String getRandomPhoneNumber() {
