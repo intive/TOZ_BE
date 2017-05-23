@@ -14,6 +14,8 @@ public class MailService {
 
     private static final String EMAIL_ENCODING = "UTF-8";
     private static final boolean ENABLE_MULTIPART = true;
+    private static final boolean IS_HTML = true;
+
     private JavaMailSender javaMailSender;
 
     @Autowired
@@ -34,7 +36,7 @@ public class MailService {
         MimeMessageHelper messageHelper = new MimeMessageHelper(mimeMessage, ENABLE_MULTIPART, EMAIL_ENCODING);
         messageHelper.setTo(recipient);
         messageHelper.setSubject(subject);
-        messageHelper.setText(messageContent, true);
+        messageHelper.setText(messageContent, IS_HTML);
 
         if (attachmentFileName != null) {
             messageHelper.addAttachment(attachmentFileName, attachmentFile);
