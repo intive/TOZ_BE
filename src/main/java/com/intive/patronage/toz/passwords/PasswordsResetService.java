@@ -43,14 +43,14 @@ public class PasswordsResetService {
         this.expirationTime = expirationTime;
     }
 
-    public User changePasswordUsingToken(String token, String newPassword) {
+    User changePasswordUsingToken(String token, String newPassword) {
 
         jwtParser.parse(token);
         String userEmail = jwtParser.getEmail();
         return passwordService.changePassword(userEmail, newPassword);
     }
 
-    public void sendResetPaswordToken(User user) throws IOException, MessagingException {
+    void sendResetPaswordToken(User user) throws IOException, MessagingException {
 
         String token = jwtFactory.generateToken(user, expirationTime);
         String mailBody = mailTemplatesService.getResetPasswordTemplate(token);

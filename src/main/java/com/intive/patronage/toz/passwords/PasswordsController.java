@@ -86,7 +86,7 @@ public class PasswordsController {
         passwordsResetService.sendResetPaswordToken(user);
 
         final String message = messageSource.getMessage(
-                "tokenSended", null, LocaleContextHolder.getLocale());
+                "tokenSent", null, LocaleContextHolder.getLocale());
         return new PasswordResponseView(message);
     }
 
