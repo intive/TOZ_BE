@@ -44,13 +44,13 @@ class UserActivationController {
             this.messageSource = messageSource;
     }
 
-    //@PreAuthorize("hasAuthority('TOZ')")
     @ApiOperation(value = "Send registration email with token activation", notes = API_METHOD_NOTES)
     @ApiResponses(value = {
             @ApiResponse(code = 400, message = "Bad request", response = ValidationErrorResponse.class),
             @ApiResponse(code = 404, message = "Proposal not found", response = ErrorResponse.class),
     })
     @PostMapping(consumes = MediaType.APPLICATION_JSON_VALUE)
+    @PreAuthorize("hasAuthority('TOZ')")
     public UserActivationResponseView sendRegistrationEmail(@Valid @RequestBody UserActivationRequestView userActivationRequestView) throws IOException, MessagingException {
 
         this.userActivationService.sendActivationEmailIfProposalExists(userActivationRequestView.getUuid());
