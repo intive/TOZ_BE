@@ -40,18 +40,22 @@ public class HelperView extends IdentifiableView {
     @Size(max = 255)
     private String email;
 
+    @ApiModelProperty(example = "ul. Jasna 1", position = 6)
+    @Size(max = 255)
+    private String address;
+
     @ApiModelProperty(example = "TEMPORARY_HOUSE_DOG",
             allowableValues = "GUARDIAN, TEMPORARY_HOUSE_CAT," +
                     " TEMPORARY_HOUSE_DOG, TEMPORARY_HOUSE_OTHER",
-            position = 6)
+            position = 7)
     @EnumValidate(enumClass = Helper.Category.class)
     private String category;
 
-    @ApiModelProperty(example = "1222333444555", position = 7)
+    @ApiModelProperty(example = "1222333444555", position = 8)
     @JsonProperty(access = JsonProperty.Access.READ_ONLY)
     private Long created;
 
-    @ApiModelProperty(example = "1222333444555", position = 8)
+    @ApiModelProperty(example = "1222333444555", position = 9)
     @JsonProperty(access = JsonProperty.Access.READ_ONLY)
     private Long lastModified;
 }

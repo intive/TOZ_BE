@@ -132,6 +132,7 @@ class InitDevRepository {
         helper.setSurname(String.format("surname_%s", value));
         helper.setPhoneNumber(getRandomPhoneNumber());
         helper.setEmail(String.format("email_%s@gmail.com", value));
+        helper.setAddress(String.format("address_%s", value));
         helper.setNotes(String.format("notes_%s", value));
         Helper.Category[] helperCategories = Helper.Category.values();
         helper.setCategory(helperCategories[value % helperCategories.length]);
