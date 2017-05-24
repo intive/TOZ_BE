@@ -7,6 +7,7 @@ import lombok.NoArgsConstructor;
 import lombok.Setter;
 import org.hibernate.validator.constraints.NotEmpty;
 
+import javax.validation.constraints.NotNull;
 import java.util.UUID;
 
 @ApiModel("Send Activation token request body")
@@ -16,6 +17,6 @@ import java.util.UUID;
 public class UserActivationRequestView {
 
     @ApiModelProperty(value = "Proposal uuid", required = true, position = 1)
-    @NotEmpty
+    @NotNull
     private UUID uuid;
 }

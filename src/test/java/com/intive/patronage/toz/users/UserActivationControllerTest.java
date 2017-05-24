@@ -87,12 +87,25 @@ public class UserActivationControllerTest {
         return proposal;
     }
 
+    private User getUserModel(){
+        final User user = new User();
+        user.setId(EXPECTED_ID);
+        user.setName(EXPECTED_NAME);
+        user.setSurname(EXPECTED_SURNAME);
+        user.setPhoneNumber(EXPECTED_PHONE_NUMBER);
+        user.setEmail(EXPECTED_EMAIL);
+        user.addRole(EXPECTED_ROLE);
+
+        return user;
+    }
+
     @Test
     public void sendTokenIsOk() throws Exception {
         final Proposal proposal = getProposalModel();
         when(proposalService.findOne(EXPECTED_ID)).thenReturn(proposal);
 
         UserActivationRequestView userActivationRequestView = new UserActivationRequestView();
+        userActivationRequestView.setUuid(EXPECTED_ID);
         final String UserActivationRequestViewJsonString = ModelMapper.convertToJsonString(userActivationRequestView);
 
         final String requestUrl = String.format("%s", ApiUrl.REGISTER_PATH);
