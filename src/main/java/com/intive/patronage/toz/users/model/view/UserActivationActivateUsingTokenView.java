@@ -13,18 +13,14 @@ import javax.validation.constraints.NotNull;
 @Getter
 @Setter
 @JsonInclude(JsonInclude.Include.NON_EMPTY)
-public class UserActivationView {
-
-    @ApiModelProperty(example = "johny.bravo@gmail.com")
-    @NotNull
-    @Email
-    private String email;
+public class UserActivationActivateUsingTokenView {
 
     @ApiModelProperty(example = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9")
     @NotNull
     private String token;
 
-    @ApiModelProperty(example = "12345")
+    @ApiModelProperty(example = "dragon")
     @NotNull
     private String password;
+
 }

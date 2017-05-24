@@ -7,6 +7,8 @@ import com.intive.patronage.toz.proposals.model.Proposal;
 import com.intive.patronage.toz.tokens.JwtFactory;
 import com.intive.patronage.toz.users.model.db.Role;
 import com.intive.patronage.toz.users.model.db.User;
+import com.intive.patronage.toz.users.model.view.UserActivationRequestView;
+import com.intive.patronage.toz.util.ModelMapper;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -14,6 +16,9 @@ import org.mockito.Mock;
 import org.mockito.MockitoAnnotations;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.boot.test.mock.mockito.MockBean;
+import org.springframework.context.MessageSource;
+import org.springframework.http.MediaType;
 import org.springframework.test.context.TestPropertySource;
 import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 import org.springframework.test.web.servlet.MockMvc;
@@ -24,6 +29,7 @@ import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
 @RunWith(SpringJUnit4ClassRunner.class)
@@ -43,6 +49,7 @@ public class UserActivationControllerTest {
     private static final String EXPECTED_PHONE_NUMBER = "600100200";
     private static final String EXPECTED_EMAIL = "jan.ko@gmail.com";
     private static final Role EXPECTED_ROLE = Role.VOLUNTEER;
+    private static final MediaType CONTENT_TYPE = MediaType.APPLICATION_JSON_UTF8;
 
     @Value("${jwt.secret-base64}")
     private String secret;
@@ -53,6 +60,9 @@ public class UserActivationControllerTest {
     @Mock
     ProposalService proposalService;
 
+    @MockBean
+    private MessageSource messageSource;
+
     private MockMvc mockMvc;
 
     private JwtFactory jwtFactory;
@@ -61,7 +71,7 @@ public class UserActivationControllerTest {
     public void setUp() {
         MockitoAnnotations.initMocks(this);
         jwtFactory = new JwtFactory(secret);
-        final UserActivationController petsController = new UserActivationController(userActivationService, proposalService);
+        final UserActivationController petsController = new UserActivationController(userActivationService, proposalService, messageSource);
         mockMvc = MockMvcBuilders.standaloneSetup(petsController).build();
     }
 
@@ -81,9 +91,15 @@ public class UserActivationControllerTest {
     public void sendTokenIsOk() throws Exception {
         final Proposal proposal = getProposalModel();
         when(proposalService.findOne(EXPECTED_ID)).thenReturn(proposal);
-        final String requestUrl = String.format("%s/%s", ApiUrl.REGISTER_PATH, EXPECTED_ID);
-        mockMvc.perform(get(requestUrl))
+
+        UserActivationRequestView userActivationRequestView = new UserActivationRequestView();
+        final String UserActivationRequestViewJsonString = ModelMapper.convertToJsonString(userActivationRequestView);
+
+        final String requestUrl = String.format("%s", ApiUrl.REGISTER_PATH);
+        mockMvc.perform(post(requestUrl)
+                .contentType(CONTENT_TYPE)
+                .content(UserActivationRequestViewJsonString))
                 .andExpect(status().isOk());
-        verify(userActivationService, times(1)).sendActivationEmail(any(Proposal.class));
+        verify(userActivationService, times(1)).sendActivationEmailIfProposalExists(any(UUID.class));
     }
 }
