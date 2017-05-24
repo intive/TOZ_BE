@@ -82,7 +82,7 @@ class InitDevRepository {
         pet.setType(types[value % types.length]);
         pet.setSex(sexes[value % sexes.length]);
         pet.setDescription(String.format("description_%s", value));
-        pet.setOrigin(String.format("address_%s", value));
+        pet.setOrigin(String.format("origin_%s", value));
         return pet;
     }
 
