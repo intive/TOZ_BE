@@ -3,13 +3,15 @@ package com.intive.patronage.toz.status;
 import com.intive.patronage.toz.error.exception.NotFoundException;
 import com.intive.patronage.toz.status.model.PetsStatus;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Service;
 
 import java.util.List;
 import java.util.UUID;
 
+@Service
 public class PetsStatusService {
 
-    private static final String PETSSTATUS = "Pets status";
+    private static final String PETS_STATUS = "Pets status";
     private final PetsStatusRepository petsStatusRepository;
 
     @Autowired
@@ -38,7 +40,7 @@ public class PetsStatusService {
 
     void throwNotFoundExceptionIfIdNotExists(final UUID id) {
         if (!petsStatusRepository.exists(id)) {
-            throw new NotFoundException(PETSSTATUS);
+            throw new NotFoundException(PETS_STATUS);
         }
     }
 }
