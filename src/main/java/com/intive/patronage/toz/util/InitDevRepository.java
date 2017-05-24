@@ -99,7 +99,7 @@ class InitDevRepository {
         News.Type[] newsTypes = News.Type.values();
         news.setType(newsTypes[value % newsTypes.length]);
         news.setContents(String.format("contents_%s", value));
-        news.setPhotoUrl(String.format("photo_%s", value));
+        news.setImageUrl(String.format("image_%s", value));
         return news;
     }
 

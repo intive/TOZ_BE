@@ -418,3 +418,12 @@ databaseChangeLog:
                   name: address
                   type: varchar(255)
               tableName: helper
+  - changeSet:
+        id: 9
+        author: marek.macko
+        changes:
+        - renameColumn:
+           newColumnName: image_url
+           oldColumnName: photo_url
+           tableName: news
+
