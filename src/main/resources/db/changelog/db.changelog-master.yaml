@@ -408,3 +408,13 @@ databaseChangeLog:
                   - column:
                       name: last_modified
                       type: datetime
+  - changeSet:
+        id: 8
+        author: mateuszsz93
+        changes:
+          - addColumn:
+              columns:
+              - column:
+                  name: address
+                  type: varchar(255)
+              tableName: helper
