@@ -9,6 +9,7 @@ import org.springframework.data.jpa.domain.support.AuditingEntityListener;
 
 import javax.persistence.*;
 import java.util.Date;
+import java.util.UUID;
 
 @Getter
 @Setter
@@ -22,8 +23,9 @@ public class Pet extends Identifiable {
     @Enumerated(value = EnumType.STRING)
     private Sex sex;
     private String description;
-    private String address;
+    private String origin;
     private String imageUrl;
+    private UUID helperUuid;
 
     @CreatedDate
     @Column(updatable = false)
@@ -34,6 +36,9 @@ public class Pet extends Identifiable {
     @Column(insertable = false)
     @Temporal(TemporalType.TIMESTAMP)
     private Date lastModified;
+
+    @Temporal(TemporalType.TIMESTAMP)
+    private Date acceptanceDate;
 
     public enum Type {
         DOG, CAT
