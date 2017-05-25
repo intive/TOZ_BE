@@ -47,7 +47,6 @@ class UserActivationController {
     @ApiOperation(value = "Send registration email with token activation", notes = API_METHOD_NOTES)
     @ApiResponses(value = {
             @ApiResponse(code = 400, message = "Bad request", response = ValidationErrorResponse.class),
-            @ApiResponse(code = 404, message = "Proposal not found", response = ErrorResponse.class),
     })
     @PostMapping(consumes = MediaType.APPLICATION_JSON_VALUE)
     @PreAuthorize("hasAuthority('TOZ')")
@@ -60,7 +59,6 @@ class UserActivationController {
 
         return new UserActivationResponseView(message);
     }
-
 
     @ResponseStatus(HttpStatus.CREATED)
     @ApiOperation(value = "Create new user using activation token", response = User.class)
