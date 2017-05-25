@@ -7,6 +7,7 @@ import com.intive.patronage.toz.error.model.ValidationErrorResponse;
 import com.intive.patronage.toz.pet.model.db.Pet;
 import com.intive.patronage.toz.pet.model.view.PetRequestBody;
 import com.intive.patronage.toz.pet.model.view.PetView;
+import com.intive.patronage.toz.status.model.PetsStatus;
 import com.intive.patronage.toz.storage.StorageProperties;
 import com.intive.patronage.toz.storage.StorageService;
 import com.intive.patronage.toz.storage.model.db.UploadedFile;
@@ -14,19 +15,34 @@ import com.intive.patronage.toz.storage.model.view.UrlView;
 import com.intive.patronage.toz.util.ModelMapper;
 import com.intive.patronage.toz.util.UserInfoGetter;
 import com.intive.patronage.toz.util.validation.ImageValidator;
-import io.swagger.annotations.*;
+import io.swagger.annotations.Api;
+import io.swagger.annotations.ApiOperation;
+import io.swagger.annotations.ApiParam;
+import io.swagger.annotations.ApiResponse;
+import io.swagger.annotations.ApiResponses;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
-import org.springframework.web.bind.annotation.*;
+import org.springframework.web.bind.annotation.DeleteMapping;
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.PutMapping;
+import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.bind.annotation.ResponseStatus;
+import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.multipart.MultipartFile;
 import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
 import org.springframework.web.util.UriComponentsBuilder;
 
 import javax.validation.Valid;
 import java.net.URI;
+import java.util.ArrayList;
+import java.util.Collection;
 import java.util.List;
 import java.util.UUID;
 
@@ -54,10 +70,10 @@ class PetsController {
     public List<PetView> getAllPets() {
         if (UserInfoGetter.hasCurrentUserAdminRole()) {
             final List<Pet> pets = petsService.findAllPets();
-            return ModelMapper.convertIdentifiableToView(pets, PetView.class);
+            return convertToView(pets);
         }
         final List<Pet> pets = petsService.findPetsWithFilledFields();
-        return ModelMapper.convertIdentifiableToView(pets, PetView.class);
+        return convertToView(pets);
     }
 
     @ApiOperation(value = "Get single pet by id", notes =
@@ -77,10 +93,6 @@ class PetsController {
         return convertToView(pet);
     }
 
-    private static PetView convertToView(final Pet pet) {
-        return ModelMapper.convertIdentifiableToView(pet, PetView.class);
-    }
-
     @ApiOperation(value = "Create new pet", response = PetView.class, notes =
             "Required roles: SA, TOZ.")
     @ApiResponses(value = {
@@ -98,10 +110,6 @@ class PetsController {
         final URI location = UriComponentsBuilder.fromUriString(petLocationString).build().toUri();
         return ResponseEntity.created(location)
                 .body(createdPetView);
-    }
-
-    private static Pet convertToModel(final PetView petView) {
-        return ModelMapper.convertIdentifiableToModel(petView, Pet.class);
     }
 
     @ApiOperation(value = "Delete pet", notes =
@@ -150,5 +158,37 @@ class PetsController {
 
         return ResponseEntity.created(location)
                 .body(urlView);
+    }
+
+    private Pet convertToModel(final PetView petView) {
+        PetsStatus petsStatus = new PetsStatus();
+        petsStatus.setId(petView.getPetsStatus());
+        petView.setPetsStatus(null);
+        Pet pet = ModelMapper.convertIdentifiableToModel(petView, Pet.class);
+        pet.setPetsStatus(petsStatus);
+        return pet;
+    }
+
+    private PetView convertToView(final Pet pet) {
+        PetView petView;
+        if (pet.getPetsStatus() != null) {
+            UUID statusId = pet.getPetsStatus().getId();
+            pet.setPetsStatus(null);
+            petView = ModelMapper.convertIdentifiableToView(pet, PetView.class);
+            petView.setPetsStatus(statusId);
+        } else {
+            petView = ModelMapper.convertIdentifiableToView(pet, PetView.class);
+        }
+        return petView;
+    }
+
+    private List<PetView> convertToView(final Collection<Pet> pet) {
+        List<PetView> petViews = new ArrayList<>();
+        pet.forEach(
+                object ->
+                        petViews.add(convertToView(object))
+
+        );
+        return petViews;
     }
 }

@@ -10,8 +10,9 @@ import javax.persistence.Entity;
 @Getter
 @Setter
 @Entity
-public class PetsStatus extends Identifiable{
+public class PetsStatus extends Identifiable {
     private String name;
     private String rgb;
     private boolean isPublic;
+
 }

@@ -1,14 +1,23 @@
 package com.intive.patronage.toz.status.model;
 
+import com.fasterxml.jackson.annotation.JsonInclude;
 import com.intive.patronage.toz.base.model.IdentifiableView;
-import org.hibernate.validator.constraints.NotEmpty;
+import io.swagger.annotations.ApiModel;
+import lombok.Getter;
+import lombok.Setter;
 
+import javax.validation.constraints.NotNull;
+
+@ApiModel(value = "Pets status")
+@Getter
+@Setter
+@JsonInclude(JsonInclude.Include.NON_EMPTY)
 public class PetsStatusView extends IdentifiableView{
 
-    @NotEmpty
+    @NotNull
     private String name;
 
-    @NotEmpty
+    @NotNull
     private String rgb;
 
     private boolean isPublic = false;

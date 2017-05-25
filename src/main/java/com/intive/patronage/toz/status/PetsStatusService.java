@@ -1,5 +1,6 @@
 package com.intive.patronage.toz.status;
 
+import com.intive.patronage.toz.error.exception.AlreadyExistsException;
 import com.intive.patronage.toz.error.exception.NotFoundException;
 import com.intive.patronage.toz.status.model.PetsStatus;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -24,6 +25,7 @@ public class PetsStatusService {
     }
 
     public PetsStatus create(PetsStatus petsStatus) {
+        throwNotFoundExceptionIfStatusNameExists(petsStatus.getName());
         return petsStatusRepository.save(petsStatus);
     }
 
@@ -43,4 +45,12 @@ public class PetsStatusService {
             throw new NotFoundException(PETS_STATUS);
         }
     }
+
+    void throwNotFoundExceptionIfStatusNameExists(String email){
+        if (petsStatusRepository.existsStatusByName(email)) {
+            throw new AlreadyExistsException(PETS_STATUS);
+        }
+    }
+
+
 }

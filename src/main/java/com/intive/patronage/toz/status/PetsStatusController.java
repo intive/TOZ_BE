@@ -37,7 +37,7 @@ import static com.intive.patronage.toz.util.ModelMapper.convertToView;
 
 @Api(tags = "PetsStatus", description = "PetsStatus management operations (CRUD).")
 @RestController
-@RequestMapping(value = ApiUrl.PETSSTATUS_PATH, produces = MediaType.APPLICATION_JSON_VALUE)
+@RequestMapping(value = ApiUrl.PETS_STATUS_PATH, produces = MediaType.APPLICATION_JSON_VALUE)
 public class PetsStatusController {
 
     private final PetsStatusService petsStatusService;

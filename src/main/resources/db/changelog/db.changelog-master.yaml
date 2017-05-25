@@ -150,6 +150,9 @@ databaseChangeLog:
               - column:
                   name: image_url
                   type: varchar(255)
+              - column:
+                  name: pets_status_id
+                  type: uuid
         - createTable:
             tableName: news
             columns:
@@ -430,3 +433,12 @@ databaseChangeLog:
                   - column:
                        name: is_public
                        type: boolean
+            - createTable:
+                tableName: pets_status_pet
+                columns:
+                  - column:
+                      name: pets_status_id
+                      type: uuid
+                  - column:
+                      name: pet_id
+                      type: uuid

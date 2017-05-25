@@ -1,6 +1,7 @@
 package com.intive.patronage.toz.pet.model.db;
 
 import com.intive.patronage.toz.base.model.Identifiable;
+import com.intive.patronage.toz.status.model.PetsStatus;
 import lombok.Getter;
 import lombok.Setter;
 import org.springframework.data.annotation.CreatedDate;
@@ -34,6 +35,9 @@ public class Pet extends Identifiable {
     @Column(insertable = false)
     @Temporal(TemporalType.TIMESTAMP)
     private Date lastModified;
+
+    @ManyToOne
+    private PetsStatus petsStatus;
 
     public enum Type {
         DOG, CAT
