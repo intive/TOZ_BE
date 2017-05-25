@@ -86,12 +86,12 @@ class NewsService {
         return newsList;
     }
 
-    void updateNewsImageUrl(final UUID id, String photoUrl) {
+    void updateNewsImageUrl(final UUID id, String imageUrl) {
         final News news = newsRepository.findOne(id);
         if (news == null) {
             throw new NotFoundException(NEWS);
         }
-        news.setPhotoUrl(photoUrl);
+        news.setImageUrl(imageUrl);
         updateNews(id, news);
     }
 }

@@ -22,7 +22,7 @@ public class News extends Identifiable {
     @Enumerated(value = EnumType.STRING)
     private Type type;
 
-    private String photoUrl;
+    private String imageUrl;
 
     @CreatedDate
     @Column(updatable = false)
