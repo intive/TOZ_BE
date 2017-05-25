@@ -117,6 +117,7 @@ public class ScheduleServiceTest {
         verify(userRepository, times(1)).exists(any(UUID.class));
         verify(userRepository, times(2)).findOne(any(UUID.class));
         verify(reservationRepository, times(1)).findOne(any(UUID.class));
+        verify(reservationRepository, times(1)).findByStartDate(any(Date.class));
         verify(reservationRepository, times(1)).save(any(ScheduleReservation.class));
         verifyNoMoreInteractions(reservationRepository);
         verifyNoMoreInteractions(userRepository);

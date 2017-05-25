@@ -9,7 +9,7 @@ import com.intive.patronage.toz.schedule.model.view.ReservationRequestView;
 import com.intive.patronage.toz.schedule.model.view.ReservationResponseView;
 import com.intive.patronage.toz.schedule.model.view.ScheduleView;
 import com.intive.patronage.toz.schedule.util.ScheduleParser;
-import com.intive.patronage.toz.tokens.model.UserContext;
+import com.intive.patronage.toz.users.UserRepository;
 import com.intive.patronage.toz.util.UserInfoGetter;
 import io.swagger.annotations.*;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -20,11 +20,9 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
-import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
 import org.springframework.web.util.UriComponentsBuilder;
-import springfox.documentation.annotations.ApiIgnore;
 
 import javax.validation.Valid;
 import java.net.URI;
@@ -38,15 +36,19 @@ import java.util.UUID;
 @RequestMapping(value = "/schedule", produces = MediaType.APPLICATION_JSON_VALUE)
 class ScheduleController {
 
+    private static final String USER = "User";
+
     private final ScheduleParser scheduleParser;
     private final ScheduleService scheduleService;
+    private final UserRepository userRepository;
     @Value("${timezoneOffset}")
     private String zoneOffset = "Z";
 
     @Autowired
-    ScheduleController(ScheduleService scheduleService, ScheduleParser scheduleParser) {
+    ScheduleController(ScheduleService scheduleService, ScheduleParser scheduleParser, UserRepository userRepository) {
         this.scheduleService = scheduleService;
         this.scheduleParser = scheduleParser;
+        this.userRepository = userRepository;
     }
 
     @ApiOperation(value = "Get schedule", notes =
@@ -79,12 +81,12 @@ class ScheduleController {
     @GetMapping(value = "/{id}")
     @ResponseStatus(HttpStatus.OK)
     @PreAuthorize("hasAnyAuthority('SA', 'TOZ', 'VOLUNTEER')")
-    public ReservationResponseView getReservation(@PathVariable UUID id,
-                                                  @ApiIgnore @AuthenticationPrincipal UserContext userContext) {
+    public ReservationResponseView getReservation(@PathVariable UUID id) {
 
         final ReservationResponseView reservation = scheduleService.findReservation(id);
-        if (!UserInfoGetter.hasCurrentUserAdminRole() &&
-                !reservation.getOwnerId().equals(userContext.getUserId())) {
+        final UUID userId = UserInfoGetter.getUserUuid(userRepository, USER);
+        if (!UserInfoGetter.hasCurrentUserAdminRole()
+                && !reservation.getOwnerId().equals(userId)) {
             throw new NoPermissionException();
         }
         return reservation;
@@ -101,6 +103,16 @@ class ScheduleController {
     @ResponseStatus(HttpStatus.CREATED)
     @PreAuthorize("hasAnyAuthority('SA', 'TOZ', 'VOLUNTEER')")
     public ResponseEntity<ReservationResponseView> makeReservation(@Valid @RequestBody ReservationRequestView reservationRequestView) {
+        final UUID userId = UserInfoGetter.getUserUuid(userRepository, USER);
+        if (reservationRequestView.getOwnerId() == null) {
+            reservationRequestView.setOwnerId(userId);
+        }
+
+        if (!UserInfoGetter.hasCurrentUserAdminRole()
+                && !reservationRequestView.getOwnerId().equals(userId)) {
+            throw new NoPermissionException();
+        }
+
         ReservationResponseView createdReservationResponseView =
                 scheduleService.makeReservation(reservationRequestView);
         URI location = createLocationPath(createdReservationResponseView.getId());
