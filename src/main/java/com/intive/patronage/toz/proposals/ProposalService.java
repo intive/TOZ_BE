@@ -28,6 +28,9 @@ public class ProposalService {
         return proposalRepository.findAll();
     }
 
+    public boolean exists(UUID id){
+        return proposalRepository.exists(id);
+    }
     public Proposal findOne(final UUID id){
         throwNotFoundExceptionIfIdNotExists(id);
         return proposalRepository.findOne(id);
@@ -62,5 +65,9 @@ public class ProposalService {
         if (userRepository.existsByEmail(email)) {
             throw new AlreadyExistsException(USER);
         }
+    }
+
+    public Proposal findByEmail(String email) {
+        return proposalRepository.findByEmail(email);
     }
 }

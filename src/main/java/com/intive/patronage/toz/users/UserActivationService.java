@@ -5,6 +5,7 @@ import com.intive.patronage.toz.error.exception.JwtAuthenticationException;
 import com.intive.patronage.toz.mail.MailService;
 import com.intive.patronage.toz.mail.MailTemplatesService;
 import com.intive.patronage.toz.proposals.ProposalRepository;
+import com.intive.patronage.toz.proposals.ProposalService;
 import com.intive.patronage.toz.proposals.model.Proposal;
 import com.intive.patronage.toz.tokens.*;
 import com.intive.patronage.toz.tokens.JwtParser;
@@ -15,6 +16,7 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import javax.mail.MessagingException;
 import java.io.IOException;
+import java.util.UUID;
 
 
 @Service
@@ -32,33 +34,36 @@ public class UserActivationService {
 
     private JwtFactory jwtFactory;
     private UserRepository userRepository;
-    private ProposalRepository proposalRepository;
     private MailTemplatesService mailTemplatesService;
     private MailService mailService;
     private PasswordEncoder passwordEncoder;
     private JwtParser jwtParser;
+    private ProposalService proposalService;
 
     @Autowired
     public UserActivationService(
             JwtFactory jwtFactory,
             UserRepository userRepository,
-            ProposalRepository proposalRepository,
             JwtParser jwtParser,
             MailService mailService,
             MailTemplatesService mailTemplatesService,
-            PasswordEncoder passwordEncoder
+            PasswordEncoder passwordEncoder,
+            ProposalService proposalService
     ) {
         this.mailService = mailService;
         this.jwtParser = jwtParser;
         this.jwtFactory = jwtFactory;
         this.userRepository = userRepository;
-        this.proposalRepository = proposalRepository;
         this.mailTemplatesService = mailTemplatesService;
         this.passwordEncoder = passwordEncoder;
+        this.proposalService = proposalService;
     }
 
-    void sendActivationEmail(Proposal proposal) throws IOException, MessagingException {
-
+    void sendActivationEmailIfProposalExists(UUID id) throws IOException, MessagingException {
+        if (!proposalService.exists(id)) {
+            return;
+        }
+        Proposal proposal = proposalService.findOne(id);
         String token = jwtFactory.generateToken(proposal, expirationTime);
         String mailBody = mailTemplatesService.getRegistrationTemplate(token);
         mailService.sendMail(mailSubject, mailBody, proposal.getEmail());
@@ -73,7 +78,7 @@ public class UserActivationService {
             throw new JwtAuthenticationException(USER_ALREADY_EXISTS);
         }
 
-        Proposal proposal = proposalRepository.findByEmail(email);
+        Proposal proposal = proposalService.findByEmail(email);
         if (proposal == null) {
             throw new JwtAuthenticationException(PROPOSAL_DOES_NOT_EXISTS);
         }
