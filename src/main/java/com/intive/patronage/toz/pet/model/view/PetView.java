@@ -41,7 +41,7 @@ public class PetView extends IdentifiableView {
 
     @ApiModelProperty(example = "Most cłowy", position = 5)
     @Size(max = 35)
-    private String origin;
+    private String address;
 
     @ApiModelProperty(example = "c5296892-347f-4b2e-b1c6-6feaff971f67", position = 6)
     private UUID helperUuid;

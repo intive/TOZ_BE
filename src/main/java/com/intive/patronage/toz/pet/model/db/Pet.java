@@ -23,7 +23,7 @@ public class Pet extends Identifiable {
     @Enumerated(value = EnumType.STRING)
     private Sex sex;
     private String description;
-    private String origin;
+    private String address;
     private String imageUrl;
     private UUID helperUuid;
 
