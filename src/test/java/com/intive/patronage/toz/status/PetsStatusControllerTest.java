@@ -45,7 +45,7 @@ public class PetsStatusControllerTest {
     private static final int STATUS_LIST_SIZE = 3;
     private static final UUID EXPECTED_ID = UUID.randomUUID();
     private static final String EXPECTED_NAME = "Reksio";
-    private static final String EXPECTED_RGB = "#7cedaa2";
+    private static final String EXPECTED_RGB = "#cedaa2";
     private static final MediaType CONTENT_TYPE = MediaType.APPLICATION_JSON_UTF8;
 
     @Mock

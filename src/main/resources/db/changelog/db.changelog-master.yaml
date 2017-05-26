@@ -439,14 +439,9 @@ databaseChangeLog:
                   - column:
                       name: pet_id
                       type: uuid
-
-  - changeSet:
-          id : 9
-          author: macieg-b
-          changes:
-          - addColumn:
-              columns:
-              - column:
-                  name: pets_status_id
-                  type: uuid
-              tableName: pet
+            - addColumn:
+                columns:
+                - column:
+                    name: pets_status_id
+                    type: uuid
+                tableName: pet
