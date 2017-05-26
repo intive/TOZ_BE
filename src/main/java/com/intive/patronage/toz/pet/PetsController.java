@@ -130,7 +130,7 @@ class PetsController {
         return convertToView(updatedPet);
     }
 
-    @ApiOperation(value = "Upload image", notes =
+    @ApiOperation(value = "Upload main image", notes =
             "Required roles: SA, TOZ.")
     @ApiResponses(value = {
             @ApiResponse(code = 400, message = "Bad Request"),
@@ -140,15 +140,62 @@ class PetsController {
     @PostMapping(value = "/{id}/images", consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
     @PreAuthorize("hasAnyAuthority('SA', 'TOZ')")
     public ResponseEntity<UrlView> uploadFile(@PathVariable UUID id, @RequestParam MultipartFile file) {
-        ImageValidator.validateImageArgument(file);
-        final UploadedFile uploadedFile = storageService.store(file);
-        UrlView urlView = new UrlView();
-        urlView.setUrl(String.format("/%s/%s", this.storageProperties.getStoragePathRoot(), uploadedFile.getPath()));
+        final UploadedFile uploadedFile = prepareAndStoreUploadedFile(file);
+        UrlView urlView = createUrlView(uploadedFile);
         petsService.updatePetImageUrl(id, urlView.getUrl());
         final URI location = ServletUriComponentsBuilder.fromCurrentRequest()
                 .build().toUri();
 
         return ResponseEntity.created(location)
                 .body(urlView);
+    }
+
+    @ApiOperation(value = "Upload image to gallery", notes =
+            "Required roles: SA, TOZ.")
+    @ApiResponses(value = {
+            @ApiResponse(code = 400, message = "Bad Request"),
+            @ApiResponse(code = 422, message = "Invalid image file")
+    })
+    @ResponseStatus(HttpStatus.CREATED)
+    @PostMapping(value = "/{id}/gallery", consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
+    @PreAuthorize("hasAnyAuthority('SA', 'TOZ')")
+    public ResponseEntity<UrlView> uploadGallery(@PathVariable UUID id, @RequestParam MultipartFile file) {
+        final UploadedFile uploadedFile = prepareAndStoreUploadedFile(file);
+        UrlView urlView = createUrlView(uploadedFile);
+        uploadedFile.setFileUrl(urlView.getUrl());
+        petsService.addImageToGallery(id, uploadedFile);
+        final URI location = ServletUriComponentsBuilder.fromCurrentRequest()
+                .build().toUri();
+
+        return ResponseEntity.created(location)
+                .body(urlView);
+    }
+
+    @ApiOperation(value = "Remove image from gallery", notes =
+            "Required roles: SA, TOZ.")
+    @ApiResponses(value = {
+            @ApiResponse(code = 400, message = "Bad Request"),
+            @ApiResponse(code = 404, message = "Pet not found", response = ErrorResponse.class),
+    })
+    @ResponseStatus(HttpStatus.OK)
+    @DeleteMapping(value = "/{petId}/gallery/{imageId}", consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
+    @PreAuthorize("hasAnyAuthority('SA', 'TOZ')")
+    public ResponseEntity<?> removeImageFromGallery(@PathVariable UUID petId, @PathVariable UUID imageId) {
+        UploadedFile uploadedFile = storageService.get(imageId);
+        petsService.removeImageFromGallery(petId, uploadedFile);
+        storageService.delete(imageId);
+        return ResponseEntity.ok().build();
+    }
+
+    private UrlView createUrlView(UploadedFile uploadedFile) {
+        UrlView urlView = new UrlView();
+        urlView.setUrl(String.format("/%s/%s", this.storageProperties.getStoragePathRoot(),
+                uploadedFile.getPath()));
+        return urlView;
+    }
+
+    private UploadedFile prepareAndStoreUploadedFile(MultipartFile file) {
+        ImageValidator.validateImageArgument(file);
+        return storageService.store(file);
     }
 }

@@ -44,8 +44,10 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 public class PetsControllerImagesTest {
 
     private final static String IMAGES_REQUEST_PATH_FORMAT = ApiUrl.PETS_PATH + "/%s/images";
+    private final static String GALLERY_REQUEST_PATH_FORMAT = ApiUrl.PETS_PATH + "/%s/gallery";
     private final static String IMAGE_FILE_NAME = "/test.jpg";
     private final Pet pet = new Pet();
+    private final UploadedFile uploadedFile = new UploadedFile();
 
     private MockMvc mockMvc;
     private MockMvc mvcWithCustomHandlers;
@@ -64,7 +66,8 @@ public class PetsControllerImagesTest {
         mockMvc = MockMvcBuilders.standaloneSetup(
                 new PetsController(petsService, storageService, storageProperties)).build();
         mvcWithCustomHandlers =
-                MockMvcBuilders.standaloneSetup(new PetsController(petsService, storageService, storageProperties))
+                MockMvcBuilders.standaloneSetup(new PetsController(petsService, storageService,
+                        storageProperties))
                         .setHandlerExceptionResolvers(exceptionHandlerExceptionResolver).build();
         when(storageService.store(any(MultipartFile.class))).thenReturn(uploadedFile);
         when(storageService.get(uploadedFile.getId())).thenReturn(uploadedFile);
@@ -83,9 +86,29 @@ public class PetsControllerImagesTest {
     public void shouldSaveUploadedFile() throws Exception {
         try (InputStream inputStream = getClass().getResourceAsStream(IMAGE_FILE_NAME)) {
             MockMultipartFile multipartFile =
-                    new MockMultipartFile("file", "filename.jpg", MediaType.IMAGE_JPEG_VALUE, inputStream);
+                    new MockMultipartFile("file", "filename.jpg", MediaType
+                            .IMAGE_JPEG_VALUE, inputStream);
 
-            mockMvc.perform(fileUpload(String.format(IMAGES_REQUEST_PATH_FORMAT, pet.getId())).file(multipartFile))
+            mockMvc.perform(fileUpload(String.format(IMAGES_REQUEST_PATH_FORMAT, pet.getId()))
+                    .file(multipartFile))
+                    .andExpect(status().isCreated())
+                    .andExpect(jsonPath("url").isNotEmpty());
+
+            then(storageService).should().store(multipartFile);
+        } catch (Exception exception) {
+            fail();
+        }
+    }
+
+    @Test
+    public void shouldSaveUploadedFileInGallery() throws Exception {
+        try (InputStream inputStream = getClass().getResourceAsStream(IMAGE_FILE_NAME)) {
+            MockMultipartFile multipartFile =
+                    new MockMultipartFile("file", "filename.jpg", MediaType
+                            .IMAGE_JPEG_VALUE, inputStream);
+
+            mockMvc.perform(fileUpload(String.format(GALLERY_REQUEST_PATH_FORMAT, pet.getId()))
+                    .file(multipartFile))
                     .andExpect(status().isCreated())
                     .andExpect(jsonPath("url").isNotEmpty());
 
@@ -98,8 +121,10 @@ public class PetsControllerImagesTest {
     @Test
     public void shouldReturnErrorWhenInvalidImage() throws Exception {
         MockMultipartFile multipartFile =
-                new MockMultipartFile("file", "test.txt", "text/plain", "Spring Framework".getBytes());
-        mvcWithCustomHandlers.perform(fileUpload(String.format(IMAGES_REQUEST_PATH_FORMAT, pet.getId())).file(multipartFile))
+                new MockMultipartFile("file", "test.txt",
+                        "text/plain", "Spring Framework".getBytes());
+        mvcWithCustomHandlers.perform(fileUpload(String.format(IMAGES_REQUEST_PATH_FORMAT,
+                pet.getId())).file(multipartFile))
                 .andExpect(status().isUnprocessableEntity());
 
         verifyZeroInteractions(storageService);
@@ -111,5 +136,3 @@ public class PetsControllerImagesTest {
         return uploadedFile;
     }
 }
-
-
