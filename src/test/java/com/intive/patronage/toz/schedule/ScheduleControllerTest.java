@@ -7,9 +7,12 @@ import com.intive.patronage.toz.environment.ApiProperties;
 import com.intive.patronage.toz.schedule.model.view.ReservationRequestView;
 import com.intive.patronage.toz.schedule.model.view.ReservationResponseView;
 import com.intive.patronage.toz.schedule.util.ScheduleParser;
+import com.intive.patronage.toz.tokens.model.UserContext;
 import com.intive.patronage.toz.users.UserRepository;
+import com.intive.patronage.toz.users.model.db.Role;
 import com.tngtech.java.junit.dataprovider.DataProviderRunner;
 import com.tngtech.java.junit.dataprovider.UseDataProvider;
+import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -17,6 +20,9 @@ import org.mockito.Mock;
 import org.mockito.MockitoAnnotations;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.http.MediaType;
+import org.springframework.security.core.Authentication;
+import org.springframework.security.core.context.SecurityContext;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.setup.MockMvcBuilders;
 
@@ -24,10 +30,7 @@ import java.time.Instant;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
-import java.util.ArrayList;
-import java.util.Date;
-import java.util.List;
-import java.util.UUID;
+import java.util.*;
 
 import static com.intive.patronage.toz.schedule.ScheduleDataProvider.*;
 import static org.mockito.Matchers.any;
@@ -46,6 +49,8 @@ public class ScheduleControllerTest {
     private static final String VALID_LOCAL_DATE_TO = "2017-12-01";
     private static final LocalDate PAST_LOCAL_DATE = LocalDate.now().minusDays(3);
     private static final String ID_PARAM = "id";
+    private static final UserContext USER_CONTEXT = new UserContext(UUID.randomUUID(),
+            null, new HashSet<>(Collections.singletonList(Role.TOZ)));
 
     private MockMvc mvc;
     @Mock
@@ -54,15 +59,31 @@ public class ScheduleControllerTest {
     private ScheduleParser scheduleParser;
     @Mock
     private UserRepository userRepository;
+    @Mock
+    private Authentication authentication;
+    @Mock
+    private SecurityContext securityContext;
+    @Mock
+    private SecurityContextHolder securityContextHolder;
     private ObjectMapper objectMapper;
 
     @Before
     public void setUp() throws Exception {
         MockitoAnnotations.initMocks(this);
         mvc = MockMvcBuilders.standaloneSetup(new ScheduleController(scheduleService, scheduleParser)).build();
+        SecurityContextHolder.setContext(securityContext);
+        when(securityContext.getAuthentication()).thenReturn(authentication);
+        when(authentication.getPrincipal()).thenReturn(USER_CONTEXT);
+
         JavaTimeModule javaTimeModule = new JavaTimeModule();
         javaTimeModule.addDeserializer(LocalDateTime.class, new LocalDateTimeDeserializer(DateTimeFormatter.ISO_DATE_TIME));
         objectMapper = new ObjectMapper().registerModule(javaTimeModule);
+
+    }
+
+    @After
+    public void clean() {
+        SecurityContextHolder.clearContext();
     }
 
     @Test
