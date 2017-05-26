@@ -51,7 +51,7 @@ class PetsService {
     }
 
     Pet createPet(final Pet pet) {
-        if (pet.getPetsStatus().getId() != null) {
+        if (pet.getPetsStatus() != null) {
             throwNotFoundExceptionIfStatusNotExists(pet.getPetsStatus().getId());
             PetsStatus petsStatus = petsStatusRepository.findOne(pet.getPetsStatus().getId());
             pet.setPetsStatus(petsStatus);
@@ -69,13 +69,10 @@ class PetsService {
     Pet updatePet(final UUID id, final Pet pet) {
         RepositoryChecker.throwNotFoundExceptionIfNotExists(id, petsRepository, PET);
         pet.setId(id);
-        PetsStatus petsStatus;
-        if (pet.getPetsStatus().getId() == null) {
-            petsStatus = null;
-        } else {
-            petsStatus = petsStatusRepository.findOne(pet.getPetsStatus().getId());
+        if (pet.getPetsStatus() != null) {
+            PetsStatus petsStatus = petsStatusRepository.findOne(pet.getPetsStatus().getId());
+            pet.setPetsStatus(petsStatus);
         }
-        pet.setPetsStatus(petsStatus);
         return petsRepository.save(pet);
     }
 

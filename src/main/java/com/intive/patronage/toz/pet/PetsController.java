@@ -161,8 +161,11 @@ class PetsController {
     }
 
     private Pet convertToModel(final PetView petView) {
-        PetsStatus petsStatus = new PetsStatus();
-        petsStatus.setId(petView.getPetsStatus());
+        PetsStatus petsStatus = null;
+        if (petView.getPetsStatus() != null) {
+            petsStatus = new PetsStatus();
+            petsStatus.setId(petView.getPetsStatus());
+        }
         petView.setPetsStatus(null);
         Pet pet = ModelMapper.convertIdentifiableToModel(petView, Pet.class);
         pet.setPetsStatus(petsStatus);

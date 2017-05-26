@@ -150,9 +150,6 @@ databaseChangeLog:
               - column:
                   name: image_url
                   type: varchar(255)
-              - column:
-                  name: pets_status_id
-                  type: uuid
         - createTable:
             tableName: news
             columns:
@@ -442,3 +439,14 @@ databaseChangeLog:
                   - column:
                       name: pet_id
                       type: uuid
+
+  - changeSet:
+          id : 9
+          author: macieg-b
+          changes:
+          - addColumn:
+              columns:
+              - column:
+                  name: pets_status_id
+                  type: uuid
+              tableName: pet
