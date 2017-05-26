@@ -235,8 +235,7 @@ class PetsController {
     private List<PetView> convertToView(final Collection<Pet> pet) {
         List<PetView> petViews = new ArrayList<>();
         pet.forEach(
-                object ->
-                        petViews.add(convertToView(object))
+                object -> petViews.add(convertToView(object))
         );
         return petViews;
     }

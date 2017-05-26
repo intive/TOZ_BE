@@ -70,16 +70,9 @@ class PetsService {
     }
 
     Pet updatePet(final UUID id, final Pet pet) {
-        Pet oldPet = petsRepository.findOne(id);
-        if (oldPet == null) {
-            throw new NotFoundException(PET);
-        } else {
-            pet.setId(id);
-            pet.setGallery(oldPet.getGallery());
-            return petsRepository.save(pet);
-        }
         RepositoryChecker.throwNotFoundExceptionIfNotExists(id, petsRepository, PET);
         pet.setId(id);
+        pet.setGallery(petsRepository.findOne(id).getGallery());
         if (pet.getPetsStatus() != null) {
             PetsStatus petsStatus = petsStatusRepository.findOne(pet.getPetsStatus().getId());
             pet.setPetsStatus(petsStatus);
