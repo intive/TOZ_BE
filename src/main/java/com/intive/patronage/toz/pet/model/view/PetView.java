@@ -13,6 +13,7 @@ import lombok.Setter;
 
 import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Size;
+import java.util.UUID;
 
 @ApiModel(value = "Pet")
 @Getter
@@ -35,22 +36,28 @@ public class PetView extends IdentifiableView {
     private String sex;
 
     @ApiModelProperty(example = "Jamnik niskopodłogowy", position = 4)
-    @Size(max = 120)
+    @Size(max = 1200)
     private String description;
 
     @ApiModelProperty(example = "Most cłowy", position = 5)
     @Size(max = 35)
     private String address;
 
-    @ApiModelProperty(example = "1490134074968", position = 6)
-    @JsonProperty(access = JsonProperty.Access.READ_ONLY)
-    private Long created;
+    @ApiModelProperty(example = "c5296892-347f-4b2e-b1c6-6feaff971f67", position = 6)
+    private UUID helperUuid;
 
     @ApiModelProperty(example = "1490134074968", position = 7)
     @JsonProperty(access = JsonProperty.Access.READ_ONLY)
+    private Long created;
+
+    @ApiModelProperty(example = "1490134074968", position = 8)
+    @JsonProperty(access = JsonProperty.Access.READ_ONLY)
     private Long lastModified;
 
-    @ApiModelProperty(example = "/storage/a5/0d/4d/a50d4d4c-ccd2-4747-8dec-d6d7f521336e.jpg", position = 8)
+    @ApiModelProperty(example = "1490134074968", position = 9)
+    private Long acceptanceDate;
+
+    @ApiModelProperty(example = "/storage/a5/0d/4d/a50d4d4c-ccd2-4747-8dec-d6d7f521336e.jpg", position = 10)
     @JsonProperty(access = JsonProperty.Access.READ_ONLY)
     private String imageUrl;
 }
