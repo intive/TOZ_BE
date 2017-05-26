@@ -18,4 +18,5 @@ public class UploadedFile extends Identifiable {
     private Date createDate;
     
     private String path;
+    private String fileUrl;
 }

@@ -443,3 +443,22 @@ databaseChangeLog:
                   name: helper_uuid
                   type: uuid
               tableName: pet
+  - changeSet:
+        id : 11
+        author: mateuszsz93
+        changes:
+          - addColumn:
+                columns:
+                - column:
+                    name: file_url
+                    type: varchar(255)
+                tableName: uploaded_file
+          - createTable:
+                tableName: gallery
+                columns:
+                  - column:
+                      name: pet_id
+                      type: uuid
+                  - column:
+                      name: uploaded_file_id
+                      type: uuid

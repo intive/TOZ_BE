@@ -119,6 +119,7 @@ public class PetsServiceTest {
     @UseDataProvider("getPet")
     public void updatePet(final Pet pet) throws Exception {
         final UUID petId = pet.getId();
+        when(petsRepository.findOne(petId)).thenReturn(pet);
         when(petsRepository.exists(petId)).thenReturn(true);
         when(petsRepository.save(any(Pet.class))).thenReturn(pet);
         Pet savedPet = petsService.updatePet(petId, pet);
