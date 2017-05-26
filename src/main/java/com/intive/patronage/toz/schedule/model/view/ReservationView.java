@@ -42,8 +42,7 @@ abstract class ReservationView {
     @JsonFormat(pattern = "HH:mm")
     private LocalTime endTime;
 
-    @ApiModelProperty(value = "Owner ID", example = "c5296892-347f-4b2e-b1c6-6faff971f767", required = true, position = 4)
+    @ApiModelProperty(value = "Owner ID", example = "c5296892-347f-4b2e-b1c6-6faff971f767", position = 4)
     @Valid
-    @NotNull
     private UUID ownerId;
 }

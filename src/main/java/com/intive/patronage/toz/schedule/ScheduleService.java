@@ -60,10 +60,12 @@ class ScheduleService {
                 to,
                 LocalDate.now().atTime(LocalTime.MAX).toLocalTime(),
                 ZoneOffset.of(zoneOffset));
+
         List<ReservationResponseView> reservationViews = new ArrayList<>();
         for (ScheduleReservation reservation : reservationRepository.findByStartDateBetween(dateFrom, dateTo)) {
             reservationViews.add(convertToReservationResponseView(reservation));
         }
+
         return reservationViews;
     }
 
@@ -74,10 +76,13 @@ class ScheduleService {
 
     ReservationResponseView makeReservation(ReservationRequestView reservationRequestView) {
         ScheduleReservation scheduleReservation = convertToReservation(reservationRequestView);
+
         RepositoryChecker.throwNotFoundExceptionIfNotExists(scheduleReservation.getOwnerUuid(), userRepository, USER);
         ifReservationExistsThrowException(scheduleReservation.getStartDate());
         scheduleParser.validateHours(scheduleReservation.getStartDate(), scheduleReservation.getEndDate());
+
         ScheduleReservation newScheduleReservation = reservationRepository.save(scheduleReservation);
+
         saveReservationChangelog(newScheduleReservation, reservationRequestView.getModificationMessage(),
                 OperationType.CREATE);
         return convertToReservationResponseView(newScheduleReservation);
@@ -85,15 +90,19 @@ class ScheduleService {
 
     ReservationResponseView updateReservation(UUID id, ReservationRequestView reservationRequestView) {
         ScheduleReservation newScheduleReservation = convertToReservation(reservationRequestView);
+
         RepositoryChecker.throwNotFoundExceptionIfNotExists(newScheduleReservation.getOwnerUuid(), userRepository,
                 USER);
         RepositoryChecker.throwNotFoundExceptionIfNotExists(id, reservationRepository, RESERVATION);
+        ifReservationExistsThrowException(newScheduleReservation.getStartDate());
         scheduleParser.validateHours(newScheduleReservation.getStartDate(), newScheduleReservation.getEndDate());
+
         ScheduleReservation scheduleReservation = reservationRepository.findOne(id);
         scheduleReservation.setStartDate(newScheduleReservation.getStartDate());
         scheduleReservation.setEndDate(newScheduleReservation.getEndDate());
         scheduleReservation.setOwnerUuid(newScheduleReservation.getOwnerUuid());
         ScheduleReservation updatedScheduleReservation = reservationRepository.save(scheduleReservation);
+
         saveReservationChangelog(updatedScheduleReservation, reservationRequestView.getModificationMessage(),
                 OperationType.UPDATE);
         return convertToReservationResponseView(updatedScheduleReservation);
@@ -101,8 +110,10 @@ class ScheduleService {
 
     ReservationResponseView removeReservation(UUID id) {
         RepositoryChecker.throwNotFoundExceptionIfNotExists(id, reservationRepository, RESERVATION);
+
         ScheduleReservation deletedScheduleReservation = reservationRepository.findOne(id);
         reservationRepository.delete(id);
+
         saveReservationChangelog(deletedScheduleReservation, null, OperationType.DELETE);
         return convertToReservationResponseView(deletedScheduleReservation);
     }
@@ -141,7 +152,7 @@ class ScheduleService {
         reservationChangelogRepository.save(newLog);
     }
 
-    public ScheduleReservation convertToReservation(ReservationRequestView reservationRequestView) {
+    ScheduleReservation convertToReservation(ReservationRequestView reservationRequestView) {
         ScheduleReservation scheduleReservation = new ScheduleReservation();
         scheduleReservation.setStartDate(
                 convertToDate(
@@ -157,7 +168,7 @@ class ScheduleService {
         return scheduleReservation;
     }
 
-    public ReservationResponseView convertToReservationResponseView(ScheduleReservation scheduleReservation) {
+    private ReservationResponseView convertToReservationResponseView(ScheduleReservation scheduleReservation) {
         ReservationResponseView reservationResponseView = new ReservationResponseView();
         reservationResponseView.setDate(scheduleReservation.getStartDate().toInstant().atOffset(ZoneOffset
                 .of(zoneOffset)).toLocalDate());

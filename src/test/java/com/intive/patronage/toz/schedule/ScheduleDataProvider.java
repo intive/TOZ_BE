@@ -41,7 +41,7 @@ public class ScheduleDataProvider {
         view.setDate(VALID_LOCAL_DATE_FROM);
         view.setStartTime(VALID_LOCAL_TIME);
         view.setEndTime(VALID_LOCAL_TIME);
-        view.setOwnerId(UUID.randomUUID());
+        view.setOwnerId(EXAMPLE_USER.getId());
         view.setOwnerSurname("string");
         view.setOwnerName("string");
         view.setCreated(EXAMPLE_TIMESTAMP);
