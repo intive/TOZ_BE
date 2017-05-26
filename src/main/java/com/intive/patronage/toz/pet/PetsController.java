@@ -187,7 +187,6 @@ class PetsController {
         pet.forEach(
                 object ->
                         petViews.add(convertToView(object))
-
         );
         return petViews;
     }
