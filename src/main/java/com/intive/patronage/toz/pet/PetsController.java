@@ -140,7 +140,7 @@ class PetsController {
     @PostMapping(value = "/{id}/images", consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
     @PreAuthorize("hasAnyAuthority('SA', 'TOZ')")
     public ResponseEntity<UrlView> uploadFile(@PathVariable UUID id, @RequestParam MultipartFile file) {
-        final UploadedFile uploadedFile = prepareUploadedFile(file);
+        final UploadedFile uploadedFile = prepareAndStoreUploadedFile(file);
         UrlView urlView = createUrlView(uploadedFile);
         petsService.updatePetImageUrl(id, urlView.getUrl());
         final URI location = ServletUriComponentsBuilder.fromCurrentRequest()
@@ -160,7 +160,7 @@ class PetsController {
     @PostMapping(value = "/{id}/gallery", consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
     @PreAuthorize("hasAnyAuthority('SA', 'TOZ')")
     public ResponseEntity<UrlView> uploadGallery(@PathVariable UUID id, @RequestParam MultipartFile file) {
-        final UploadedFile uploadedFile = prepareUploadedFile(file);
+        final UploadedFile uploadedFile = prepareAndStoreUploadedFile(file);
         UrlView urlView = createUrlView(uploadedFile);
         uploadedFile.setFileUrl(urlView.getUrl());
         petsService.addImageToGallery(id, uploadedFile);
@@ -194,7 +194,7 @@ class PetsController {
         return urlView;
     }
 
-    private UploadedFile prepareUploadedFile(MultipartFile file) {
+    private UploadedFile prepareAndStoreUploadedFile(MultipartFile file) {
         ImageValidator.validateImageArgument(file);
         return storageService.store(file);
     }

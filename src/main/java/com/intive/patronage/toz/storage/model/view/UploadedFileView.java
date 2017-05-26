@@ -16,9 +16,11 @@ public class UploadedFileView extends IdentifiableView {
     @ApiModelProperty(example = "1490134074968", position = 1)
     @JsonProperty(access = JsonProperty.Access.READ_ONLY)
     private Long createDate;
+
     @ApiModelProperty(example = "a5/0d/4d/a50d4d4c-ccd2-4747-8dec-d6d7f521336e.jpg", position = 2)
     @JsonProperty(access = JsonProperty.Access.READ_ONLY)
     private String path;
+
     @ApiModelProperty(example = "/storage/a5/0d/4d/a50d4d4c-ccd2-4747-8dec-d6d7f521336e.jpg", position = 3)
     @JsonProperty(access = JsonProperty.Access.READ_ONLY)
     private String fileUrl;
