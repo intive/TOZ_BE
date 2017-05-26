@@ -12,6 +12,7 @@ import com.intive.patronage.toz.users.UserRepository;
 import com.intive.patronage.toz.users.model.db.Role;
 import com.tngtech.java.junit.dataprovider.DataProviderRunner;
 import com.tngtech.java.junit.dataprovider.UseDataProvider;
+import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -78,6 +79,11 @@ public class ScheduleControllerTest {
         javaTimeModule.addDeserializer(LocalDateTime.class, new LocalDateTimeDeserializer(DateTimeFormatter.ISO_DATE_TIME));
         objectMapper = new ObjectMapper().registerModule(javaTimeModule);
 
+    }
+
+    @After
+    public void clean() {
+        SecurityContextHolder.clearContext();
     }
 
     @Test
