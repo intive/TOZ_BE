@@ -99,7 +99,7 @@ class InitDevRepository {
         News.Type[] newsTypes = News.Type.values();
         news.setType(newsTypes[value % newsTypes.length]);
         news.setContents(String.format("contents_%s", value));
-        news.setPhotoUrl(String.format("photo_%s", value));
+        news.setImageUrl(String.format("image_%s", value));
         return news;
     }
 
@@ -132,6 +132,7 @@ class InitDevRepository {
         helper.setSurname(String.format("surname_%s", value));
         helper.setPhoneNumber(getRandomPhoneNumber());
         helper.setEmail(String.format("email_%s@gmail.com", value));
+        helper.setAddress(String.format("address_%s", value));
         helper.setNotes(String.format("notes_%s", value));
         Helper.Category[] helperCategories = Helper.Category.values();
         helper.setCategory(helperCategories[value % helperCategories.length]);

@@ -4,6 +4,7 @@ import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import com.intive.patronage.toz.base.model.IdentifiableView;
 import com.intive.patronage.toz.pet.model.db.Pet;
+import com.intive.patronage.toz.storage.model.view.UploadedFileView;
 import com.intive.patronage.toz.util.validation.EnumValidate;
 import io.swagger.annotations.ApiModel;
 import io.swagger.annotations.ApiModelProperty;
@@ -12,6 +13,8 @@ import lombok.Setter;
 
 import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Size;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.UUID;
 
 @ApiModel(value = "Pet")
@@ -35,24 +38,34 @@ public class PetView extends IdentifiableView {
     private String sex;
 
     @ApiModelProperty(example = "Jamnik niskopodłogowy", position = 4)
-    @Size(max = 120)
+    @Size(max = 1200)
     private String description;
 
     @ApiModelProperty(example = "Most cłowy", position = 5)
     @Size(max = 35)
     private String address;
 
-    @ApiModelProperty(example = "1490134074968", position = 6)
-    @JsonProperty(access = JsonProperty.Access.READ_ONLY)
-    private Long created;
+    @ApiModelProperty(example = "c5296892-347f-4b2e-b1c6-6feaff971f67", position = 6)
+    private UUID helperUuid;
 
     @ApiModelProperty(example = "1490134074968", position = 7)
     @JsonProperty(access = JsonProperty.Access.READ_ONLY)
+    private Long created;
+
+    @ApiModelProperty(example = "1490134074968", position = 8)
+    @JsonProperty(access = JsonProperty.Access.READ_ONLY)
     private Long lastModified;
 
-    @ApiModelProperty(example = "/storage/a5/0d/4d/a50d4d4c-ccd2-4747-8dec-d6d7f521336e.jpg", position = 8)
+    @ApiModelProperty(example = "1490134074968", position = 9)
+    private Long acceptanceDate;
+
+    @ApiModelProperty(example = "/storage/a5/0d/4d/a50d4d4c-ccd2-4747-8dec-d6d7f521336e.jpg", position = 10)
     @JsonProperty(access = JsonProperty.Access.READ_ONLY)
     private String imageUrl;
+
+    @ApiModelProperty(position = 11)
+    @JsonProperty(access = JsonProperty.Access.READ_ONLY)
+    protected List<UploadedFileView> gallery = new ArrayList<>();
 
     @ApiModelProperty(example = "c5296892-347f-4b2e-b1c6-6faff971f767", position = 9)
     private UUID petsStatus;

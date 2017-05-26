@@ -2,6 +2,7 @@ package com.intive.patronage.toz.pet;
 
 import com.intive.patronage.toz.error.exception.NotFoundException;
 import com.intive.patronage.toz.pet.model.db.Pet;
+import com.intive.patronage.toz.storage.model.db.UploadedFile;
 import com.intive.patronage.toz.status.PetsStatusRepository;
 import com.intive.patronage.toz.status.model.PetsStatus;
 import com.intive.patronage.toz.util.RepositoryChecker;
@@ -16,6 +17,7 @@ import java.util.UUID;
 class PetsService {
 
     private static final String PET = "Pet";
+    private static final String IMAGE = "Image";
     private static final String PETS_STATUS = "Pets status";
     private final PetsRepository petsRepository;
     private final PetsStatusRepository petsStatusRepository;
@@ -51,6 +53,7 @@ class PetsService {
     }
 
     Pet createPet(final Pet pet) {
+        pet.setGallery(null);
         if (pet.getPetsStatus() != null) {
             throwNotFoundExceptionIfStatusNotExists(pet.getPetsStatus().getId());
             PetsStatus petsStatus = petsStatusRepository.findOne(pet.getPetsStatus().getId());
@@ -67,6 +70,14 @@ class PetsService {
     }
 
     Pet updatePet(final UUID id, final Pet pet) {
+        Pet oldPet = petsRepository.findOne(id);
+        if (oldPet == null) {
+            throw new NotFoundException(PET);
+        } else {
+            pet.setId(id);
+            pet.setGallery(oldPet.getGallery());
+            return petsRepository.save(pet);
+        }
         RepositoryChecker.throwNotFoundExceptionIfNotExists(id, petsRepository, PET);
         pet.setId(id);
         if (pet.getPetsStatus() != null) {
@@ -89,5 +100,26 @@ class PetsService {
         if (!petsStatusRepository.exists(id)) {
             throw new NotFoundException(PETS_STATUS);
         }
+    }
+
+    void addImageToGallery(final UUID id, UploadedFile uploadedFile) {
+        final Pet pet = petsRepository.findOne(id);
+        if (pet == null) {
+            throw new NotFoundException(PET);
+        }
+        pet.addToGallery(uploadedFile);
+        updatePet(id, pet);
+    }
+
+    void removeImageFromGallery(final UUID id, UploadedFile uploadedFile) {
+        final Pet pet = petsRepository.findOne(id);
+        if (pet == null) {
+            throw new NotFoundException(PET);
+        }
+        if (uploadedFile == null) {
+            throw new NotFoundException(IMAGE);
+        }
+        pet.removeFromGallery(uploadedFile);
+        updatePet(id, pet);
     }
 }

@@ -3,6 +3,7 @@ package com.intive.patronage.toz.users;
 import com.intive.patronage.toz.mail.MailService;
 import com.intive.patronage.toz.mail.MailTemplatesService;
 import com.intive.patronage.toz.proposals.ProposalRepository;
+import com.intive.patronage.toz.proposals.ProposalService;
 import com.intive.patronage.toz.proposals.model.Proposal;
 import com.intive.patronage.toz.tokens.JwtFactory;
 import com.intive.patronage.toz.tokens.JwtParser;
@@ -52,7 +53,11 @@ public class UserActivationServiceTest {
     @Autowired
     private MailTemplatesService mailTemplatesService;
 
+    @Mock
+    private ProposalService proposalService;
+
     private UserActivationService userActivationService;
+
     private static final String SECRET = "c2VjcmV0";
     private static final String USER_EMAIL = "email@email.com";
     private static final String USER_NAME = "username";
@@ -78,11 +83,11 @@ public class UserActivationServiceTest {
         userActivationService = new UserActivationService(
                 jwtFactory,
                 userRepository,
-                proposalRepository,
                 jwtParser,
                 mailService,
                 mailTemplatesService,
-                passwordEncoder
+                passwordEncoder,
+                proposalService
         );
 
 
@@ -111,7 +116,7 @@ public class UserActivationServiceTest {
     @UseDataProvider("getProperProposalAndUser")
     public void checkCorrectUserActivation( final User user, final Proposal proposal) throws Exception {
         when(userRepository.save(any(User.class))).thenReturn(user);
-        when(proposalRepository.findByEmail(USER_EMAIL)).thenReturn(proposal);
+        when(proposalService.findByEmail(USER_EMAIL)).thenReturn(proposal);
 
         JwtFactory jwtFactory = new JwtFactory(SECRET );
         String token = jwtFactory.generateToken(proposal, EXPIRATION_TIME);

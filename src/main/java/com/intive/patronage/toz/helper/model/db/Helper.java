@@ -20,6 +20,7 @@ public class Helper extends Identifiable {
     private String notes;
     private String phoneNumber;
     private String email;
+    private String address;
 
     @Enumerated(value = EnumType.STRING)
     private Helper.Category category;

@@ -409,6 +409,60 @@ databaseChangeLog:
                       name: last_modified
                       type: datetime
   - changeSet:
+        id: 8
+        author: mateuszsz93
+        changes:
+          - addColumn:
+              columns:
+              - column:
+                  name: address
+                  type: varchar(255)
+              tableName: helper
+  - changeSet:
+        id: 9
+        author: marek.macko
+        changes:
+        - renameColumn:
+           newColumnName: image_url
+           oldColumnName: photo_url
+           tableName: news
+  - changeSet:
+        id: 10
+        author: mateuszsz93
+        changes:
+          - modifyDataType:
+              columnName: description
+              newDataType: varchar
+              tableName: pet
+          - addColumn:
+              columns:
+              - column:
+                  name: acceptance_date
+                  type: datetime
+              - column:
+                  name: helper_uuid
+                  type: uuid
+              tableName: pet
+  - changeSet:
+        id : 11
+        author: mateuszsz93
+        changes:
+          - addColumn:
+                columns:
+                - column:
+                    name: file_url
+                    type: varchar(255)
+                tableName: uploaded_file
+          - createTable:
+                tableName: gallery
+                columns:
+                  - column:
+                      name: pet_id
+                      type: uuid
+                  - column:
+                      name: uploaded_file_id
+                      type: uuid
+  - changeSet:
           id : 8
           author: macieg-b
           changes:

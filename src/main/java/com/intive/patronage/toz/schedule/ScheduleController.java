@@ -1,5 +1,6 @@
 package com.intive.patronage.toz.schedule;
 
+import com.intive.patronage.toz.error.exception.NoPermissionException;
 import com.intive.patronage.toz.error.model.ArgumentErrorResponse;
 import com.intive.patronage.toz.error.model.ErrorResponse;
 import com.intive.patronage.toz.error.model.ValidationErrorResponse;
@@ -8,6 +9,8 @@ import com.intive.patronage.toz.schedule.model.view.ReservationRequestView;
 import com.intive.patronage.toz.schedule.model.view.ReservationResponseView;
 import com.intive.patronage.toz.schedule.model.view.ScheduleView;
 import com.intive.patronage.toz.schedule.util.ScheduleParser;
+import com.intive.patronage.toz.users.UserRepository;
+import com.intive.patronage.toz.util.UserInfoGetter;
 import io.swagger.annotations.*;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
@@ -33,15 +36,19 @@ import java.util.UUID;
 @RequestMapping(value = "/schedule", produces = MediaType.APPLICATION_JSON_VALUE)
 class ScheduleController {
 
+    private static final String USER = "User";
+
     private final ScheduleParser scheduleParser;
     private final ScheduleService scheduleService;
+    private final UserRepository userRepository;
     @Value("${timezoneOffset}")
     private String zoneOffset = "Z";
 
     @Autowired
-    ScheduleController(ScheduleService scheduleService, ScheduleParser scheduleParser) {
+    ScheduleController(ScheduleService scheduleService, ScheduleParser scheduleParser, UserRepository userRepository) {
         this.scheduleService = scheduleService;
         this.scheduleParser = scheduleParser;
+        this.userRepository = userRepository;
     }
 
     @ApiOperation(value = "Get schedule", notes =
@@ -75,7 +82,14 @@ class ScheduleController {
     @ResponseStatus(HttpStatus.OK)
     @PreAuthorize("hasAnyAuthority('SA', 'TOZ', 'VOLUNTEER')")
     public ReservationResponseView getReservation(@PathVariable UUID id) {
-        return scheduleService.findReservation(id);
+
+        final ReservationResponseView reservation = scheduleService.findReservation(id);
+        final UUID userId = UserInfoGetter.getUserUuid(userRepository, USER);
+        if (!UserInfoGetter.hasCurrentUserAdminRole()
+                && !reservation.getOwnerId().equals(userId)) {
+            throw new NoPermissionException();
+        }
+        return reservation;
     }
 
     @ApiOperation(value = "Make reservation", notes =
@@ -89,6 +103,16 @@ class ScheduleController {
     @ResponseStatus(HttpStatus.CREATED)
     @PreAuthorize("hasAnyAuthority('SA', 'TOZ', 'VOLUNTEER')")
     public ResponseEntity<ReservationResponseView> makeReservation(@Valid @RequestBody ReservationRequestView reservationRequestView) {
+        final UUID userId = UserInfoGetter.getUserUuid(userRepository, USER);
+        if (reservationRequestView.getOwnerId() == null) {
+            reservationRequestView.setOwnerId(userId);
+        }
+
+        if (!UserInfoGetter.hasCurrentUserAdminRole()
+                && !reservationRequestView.getOwnerId().equals(userId)) {
+            throw new NoPermissionException();
+        }
+
         ReservationResponseView createdReservationResponseView =
                 scheduleService.makeReservation(reservationRequestView);
         URI location = createLocationPath(createdReservationResponseView.getId());
@@ -97,14 +121,14 @@ class ScheduleController {
     }
 
     @ApiOperation(value = "Update reservation", notes =
-            "Required roles: SA, TOZ, VOLUNTEER.")
+            "Required roles: SA, TOZ")
     @ApiResponses(value = {
             @ApiResponse(code = 400, message = "Bad request", response = ValidationErrorResponse.class),
             @ApiResponse(code = 404, message = "Not found", response = ErrorResponse.class)
     })
     @PutMapping(value = "/{id}", consumes = MediaType.APPLICATION_JSON_VALUE)
     @ResponseStatus(HttpStatus.CREATED)
-    @PreAuthorize("hasAnyAuthority('SA', 'TOZ', 'VOLUNTEER')")
+    @PreAuthorize("hasAnyAuthority('SA', 'TOZ')")
     public ResponseEntity<ReservationResponseView> updateReservation(@PathVariable UUID id,
                                                                      @Valid @RequestBody ReservationRequestView reservationRequestView) {
         ReservationResponseView updatedReservationResponseView =
@@ -115,14 +139,14 @@ class ScheduleController {
     }
 
     @ApiOperation(value = "Delete reservation", notes =
-            "Required roles: SA, TOZ, VOLUNTEER.")
+            "Required roles: SA, TOZ")
     @ApiResponses(value = {
             @ApiResponse(code = 400, message = "Bad request", response = ArgumentErrorResponse.class),
             @ApiResponse(code = 404, message = "Not found", response = ErrorResponse.class)
     })
     @DeleteMapping(value = "/{id}")
     @ResponseStatus(HttpStatus.OK)
-    @PreAuthorize("hasAnyAuthority('SA', 'TOZ', 'VOLUNTEER')")
+    @PreAuthorize("hasAnyAuthority('SA', 'TOZ')")
     public ReservationResponseView removeReservation(@PathVariable UUID id) {
         return scheduleService.removeReservation(id);
     }
