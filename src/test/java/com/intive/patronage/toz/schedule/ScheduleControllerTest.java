@@ -51,7 +51,7 @@ public class ScheduleControllerTest {
     private static final String VALID_LOCAL_DATE_TO = "2017-12-01";
     private static final LocalDate PAST_LOCAL_DATE = LocalDate.now().minusDays(3);
     private static final String ID_PARAM = "id";
-    private static final UserContext USER_CONTEXT = new UserContext(UUID.randomUUID(),
+    private static final UserContext USER_CONTEXT = new UserContext(EXAMPLE_USER.getId(),
             null, new HashSet<>(Collections.singletonList(Role.TOZ)));
 
     private MockMvc mvc;
@@ -128,17 +128,40 @@ public class ScheduleControllerTest {
     @Test
     @UseDataProvider(value = "getReservationResponseView",
             location = ScheduleDataProvider.class)
+    public void shouldReturnOKWhenGetReservationById(ReservationResponseView reservationResponseView) throws Exception {
+        when(scheduleService.findReservation(any(UUID.class)))
+                .thenReturn(reservationResponseView);
+        when(userRepository.findOne(any(UUID.class)))
+                .thenReturn(EXAMPLE_USER);
+        when(userRepository.exists(any(UUID.class)))
+                .thenReturn(true);
+
+        mvc.perform(get(String.format("%s/%s", SCHEDULE_PATH, UUID.randomUUID().toString()))
+                .param(ID_PARAM, VALID_LOCAL_DATE_TO))
+                .andExpect(status().isOk());
+
+        verify(scheduleService, times(1)).findReservation(any(UUID.class));
+        verifyNoMoreInteractions(scheduleService);
+    }
+
+    @Test
+    @UseDataProvider(value = "getReservationResponseView",
+            location = ScheduleDataProvider.class)
     public void shouldReturnCreatedWhenCreateReservation(ReservationResponseView reservationResponseView) throws Exception {
         when(scheduleService.makeReservation(any(ReservationRequestView.class)))
                 .thenReturn(reservationResponseView);
         when(userRepository.findOne(any(UUID.class)))
                 .thenReturn(EXAMPLE_USER);
+        when(userRepository.exists(any(UUID.class)))
+                .thenReturn(true);
+
         ReservationRequestView view = new ReservationRequestView();
         view.setDate(VALID_LOCAL_DATE_FROM);
         view.setStartTime(VALID_LOCAL_TIME);
         view.setModificationMessage("string");
-        view.setOwnerId(UUID.randomUUID());
+        view.setOwnerId(EXAMPLE_USER.getId());
         view.setEndTime(VALID_LOCAL_TIME);
+
         mvc.perform(post(String.format("%s", SCHEDULE_PATH))
                 .param(ID_PARAM, UUID.randomUUID().toString())
                 .contentType(CONTENT_TYPE)
