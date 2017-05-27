@@ -19,6 +19,7 @@ public final class ApiUrl {
     public final static String COMMENTS_PATH = "/comments";
     public final static String PROPOSAL_PATH = "/proposals";
     public final static String HELPERS_PATH = "/helpers";
+    public final static String PETS_STATUS_PATH = PETS_PATH + "/status";
 
     private ApiUrl() {
     }

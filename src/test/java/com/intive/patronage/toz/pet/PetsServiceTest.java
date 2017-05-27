@@ -2,6 +2,7 @@ package com.intive.patronage.toz.pet;
 
 import com.intive.patronage.toz.error.exception.NotFoundException;
 import com.intive.patronage.toz.pet.model.db.Pet;
+import com.intive.patronage.toz.status.PetsStatusRepository;
 import com.tngtech.java.junit.dataprovider.DataProvider;
 import com.tngtech.java.junit.dataprovider.DataProviderRunner;
 import com.tngtech.java.junit.dataprovider.UseDataProvider;
@@ -28,12 +29,14 @@ public class PetsServiceTest {
 
     @Mock
     private PetsRepository petsRepository;
+    @Mock
+    private PetsStatusRepository petsStatusRepository;
     private PetsService petsService;
 
     @Before
     public void setUp() throws Exception {
         MockitoAnnotations.initMocks(this);
-        petsService = new PetsService(petsRepository);
+        petsService = new PetsService(petsRepository, petsStatusRepository);
     }
 
     @DataProvider

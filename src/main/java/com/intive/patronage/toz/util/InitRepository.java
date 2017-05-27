@@ -1,5 +1,7 @@
 package com.intive.patronage.toz.util;
 
+import com.intive.patronage.toz.status.PetsStatusRepository;
+import com.intive.patronage.toz.status.model.PetsStatus;
 import com.intive.patronage.toz.users.UserRepository;
 import com.intive.patronage.toz.users.model.db.Role;
 import com.intive.patronage.toz.users.model.db.User;
@@ -24,6 +26,7 @@ class InitRepository {
 
     private final UserRepository userRepository;
     private final PasswordEncoder passwordEncoder;
+    private final PetsStatusRepository petsStatusRepository;
 
     @Value("${super-admin.email:maciej.lotysz@intive.com}")
     private String email;
@@ -32,8 +35,9 @@ class InitRepository {
     private String password;
 
     @Autowired
-    public InitRepository(UserRepository userRepository, PasswordEncoder passwordEncoder) {
+    public InitRepository(UserRepository userRepository, PasswordEncoder passwordEncoder, PetsStatusRepository petsStatusRepository) {
         this.userRepository = userRepository;
+        this.petsStatusRepository = petsStatusRepository;
         this.passwordEncoder = passwordEncoder;
     }
 
@@ -50,6 +54,50 @@ class InitRepository {
                 userRepository.save(admin);
                 LOG.info("Created super admin: " + admin);
             }
+
+
+            PetsStatus petsStatus = new PetsStatus();
+            petsStatus.setName("ODEBRANY PRZEZ WŁAŚCICIELA");
+            petsStatus.setRgb("#0000FF");
+            petsStatus.setPublic(false);
+            petsStatusRepository.save(petsStatus);
+            petsStatus = new PetsStatus();
+            petsStatus.setName("WYPUSZCZONY W MIEJSCE BYTOWANIA");
+            petsStatus.setRgb("#007FFF");
+            petsStatus.setPublic(false);
+            petsStatusRepository.save(petsStatus);
+            petsStatus = new PetsStatus();
+            petsStatus.setName("EUTANAZJA");
+            petsStatus.setRgb("#FF0000");
+            petsStatus.setPublic(false);
+            petsStatusRepository.save(petsStatus);
+            petsStatus = new PetsStatus();
+            petsStatus.setName("ZGON");
+            petsStatus.setRgb("#FF0000");
+            petsStatus.setPublic(false);
+            petsStatusRepository.save(petsStatus);
+            petsStatus = new PetsStatus();
+            petsStatus.setName("PRZEKAZANY");
+            petsStatus.setRgb("#FFFF00");
+            petsStatus.setPublic(false);
+            petsStatusRepository.save(petsStatus);
+            petsStatus = new PetsStatus();
+            petsStatus.setName("USUNIĘTY");
+            petsStatus.setRgb("#606060");
+            petsStatus.setPublic(false);
+            petsStatusRepository.save(petsStatus);
+            petsStatus = new PetsStatus();
+            petsStatus.setName("ADOPTOWANY");
+            petsStatus.setRgb("#008000");
+            petsStatus.setPublic(false);
+            petsStatusRepository.save(petsStatus);
+            petsStatus = new PetsStatus();
+            petsStatus.setName("DO ADOPCJI");
+            petsStatus.setRgb("#008000");
+            petsStatus.setPublic(true);
+            petsStatusRepository.save(petsStatus);
+            LOG.info("Created predefined pets statuses");
+
         };
     }
 }

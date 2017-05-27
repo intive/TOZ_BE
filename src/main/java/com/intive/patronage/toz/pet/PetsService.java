@@ -3,10 +3,13 @@ package com.intive.patronage.toz.pet;
 import com.intive.patronage.toz.error.exception.NotFoundException;
 import com.intive.patronage.toz.pet.model.db.Pet;
 import com.intive.patronage.toz.storage.model.db.UploadedFile;
+import com.intive.patronage.toz.status.PetsStatusRepository;
+import com.intive.patronage.toz.status.model.PetsStatus;
 import com.intive.patronage.toz.util.RepositoryChecker;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.UUID;
 
@@ -15,11 +18,14 @@ class PetsService {
 
     private static final String PET = "Pet";
     private static final String IMAGE = "Image";
+    private static final String PETS_STATUS = "Pets status";
     private final PetsRepository petsRepository;
+    private final PetsStatusRepository petsStatusRepository;
 
     @Autowired
-    PetsService(PetsRepository petsRepository) {
+    PetsService(PetsRepository petsRepository, PetsStatusRepository petsStatusRepository) {
         this.petsRepository = petsRepository;
+        this.petsStatusRepository = petsStatusRepository;
     }
 
     List<Pet> findAllPets() {
@@ -27,7 +33,18 @@ class PetsService {
     }
 
     List<Pet> findPetsWithFilledFields() {
-        return petsRepository.findByNameNotNullAndTypeNotNullAndSexNotNull();
+        List<Pet> pets = petsRepository.findByNameNotNullAndTypeNotNullAndSexNotNull();
+        List<Pet> publicPets = new ArrayList<>();
+        pets.forEach(
+                pet -> {
+                    if (pet.getPetsStatus() != null) {
+                        if (pet.getPetsStatus().isPublic()) {
+                            publicPets.add(pet);
+                        }
+                    }
+                }
+        );
+        return publicPets;
     }
 
     Pet findById(final UUID id) {
@@ -37,6 +54,13 @@ class PetsService {
 
     Pet createPet(final Pet pet) {
         pet.setGallery(null);
+        if (pet.getPetsStatus() != null) {
+            throwNotFoundExceptionIfStatusNotExists(pet.getPetsStatus().getId());
+            PetsStatus petsStatus = petsStatusRepository.findOne(pet.getPetsStatus().getId());
+            pet.setPetsStatus(petsStatus);
+        } else {
+            pet.setPetsStatus(null);
+        }
         return petsRepository.save(pet);
     }
 
@@ -46,14 +70,14 @@ class PetsService {
     }
 
     Pet updatePet(final UUID id, final Pet pet) {
-        Pet oldPet = petsRepository.findOne(id);
-        if (oldPet == null) {
-            throw new NotFoundException(PET);
-        } else {
-            pet.setId(id);
-            pet.setGallery(oldPet.getGallery());
-            return petsRepository.save(pet);
+        RepositoryChecker.throwNotFoundExceptionIfNotExists(id, petsRepository, PET);
+        pet.setId(id);
+        pet.setGallery(petsRepository.findOne(id).getGallery());
+        if (pet.getPetsStatus() != null) {
+            PetsStatus petsStatus = petsStatusRepository.findOne(pet.getPetsStatus().getId());
+            pet.setPetsStatus(petsStatus);
         }
+        return petsRepository.save(pet);
     }
 
     void updatePetImageUrl(final UUID id, String imageUrl) {
@@ -63,6 +87,12 @@ class PetsService {
         }
         pet.setImageUrl(imageUrl);
         updatePet(id, pet);
+    }
+
+    void throwNotFoundExceptionIfStatusNotExists(UUID id) {
+        if (!petsStatusRepository.exists(id)) {
+            throw new NotFoundException(PETS_STATUS);
+        }
     }
 
     void addImageToGallery(final UUID id, UploadedFile uploadedFile) {

@@ -462,3 +462,40 @@ databaseChangeLog:
                   - column:
                       name: uploaded_file_id
                       type: uuid
+  - changeSet:
+          id : 8
+          author: macieg-b
+          changes:
+            - createTable:
+                tableName: pets_status
+                columns:
+                  - column:
+                       name: id
+                       type: uuid
+                       constraints:
+                         - primaryKey: true
+                         - nullable: false
+                  - column:
+                       name: name
+                       type: varchar(255)
+                  - column:
+                       name: rgb
+                       type: varchar(7)
+                  - column:
+                       name: is_public
+                       type: boolean
+            - createTable:
+                tableName: pets_status_pet
+                columns:
+                  - column:
+                      name: pets_status_id
+                      type: uuid
+                  - column:
+                      name: pet_id
+                      type: uuid
+            - addColumn:
+                columns:
+                - column:
+                    name: pets_status_id
+                    type: uuid
+                tableName: pet

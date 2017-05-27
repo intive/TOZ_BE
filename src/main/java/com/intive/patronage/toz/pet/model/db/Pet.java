@@ -1,6 +1,7 @@
 package com.intive.patronage.toz.pet.model.db;
 
 import com.intive.patronage.toz.base.model.Identifiable;
+import com.intive.patronage.toz.status.model.PetsStatus;
 import com.intive.patronage.toz.storage.model.db.UploadedFile;
 import lombok.Getter;
 import lombok.Setter;
@@ -18,6 +19,7 @@ import java.util.UUID;
 @Entity
 @EntityListeners(AuditingEntityListener.class)
 public class Pet extends Identifiable {
+
     private String name;
     @Enumerated(value = EnumType.STRING)
     private Type type;
@@ -55,6 +57,9 @@ public class Pet extends Identifiable {
     public void removeFromGallery(final UploadedFile uploadedFile) {
         gallery.remove(uploadedFile);
     }
+
+    @ManyToOne
+    private PetsStatus petsStatus;
 
     public enum Type {
         DOG, CAT

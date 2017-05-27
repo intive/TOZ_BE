@@ -23,6 +23,7 @@ import java.util.UUID;
 @JsonInclude(JsonInclude.Include.NON_EMPTY)
 @SuppressWarnings("SpellCheckingInspection")
 public class PetView extends IdentifiableView {
+
     @ApiModelProperty(example = "Burek", position = 1)
     @Size(max = 35)
     private String name;
@@ -65,4 +66,7 @@ public class PetView extends IdentifiableView {
     @ApiModelProperty(position = 11)
     @JsonProperty(access = JsonProperty.Access.READ_ONLY)
     protected List<UploadedFileView> gallery = new ArrayList<>();
+
+    @ApiModelProperty(example = "c5296892-347f-4b2e-b1c6-6faff971f767", position = 9)
+    private UUID petsStatus;
 }
