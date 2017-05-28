@@ -186,7 +186,7 @@ class PetsController {
             @ApiResponse(code = 404, message = "Pet not found", response = ErrorResponse.class),
     })
     @ResponseStatus(HttpStatus.OK)
-    @DeleteMapping(value = "/{petId}/gallery/{imageId}", consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
+    @DeleteMapping(value = "/{petId}/gallery/{imageId}")
     @PreAuthorize("hasAnyAuthority('SA', 'TOZ')")
     public ResponseEntity<?> removeImageFromGallery(@PathVariable UUID petId, @PathVariable UUID imageId) {
         UploadedFile uploadedFile = storageService.get(imageId);
