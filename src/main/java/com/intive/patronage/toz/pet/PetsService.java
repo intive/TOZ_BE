@@ -41,6 +41,8 @@ class PetsService {
                         if (pet.getPetsStatus().isPublic()) {
                             publicPets.add(pet);
                         }
+                    } else { //TODO: remove this 'else' when mobile clients finish testing
+                        publicPets.add(pet);
                     }
                 }
         );
