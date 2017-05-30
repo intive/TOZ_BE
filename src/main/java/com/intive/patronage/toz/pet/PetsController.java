@@ -88,7 +88,7 @@ class PetsController {
         Pet pet = petsService.findById(id);
         if (!UserInfoGetter.hasCurrentUserAdminRole()
                 && (pet.getName() == null || pet.getType() == null || pet.getSex() == null)) {
-            throw new NoPermissionException();
+            throw new NoPermissionException(); //TODO: add checking if pet's status is public, when mobiles finish testing
         }
         return convertToView(pet);
     }
