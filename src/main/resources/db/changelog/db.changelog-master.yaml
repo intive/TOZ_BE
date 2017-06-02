@@ -499,3 +499,16 @@ databaseChangeLog:
                     name: pets_status_id
                     type: uuid
                 tableName: pet
+  - changeSet:
+        id: 12
+        author: mateuszsz93
+        changes:
+          - addColumn:
+              columns:
+              - column:
+                  name: author_name
+                  type: varchar(255)
+              - column:
+                  name: author_surname
+                  type: varchar(255)
+              tableName: comment

@@ -3,6 +3,7 @@ package com.intive.patronage.toz.comment;
 import com.intive.patronage.toz.comment.model.db.Comment;
 import com.intive.patronage.toz.error.exception.NoPermissionException;
 import com.intive.patronage.toz.users.UserRepository;
+import com.intive.patronage.toz.users.model.db.User;
 import com.intive.patronage.toz.util.RepositoryChecker;
 import com.intive.patronage.toz.util.UserInfoGetter;
 import com.intive.patronage.toz.util.StringFormatter;
@@ -50,18 +51,14 @@ public class CommentService {
     }
 
     Comment createComment(Comment comment) {
-        UUID userUuid = UserInfoGetter.getUserUuid(userRepository, USER);
-        comment.setUserUuid(userUuid);
+        User user = userRepository.findOne(UserInfoGetter.getUserUuid(userRepository, USER));
+        setCommentAuthor(comment, user);
         comment.setState(STATE_ACTIVE);
         return commentRepository.save(comment);
     }
 
     void deleteComment(final UUID id) {
         RepositoryChecker.throwNotFoundExceptionIfNotExists(id, commentRepository, COMMENT);
-        if (!UserInfoGetter.hasCurrentUserAdminRole()) {
-            UUID userUuid = UserInfoGetter.getUserUuid(userRepository, USER);
-            checkPermissionToManageComment(id, userUuid);
-        }
         Comment comment = commentRepository.getOne(id);
         comment.setState(STATE_DELETE);
         commentRepository.save(comment);
@@ -70,16 +67,22 @@ public class CommentService {
     Comment updateComment(final UUID id, final Comment comment) {
         RepositoryChecker.throwNotFoundExceptionIfNotExists(id, commentRepository, COMMENT);
         comment.setId(id);
-        UUID userUuid;
+        User user;
         if (UserInfoGetter.hasCurrentUserAdminRole()) {
-            userUuid = commentRepository.findOne(id).getUserUuid();
+            user = userRepository.findOne(commentRepository.findOne(id).getUserUuid());
         } else {
-            userUuid = UserInfoGetter.getUserUuid(userRepository, USER);
-            checkPermissionToManageComment(id, userUuid);
+            user = userRepository.findOne(UserInfoGetter.getUserUuid(userRepository, USER));
+            checkPermissionToManageComment(id, user.getId());
             comment.setState(STATE_ACTIVE);
         }
-        comment.setUserUuid(userUuid);
+        setCommentAuthor(comment, user);
         return commentRepository.save(comment);
+    }
+
+    private void setCommentAuthor(Comment comment, User user) {
+        comment.setUserUuid(user.getId());
+        comment.setAuthorName(user.getName());
+        comment.setAuthorSurname(user.getSurname());
     }
 
     private void checkPermissionToManageComment(UUID id, UUID userUuid) {

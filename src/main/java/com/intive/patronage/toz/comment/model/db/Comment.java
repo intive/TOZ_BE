@@ -19,6 +19,8 @@ public class Comment extends Identifiable {
     private String contents;
     private UUID userUuid;
     private UUID petUuid;
+    private String authorName;
+    private String authorSurname;
 
     @Enumerated(value = EnumType.STRING)
     private State state;

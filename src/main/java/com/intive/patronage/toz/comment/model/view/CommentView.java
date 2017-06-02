@@ -47,4 +47,12 @@ public class CommentView extends IdentifiableView {
     @ApiModelProperty(example = "1222333444555", position = 6)
     @JsonProperty(access = JsonProperty.Access.READ_ONLY)
     private Long lastModified;
+
+    @ApiModelProperty(example = "Jan", required = true, position = 7)
+    @Size(min = 1, max = 35)
+    private String authorName;
+
+    @ApiModelProperty(example = "Kowalski", position = 8)
+    @Size(min = 1, max = 35)
+    private String authorSurname;
 }

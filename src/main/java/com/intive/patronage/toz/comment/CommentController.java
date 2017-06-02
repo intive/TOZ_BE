@@ -93,7 +93,7 @@ public class CommentController {
     }
 
     @ApiOperation(value = "Delete comment.", notes =
-            "Required roles: SA, TOZ, VOLUNTEER.")
+            "Required roles: SA, TOZ.")
     @ApiResponses(value = {
             @ApiResponse(code = 404, message = "Comment/User not found.",
                     response = ErrorResponse.class),
@@ -101,7 +101,7 @@ public class CommentController {
                     response = ErrorResponse.class)
     })
     @DeleteMapping(value = "/{id}")
-    @PreAuthorize("hasAnyAuthority('SA', 'TOZ', 'VOLUNTEER')")
+    @PreAuthorize("hasAnyAuthority('SA', 'TOZ')")
     public ResponseEntity<?> deleteCommentById(@PathVariable UUID id) {
         commentService.deleteComment(id);
         return ResponseEntity.ok().build();
