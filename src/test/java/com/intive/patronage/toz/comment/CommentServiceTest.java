@@ -4,6 +4,7 @@ import com.intive.patronage.toz.comment.model.db.Comment;
 import com.intive.patronage.toz.error.exception.NotFoundException;
 import com.intive.patronage.toz.tokens.model.UserContext;
 import com.intive.patronage.toz.users.UserRepository;
+import com.intive.patronage.toz.users.model.db.User;
 import com.tngtech.java.junit.dataprovider.DataProvider;
 import com.tngtech.java.junit.dataprovider.DataProviderRunner;
 import com.tngtech.java.junit.dataprovider.UseDataProvider;
@@ -37,6 +38,9 @@ public class CommentServiceTest {
     private static final Boolean DEFAULT_SHORTENED = false;
     private static final UserContext USER_CONTEXT = new UserContext(EXPECTED_USER_UUID,
             null, null);
+    private static final String EXAMPLE_NAME = "Jan";
+    private static final String EXAMPLE_SURNAME = "Kowalski";
+    private User user;
     private Comment comment;
     private CommentService commentService;
 
@@ -57,6 +61,11 @@ public class CommentServiceTest {
         comment.setPetUuid(EXPECTED_PET_UUID);
         comment.setContents(EXPECTED_CONTENTS);
         comment.setUserUuid(EXPECTED_USER_UUID);
+        comment.setAuthorName(EXAMPLE_NAME);
+        comment.setAuthorSurname(EXAMPLE_SURNAME);
+        user = new User();
+        user.setId(EXPECTED_USER_UUID);
+        user.setName(EXAMPLE_NAME);
     }
 
     @DataProvider
@@ -130,6 +139,7 @@ public class CommentServiceTest {
     @UseDataProvider("getProperComment")
     public void createComment(final Comment commentDb) throws Exception {
         when(commentRepository.save(any(Comment.class))).thenReturn(commentDb);
+        when(userRepository.findOne(any(UUID.class))).thenReturn(user);
 
         Comment comment = commentService.createComment(this.comment);
         assertEquals(EXPECTED_CONTENTS, comment.getContents());
@@ -159,8 +169,6 @@ public class CommentServiceTest {
         verify(commentRepository, times(1))
                 .save(any(Comment.class));
         verify(commentRepository, times(1))
-                .findOne(eq(EXPECTED_ID));
-        verify(commentRepository, times(1))
                 .getOne(eq(EXPECTED_ID));
         verifyNoMoreInteractions(commentRepository);
     }
@@ -186,6 +194,7 @@ public class CommentServiceTest {
         when(securityContext.getAuthentication()).thenReturn(authentication);
         when(authentication.getPrincipal()).thenReturn(USER_CONTEXT);
         when(userRepository.exists(any(UUID.class))).thenReturn(true);
+        when(userRepository.findOne(any(UUID.class))).thenReturn(user);
 
         Comment comment = commentService.updateComment(EXPECTED_ID, this.comment);
         assertEquals(EXPECTED_CONTENTS, comment.getContents());
