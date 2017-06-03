@@ -66,7 +66,10 @@ class NewsService {
 
     News updateNews(final UUID id, final News news) {
         RepositoryChecker.throwNotFoundExceptionIfNotExists(id, newsRepository, NEWS);
+
         news.setId(id);
+        news.setImageUrl(newsRepository.findOne(id).getImageUrl());
+
         Date published = newsRepository.findOne(id).getPublished();
         if (news.getType() == News.Type.RELEASED && published == null) {
             news.setPublished(new Date());

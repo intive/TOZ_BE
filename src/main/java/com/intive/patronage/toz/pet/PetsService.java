@@ -2,9 +2,9 @@ package com.intive.patronage.toz.pet;
 
 import com.intive.patronage.toz.error.exception.NotFoundException;
 import com.intive.patronage.toz.pet.model.db.Pet;
-import com.intive.patronage.toz.storage.model.db.UploadedFile;
 import com.intive.patronage.toz.status.PetsStatusRepository;
 import com.intive.patronage.toz.status.model.PetsStatus;
+import com.intive.patronage.toz.storage.model.db.UploadedFile;
 import com.intive.patronage.toz.util.RepositoryChecker;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -73,8 +73,11 @@ class PetsService {
 
     Pet updatePet(final UUID id, final Pet pet) {
         RepositoryChecker.throwNotFoundExceptionIfNotExists(id, petsRepository, PET);
+
         pet.setId(id);
         pet.setGallery(petsRepository.findOne(id).getGallery());
+        pet.setImageUrl(petsRepository.findOne(id).getImageUrl());
+
         if (pet.getPetsStatus() != null) {
             PetsStatus petsStatus = petsStatusRepository.findOne(pet.getPetsStatus().getId());
             pet.setPetsStatus(petsStatus);
@@ -91,7 +94,7 @@ class PetsService {
         updatePet(id, pet);
     }
 
-    void throwNotFoundExceptionIfStatusNotExists(UUID id) {
+    private void throwNotFoundExceptionIfStatusNotExists(UUID id) {
         if (!petsStatusRepository.exists(id)) {
             throw new NotFoundException(PETS_STATUS);
         }
