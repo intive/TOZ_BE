@@ -54,10 +54,11 @@ class PetsService {
         return petsRepository.findOne(id);
     }
 
-    Pet createPet(final Pet pet) { // TODO
+    Pet createPet(final Pet pet) {
         pet.setGallery(null);
         if (pet.getPetStatus() != null) {
-            throwNotFoundExceptionIfStatusNotExists(pet.getPetStatus().getId());
+            UUID petStatusId = pet.getPetStatus().getId();
+            RepositoryChecker.throwNotFoundExceptionIfNotExists(petStatusId, petsStatusRepository, PETS_STATUS);
             PetStatus petStatus = petsStatusRepository.findOne(pet.getPetStatus().getId());
             pet.setPetStatus(petStatus);
         } else {
@@ -89,12 +90,6 @@ class PetsService {
         }
         pet.setImageUrl(imageUrl);
         updatePet(id, pet);
-    }
-
-    private void throwNotFoundExceptionIfStatusNotExists(UUID id) { // TODO roles checker
-        if (!petsStatusRepository.exists(id)) {
-            throw new NotFoundException(PETS_STATUS);
-        }
     }
 
     void addImageToGallery(final UUID id, UploadedFile uploadedFile) {
