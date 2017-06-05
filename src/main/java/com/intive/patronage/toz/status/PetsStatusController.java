@@ -3,7 +3,7 @@ package com.intive.patronage.toz.status;
 import com.intive.patronage.toz.config.ApiUrl;
 import com.intive.patronage.toz.error.model.ErrorResponse;
 import com.intive.patronage.toz.error.model.ValidationErrorResponse;
-import com.intive.patronage.toz.status.model.PetsStatus;
+import com.intive.patronage.toz.status.model.PetStatus;
 import com.intive.patronage.toz.status.model.PetsStatusView;
 import com.intive.patronage.toz.util.ModelMapper;
 import io.swagger.annotations.Api;
@@ -35,7 +35,7 @@ import java.util.UUID;
 import static com.intive.patronage.toz.util.ModelMapper.convertIdentifiableToView;
 import static com.intive.patronage.toz.util.ModelMapper.convertToView;
 
-@Api(tags = "PetsStatus", description = "PetsStatus management operations (CRUD).")
+@Api(tags = "PetStatus", description = "PetStatus management operations (CRUD).")
 @RestController
 @RequestMapping(value = ApiUrl.PETS_STATUS_PATH, produces = MediaType.APPLICATION_JSON_VALUE)
 public class PetsStatusController {
@@ -52,7 +52,7 @@ public class PetsStatusController {
     @GetMapping
     @PreAuthorize("hasAnyAuthority('SA', 'TOZ')")
     public List<PetsStatusView> getAllPetsStatus() {
-        final List<PetsStatus> statuses = petsStatusService.findAll();
+        final List<PetStatus> statuses = petsStatusService.findAll();
         return convertIdentifiableToView(statuses, PetsStatusView.class);
     }
 
@@ -65,8 +65,8 @@ public class PetsStatusController {
     @PostMapping(consumes = MediaType.APPLICATION_JSON_VALUE)
     @PreAuthorize("hasAnyAuthority('SA', 'TOZ')")
     public ResponseEntity<PetsStatusView> createPetsStatus(@Valid @RequestBody PetsStatusView petsStatusView) {
-        final PetsStatus petsStatus = ModelMapper.convertToModel(petsStatusView, PetsStatus.class);
-        final PetsStatusView createdStatus = convertToView(petsStatusService.create(petsStatus), PetsStatusView.class);
+        final PetStatus petStatus = ModelMapper.convertToModel(petsStatusView, PetStatus.class);
+        final PetsStatusView createdStatus = convertToView(petsStatusService.create(petStatus), PetsStatusView.class);
         final URI baseLocation = ServletUriComponentsBuilder.fromCurrentRequest()
                 .build().toUri();
         final String statusLocationString = String.format("%s/%s", baseLocation, createdStatus.getId());
@@ -83,8 +83,8 @@ public class PetsStatusController {
     @PutMapping(value = "/{id}", consumes = MediaType.APPLICATION_JSON_VALUE)
     @PreAuthorize("hasAnyAuthority('SA', 'TOZ')")
     public PetsStatusView updatePetsStatus(@PathVariable UUID id, @Valid @RequestBody PetsStatusView petsStatusView) {
-        final PetsStatus petsStatus = ModelMapper.convertToModel(petsStatusView, PetsStatus.class);
-        return ModelMapper.convertToView(petsStatusService.update(id, petsStatus), PetsStatusView.class);
+        final PetStatus petStatus = ModelMapper.convertToModel(petsStatusView, PetStatus.class);
+        return ModelMapper.convertToView(petsStatusService.update(id, petStatus), PetsStatusView.class);
     }
 
     @ApiOperation(value = "Delete pets status", notes =

@@ -1,7 +1,7 @@
 package com.intive.patronage.toz.status;
 
 import com.intive.patronage.toz.error.exception.AlreadyExistsException;
-import com.intive.patronage.toz.status.model.PetsStatus;
+import com.intive.patronage.toz.status.model.PetStatus;
 import com.intive.patronage.toz.util.RepositoryChecker;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -20,19 +20,19 @@ public class PetsStatusService {
         this.petsStatusRepository = petsStatusRepository;
     }
 
-    public List<PetsStatus> findAll() {
+    public List<PetStatus> findAll() {
         return petsStatusRepository.findAll();
     }
 
-    public PetsStatus create(PetsStatus petsStatus) {
-        throwNotFoundExceptionIfStatusNameExists(petsStatus.getName());
-        return petsStatusRepository.save(petsStatus);
+    public PetStatus create(PetStatus petStatus) {
+        throwNotFoundExceptionIfStatusNameExists(petStatus.getName());
+        return petsStatusRepository.save(petStatus);
     }
 
-    public PetsStatus update(UUID id, PetsStatus petsStatus) {
+    public PetStatus update(UUID id, PetStatus petStatus) {
         RepositoryChecker.throwNotFoundExceptionIfNotExists(id, petsStatusRepository, PETS_STATUS);
-        petsStatus.setId(id);
-        return petsStatusRepository.save(petsStatus);
+        petStatus.setId(id);
+        return petsStatusRepository.save(petStatus);
     }
 
     public void delete(UUID id) {

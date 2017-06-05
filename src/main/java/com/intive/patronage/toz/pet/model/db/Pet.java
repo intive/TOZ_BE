@@ -1,7 +1,7 @@
 package com.intive.patronage.toz.pet.model.db;
 
 import com.intive.patronage.toz.base.model.Identifiable;
-import com.intive.patronage.toz.status.model.PetsStatus;
+import com.intive.patronage.toz.status.model.PetStatus;
 import com.intive.patronage.toz.storage.model.db.UploadedFile;
 import lombok.Getter;
 import lombok.Setter;
@@ -59,7 +59,10 @@ public class Pet extends Identifiable {
     }
 
     @ManyToOne
-    private PetsStatus petsStatus;
+//    @JoinTable(name = "pets_status_pet",
+//            joinColumns = @JoinColumn(name = "pet_id"),
+//    inverseJoinColumns = @JoinColumn(name = "pets_status_id"))
+    private PetStatus petStatus;
 
     public enum Type {
         DOG, CAT

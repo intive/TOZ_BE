@@ -1,7 +1,7 @@
 package com.intive.patronage.toz.status;
 
 import com.intive.patronage.toz.config.ApiUrl;
-import com.intive.patronage.toz.status.model.PetsStatus;
+import com.intive.patronage.toz.status.model.PetStatus;
 import com.intive.patronage.toz.status.model.PetsStatusView;
 import com.intive.patronage.toz.util.ModelMapper;
 import com.tngtech.java.junit.dataprovider.DataProvider;
@@ -21,27 +21,16 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.UUID;
 
-import static org.hamcrest.Matchers.hasSize;
-import static org.hamcrest.Matchers.is;
-import static org.hamcrest.Matchers.notNullValue;
+import static org.hamcrest.Matchers.*;
 import static org.mockito.Matchers.any;
 import static org.mockito.Matchers.eq;
-import static org.mockito.Mockito.doNothing;
-import static org.mockito.Mockito.times;
-import static org.mockito.Mockito.verify;
-import static org.mockito.Mockito.verifyNoMoreInteractions;
-import static org.mockito.Mockito.when;
-import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.delete;
-import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
-import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
-import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.put;
-import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.content;
-import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
-import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
+import static org.mockito.Mockito.*;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
+import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
 
 @RunWith(DataProviderRunner.class)
 @SpringBootTest
-public class PetsStatusControllerTest {
+public class PetStatusControllerTest {
     private static final int STATUS_LIST_SIZE = 3;
     private static final UUID EXPECTED_ID = UUID.randomUUID();
     private static final String EXPECTED_NAME = "Reksio";
@@ -62,31 +51,31 @@ public class PetsStatusControllerTest {
 
     @DataProvider
     public static Object[][] getPetsStatusModelAndView() {
-        final PetsStatus petsStatus = new PetsStatus();
-        petsStatus.setId(EXPECTED_ID);
-        petsStatus.setName(EXPECTED_NAME);
-        petsStatus.setRgb(EXPECTED_RGB);
+        final PetStatus petStatus = new PetStatus();
+        petStatus.setId(EXPECTED_ID);
+        petStatus.setName(EXPECTED_NAME);
+        petStatus.setRgb(EXPECTED_RGB);
 
-        final PetsStatusView petsStatusView = ModelMapper.convertToView(petsStatus, PetsStatusView.class);
-        return new Object[][]{{petsStatus, petsStatusView}};
+        final PetsStatusView petsStatusView = ModelMapper.convertToView(petStatus, PetsStatusView.class);
+        return new Object[][]{{petStatus, petsStatusView}};
     }
 
-    private List<PetsStatus> getPetsStatuses() {
-        final List<PetsStatus> petsStatuses = new ArrayList<>();
+    private List<PetStatus> getPetsStatuses() {
+        final List<PetStatus> petStatuses = new ArrayList<>();
         for (int i = 0; i < STATUS_LIST_SIZE; i++) {
-            final PetsStatus petsStatus = new PetsStatus();
-            petsStatus.setId(UUID.randomUUID());
-            petsStatus.setName(String.format("%s%d", "name", i));
-            petsStatus.setRgb(String.format("%s%d", "rgbrgb", i));
-            petsStatuses.add(petsStatus);
+            final PetStatus petStatus = new PetStatus();
+            petStatus.setId(UUID.randomUUID());
+            petStatus.setName(String.format("%s%d", "name", i));
+            petStatus.setRgb(String.format("%s%d", "rgbrgb", i));
+            petStatuses.add(petStatus);
         }
-        return petsStatuses;
+        return petStatuses;
     }
 
     @Test
     public void shouldReturnPetsStatusList() throws Exception {
-        final List<PetsStatus> petsStatuses = getPetsStatuses();
-        when(petsStatusService.findAll()).thenReturn(petsStatuses);
+        final List<PetStatus> petStatuses = getPetsStatuses();
+        when(petsStatusService.findAll()).thenReturn(petStatuses);
 
         mvc.perform(get(ApiUrl.PETS_STATUS_PATH))
                 .andExpect(status().isOk())
@@ -101,10 +90,10 @@ public class PetsStatusControllerTest {
 
     @Test
     @UseDataProvider("getPetsStatusModelAndView")
-    public void shouldCreatePetsStatus(final PetsStatus petsStatus, final PetsStatusView petsStatusView) throws Exception {
+    public void shouldCreatePetsStatus(final PetStatus petStatus, final PetsStatusView petsStatusView) throws Exception {
         final String petsStatusViewJsonString = ModelMapper.convertToJsonString(petsStatusView);
 
-        when(petsStatusService.create(any(PetsStatus.class))).thenReturn(petsStatus);
+        when(petsStatusService.create(any(PetStatus.class))).thenReturn(petStatus);
         mvc.perform(post(ApiUrl.PETS_STATUS_PATH)
                 .contentType(CONTENT_TYPE)
                 .content(petsStatusViewJsonString))
@@ -112,22 +101,22 @@ public class PetsStatusControllerTest {
                 .andExpect(jsonPath("$.name", is(EXPECTED_NAME)));
 
         verify(petsStatusService, times(1))
-                .create(any(PetsStatus.class));
+                .create(any(PetStatus.class));
         verifyNoMoreInteractions(petsStatusService);
     }
 
     @Test
     @UseDataProvider("getPetsStatusModelAndView")
-    public void shouldUpdatePetsStatus(final PetsStatus petsStatus, final PetsStatusView petsStatusView) throws Exception {
+    public void shouldUpdatePetsStatus(final PetStatus petStatus, final PetsStatusView petsStatusView) throws Exception {
         final String petsStatusJsonString = ModelMapper.convertToJsonString(petsStatusView);
 
-        when(petsStatusService.update(eq(EXPECTED_ID), any(PetsStatus.class))).thenReturn(petsStatus);
+        when(petsStatusService.update(eq(EXPECTED_ID), any(PetStatus.class))).thenReturn(petStatus);
         mvc.perform(put(String.format("%s/%s", ApiUrl.PETS_STATUS_PATH, EXPECTED_ID))
                 .contentType(CONTENT_TYPE)
                 .content(petsStatusJsonString))
                 .andExpect(status().isOk());
 
-        verify(petsStatusService, times(1)).update(eq(EXPECTED_ID), any(PetsStatus.class));
+        verify(petsStatusService, times(1)).update(eq(EXPECTED_ID), any(PetStatus.class));
         verifyNoMoreInteractions(petsStatusService);
     }
 

@@ -1,7 +1,7 @@
 package com.intive.patronage.toz.status;
 
 import com.intive.patronage.toz.error.exception.NotFoundException;
-import com.intive.patronage.toz.status.model.PetsStatus;
+import com.intive.patronage.toz.status.model.PetStatus;
 import com.tngtech.java.junit.dataprovider.DataProvider;
 import com.tngtech.java.junit.dataprovider.DataProviderRunner;
 import com.tngtech.java.junit.dataprovider.UseDataProvider;
@@ -19,12 +19,10 @@ import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertTrue;
 import static org.mockito.Matchers.any;
 import static org.mockito.Matchers.eq;
-import static org.mockito.Mockito.times;
-import static org.mockito.Mockito.verify;
-import static org.mockito.Mockito.when;
+import static org.mockito.Mockito.*;
 
 @RunWith(DataProviderRunner.class)
-public class PetsStatusServiceTest {
+public class PetStatusServiceTest {
     private static final UUID EXPECTED_ID = UUID.randomUUID();
     private static final String EXPECTED_NAME = "Reksio";
     private static final String EXPECTED_RGB = "#7cedaa2";
@@ -43,31 +41,31 @@ public class PetsStatusServiceTest {
 
     @DataProvider
     public static Object[] getProperPetsStatus() {
-        final PetsStatus petsStatus = new PetsStatus();
-        petsStatus.setId(EXPECTED_ID);
-        petsStatus.setName(EXPECTED_NAME);
-        petsStatus.setRgb(EXPECTED_RGB);
-        return new PetsStatus[]{petsStatus};
+        final PetStatus petStatus = new PetStatus();
+        petStatus.setId(EXPECTED_ID);
+        petStatus.setName(EXPECTED_NAME);
+        petStatus.setRgb(EXPECTED_RGB);
+        return new PetStatus[]{petStatus};
     }
 
     @Test
     public void shouldReturnPetsStatusList() throws Exception {
         when(petsStatusRepository.findAll()).thenReturn(Collections.emptyList());
 
-        final List<PetsStatus> petsStatuses = petsStatusService.findAll();
-        assertTrue(petsStatuses.isEmpty());
+        final List<PetStatus> petStatuses = petsStatusService.findAll();
+        assertTrue(petStatuses.isEmpty());
     }
 
 
     @Test
     @UseDataProvider("getProperPetsStatus")
-    public void shouldCreatePetsStatus(final PetsStatus petsStatus) throws Exception {
-        when(petsStatusRepository.save(any(PetsStatus.class))).thenReturn(petsStatus);
+    public void shouldCreatePetsStatus(final PetStatus petStatus) throws Exception {
+        when(petsStatusRepository.save(any(PetStatus.class))).thenReturn(petStatus);
 
-        final PetsStatus createdPetsStatus = petsStatusService.create(petsStatus);
-        assertEquals(EXPECTED_NAME, createdPetsStatus.getName());
-        assertEquals(EXPECTED_RGB, createdPetsStatus.getRgb());
-        verify(petsStatusRepository, times(1)).save(any(PetsStatus.class));
+        final PetStatus createdPetStatus = petsStatusService.create(petStatus);
+        assertEquals(EXPECTED_NAME, createdPetStatus.getName());
+        assertEquals(EXPECTED_RGB, createdPetStatus.getRgb());
+        verify(petsStatusRepository, times(1)).save(any(PetStatus.class));
     }
 
     @Test
@@ -88,20 +86,20 @@ public class PetsStatusServiceTest {
 
     @Test
     @UseDataProvider("getProperPetsStatus")
-    public void updatePetsStatus(final PetsStatus petsStatus) throws Exception {
+    public void updatePetsStatus(final PetStatus petStatus) throws Exception {
         when(petsStatusRepository.exists(EXPECTED_ID)).thenReturn(true);
-        when(petsStatusRepository.save(any(PetsStatus.class))).thenReturn(petsStatus);
-        final PetsStatus updatedPetsStatus = petsStatusService.update(EXPECTED_ID, petsStatus);
+        when(petsStatusRepository.save(any(PetStatus.class))).thenReturn(petStatus);
+        final PetStatus updatedPetStatus = petsStatusService.update(EXPECTED_ID, petStatus);
 
-        assertEquals(EXPECTED_NAME, updatedPetsStatus.getName());
-        assertEquals(EXPECTED_RGB, updatedPetsStatus.getRgb());
+        assertEquals(EXPECTED_NAME, updatedPetStatus.getName());
+        assertEquals(EXPECTED_RGB, updatedPetStatus.getRgb());
     }
 
     @Test(expected = NotFoundException.class)
     @UseDataProvider("getProperPetsStatus")
-    public void updateProposalNotFoundException(final PetsStatus petsStatus) throws Exception {
+    public void updateProposalNotFoundException(final PetStatus petStatus) throws Exception {
         when(petsStatusRepository.exists(EXPECTED_ID)).thenReturn(false);
-        petsStatusService.update(EXPECTED_ID, petsStatus);
+        petsStatusService.update(EXPECTED_ID, petStatus);
 
         verify(petsStatusRepository, times(1)).exists(eq(EXPECTED_ID));
     }

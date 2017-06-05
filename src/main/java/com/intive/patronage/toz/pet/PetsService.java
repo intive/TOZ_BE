@@ -2,9 +2,9 @@ package com.intive.patronage.toz.pet;
 
 import com.intive.patronage.toz.error.exception.NotFoundException;
 import com.intive.patronage.toz.pet.model.db.Pet;
-import com.intive.patronage.toz.storage.model.db.UploadedFile;
 import com.intive.patronage.toz.status.PetsStatusRepository;
-import com.intive.patronage.toz.status.model.PetsStatus;
+import com.intive.patronage.toz.status.model.PetStatus;
+import com.intive.patronage.toz.storage.model.db.UploadedFile;
 import com.intive.patronage.toz.util.RepositoryChecker;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -37,8 +37,8 @@ class PetsService {
         List<Pet> publicPets = new ArrayList<>();
         pets.forEach(
                 pet -> {
-                    if (pet.getPetsStatus() != null) {
-                        if (pet.getPetsStatus().isPublic()) {
+                    if (pet.getPetStatus() != null) {
+                        if (pet.getPetStatus().isPublic()) {
                             publicPets.add(pet);
                         }
                     } else { //TODO: remove this 'else' when mobile clients finish testing
@@ -56,12 +56,12 @@ class PetsService {
 
     Pet createPet(final Pet pet) {
         pet.setGallery(null);
-        if (pet.getPetsStatus() != null) {
-            throwNotFoundExceptionIfStatusNotExists(pet.getPetsStatus().getId());
-            PetsStatus petsStatus = petsStatusRepository.findOne(pet.getPetsStatus().getId());
-            pet.setPetsStatus(petsStatus);
+        if (pet.getPetStatus() != null) {
+            throwNotFoundExceptionIfStatusNotExists(pet.getPetStatus().getId());
+            PetStatus petStatus = petsStatusRepository.findOne(pet.getPetStatus().getId());
+            pet.setPetStatus(petStatus);
         } else {
-            pet.setPetsStatus(null);
+            pet.setPetStatus(null);
         }
         return petsRepository.save(pet);
     }
@@ -75,9 +75,9 @@ class PetsService {
         RepositoryChecker.throwNotFoundExceptionIfNotExists(id, petsRepository, PET);
         pet.setId(id);
         pet.setGallery(petsRepository.findOne(id).getGallery());
-        if (pet.getPetsStatus() != null) {
-            PetsStatus petsStatus = petsStatusRepository.findOne(pet.getPetsStatus().getId());
-            pet.setPetsStatus(petsStatus);
+        if (pet.getPetStatus() != null) {
+            PetStatus petStatus = petsStatusRepository.findOne(pet.getPetStatus().getId());
+            pet.setPetStatus(petStatus);
         }
         return petsRepository.save(pet);
     }
@@ -91,7 +91,7 @@ class PetsService {
         updatePet(id, pet);
     }
 
-    void throwNotFoundExceptionIfStatusNotExists(UUID id) {
+    void throwNotFoundExceptionIfStatusNotExists(UUID id) { // TODO roles checker
         if (!petsStatusRepository.exists(id)) {
             throw new NotFoundException(PETS_STATUS);
         }
