@@ -45,7 +45,7 @@ public class PetsServiceTest {
         pet.setName(EXPECTED_NAME);
         pet.setType(EXPECTED_TYPE);
         pet.setSex(EXPECTED_SEX);
-        pet.setPetsStatus(null);
+        pet.setPetStatus(null);
         return new Pet[]{pet};
     }
 
