@@ -31,12 +31,12 @@ public class PetStatusServiceTest {
     private PetsStatusRepository petsStatusRepository;
 
     @Mock
-    private PetsStatusService petsStatusService;
+    private PetStatusService petStatusService;
 
     @Before
     public void setUp() throws Exception {
         MockitoAnnotations.initMocks(this);
-        petsStatusService = new PetsStatusService(petsStatusRepository);
+        petStatusService = new PetStatusService(petsStatusRepository);
     }
 
     @DataProvider
@@ -52,7 +52,7 @@ public class PetStatusServiceTest {
     public void shouldReturnPetsStatusList() throws Exception {
         when(petsStatusRepository.findAll()).thenReturn(Collections.emptyList());
 
-        final List<PetStatus> petStatuses = petsStatusService.findAll();
+        final List<PetStatus> petStatuses = petStatusService.findAll();
         assertTrue(petStatuses.isEmpty());
     }
 
@@ -62,7 +62,7 @@ public class PetStatusServiceTest {
     public void shouldCreatePetsStatus(final PetStatus petStatus) throws Exception {
         when(petsStatusRepository.save(any(PetStatus.class))).thenReturn(petStatus);
 
-        final PetStatus createdPetStatus = petsStatusService.create(petStatus);
+        final PetStatus createdPetStatus = petStatusService.create(petStatus);
         assertEquals(EXPECTED_NAME, createdPetStatus.getName());
         assertEquals(EXPECTED_RGB, createdPetStatus.getRgb());
         verify(petsStatusRepository, times(1)).save(any(PetStatus.class));
@@ -71,7 +71,7 @@ public class PetStatusServiceTest {
     @Test
     public void shouldDeletePetsStatus() throws Exception {
         when(petsStatusRepository.exists(EXPECTED_ID)).thenReturn(true);
-        petsStatusService.delete(EXPECTED_ID);
+        petStatusService.delete(EXPECTED_ID);
 
         verify(petsStatusRepository, times(1)).exists(eq(EXPECTED_ID));
     }
@@ -79,7 +79,7 @@ public class PetStatusServiceTest {
     @Test(expected = NotFoundException.class)
     public void deletePetsStatusNotFoundException() throws Exception {
         when(petsStatusRepository.exists(EXPECTED_ID)).thenReturn(false);
-        petsStatusService.delete(EXPECTED_ID);
+        petStatusService.delete(EXPECTED_ID);
 
         verify(petsStatusRepository, times(1)).exists(eq(EXPECTED_ID));
     }
@@ -89,7 +89,7 @@ public class PetStatusServiceTest {
     public void updatePetsStatus(final PetStatus petStatus) throws Exception {
         when(petsStatusRepository.exists(EXPECTED_ID)).thenReturn(true);
         when(petsStatusRepository.save(any(PetStatus.class))).thenReturn(petStatus);
-        final PetStatus updatedPetStatus = petsStatusService.update(EXPECTED_ID, petStatus);
+        final PetStatus updatedPetStatus = petStatusService.update(EXPECTED_ID, petStatus);
 
         assertEquals(EXPECTED_NAME, updatedPetStatus.getName());
         assertEquals(EXPECTED_RGB, updatedPetStatus.getRgb());
@@ -99,7 +99,7 @@ public class PetStatusServiceTest {
     @UseDataProvider("getProperPetsStatus")
     public void updateProposalNotFoundException(final PetStatus petStatus) throws Exception {
         when(petsStatusRepository.exists(EXPECTED_ID)).thenReturn(false);
-        petsStatusService.update(EXPECTED_ID, petStatus);
+        petStatusService.update(EXPECTED_ID, petStatus);
 
         verify(petsStatusRepository, times(1)).exists(eq(EXPECTED_ID));
     }

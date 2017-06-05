@@ -10,13 +10,13 @@ import java.util.List;
 import java.util.UUID;
 
 @Service
-public class PetsStatusService {
+public class PetStatusService {
 
     private static final String PETS_STATUS = "Pets status";
     private final PetsStatusRepository petsStatusRepository;
 
     @Autowired
-    PetsStatusService(PetsStatusRepository petsStatusRepository) {
+    PetStatusService(PetsStatusRepository petsStatusRepository) {
         this.petsStatusRepository = petsStatusRepository;
     }
 

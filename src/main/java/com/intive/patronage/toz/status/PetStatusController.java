@@ -40,11 +40,11 @@ import static com.intive.patronage.toz.util.ModelMapper.convertToView;
 @RequestMapping(value = ApiUrl.PETS_STATUS_PATH, produces = MediaType.APPLICATION_JSON_VALUE)
 public class PetStatusController {
 
-    private final PetsStatusService petsStatusService;
+    private final PetStatusService petStatusService;
 
     @Autowired
-    PetStatusController(PetsStatusService petsStatusService) {
-        this.petsStatusService = petsStatusService;
+    PetStatusController(PetStatusService petStatusService) {
+        this.petStatusService = petStatusService;
     }
 
     @ApiOperation(value = "Get all pets status", responseContainer = "List", notes =
@@ -52,7 +52,7 @@ public class PetStatusController {
     @GetMapping
     @PreAuthorize("hasAnyAuthority('SA', 'TOZ')")
     public List<PetStatusView> getAllPetsStatus() {
-        final List<PetStatus> statuses = petsStatusService.findAll();
+        final List<PetStatus> statuses = petStatusService.findAll();
         return convertIdentifiableToView(statuses, PetStatusView.class);
     }
 
@@ -66,7 +66,7 @@ public class PetStatusController {
     @PreAuthorize("hasAnyAuthority('SA', 'TOZ')")
     public ResponseEntity<PetStatusView> createPetsStatus(@Valid @RequestBody PetStatusView petStatusView) {
         final PetStatus petStatus = ModelMapper.convertToModel(petStatusView, PetStatus.class);
-        final PetStatusView createdStatus = convertToView(petsStatusService.create(petStatus), PetStatusView.class);
+        final PetStatusView createdStatus = convertToView(petStatusService.create(petStatus), PetStatusView.class);
         final URI baseLocation = ServletUriComponentsBuilder.fromCurrentRequest()
                 .build().toUri();
         final String statusLocationString = String.format("%s/%s", baseLocation, createdStatus.getId());
@@ -84,7 +84,7 @@ public class PetStatusController {
     @PreAuthorize("hasAnyAuthority('SA', 'TOZ')")
     public PetStatusView updatePetsStatus(@PathVariable UUID id, @Valid @RequestBody PetStatusView petStatusView) {
         final PetStatus petStatus = ModelMapper.convertToModel(petStatusView, PetStatus.class);
-        return ModelMapper.convertToView(petsStatusService.update(id, petStatus), PetStatusView.class);
+        return ModelMapper.convertToView(petStatusService.update(id, petStatus), PetStatusView.class);
     }
 
     @ApiOperation(value = "Delete pets status", notes =
@@ -95,7 +95,7 @@ public class PetStatusController {
     @DeleteMapping(value = "/{id}")
     @PreAuthorize("hasAnyAuthority('SA', 'TOZ')")
     public ResponseEntity<?> deletePetsStatus(@PathVariable UUID id) {
-        petsStatusService.delete(id);
+        petStatusService.delete(id);
         return ResponseEntity.ok().build();
     }
 }

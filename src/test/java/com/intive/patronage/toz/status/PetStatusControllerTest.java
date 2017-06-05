@@ -38,14 +38,14 @@ public class PetStatusControllerTest {
     private static final MediaType CONTENT_TYPE = MediaType.APPLICATION_JSON_UTF8;
 
     @Mock
-    private PetsStatusService petsStatusService;
+    private PetStatusService petStatusService;
 
     private MockMvc mvc;
 
     @Before
     public void setUp() throws Exception {
         MockitoAnnotations.initMocks(this);
-        final PetStatusController petStatusController = new PetStatusController(petsStatusService);
+        final PetStatusController petStatusController = new PetStatusController(petStatusService);
         mvc = MockMvcBuilders.standaloneSetup(petStatusController).build();
     }
 
@@ -75,7 +75,7 @@ public class PetStatusControllerTest {
     @Test
     public void shouldReturnPetsStatusList() throws Exception {
         final List<PetStatus> petStatuses = getPetsStatuses();
-        when(petsStatusService.findAll()).thenReturn(petStatuses);
+        when(petStatusService.findAll()).thenReturn(petStatuses);
 
         mvc.perform(get(ApiUrl.PETS_STATUS_PATH))
                 .andExpect(status().isOk())
@@ -84,8 +84,8 @@ public class PetStatusControllerTest {
                 .andExpect(jsonPath("$[0].name", notNullValue()))
                 .andExpect(jsonPath("$[1].name", notNullValue()))
                 .andExpect(jsonPath("$[2].name", notNullValue()));
-        verify(petsStatusService, times(1)).findAll();
-        verifyNoMoreInteractions(petsStatusService);
+        verify(petStatusService, times(1)).findAll();
+        verifyNoMoreInteractions(petStatusService);
     }
 
     @Test
@@ -93,16 +93,16 @@ public class PetStatusControllerTest {
     public void shouldCreatePetsStatus(final PetStatus petStatus, final PetStatusView petStatusView) throws Exception {
         final String petsStatusViewJsonString = ModelMapper.convertToJsonString(petStatusView);
 
-        when(petsStatusService.create(any(PetStatus.class))).thenReturn(petStatus);
+        when(petStatusService.create(any(PetStatus.class))).thenReturn(petStatus);
         mvc.perform(post(ApiUrl.PETS_STATUS_PATH)
                 .contentType(CONTENT_TYPE)
                 .content(petsStatusViewJsonString))
                 .andExpect(status().isCreated())
                 .andExpect(jsonPath("$.name", is(EXPECTED_NAME)));
 
-        verify(petsStatusService, times(1))
+        verify(petStatusService, times(1))
                 .create(any(PetStatus.class));
-        verifyNoMoreInteractions(petsStatusService);
+        verifyNoMoreInteractions(petStatusService);
     }
 
     @Test
@@ -110,24 +110,24 @@ public class PetStatusControllerTest {
     public void shouldUpdatePetsStatus(final PetStatus petStatus, final PetStatusView petStatusView) throws Exception {
         final String petsStatusJsonString = ModelMapper.convertToJsonString(petStatusView);
 
-        when(petsStatusService.update(eq(EXPECTED_ID), any(PetStatus.class))).thenReturn(petStatus);
+        when(petStatusService.update(eq(EXPECTED_ID), any(PetStatus.class))).thenReturn(petStatus);
         mvc.perform(put(String.format("%s/%s", ApiUrl.PETS_STATUS_PATH, EXPECTED_ID))
                 .contentType(CONTENT_TYPE)
                 .content(petsStatusJsonString))
                 .andExpect(status().isOk());
 
-        verify(petsStatusService, times(1)).update(eq(EXPECTED_ID), any(PetStatus.class));
-        verifyNoMoreInteractions(petsStatusService);
+        verify(petStatusService, times(1)).update(eq(EXPECTED_ID), any(PetStatus.class));
+        verifyNoMoreInteractions(petStatusService);
     }
 
     @Test
     public void shouldDeletePetsStatusById() throws Exception {
         final UUID id = UUID.randomUUID();
-        doNothing().when(petsStatusService).delete(id);
+        doNothing().when(petStatusService).delete(id);
         mvc.perform(delete(String.format("%s/%s", ApiUrl.PETS_STATUS_PATH, id)))
                 .andExpect(status().isOk());
 
-        verify(petsStatusService, times(1)).delete(id);
-        verifyNoMoreInteractions(petsStatusService);
+        verify(petStatusService, times(1)).delete(id);
+        verifyNoMoreInteractions(petStatusService);
     }
 }
