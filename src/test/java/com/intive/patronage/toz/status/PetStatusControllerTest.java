@@ -45,8 +45,8 @@ public class PetStatusControllerTest {
     @Before
     public void setUp() throws Exception {
         MockitoAnnotations.initMocks(this);
-        final PetsStatusController petsStatusController = new PetsStatusController(petsStatusService);
-        mvc = MockMvcBuilders.standaloneSetup(petsStatusController).build();
+        final PetStatusController petStatusController = new PetStatusController(petsStatusService);
+        mvc = MockMvcBuilders.standaloneSetup(petStatusController).build();
     }
 
     @DataProvider
