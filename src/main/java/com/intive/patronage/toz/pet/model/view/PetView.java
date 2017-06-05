@@ -68,5 +68,5 @@ public class PetView extends IdentifiableView {
     protected List<UploadedFileView> gallery = new ArrayList<>();
 
     @ApiModelProperty(example = "c5296892-347f-4b2e-b1c6-6faff971f767", position = 9)
-    private UUID petsStatus;
+    private UUID petStatus;
 }

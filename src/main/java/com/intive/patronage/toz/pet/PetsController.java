@@ -196,11 +196,11 @@ class PetsController {
 
     private Pet convertToModel(final PetView petView) {
         PetStatus petStatus = null;
-        if (petView.getPetsStatus() != null) {
+        if (petView.getPetStatus() != null) {
             petStatus = new PetStatus();
-            petStatus.setId(petView.getPetsStatus());
+            petStatus.setId(petView.getPetStatus());
         }
-        petView.setPetsStatus(null);
+        petView.setPetStatus(null);
         Pet pet = ModelMapper.convertIdentifiableToModel(petView, Pet.class);
         pet.setPetStatus(petStatus);
         return pet;
@@ -212,7 +212,7 @@ class PetsController {
             UUID statusId = pet.getPetStatus().getId();
             pet.setPetStatus(null);
             petView = ModelMapper.convertIdentifiableToView(pet, PetView.class);
-            petView.setPetsStatus(statusId);
+            petView.setPetStatus(statusId);
         } else {
             petView = ModelMapper.convertIdentifiableToView(pet, PetView.class);
         }
