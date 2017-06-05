@@ -5,13 +5,14 @@ import com.intive.patronage.toz.pet.model.db.Pet;
 import com.intive.patronage.toz.status.PetsStatusRepository;
 import com.intive.patronage.toz.status.model.PetStatus;
 import com.intive.patronage.toz.storage.model.db.UploadedFile;
-import com.intive.patronage.toz.util.RepositoryChecker;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.util.ArrayList;
 import java.util.List;
 import java.util.UUID;
+
+import static com.intive.patronage.toz.util.RepositoryChecker.throwNotFoundExceptionIfNotExists;
 
 @Service
 class PetsService {
@@ -50,7 +51,7 @@ class PetsService {
     }
 
     Pet findById(final UUID id) {
-        RepositoryChecker.throwNotFoundExceptionIfNotExists(id, petsRepository, PET);
+        throwNotFoundExceptionIfNotExists(id, petsRepository, PET);
         return petsRepository.findOne(id);
     }
 
@@ -58,8 +59,8 @@ class PetsService {
         pet.setGallery(null);
         if (pet.getPetStatus() != null) {
             UUID petStatusId = pet.getPetStatus().getId();
-            RepositoryChecker.throwNotFoundExceptionIfNotExists(petStatusId, petsStatusRepository, PETS_STATUS);
-            PetStatus petStatus = petsStatusRepository.findOne(pet.getPetStatus().getId());
+            throwNotFoundExceptionIfNotExists(petStatusId, petsStatusRepository, PETS_STATUS);
+            PetStatus petStatus = petsStatusRepository.findOne(petStatusId);
             pet.setPetStatus(petStatus);
         } else {
             pet.setPetStatus(null);
@@ -68,13 +69,15 @@ class PetsService {
     }
 
     void deletePet(final UUID id) {
-        RepositoryChecker.throwNotFoundExceptionIfNotExists(id, petsRepository, PET);
+        throwNotFoundExceptionIfNotExists(id, petsRepository, PET);
         petsRepository.delete(id);
     }
 
     Pet updatePet(final UUID id, final Pet pet) {
-        RepositoryChecker.throwNotFoundExceptionIfNotExists(id, petsRepository, PET);
-        pet.setId(id); // TODO check status exists
+        throwNotFoundExceptionIfNotExists(id, petsRepository, PET);
+        UUID petStatusId = pet.getPetStatus().getId();
+        throwNotFoundExceptionIfNotExists(petStatusId, petsStatusRepository, PETS_STATUS);
+        pet.setId(id);
         pet.setGallery(petsRepository.findOne(id).getGallery());
         if (pet.getPetStatus() != null) {
             PetStatus petStatus = petsStatusRepository.findOne(pet.getPetStatus().getId());
