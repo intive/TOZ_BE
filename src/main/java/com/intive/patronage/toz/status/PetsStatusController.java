@@ -4,7 +4,7 @@ import com.intive.patronage.toz.config.ApiUrl;
 import com.intive.patronage.toz.error.model.ErrorResponse;
 import com.intive.patronage.toz.error.model.ValidationErrorResponse;
 import com.intive.patronage.toz.status.model.PetStatus;
-import com.intive.patronage.toz.status.model.PetsStatusView;
+import com.intive.patronage.toz.status.model.PetStatusView;
 import com.intive.patronage.toz.util.ModelMapper;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
@@ -51,22 +51,22 @@ public class PetsStatusController {
             "Required roles: SA, TOZ.")
     @GetMapping
     @PreAuthorize("hasAnyAuthority('SA', 'TOZ')")
-    public List<PetsStatusView> getAllPetsStatus() {
+    public List<PetStatusView> getAllPetsStatus() {
         final List<PetStatus> statuses = petsStatusService.findAll();
-        return convertIdentifiableToView(statuses, PetsStatusView.class);
+        return convertIdentifiableToView(statuses, PetStatusView.class);
     }
 
     @ResponseStatus(HttpStatus.CREATED)
-    @ApiOperation(value = "Create new pets status", response = PetsStatusView.class, notes =
+    @ApiOperation(value = "Create new pets status", response = PetStatusView.class, notes =
             "Required roles: SA, TOZ")
     @ApiResponses(value = {
             @ApiResponse(code = 400, message = "Bad request", response = ValidationErrorResponse.class)
     })
     @PostMapping(consumes = MediaType.APPLICATION_JSON_VALUE)
     @PreAuthorize("hasAnyAuthority('SA', 'TOZ')")
-    public ResponseEntity<PetsStatusView> createPetsStatus(@Valid @RequestBody PetsStatusView petsStatusView) {
-        final PetStatus petStatus = ModelMapper.convertToModel(petsStatusView, PetStatus.class);
-        final PetsStatusView createdStatus = convertToView(petsStatusService.create(petStatus), PetsStatusView.class);
+    public ResponseEntity<PetStatusView> createPetsStatus(@Valid @RequestBody PetStatusView petStatusView) {
+        final PetStatus petStatus = ModelMapper.convertToModel(petStatusView, PetStatus.class);
+        final PetStatusView createdStatus = convertToView(petsStatusService.create(petStatus), PetStatusView.class);
         final URI baseLocation = ServletUriComponentsBuilder.fromCurrentRequest()
                 .build().toUri();
         final String statusLocationString = String.format("%s/%s", baseLocation, createdStatus.getId());
@@ -74,7 +74,7 @@ public class PetsStatusController {
         return ResponseEntity.created(location).body(createdStatus);
     }
 
-    @ApiOperation(value = "Update pets status information", response = PetsStatusView.class, notes =
+    @ApiOperation(value = "Update pets status information", response = PetStatusView.class, notes =
             "Required roles: SA, TOZ.")
     @ApiResponses(value = {
             @ApiResponse(code = 404, message = "Pets status not found", response = ErrorResponse.class),
@@ -82,9 +82,9 @@ public class PetsStatusController {
     })
     @PutMapping(value = "/{id}", consumes = MediaType.APPLICATION_JSON_VALUE)
     @PreAuthorize("hasAnyAuthority('SA', 'TOZ')")
-    public PetsStatusView updatePetsStatus(@PathVariable UUID id, @Valid @RequestBody PetsStatusView petsStatusView) {
-        final PetStatus petStatus = ModelMapper.convertToModel(petsStatusView, PetStatus.class);
-        return ModelMapper.convertToView(petsStatusService.update(id, petStatus), PetsStatusView.class);
+    public PetStatusView updatePetsStatus(@PathVariable UUID id, @Valid @RequestBody PetStatusView petStatusView) {
+        final PetStatus petStatus = ModelMapper.convertToModel(petStatusView, PetStatus.class);
+        return ModelMapper.convertToView(petsStatusService.update(id, petStatus), PetStatusView.class);
     }
 
     @ApiOperation(value = "Delete pets status", notes =

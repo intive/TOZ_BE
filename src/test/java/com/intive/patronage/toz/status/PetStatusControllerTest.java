@@ -2,7 +2,7 @@ package com.intive.patronage.toz.status;
 
 import com.intive.patronage.toz.config.ApiUrl;
 import com.intive.patronage.toz.status.model.PetStatus;
-import com.intive.patronage.toz.status.model.PetsStatusView;
+import com.intive.patronage.toz.status.model.PetStatusView;
 import com.intive.patronage.toz.util.ModelMapper;
 import com.tngtech.java.junit.dataprovider.DataProvider;
 import com.tngtech.java.junit.dataprovider.DataProviderRunner;
@@ -56,8 +56,8 @@ public class PetStatusControllerTest {
         petStatus.setName(EXPECTED_NAME);
         petStatus.setRgb(EXPECTED_RGB);
 
-        final PetsStatusView petsStatusView = ModelMapper.convertToView(petStatus, PetsStatusView.class);
-        return new Object[][]{{petStatus, petsStatusView}};
+        final PetStatusView petStatusView = ModelMapper.convertToView(petStatus, PetStatusView.class);
+        return new Object[][]{{petStatus, petStatusView}};
     }
 
     private List<PetStatus> getPetsStatuses() {
@@ -90,8 +90,8 @@ public class PetStatusControllerTest {
 
     @Test
     @UseDataProvider("getPetsStatusModelAndView")
-    public void shouldCreatePetsStatus(final PetStatus petStatus, final PetsStatusView petsStatusView) throws Exception {
-        final String petsStatusViewJsonString = ModelMapper.convertToJsonString(petsStatusView);
+    public void shouldCreatePetsStatus(final PetStatus petStatus, final PetStatusView petStatusView) throws Exception {
+        final String petsStatusViewJsonString = ModelMapper.convertToJsonString(petStatusView);
 
         when(petsStatusService.create(any(PetStatus.class))).thenReturn(petStatus);
         mvc.perform(post(ApiUrl.PETS_STATUS_PATH)
@@ -107,8 +107,8 @@ public class PetStatusControllerTest {
 
     @Test
     @UseDataProvider("getPetsStatusModelAndView")
-    public void shouldUpdatePetsStatus(final PetStatus petStatus, final PetsStatusView petsStatusView) throws Exception {
-        final String petsStatusJsonString = ModelMapper.convertToJsonString(petsStatusView);
+    public void shouldUpdatePetsStatus(final PetStatus petStatus, final PetStatusView petStatusView) throws Exception {
+        final String petsStatusJsonString = ModelMapper.convertToJsonString(petStatusView);
 
         when(petsStatusService.update(eq(EXPECTED_ID), any(PetStatus.class))).thenReturn(petStatus);
         mvc.perform(put(String.format("%s/%s", ApiUrl.PETS_STATUS_PATH, EXPECTED_ID))
