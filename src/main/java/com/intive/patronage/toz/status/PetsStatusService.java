@@ -40,8 +40,8 @@ public class PetsStatusService {
         petsStatusRepository.delete(id);
     }
 
-    private void throwAlreadyExistsIfStatusNameExists(String email){
-        if (petsStatusRepository.existsStatusByName(email)) {
+    private void throwAlreadyExistsIfStatusNameExists(String statusName){
+        if (petsStatusRepository.existsStatusByName(statusName)) {
             throw new AlreadyExistsException(PETS_STATUS);
         }
     }
