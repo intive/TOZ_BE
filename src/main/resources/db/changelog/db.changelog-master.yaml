@@ -523,3 +523,7 @@ databaseChangeLog:
           - renameTable:
               oldTableName: pets_status
               newTableName: pet_status
+          - renameColumn:
+              oldColumnName: pets_status_id
+              newColumnName: pet_status_id
+              tableName: pets_status_pet

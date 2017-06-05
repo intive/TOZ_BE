@@ -54,7 +54,7 @@ class PetsService {
         return petsRepository.findOne(id);
     }
 
-    Pet createPet(final Pet pet) {
+    Pet createPet(final Pet pet) { // TODO
         pet.setGallery(null);
         if (pet.getPetStatus() != null) {
             throwNotFoundExceptionIfStatusNotExists(pet.getPetStatus().getId());
@@ -73,7 +73,7 @@ class PetsService {
 
     Pet updatePet(final UUID id, final Pet pet) {
         RepositoryChecker.throwNotFoundExceptionIfNotExists(id, petsRepository, PET);
-        pet.setId(id);
+        pet.setId(id); // TODO check status exists
         pet.setGallery(petsRepository.findOne(id).getGallery());
         if (pet.getPetStatus() != null) {
             PetStatus petStatus = petsStatusRepository.findOne(pet.getPetStatus().getId());
@@ -91,7 +91,7 @@ class PetsService {
         updatePet(id, pet);
     }
 
-    void throwNotFoundExceptionIfStatusNotExists(UUID id) { // TODO roles checker
+    private void throwNotFoundExceptionIfStatusNotExists(UUID id) { // TODO roles checker
         if (!petsStatusRepository.exists(id)) {
             throw new NotFoundException(PETS_STATUS);
         }

@@ -25,7 +25,7 @@ public class PetsStatusService {
     }
 
     public PetStatus create(PetStatus petStatus) {
-        throwNotFoundExceptionIfStatusNameExists(petStatus.getName());
+        throwAlreadyExistsIfStatusNameExists(petStatus.getName());
         return petsStatusRepository.save(petStatus);
     }
 
@@ -40,11 +40,9 @@ public class PetsStatusService {
         petsStatusRepository.delete(id);
     }
 
-    private void throwNotFoundExceptionIfStatusNameExists(String email){
+    private void throwAlreadyExistsIfStatusNameExists(String email){
         if (petsStatusRepository.existsStatusByName(email)) {
             throw new AlreadyExistsException(PETS_STATUS);
         }
     }
-
-
 }

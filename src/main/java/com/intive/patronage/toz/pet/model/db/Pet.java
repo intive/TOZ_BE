@@ -59,9 +59,10 @@ public class Pet extends Identifiable {
     }
 
     @ManyToOne
-//    @JoinTable(name = "pets_status_pet",
-//            joinColumns = @JoinColumn(name = "pet_id"),
-//    inverseJoinColumns = @JoinColumn(name = "pets_status_id"))
+    @JoinTable(name = "pets_status_pet",
+            joinColumns = @JoinColumn(name = "pet_id"),
+            inverseJoinColumns = @JoinColumn(name = "pet_status_id")
+    )
     private PetStatus petStatus;
 
     public enum Type {
