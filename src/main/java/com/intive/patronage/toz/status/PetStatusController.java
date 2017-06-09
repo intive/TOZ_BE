@@ -51,7 +51,7 @@ public class PetStatusController {
             "Required roles: SA, TOZ.")
     @GetMapping
     @PreAuthorize("hasAnyAuthority('SA', 'TOZ')")
-    public List<PetStatusView> getAllPetsStatus() {
+    public List<PetStatusView> getAllPetStatuses() {
         final List<PetStatus> statuses = petStatusService.findAll();
         return convertIdentifiableToView(statuses, PetStatusView.class);
     }
@@ -64,7 +64,7 @@ public class PetStatusController {
     })
     @PostMapping(consumes = MediaType.APPLICATION_JSON_VALUE)
     @PreAuthorize("hasAnyAuthority('SA', 'TOZ')")
-    public ResponseEntity<PetStatusView> createPetsStatus(@Valid @RequestBody PetStatusView petStatusView) {
+    public ResponseEntity<PetStatusView> createPetStatus(@Valid @RequestBody PetStatusView petStatusView) {
         final PetStatus petStatus = ModelMapper.convertToModel(petStatusView, PetStatus.class);
         final PetStatusView createdStatus = convertToView(petStatusService.create(petStatus), PetStatusView.class);
         final URI baseLocation = ServletUriComponentsBuilder.fromCurrentRequest()
@@ -82,7 +82,7 @@ public class PetStatusController {
     })
     @PutMapping(value = "/{id}", consumes = MediaType.APPLICATION_JSON_VALUE)
     @PreAuthorize("hasAnyAuthority('SA', 'TOZ')")
-    public PetStatusView updatePetsStatus(@PathVariable UUID id, @Valid @RequestBody PetStatusView petStatusView) {
+    public PetStatusView updatePetStatus(@PathVariable UUID id, @Valid @RequestBody PetStatusView petStatusView) {
         final PetStatus petStatus = ModelMapper.convertToModel(petStatusView, PetStatus.class);
         return ModelMapper.convertToView(petStatusService.update(id, petStatus), PetStatusView.class);
     }
@@ -94,7 +94,7 @@ public class PetStatusController {
     })
     @DeleteMapping(value = "/{id}")
     @PreAuthorize("hasAnyAuthority('SA', 'TOZ')")
-    public ResponseEntity<?> deletePetsStatus(@PathVariable UUID id) {
+    public ResponseEntity<?> deletePetStatus(@PathVariable UUID id) {
         petStatusService.delete(id);
         return ResponseEntity.ok().build();
     }
