@@ -14,7 +14,7 @@ import org.springframework.context.annotation.Bean;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Component;
 
-import java.util.Objects;
+import java.util.*;
 
 @Component
 class InitRepository {
@@ -42,7 +42,7 @@ class InitRepository {
     }
 
     @Bean
-    public CommandLineRunner initDatabase() {
+    CommandLineRunner initDatabase() {
         return args -> {
             // TODO move to UserRepository?
             if (!userRepository.existsByName(SUPER_ADMIN_USER_NAME)) {
@@ -55,49 +55,21 @@ class InitRepository {
                 LOG.info("Created super admin: " + admin);
             }
 
-
-            PetStatus petStatus = new PetStatus();
-            petStatus.setName("ODEBRANY PRZEZ WŁAŚCICIELA");
-            petStatus.setRgb("#0000FF");
-            petStatus.setPublic(false);
-            petsStatusRepository.save(petStatus);
-            petStatus = new PetStatus();
-            petStatus.setName("WYPUSZCZONY W MIEJSCE BYTOWANIA");
-            petStatus.setRgb("#007FFF");
-            petStatus.setPublic(false);
-            petsStatusRepository.save(petStatus);
-            petStatus = new PetStatus();
-            petStatus.setName("EUTANAZJA");
-            petStatus.setRgb("#FF0000");
-            petStatus.setPublic(false);
-            petsStatusRepository.save(petStatus);
-            petStatus = new PetStatus();
-            petStatus.setName("ZGON");
-            petStatus.setRgb("#FF0000");
-            petStatus.setPublic(false);
-            petsStatusRepository.save(petStatus);
-            petStatus = new PetStatus();
-            petStatus.setName("PRZEKAZANY");
-            petStatus.setRgb("#FFFF00");
-            petStatus.setPublic(false);
-            petsStatusRepository.save(petStatus);
-            petStatus = new PetStatus();
-            petStatus.setName("USUNIĘTY");
-            petStatus.setRgb("#606060");
-            petStatus.setPublic(false);
-            petsStatusRepository.save(petStatus);
-            petStatus = new PetStatus();
-            petStatus.setName("ADOPTOWANY");
-            petStatus.setRgb("#008000");
-            petStatus.setPublic(false);
-            petsStatusRepository.save(petStatus);
-            petStatus = new PetStatus();
-            petStatus.setName("DO ADOPCJI");
-            petStatus.setRgb("#008000");
-            petStatus.setPublic(true);
-            petsStatusRepository.save(petStatus);
+            petsStatusRepository.save(getInitialPetStatuses());
             LOG.info("Created predefined pets statuses");
-
         };
     }
+
+    private List<PetStatus> getInitialPetStatuses() {
+        return Arrays.asList(
+                new PetStatus("ODEBRANY PRZEZ WŁAŚCICIELA", "#0000FF", false),
+                new PetStatus("WYPUSZCZONY W MIEJSCE BYTOWANIA", "#007FFF", false),
+                new PetStatus("EUTANAZJA", "#FF0000", false),
+                new PetStatus("ZGON", "#FF0000", false),
+                new PetStatus("PRZEKAZANY", "#FFFF00", false),
+                new PetStatus("USUNIĘTY", "#606060", false),
+                new PetStatus("ADOPTOWANY", "#008000", false),
+                new PetStatus("DO ADOPCJI", "#008000", true));
+    }
+
 }
