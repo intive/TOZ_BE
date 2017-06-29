@@ -36,7 +36,7 @@ public class PetsServiceTest {
     private PetsService petsService;
 
     @DataProvider
-    public static Object[] getPetWithNullStatus() {
+    public static Object[] getPetWithoutStatus() {
         Pet pet = new Pet();
         pet.setName(EXPECTED_NAME);
         pet.setType(EXPECTED_TYPE);
@@ -48,7 +48,7 @@ public class PetsServiceTest {
     @DataProvider
     public static Object[] getPetWithStatus() {
         PetStatus petStatus = new PetStatus();
-        Pet pet = (Pet) getPetWithNullStatus()[0];
+        Pet pet = (Pet) getPetWithoutStatus()[0];
         pet.setPetStatus(petStatus);
         return new Pet[]{pet};
     }
@@ -62,13 +62,19 @@ public class PetsServiceTest {
     @Test
     public void findAllPets() throws Exception {
         when(petsRepository.findAll()).thenReturn(Collections.emptyList());
-
         List<Pet> pets = petsService.findAllPets();
         assertTrue(pets.isEmpty());
     }
 
     @Test
-    @UseDataProvider("getPetWithNullStatus")
+    public void findAllPetsWithFilledFields() { // TODO: check information for 'else' in TODO in this method
+        when(petsRepository.findByNameNotNullAndTypeNotNullAndSexNotNull()).thenReturn(Collections.emptyList());
+        List<Pet> pets = petsService.findPetsWithFilledFields();
+        assertTrue(pets.isEmpty());
+    }
+
+    @Test
+    @UseDataProvider("getPetWithoutStatus")
     public void findById(final Pet pet) throws Exception {
         final UUID petId = pet.getId();
         when(petsRepository.exists(petId)).thenReturn(true);
@@ -88,14 +94,27 @@ public class PetsServiceTest {
     }
 
     @Test
-    @UseDataProvider("getPetWithNullStatus")
-    public void createPet(final Pet pet) throws Exception {
-        when(petsRepository.save(any(Pet.class))).thenReturn(pet);
+    @UseDataProvider("getPetWithoutStatus")
+    public void createPetWithoutStatus(final Pet pet) throws Exception {
+        when(petsRepository.save(pet)).thenReturn(pet);
 
         Pet createdPet = petsService.createPet(pet);
         assertEquals(EXPECTED_NAME, createdPet.getName());
         assertEquals(EXPECTED_TYPE, createdPet.getType());
         assertEquals(EXPECTED_SEX, createdPet.getSex());
+    }
+
+    @Test
+    @UseDataProvider("getPetWithStatus")
+    public void createPetWithStatus(final Pet pet) {
+        PetStatus petStatus = pet.getPetStatus();
+        UUID petStatusId = petStatus.getId();
+        when(petsStatusRepository.exists(petStatusId)).thenReturn(true);
+        when(petsStatusRepository.findOne(petStatusId)).thenReturn(petStatus);
+        when(petsRepository.save(pet)).thenReturn(pet);
+
+        Pet createdPet = petsService.createPet(pet);
+        assertEquals(petStatus, createdPet.getPetStatus());
     }
 
     @Test
@@ -113,7 +132,7 @@ public class PetsServiceTest {
     }
 
     @Test
-    @UseDataProvider("getPetWithNullStatus")
+    @UseDataProvider("getPetWithoutStatus")
     public void updatePet(final Pet pet) throws Exception {
         final UUID petId = pet.getId();
         when(petsRepository.exists(petId)).thenReturn(true);
@@ -149,7 +168,7 @@ public class PetsServiceTest {
     }
 
     @Test(expected = NotFoundException.class)
-    @UseDataProvider("getPetWithNullStatus")
+    @UseDataProvider("getPetWithoutStatus")
     public void updatePetNotFoundException(final Pet pet) throws Exception {
         final UUID petId = pet.getId();
         when(petsRepository.exists(petId)).thenReturn(false);
