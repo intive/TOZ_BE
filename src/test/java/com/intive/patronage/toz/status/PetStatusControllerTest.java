@@ -50,7 +50,7 @@ public class PetStatusControllerTest {
     }
 
     @DataProvider
-    public static Object[][] getPetsStatusModelAndView() {
+    public static Object[][] getPetStatusModelAndView() {
         final PetStatus petStatus = new PetStatus();
         petStatus.setId(EXPECTED_ID);
         petStatus.setName(EXPECTED_NAME);
