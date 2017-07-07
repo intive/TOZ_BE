@@ -89,7 +89,7 @@ public class PetStatusControllerTest {
     }
 
     @Test
-    @UseDataProvider("getPetsStatusModelAndView")
+    @UseDataProvider("getPetStatusModelAndView")
     public void shouldCreatePetsStatus(final PetStatus petStatus, final PetStatusView petStatusView) throws Exception {
         final String petsStatusViewJsonString = ModelMapper.convertToJsonString(petStatusView);
 
@@ -106,7 +106,7 @@ public class PetStatusControllerTest {
     }
 
     @Test
-    @UseDataProvider("getPetsStatusModelAndView")
+    @UseDataProvider("getPetStatusModelAndView")
     public void shouldUpdatePetsStatus(final PetStatus petStatus, final PetStatusView petStatusView) throws Exception {
         final String petsStatusJsonString = ModelMapper.convertToJsonString(petStatusView);
 

@@ -527,3 +527,6 @@ databaseChangeLog:
               oldColumnName: pets_status_id
               newColumnName: pet_status_id
               tableName: pets_status_pet
+          - dropColumn:
+              columnName: pet_status_id
+              tableName: pet
