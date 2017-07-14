@@ -12,7 +12,7 @@ import java.util.UUID;
 @Service
 public class PetStatusService {
 
-    private static final String PETS_STATUS = "Pets status";
+    private static final String PET_STATUS = "Pet status";
     private final PetsStatusRepository petsStatusRepository;
 
     @Autowired
@@ -30,19 +30,19 @@ public class PetStatusService {
     }
 
     public PetStatus update(UUID id, PetStatus petStatus) {
-        RepositoryChecker.throwNotFoundExceptionIfNotExists(id, petsStatusRepository, PETS_STATUS);
+        RepositoryChecker.throwNotFoundExceptionIfNotExists(id, petsStatusRepository, PET_STATUS);
         petStatus.setId(id);
         return petsStatusRepository.save(petStatus);
     }
 
     public void delete(UUID id) {
-        RepositoryChecker.throwNotFoundExceptionIfNotExists(id, petsStatusRepository, PETS_STATUS);
+        RepositoryChecker.throwNotFoundExceptionIfNotExists(id, petsStatusRepository, PET_STATUS);
         petsStatusRepository.delete(id);
     }
 
     private void throwAlreadyExistsIfStatusNameExists(String statusName){
         if (petsStatusRepository.existsStatusByName(statusName)) {
-            throw new AlreadyExistsException(PETS_STATUS);
+            throw new AlreadyExistsException(PET_STATUS);
         }
     }
 }

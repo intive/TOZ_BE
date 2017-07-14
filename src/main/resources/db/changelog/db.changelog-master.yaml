@@ -530,3 +530,6 @@ databaseChangeLog:
           - dropColumn:
               columnName: pet_status_id
               tableName: pet
+          - renameTable:
+              oldTableName: pets_status_pet
+              newTableName: pets_statuses
