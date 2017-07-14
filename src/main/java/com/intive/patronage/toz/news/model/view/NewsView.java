@@ -37,7 +37,9 @@ public class NewsView extends IdentifiableView {
     @EnumValidate(enumClass = News.Type.class)
     private String type;
 
-    @ApiModelProperty(example = "storage/a9/2c/a92ccd6a-f51c-4ff0-8645-02adff409051.jpg", position = 4)
+    @ApiModelProperty(example = "storage/a9/2c/a92ccd6a-f51c-4ff0-8645-02adff409051.jpg",
+            readOnly = true, position = 4)
+    @JsonProperty(access = JsonProperty.Access.READ_ONLY)
     private String imageUrl;
 
     @ApiModelProperty(example = "1222333444555", position = 5)
