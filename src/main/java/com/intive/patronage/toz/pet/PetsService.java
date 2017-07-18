@@ -3,7 +3,7 @@ package com.intive.patronage.toz.pet;
 import com.intive.patronage.toz.error.exception.NotFoundException;
 import com.intive.patronage.toz.pet.model.db.Pet;
 import com.intive.patronage.toz.status.PetsStatusRepository;
-import com.intive.patronage.toz.status.model.PetsStatus;
+import com.intive.patronage.toz.status.model.PetStatus;
 import com.intive.patronage.toz.storage.model.db.UploadedFile;
 import com.intive.patronage.toz.util.RepositoryChecker;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -12,6 +12,8 @@ import org.springframework.stereotype.Service;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.UUID;
+
+import static com.intive.patronage.toz.util.RepositoryChecker.throwNotFoundExceptionIfNotExists;
 
 @Service
 class PetsService {
@@ -37,8 +39,8 @@ class PetsService {
         List<Pet> publicPets = new ArrayList<>();
         pets.forEach(
                 pet -> {
-                    if (pet.getPetsStatus() != null) {
-                        if (pet.getPetsStatus().isPublic()) {
+                    if (pet.getPetStatus() != null) {
+                        if (pet.getPetStatus().isPublic()) {
                             publicPets.add(pet);
                         }
                     } else { //TODO: remove this 'else' when mobile clients finish testing
@@ -50,37 +52,38 @@ class PetsService {
     }
 
     Pet findById(final UUID id) {
-        RepositoryChecker.throwNotFoundExceptionIfNotExists(id, petsRepository, PET);
+        throwNotFoundExceptionIfNotExists(id, petsRepository, PET);
         return petsRepository.findOne(id);
     }
 
     Pet createPet(final Pet pet) {
         pet.setGallery(null);
-        if (pet.getPetsStatus() != null) {
-            throwNotFoundExceptionIfStatusNotExists(pet.getPetsStatus().getId());
-            PetsStatus petsStatus = petsStatusRepository.findOne(pet.getPetsStatus().getId());
-            pet.setPetsStatus(petsStatus);
+        if (pet.getPetStatus() != null) {
+            UUID petStatusId = pet.getPetStatus().getId();
+            throwNotFoundExceptionIfNotExists(petStatusId, petsStatusRepository, PETS_STATUS);
+            PetStatus petStatus = petsStatusRepository.findOne(petStatusId);
+            pet.setPetStatus(petStatus);
         } else {
-            pet.setPetsStatus(null);
+            pet.setPetStatus(null);
         }
         return petsRepository.save(pet);
     }
 
     void deletePet(final UUID id) {
-        RepositoryChecker.throwNotFoundExceptionIfNotExists(id, petsRepository, PET);
+        throwNotFoundExceptionIfNotExists(id, petsRepository, PET);
         petsRepository.delete(id);
     }
 
     Pet updatePet(final UUID id, final Pet pet) {
-        RepositoryChecker.throwNotFoundExceptionIfNotExists(id, petsRepository, PET);
-
+        throwNotFoundExceptionIfNotExists(id, petsRepository, PET);
         pet.setId(id);
         pet.setGallery(petsRepository.findOne(id).getGallery());
         pet.setImageUrl(petsRepository.findOne(id).getImageUrl());
-
-        if (pet.getPetsStatus() != null) {
-            PetsStatus petsStatus = petsStatusRepository.findOne(pet.getPetsStatus().getId());
-            pet.setPetsStatus(petsStatus);
+        if (pet.getPetStatus() != null) {
+            UUID updatePetStatusId = pet.getPetStatus().getId();
+            throwNotFoundExceptionIfNotExists(updatePetStatusId, petsStatusRepository, PETS_STATUS);
+            PetStatus petStatus = petsStatusRepository.findOne(updatePetStatusId);
+            pet.setPetStatus(petStatus);
         }
         return petsRepository.save(pet);
     }

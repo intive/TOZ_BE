@@ -7,7 +7,7 @@ import com.intive.patronage.toz.error.model.ValidationErrorResponse;
 import com.intive.patronage.toz.pet.model.db.Pet;
 import com.intive.patronage.toz.pet.model.view.PetRequestBody;
 import com.intive.patronage.toz.pet.model.view.PetView;
-import com.intive.patronage.toz.status.model.PetsStatus;
+import com.intive.patronage.toz.status.model.PetStatus;
 import com.intive.patronage.toz.storage.StorageProperties;
 import com.intive.patronage.toz.storage.StorageService;
 import com.intive.patronage.toz.storage.model.db.UploadedFile;
@@ -15,26 +15,13 @@ import com.intive.patronage.toz.storage.model.view.UrlView;
 import com.intive.patronage.toz.util.ModelMapper;
 import com.intive.patronage.toz.util.UserInfoGetter;
 import com.intive.patronage.toz.util.validation.ImageValidator;
-import io.swagger.annotations.Api;
-import io.swagger.annotations.ApiOperation;
-import io.swagger.annotations.ApiParam;
-import io.swagger.annotations.ApiResponse;
-import io.swagger.annotations.ApiResponses;
+import io.swagger.annotations.*;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
-import org.springframework.web.bind.annotation.DeleteMapping;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.PutMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestParam;
-import org.springframework.web.bind.annotation.ResponseStatus;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
 import org.springframework.web.util.UriComponentsBuilder;
@@ -208,24 +195,24 @@ class PetsController {
     }
 
     private Pet convertToModel(final PetView petView) {
-        PetsStatus petsStatus = null;
-        if (petView.getPetsStatus() != null) {
-            petsStatus = new PetsStatus();
-            petsStatus.setId(petView.getPetsStatus());
+        PetStatus petStatus = null;
+        if (petView.getPetStatus() != null) {
+            petStatus = new PetStatus();
+            petStatus.setId(petView.getPetStatus());
         }
-        petView.setPetsStatus(null);
+        petView.setPetStatus(null);
         Pet pet = ModelMapper.convertIdentifiableToModel(petView, Pet.class);
-        pet.setPetsStatus(petsStatus);
+        pet.setPetStatus(petStatus);
         return pet;
     }
 
     private PetView convertToView(final Pet pet) {
         PetView petView;
-        if (pet.getPetsStatus() != null) {
-            UUID statusId = pet.getPetsStatus().getId();
-            pet.setPetsStatus(null);
+        if (pet.getPetStatus() != null) {
+            UUID statusId = pet.getPetStatus().getId();
+            pet.setPetStatus(null);
             petView = ModelMapper.convertIdentifiableToView(pet, PetView.class);
-            petView.setPetsStatus(statusId);
+            petView.setPetStatus(statusId);
         } else {
             petView = ModelMapper.convertIdentifiableToView(pet, PetView.class);
         }

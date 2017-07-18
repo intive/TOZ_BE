@@ -14,7 +14,7 @@ import javax.validation.constraints.Size;
 @Getter
 @Setter
 @JsonInclude(JsonInclude.Include.NON_EMPTY)
-public class PetsStatusView extends IdentifiableView{
+public class PetStatusView extends IdentifiableView{
 
     @ApiModelProperty(example = "DO ADOPCJI", required = true, position = 1)
     @Size(min = 1, max = 35)

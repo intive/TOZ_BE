@@ -1,7 +1,7 @@
 package com.intive.patronage.toz.pet.model.db;
 
 import com.intive.patronage.toz.base.model.Identifiable;
-import com.intive.patronage.toz.status.model.PetsStatus;
+import com.intive.patronage.toz.status.model.PetStatus;
 import com.intive.patronage.toz.storage.model.db.UploadedFile;
 import lombok.Getter;
 import lombok.Setter;
@@ -43,6 +43,13 @@ public class Pet extends Identifiable {
     @Temporal(TemporalType.TIMESTAMP)
     private Date acceptanceDate;
 
+    @ManyToOne
+    @JoinTable(name = "pets_statuses",
+            joinColumns = @JoinColumn(name = "pet_id"),
+            inverseJoinColumns = @JoinColumn(name = "pet_status_id")
+    )
+    private PetStatus petStatus;
+
     @OneToMany(cascade = CascadeType.MERGE, fetch = FetchType.EAGER, orphanRemoval = true)
     @JoinTable(name = "gallery",
             joinColumns = @JoinColumn(name = "pet_id"),
@@ -57,9 +64,6 @@ public class Pet extends Identifiable {
     public void removeFromGallery(final UploadedFile uploadedFile) {
         gallery.remove(uploadedFile);
     }
-
-    @ManyToOne
-    private PetsStatus petsStatus;
 
     public enum Type {
         DOG, CAT

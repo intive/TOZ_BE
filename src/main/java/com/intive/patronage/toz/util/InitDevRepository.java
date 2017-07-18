@@ -26,6 +26,7 @@ import java.util.UUID;
 @Profile("dev")
 class InitDevRepository {
 
+    private static final int INIT_REPOSITORY_SIZE = 5;
     private static final Random NUMBER_GENERATOR = new Random();
     private static final int NUMBER_UPPER_BOUND = 999;
 
@@ -50,7 +51,7 @@ class InitDevRepository {
     @Bean
     public CommandLineRunner initDevDatabase() {
         return args -> {
-            for (int i = 0; i < 5; i++) {
+            for (int i = 0; i < INIT_REPOSITORY_SIZE; i++) {
                 final Pet pet = createPetWithValue(i);
                 final Pet emptyPet = createPetWithEmptyFields(i);
                 petsRepository.save(pet);

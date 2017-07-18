@@ -58,5 +58,5 @@ public class PetView extends IdentifiableView {
     @JsonProperty(access = JsonProperty.Access.READ_ONLY)
     private String imageUrl;
     @ApiModelProperty(example = "c5296892-347f-4b2e-b1c6-6faff971f767", position = 9)
-    private UUID petsStatus;
+    private UUID petStatus;
 }

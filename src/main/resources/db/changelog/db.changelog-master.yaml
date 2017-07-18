@@ -512,3 +512,24 @@ databaseChangeLog:
                   name: author_surname
                   type: varchar(255)
               tableName: comment
+  - changeSet:
+        id: 13
+        author: marek.macko
+        changes:
+          - renameColumn:
+              oldColumnName: pets_status_id
+              newColumnName: pet_status_id
+              tableName: pet
+          - renameTable:
+              oldTableName: pets_status
+              newTableName: pet_status
+          - renameColumn:
+              oldColumnName: pets_status_id
+              newColumnName: pet_status_id
+              tableName: pets_status_pet
+          - dropColumn:
+              columnName: pet_status_id
+              tableName: pet
+          - renameTable:
+              oldTableName: pets_status_pet
+              newTableName: pets_statuses

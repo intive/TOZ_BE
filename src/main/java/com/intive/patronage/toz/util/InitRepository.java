@@ -1,7 +1,7 @@
 package com.intive.patronage.toz.util;
 
 import com.intive.patronage.toz.status.PetsStatusRepository;
-import com.intive.patronage.toz.status.model.PetsStatus;
+import com.intive.patronage.toz.status.model.PetStatus;
 import com.intive.patronage.toz.users.UserRepository;
 import com.intive.patronage.toz.users.model.db.Role;
 import com.intive.patronage.toz.users.model.db.User;
@@ -14,7 +14,7 @@ import org.springframework.context.annotation.Bean;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Component;
 
-import java.util.Objects;
+import java.util.*;
 
 @Component
 class InitRepository {
@@ -42,7 +42,7 @@ class InitRepository {
     }
 
     @Bean
-    public CommandLineRunner initDatabase() {
+    CommandLineRunner initDatabase() {
         return args -> {
             // TODO move to UserRepository?
             if (!userRepository.existsByName(SUPER_ADMIN_USER_NAME)) {
@@ -55,49 +55,21 @@ class InitRepository {
                 LOG.info("Created super admin: " + admin);
             }
 
-
-            PetsStatus petsStatus = new PetsStatus();
-            petsStatus.setName("ODEBRANY PRZEZ WŁAŚCICIELA");
-            petsStatus.setRgb("#0000FF");
-            petsStatus.setPublic(false);
-            petsStatusRepository.save(petsStatus);
-            petsStatus = new PetsStatus();
-            petsStatus.setName("WYPUSZCZONY W MIEJSCE BYTOWANIA");
-            petsStatus.setRgb("#007FFF");
-            petsStatus.setPublic(false);
-            petsStatusRepository.save(petsStatus);
-            petsStatus = new PetsStatus();
-            petsStatus.setName("EUTANAZJA");
-            petsStatus.setRgb("#FF0000");
-            petsStatus.setPublic(false);
-            petsStatusRepository.save(petsStatus);
-            petsStatus = new PetsStatus();
-            petsStatus.setName("ZGON");
-            petsStatus.setRgb("#FF0000");
-            petsStatus.setPublic(false);
-            petsStatusRepository.save(petsStatus);
-            petsStatus = new PetsStatus();
-            petsStatus.setName("PRZEKAZANY");
-            petsStatus.setRgb("#FFFF00");
-            petsStatus.setPublic(false);
-            petsStatusRepository.save(petsStatus);
-            petsStatus = new PetsStatus();
-            petsStatus.setName("USUNIĘTY");
-            petsStatus.setRgb("#606060");
-            petsStatus.setPublic(false);
-            petsStatusRepository.save(petsStatus);
-            petsStatus = new PetsStatus();
-            petsStatus.setName("ADOPTOWANY");
-            petsStatus.setRgb("#008000");
-            petsStatus.setPublic(false);
-            petsStatusRepository.save(petsStatus);
-            petsStatus = new PetsStatus();
-            petsStatus.setName("DO ADOPCJI");
-            petsStatus.setRgb("#008000");
-            petsStatus.setPublic(true);
-            petsStatusRepository.save(petsStatus);
+            petsStatusRepository.save(getInitialPetStatuses());
             LOG.info("Created predefined pets statuses");
-
         };
     }
+
+    private List<PetStatus> getInitialPetStatuses() {
+        return Arrays.asList(
+                new PetStatus("ODEBRANY PRZEZ WŁAŚCICIELA", "#0000FF", false),
+                new PetStatus("WYPUSZCZONY W MIEJSCE BYTOWANIA", "#007FFF", false),
+                new PetStatus("EUTANAZJA", "#FF0000", false),
+                new PetStatus("ZGON", "#FF0000", false),
+                new PetStatus("PRZEKAZANY", "#FFFF00", false),
+                new PetStatus("USUNIĘTY", "#606060", false),
+                new PetStatus("ADOPTOWANY", "#008000", false),
+                new PetStatus("DO ADOPCJI", "#008000", true));
+    }
+
 }
