@@ -2,7 +2,7 @@
 
 # TOZ backend
 
-TODO [short description](https://en.support.wordpress.com/markdown-quick-reference/)
+*Note: This project is frozen. If you'd like to continue its development I encourage you to do fork.*
 
 ## Prerequisites
 
@@ -22,16 +22,8 @@ TODO [short description](https://en.support.wordpress.com/markdown-quick-referen
 ## REST API documentation
 
 [Production](http://patronage2017.blstream.com/swagger-ui.html)
-
 [Testbed](http://testbed.patronage2017.blstream.com/swagger-ui.html)
-
 [Bleeding edge](http://dev.patronage2017.blstream.com/swagger-ui.html)
-
-## Slack (private)
-
-[Contact us](https://patronage-2017.slack.com/messages/backend-public)
-
-[Developer news](https://patronage-2017.slack.com/messages/backend-ci/)
 
 ## Docker
 
@@ -59,28 +51,34 @@ Example curl:
 ```
 curl http://localhost:8080/users \
   -H 'Accept: application/json' \
-  -H 'Authorization: Bearer eyJhbGciOiJIUzI1NiJ9.eyJzdWIiOiI0YjVlZmE0MC1lNjQ5LTQ3ZmQtOThkNy1jZTk3NzBlYTZlY2QiLCJlbWFpbCI6InVzZXJAbWFpbC5jb20iLCJzY29wZXMiOlsiVE9aIl0sImlhdCI6MTQ5MjE3MTY4MSwiZXhwIjoxNDkyMjU4MDgxfQ.Z3iZ3zlgV0_iZAk-iCTPr68hLBL5CvyoSHUbn3Htprc'
+  -H 'Authorization: Bearer eyJhb...'
 ```
 
 ## JWT 
 
 To configure secret for JWT add `TOZ_BE_JWT_SECRET` environmental variable with base64 encoded secret.
 
-# Temporary server
-
-[Heroku temporary hosting](https://vast-plains-10769.herokuapp.com/)
-
 # Super admin
 Set `TOZ_BE_SA_PASSWORD` environmental variable with super admin password before starting server.
 This password will be used to initialize super admin database entity.
 
 # Create user
+
 curl:
 ```
-curl -X POST -H 'Content-Type: application/json' -u SA:$TOZ_BE_SA_PASSWORD -d '{ "name": "Johny", "password": "johnySecret", "surname":"Bravo", "phoneNumber":"111222333", "email": "johny.bravo@gmail.com", "roles": ["VOLUNTEER"]}' http://localhost:8080/admin/users
+curl -X POST -H 'Content-Type: application/json' \
+     -u SA:$TOZ_BE_SA_PASSWORD \
+     -d '{  "name": "Johny",
+            "password": "johnySecret",
+            "surname":"Bravo",
+            "phoneNumber":"111222333",
+            "email": "johny.bravo@gmail.com",
+            "roles": ["VOLUNTEER"]}' \
+     http://localhost:8080/admin/users
 ```
-Roles :
-SA - Super admin.
-TOZ - Organization admin.
-VOLUNTEER - A Person, who is a volunteer in TOZ Organization.
 
+## User roles
+
+* SA - Super admin
+* TOZ - Organization admin
+* VOLUNTEER - A Person, who is a volunteer in TOZ Organization
